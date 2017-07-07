@@ -241,7 +241,7 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'video-player'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">PlayerService</span><span class="p">,</span>
-    <span class="nx">provide</span><span class="p">(</span><span class="nx">VideoService</span><span class="p">,</span> <span class="p">{</span><span class="na">useClass</span><span class="p">:</span> <span class="nx">SpecificVideoService</span><span class="p">})</span>
+    <span class="p">{</span> <span class="na">provide</span> <span class="p">:</span> <span class="nx">VideoService</span><span class="p">,</span> <span class="na">useClass</span> <span class="p">:</span> <span class="nx">SpecificVideoService</span> <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">VideoPlayer</span> <span class="p">{</span>
