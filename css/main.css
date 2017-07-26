@@ -1263,12 +1263,12 @@ green     #859900  operators, other keywords
         font-size: 18px; } }
   .thtrm-article p, .thtrm-article li {
     line-height: 1.8; }
-  .thtrm-article p code {
+  .thtrm-article p code, .thtrm-article li code {
     background-color: rgba(98, 167, 190, 0.22);
     padding: 3px;
     font-size: 15px; }
     @media (min-width: 840px) {
-      .thtrm-article p code {
+      .thtrm-article p code, .thtrm-article li code {
         font-size: 17px; } }
   .thtrm-article a {
     color: #62a7be;
