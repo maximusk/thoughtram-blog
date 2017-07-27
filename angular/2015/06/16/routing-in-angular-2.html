@@ -102,7 +102,7 @@
 
 <p><strong>Please read our new article <a href="/angular/2016/06/14/routing-in-angular-2-revisited.html">Routing in Angular revisited</a></strong></p>
 
-<p>If you’re following our <a href="http://blog.thoughtram.io/categories/angular">articles on Angular</a> you might know that, a couple of months ago, <a href="http://blog.thoughtram.io/angularjs/2015/02/19/futuristic-routing-in-angular.html">we’ve written about the new router</a>, how it can be used, and how it differs from the <code>ngRoute</code> standard router. Whereas we mostly touched on using the router in Angular 1 applications, this article discusses how it can be used in Angular 2 applications.</p>
+<p>If you’re following our <a href="http://blog.thoughtram.io/categories/angular">articles on Angular</a> you might know that, a couple of months ago, <a href="http://blog.thoughtram.io/angularjs/2015/02/19/futuristic-routing-in-angular.html">we’ve written about the new router</a>, how it can be used, and how it differs from the <code class="highlighter-rouge">ngRoute</code> standard router. Whereas we mostly touched on using the router in Angular 1 applications, this article discusses how it can be used in Angular 2 applications.</p>
 
 <p>We won’t talk about how to get started with Angular 2. We assume that we’re all familiar with the installation process and how to bootstrap a small Angular 2 application. If this is entirely new to you, I recommend checking out our articles on <a href="http://blog.thoughtram.io/angular/2015/03/27/building-a-zippy-component-in-angular-2.html">developing a zippy component</a> or <a href="http://blog.thoughtram.io/angular/2015/04/09/developing-a-tabs-component-in-angular-2.html">developing a tabs component</a> in Angular 2. Another great starting point is the <a href="http://github.com/angular-class/angular2-webpack-starter">starter kit</a> by our friends over at <a href="http://angularclass.com">AngularClass</a>.</p>
 
@@ -123,9 +123,9 @@
 
 <p>In order to use the new router, we need to import all needed components from the Angular framework and bind them to our component’s injector. Note that, even if in this article we’re importing straight from Angular, this might change in the future, since the router source has only temporarily been moved to the core.</p>
 
-<p>To avoid additional typing, and also to hide some boilerplate logic, the router module exports a variable <code>routerInjectables</code> which contains all injector bindings to get going. To give you an idea of what that looks like, here’s a small snippet from the router’s source:</p>
+<p>To avoid additional typing, and also to hide some boilerplate logic, the router module exports a variable <code class="highlighter-rouge">routerInjectables</code> which contains all injector bindings to get going. To give you an idea of what that looks like, here’s a small snippet from the router’s source:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kd">var</span> <span class="nx">routerInjectables</span><span class="err">:</span> <span class="nx">List</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kd">var</span> <span class="nx">routerInjectables</span><span class="err">:</span> <span class="nx">List</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span>
   <span class="nx">RouteRegistry</span><span class="p">,</span>
   <span class="nx">Pipeline</span><span class="p">,</span>
   <span class="nx">BrowserLocation</span><span class="p">,</span>
@@ -138,37 +138,37 @@
     <span class="nx">Location</span><span class="p">,</span>
     <span class="nx">appComponentTypeToken</span>
   <span class="p">])</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
 <p>It’s really just a collection of binding declarations. If you see those kind of bindings for the very first time, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/05/18/dependency-injection-in-angular-2.html">dependency injection</a> in Angular 2. The short version is that each item in this collection describes how to create an object of a specific type when our application asks for an object of that type.</p>
 
-<p>For example the following binding tells the injector to create an instance of <code>RootRouter</code> whenever someone asks for an object of type <code>Router</code>.</p>
+<p>For example the following binding tells the injector to create an instance of <code class="highlighter-rouge">RootRouter</code> whenever someone asks for an object of type <code class="highlighter-rouge">Router</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">bind</span><span class="p">(</span><span class="nx">Router</span><span class="p">).</span><span class="nx">toFactory</span><span class="p">((</span><span class="nx">registry</span><span class="p">,</span> <span class="nx">pipeline</span><span class="p">,</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">appRoot</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">bind</span><span class="p">(</span><span class="nx">Router</span><span class="p">).</span><span class="nx">toFactory</span><span class="p">((</span><span class="nx">registry</span><span class="p">,</span> <span class="nx">pipeline</span><span class="p">,</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">appRoot</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">return</span> <span class="k">new</span> <span class="nx">RootRouter</span><span class="p">(</span><span class="nx">registry</span><span class="p">,</span> <span class="nx">pipeline</span><span class="p">,</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">appRoot</span><span class="p">);</span>
 <span class="p">},[</span>
   <span class="nx">RouteRegistry</span><span class="p">,</span>
   <span class="nx">Pipeline</span><span class="p">,</span>
   <span class="nx">Location</span><span class="p">,</span>
   <span class="nx">appComponentTypeToken</span>
-<span class="p">])</span></code></pre></div>
+<span class="p">])</span></code></pre></figure>
 
 <p><i>The router exports a couple of other components that are needed thoughout our application, but we’ll cover them later in this article.</i></p>
 
-<p>Alright, now that we know what <code>routerInjectables</code> are, we can import and use them when bootstrapping our application, to make the router components available in our component’s dependency injector.</p>
+<p>Alright, now that we know what <code class="highlighter-rouge">routerInjectables</code> are, we can import and use them when bootstrapping our application, to make the router components available in our component’s dependency injector.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">bootstrap</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'angular2/angular2'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">bootstrap</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'angular2/angular2'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">routerInjectables</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'angular2/router'</span><span class="p">;</span>
 
 <span class="p">...</span> <span class="c1">// App is defined here</span>
 
-<span class="nx">bootstrap</span><span class="p">(</span><span class="nx">App</span><span class="p">,</span> <span class="p">[</span><span class="nx">routerInjectables</span><span class="p">]);</span></code></pre></div>
+<span class="nx">bootstrap</span><span class="p">(</span><span class="nx">App</span><span class="p">,</span> <span class="p">[</span><span class="nx">routerInjectables</span><span class="p">]);</span></code></pre></figure>
 
-<p><code>bootstrap</code> takes a list of injector bindings as second argument. Those bindings are used when an injector is created. which means, passing <code>routerInjectables</code> here basically makes all the bindings application-wide available.</p>
+<p><code class="highlighter-rouge">bootstrap</code> takes a list of injector bindings as second argument. Those bindings are used when an injector is created. which means, passing <code class="highlighter-rouge">routerInjectables</code> here basically makes all the bindings application-wide available.</p>
 
-<p>For now we want to implement basic routing with a couple of components. All we need to do is to create a component that has a template with a navigation, and some router specific template logic. Let’s start small - here’s what our <code>App</code> component could look like (without router logic):</p>
+<p>For now we want to implement basic routing with a couple of components. All we need to do is to create a component that has a template with a navigation, and some router specific template logic. Let’s start small - here’s what our <code class="highlighter-rouge">App</code> component could look like (without router logic):</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">View</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'angular2/angular2'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
@@ -191,17 +191,17 @@
 <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
 
 <span class="p">}</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
-<p>Pretty much an empty component with a template. We also take advantage of decorators, that’s why we need to import <code>Component</code> and <code>View</code>. You can read more about decorators (and also annotations) in our article on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between annotations and decorators</a>. Annotations can be used in ES5 code as well. In case this is more interesting to you, <a href="http://blog.thoughtram.io/angular/2015/05/09/writing-angular-2-code-in-es5.html">this article</a> shows you how.</p>
+<p>Pretty much an empty component with a template. We also take advantage of decorators, that’s why we need to import <code class="highlighter-rouge">Component</code> and <code class="highlighter-rouge">View</code>. You can read more about decorators (and also annotations) in our article on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between annotations and decorators</a>. Annotations can be used in ES5 code as well. In case this is more interesting to you, <a href="http://blog.thoughtram.io/angular/2015/05/09/writing-angular-2-code-in-es5.html">this article</a> shows you how.</p>
 
 <h2 id="configuring-routes">Configuring routes</h2>
 
-<p>According to our application’s template, we seem to have a <code>Start</code>, an <code>About</code> and a <code>Contact</code> component. In order to be able to navigate to those components, we first need to configure the router in our application. As mentioned earlier, next to <code>routerInjectables</code>, there are other components that the router module exports. One of them is the <code>RouteConfig</code> class which can be used to decorate a component with routing capabilities.</p>
+<p>According to our application’s template, we seem to have a <code class="highlighter-rouge">Start</code>, an <code class="highlighter-rouge">About</code> and a <code class="highlighter-rouge">Contact</code> component. In order to be able to navigate to those components, we first need to configure the router in our application. As mentioned earlier, next to <code class="highlighter-rouge">routerInjectables</code>, there are other components that the router module exports. One of them is the <code class="highlighter-rouge">RouteConfig</code> class which can be used to decorate a component with routing capabilities.</p>
 
-<p><code>RouteConfig</code> takes a collection of route configurations. A route configuration is an object with a <code>path</code> and a <code>component</code>, so pretty much the same we have in Angular 1 too. Here’s what the route configuration for our <code>Start</code> component could look like:</p>
+<p><code class="highlighter-rouge">RouteConfig</code> takes a collection of route configurations. A route configuration is an object with a <code class="highlighter-rouge">path</code> and a <code class="highlighter-rouge">component</code>, so pretty much the same we have in Angular 1 too. Here’s what the route configuration for our <code class="highlighter-rouge">Start</code> component could look like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">Start</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/start'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">RouteConfig</span><span class="p">([</span>
@@ -209,13 +209,13 @@
 <span class="p">])</span>
 <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Easy right? One small difference compared to the Angular 1 version we see here, is that a component is provided as a class (or constructor function in ES5) instead of a string that represents the name of a component.</p>
 
-<p>That’s why we need to import our <code>Start</code> component first. Let’s take a quick look at what that component looks like:</p>
+<p>That’s why we need to import our <code class="highlighter-rouge">Start</code> component first. Let’s take a quick look at what that component looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'start'</span>
 <span class="p">})</span>
 <span class="err">@</span><span class="nx">View</span><span class="p">({</span>
@@ -223,17 +223,17 @@
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Start</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Nothing special here. Let’s make sure that our loaded component is actually displayed when the router activates it.</p>
 
 <h2 id="displaying-the-component">Displaying the component</h2>
 
-<p>In order to display the loaded component in our application, we need to specify the location in our application’s template. If you’ve read our first article on the new router,  you know that there’s a directive called <code>RouterOutlet</code> that lets us define a place in our template to display the loaded component.</p>
+<p>In order to display the loaded component in our application, we need to specify the location in our application’s template. If you’ve read our first article on the new router,  you know that there’s a directive called <code class="highlighter-rouge">RouterOutlet</code> that lets us define a place in our template to display the loaded component.</p>
 
-<p>Let’s do that. All we need to do is to import the directive, extend our application’s <code>@View</code> annotation configuration and use the directive in the template:</p>
+<p>Let’s do that. All we need to do is to import the directive, extend our application’s <code class="highlighter-rouge">@View</code> annotation configuration and use the directive in the template:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">RouterOutlet</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'angular2/router'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
@@ -257,19 +257,19 @@
 <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
 
 <span class="p">}</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
-<p><strong>That’s it</strong>! Since our route configuration says that <code>/</code> is mapped to our <code>Start</code> component, we don’t have to do anything special for now to activate that component - it is loaded by default.</p>
+<p><strong>That’s it</strong>! Since our route configuration says that <code class="highlighter-rouge">/</code> is mapped to our <code class="highlighter-rouge">Start</code> component, we don’t have to do anything special for now to activate that component - it is loaded by default.</p>
 
 <h2 id="linking-to-other-components">Linking to other components</h2>
 
-<p>Of course, setting up a single route that is displayed by default, isn’t really what we’re looking for. Our application can have multiple route configurations and we also want to be able to navigate to each of them. But how can we achieve this? In <code>ngRoute</code> we just use normal links with <code>href</code> attributes and the module is smart enough to intercept accordingly. In UI-Router, we have a directive <code>uiSref</code> that takes a state name or a relative path to navigate to. What does the new router provide?</p>
+<p>Of course, setting up a single route that is displayed by default, isn’t really what we’re looking for. Our application can have multiple route configurations and we also want to be able to navigate to each of them. But how can we achieve this? In <code class="highlighter-rouge">ngRoute</code> we just use normal links with <code class="highlighter-rouge">href</code> attributes and the module is smart enough to intercept accordingly. In UI-Router, we have a directive <code class="highlighter-rouge">uiSref</code> that takes a state name or a relative path to navigate to. What does the new router provide?</p>
 
-<p>Well, as you might know, the new router shares a code base for both, the Angular 1 and Angular 2 version. In our last article we explored the <code>router-link</code> directive, which allows us to navigate to components. <strong>Guess what, we can use the same in Angular 2</strong>!</p>
+<p>Well, as you might know, the new router shares a code base for both, the Angular 1 and Angular 2 version. In our last article we explored the <code class="highlighter-rouge">router-link</code> directive, which allows us to navigate to components. <strong>Guess what, we can use the same in Angular 2</strong>!</p>
 
-<p>In Angular 2, the <code>RouterLink</code> directive is exported by the router module. In order to use it, we need to import it first and declare it as directive dependency of our component’s template, just like <code>RouterOutlet</code>.</p>
+<p>In Angular 2, the <code class="highlighter-rouge">RouterLink</code> directive is exported by the router module. In order to use it, we need to import it first and declare it as directive dependency of our component’s template, just like <code class="highlighter-rouge">RouterOutlet</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">RouterOutlet</span><span class="p">,</span> <span class="nx">RouterLink</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'angular2/router'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
@@ -282,23 +282,23 @@
 <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
 
 <span class="p">}</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
-<p>Awesome, now it can be used in the template. Let’s extend our navigation with proper links that make use of <code>RouterLink</code>. The directive takes a component name and if the underlying DOM element is an anchor element, it generates a URL based on the component’s route configuration, which is then added to it as part of the <code>href</code> attribute.</p>
+<p>Awesome, now it can be used in the template. Let’s extend our navigation with proper links that make use of <code class="highlighter-rouge">RouterLink</code>. The directive takes a component name and if the underlying DOM element is an anchor element, it generates a URL based on the component’s route configuration, which is then added to it as part of the <code class="highlighter-rouge">href</code> attribute.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;nav&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;nav&gt;</span>
   <span class="nt">&lt;ul&gt;</span>
     <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">router-link=</span><span class="s">"start"</span><span class="nt">&gt;</span>Start<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
     <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">router-link=</span><span class="s">"about"</span><span class="nt">&gt;</span>About<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
     <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">router-link=</span><span class="s">"contact"</span><span class="nt">&gt;</span>Contact<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
   <span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;/nav&gt;</span></code></pre></div>
+<span class="nt">&lt;/nav&gt;</span></code></pre></figure>
 
-<p>You might wonder, how the directive knows that <code>"start"</code> should generate a URL for our <code>Start</code> component. In fact, it can’t until we extend our router configuration. Next to <code>path</code> and <code>component</code> there’s another configuration property <code>as</code> that allows us to expose a router configuration under a given name.</p>
+<p>You might wonder, how the directive knows that <code class="highlighter-rouge">"start"</code> should generate a URL for our <code class="highlighter-rouge">Start</code> component. In fact, it can’t until we extend our router configuration. Next to <code class="highlighter-rouge">path</code> and <code class="highlighter-rouge">component</code> there’s another configuration property <code class="highlighter-rouge">as</code> that allows us to expose a router configuration under a given name.</p>
 
-<p>E.g. if we want to use <code>start</code> as an “alias” for the route configuration for the <code>Start</code> component, we simply have to add the configuration accordingly. While we are at it, we do the same for the other two components, and just assume that we’ve built them already:</p>
+<p>E.g. if we want to use <code class="highlighter-rouge">start</code> as an “alias” for the route configuration for the <code class="highlighter-rouge">Start</code> component, we simply have to add the configuration accordingly. While we are at it, we do the same for the other two components, and just assume that we’ve built them already:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Start</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/start'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Start</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/start'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">About</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/about'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">Contact</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/contact'</span><span class="p">;</span>
 
@@ -308,9 +308,9 @@
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">'/'</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">Start</span><span class="p">,</span> <span class="na">as</span><span class="p">:</span> <span class="s1">'start'</span><span class="p">},</span>
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">'/about'</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">About</span><span class="p">,</span> <span class="na">as</span><span class="p">:</span> <span class="s1">'about'</span><span class="p">},</span>
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">'/contact'</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">Contact</span><span class="p">,</span> <span class="na">as</span><span class="p">:</span> <span class="s1">'contact'</span><span class="p">},</span>
-<span class="p">])</span></code></pre></div>
+<span class="p">])</span></code></pre></figure>
 
-<p>Now the router actually knows for what to generate URLs when using <code>RouterLink</code>. Cool, we can navigate to single components throughout our application, but what if we have components that use more than one <code>RouterOutlet</code>?</p>
+<p>Now the router actually knows for what to generate URLs when using <code class="highlighter-rouge">RouterLink</code>. Cool, we can navigate to single components throughout our application, but what if we have components that use more than one <code class="highlighter-rouge">RouterOutlet</code>?</p>
 
 <h2 id="routes-with-sibling-outlets">Routes with sibling outlets</h2>
 
@@ -318,18 +318,18 @@
 
 <p>Having a component with multiple outlets is easy. Let’s say we have a dashboard component component that needs to load a navigation component and a statistics component. First we would of course setup a route config to be able to navigate to the dashboard component.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Dashboard</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/dashboard'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Dashboard</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/dashboard'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">RouteConfig</span><span class="p">([</span>
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">'/dashboard'</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">Dashboard</span><span class="p">,</span> <span class="na">as</span><span class="p">:</span> <span class="s1">'dashboard'</span><span class="p">}</span>
 <span class="p">])</span>
 <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Alright, nothing new here. Let’s jump over to the dashboard component. The dashboard defines two sibling outlets. In order to tell the router what to load into those siblings, we can give them names and reference them to components accordingly in our route configuration. Here’ what the configuration of the dashboard component could look like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Navigation</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/navigation'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Navigation</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/navigation'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">Statistics</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./components/statistics'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">RouteConfig</span><span class="p">([</span>
@@ -344,17 +344,17 @@
 <span class="p">])</span>
 <span class="kr">class</span> <span class="nx">Dashboard</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p style="background: #F2AEAE; border-radius: 0.3em; margin-top: 1.4em; padding: 1em; border: #F56B6B 1px solid;"><strong>Attention</strong>: <br />
 The <code>components</code> property has been removed as of <a href="https://github.com/angular/angular/issues/2329">#2329</a> but the feature will be reintroduced with a different mechanism.
 </p>
 
-<p>Again, <code>Navigation</code> and <code>Statistics</code> are really just two components that don’t even have to know that they are part of a route configuration. We can also see how the <code>as</code> property in the route configuration can be nicely used as an alias for component combinations.</p>
+<p>Again, <code class="highlighter-rouge">Navigation</code> and <code class="highlighter-rouge">Statistics</code> are really just two components that don’t even have to know that they are part of a route configuration. We can also see how the <code class="highlighter-rouge">as</code> property in the route configuration can be nicely used as an alias for component combinations.</p>
 
 <h2 id="theres-so-much-more-coming">There’s so much more coming</h2>
 
-<p>This article gives us just a little picture of how the new router can be used in Angular 2 compared to Angular 1. As you can see a lot of things are very similar, <strong>which will surely help when migrating to Angular 2</strong>. Of course, there are more things to cover, like how to deal with nested components and how to do dynamic routing using <code>Router</code>. Those things will be part of future articles.</p>
+<p>This article gives us just a little picture of how the new router can be used in Angular 2 compared to Angular 1. As you can see a lot of things are very similar, <strong>which will surely help when migrating to Angular 2</strong>. Of course, there are more things to cover, like how to deal with nested components and how to do dynamic routing using <code class="highlighter-rouge">Router</code>. Those things will be part of future articles.</p>
 
 
           

@@ -105,28 +105,28 @@
 
 <h2 id="understanding-data-binding-and-watchers">Understanding data-binding and watchers</h2>
 
-<p>In order to make databinding possible, Angular uses <a href="https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$watch">$watch</a> APIs to observe model mutations on the scope. What the scope actually is and where it comes from, depends on your application code. If you don’t create a <em>child scope</em> by, for example, using the <code>ngController</code> directive to create an association between your DOM and your actual controller code, you’re probably dealing with the <a href="https://docs.angularjs.org/api/ng/service/$rootScope">$rootScope</a>, which is (as the name says) the scope that acts as root scope for your application and created by Angular itself through the <code>ngApp</code> directive, unless you bootstrap your app manually.</p>
+<p>In order to make databinding possible, Angular uses <a href="https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$watch">$watch</a> APIs to observe model mutations on the scope. What the scope actually is and where it comes from, depends on your application code. If you don’t create a <em>child scope</em> by, for example, using the <code class="highlighter-rouge">ngController</code> directive to create an association between your DOM and your actual controller code, you’re probably dealing with the <a href="https://docs.angularjs.org/api/ng/service/$rootScope">$rootScope</a>, which is (as the name says) the scope that acts as root scope for your application and created by Angular itself through the <code class="highlighter-rouge">ngApp</code> directive, unless you bootstrap your app manually.</p>
 
 <p>However, at some point you always deal with a scope and that one is used to observe changes on it with the use of so called <em>watchers</em>. Watchers are registered through <a href="https://docs.angularjs.org/guide/directive">directives</a> that are used in the DOM. So let’s say we use the interpolation directive to reflect scope model values in the DOM:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
-<p>This interpolation directive registers a watch for a property <code>name</code> on the corresponding scope (which in our case is <code>$rootScope</code>) in order to interpolate against it to display the value in the DOM.</p>
+<p>This interpolation directive registers a watch for a property <code class="highlighter-rouge">name</code> on the corresponding scope (which in our case is <code class="highlighter-rouge">$rootScope</code>) in order to interpolate against it to display the value in the DOM.</p>
 
 <p>Defining a property with exactly that identifier on our scope and assigning a value to it, makes it magically displaying it in the DOM without further actions:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
 <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$rootScope</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$rootScope</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">"Pascal"</span><span class="p">;</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>Great! We just bound a model value to the view with an interpolation directive. If now something changes the value, the view gets updated automatically. Let’s add a button that updates the value of <code>name</code> once it’s clicked:</p>
+<p>Great! We just bound a model value to the view with an interpolation directive. If now something changes the value, the view gets updated automatically. Let’s add a button that updates the value of <code class="highlighter-rouge">name</code> once it’s clicked:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">"name = 'Christoph'"</span><span class="nt">&gt;</span>Click me!<span class="nt">&lt;/button&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">"name = 'Christoph'"</span><span class="nt">&gt;</span>Click me!<span class="nt">&lt;/button&gt;</span></code></pre></figure>
 
-<p>Clicking the button assigns the string <code>Christoph</code> to <code>name</code> which triggers a <a href="https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$digest">$digest</a> cycle that automatically updates the DOM accordingly. In this particular case we’re just updating the value one-way (top → down). However, when for example dealing with an <code>input</code> element that has an <a href="https://docs.angularjs.org/api/ng/directive/ngModel">ngModel</a> directive applied, and a user changes its <code>value</code> property by typing something into it, the change is reflected back to the actual model.</p>
+<p>Clicking the button assigns the string <code class="highlighter-rouge">Christoph</code> to <code class="highlighter-rouge">name</code> which triggers a <a href="https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$digest">$digest</a> cycle that automatically updates the DOM accordingly. In this particular case we’re just updating the value one-way (top → down). However, when for example dealing with an <code class="highlighter-rouge">input</code> element that has an <a href="https://docs.angularjs.org/api/ng/directive/ngModel">ngModel</a> directive applied, and a user changes its <code class="highlighter-rouge">value</code> property by typing something into it, the change is reflected back to the actual model.</p>
 
-<p>This happens because when a <code>$digest</code> cycle is triggered, Angular processes all registered watchers on the current scope and its children and checks for model mutations and calls dedicated watch listeners until the model is stabilized and no more listeners are fired. Once the <code>$digest</code> loop finishes the execution, the browser re-renders the DOM and reflects the changes.</p>
+<p>This happens because when a <code class="highlighter-rouge">$digest</code> cycle is triggered, Angular processes all registered watchers on the current scope and its children and checks for model mutations and calls dedicated watch listeners until the model is stabilized and no more listeners are fired. Once the <code class="highlighter-rouge">$digest</code> loop finishes the execution, the browser re-renders the DOM and reflects the changes.</p>
 
 <p>Here’s a running example of the code described above:</p>
 
@@ -136,9 +136,9 @@
 
 <p>Now that we have a picture of how the databinding mechanism in Angular actually works, we might wonder why there is a feature for one-time binding.</p>
 
-<p>Due to Angulars nature of using watchers for databinding, we might get some problems in terms of performance when having too many of them. As we learned, <em>watch expressions</em> are registered on the scope together with their callback listeners so Angular can process them during <code>$digest</code> cycles in order to update the view accordingly. That simply means, the more watchers are registered, the more Angular has to process.</p>
+<p>Due to Angulars nature of using watchers for databinding, we might get some problems in terms of performance when having too many of them. As we learned, <em>watch expressions</em> are registered on the scope together with their callback listeners so Angular can process them during <code class="highlighter-rouge">$digest</code> cycles in order to update the view accordingly. That simply means, the more watchers are registered, the more Angular has to process.</p>
 
-<p>Now imagine you have a lot of dynamic values in your view that have to be evaluated by Angular. Internationalization for example, is a very common use case where developers use Angulars databinding to localize their apps, even if the language isn’t changeable during runtime, but set on initial page load. In that case every single string that is localized in the view and written to the scope, sets up a watch in order to get updated once something triggers the next <code>$digest</code>. This is a lot of overhead especially when your language actually doesn’t change at runtime.</p>
+<p>Now imagine you have a lot of dynamic values in your view that have to be evaluated by Angular. Internationalization for example, is a very common use case where developers use Angulars databinding to localize their apps, even if the language isn’t changeable during runtime, but set on initial page load. In that case every single string that is localized in the view and written to the scope, sets up a watch in order to get updated once something triggers the next <code class="highlighter-rouge">$digest</code>. This is a lot of overhead especially when your language actually doesn’t change at runtime.</p>
 
 <h2 id="one-time-bindings-to-the-rescue">One-time bindings to the rescue!</h2>
 
@@ -150,23 +150,23 @@
 
 <p>And this is exactly what the Angular world needs to tackle the problems mentioned above. So what does it look like when we want to use one-time binding? Angular 1.3 comes with a new syntax for interpolation directives and expressions in order to tell Angular that this particular interpolated value should be bound one-time.</p>
 
-<p>Using this new syntax is as easy as starting an expression with <code>::</code>. So if we apply the one-time expression to our example above, we change this:</p>
+<p>Using this new syntax is as easy as starting an expression with <code class="highlighter-rouge">::</code>. So if we apply the one-time expression to our example above, we change this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
 <p>To this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Hello {{::name}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Hello {{::name}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
-<p>This works for all kind of typical Angular expressions you’re used to use throughout your app. Which means you can use them in <code>ng-repeat</code> expressions or even for directives that expose attributes that set up a two-way binding from the inside out. From the outside you’re able to just feed them with a one-time expression:</p>
+<p>This works for all kind of typical Angular expressions you’re used to use throughout your app. Which means you can use them in <code class="highlighter-rouge">ng-repeat</code> expressions or even for directives that expose attributes that set up a two-way binding from the inside out. From the outside you’re able to just feed them with a one-time expression:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;custom-directive</span> <span class="na">two-way-attribute=</span><span class="s">"::oneWayExpression"</span><span class="nt">&gt;&lt;/custom-directive&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;custom-directive</span> <span class="na">two-way-attribute=</span><span class="s">"::oneWayExpression"</span><span class="nt">&gt;&lt;/custom-directive&gt;</span></code></pre></figure>
 
-<p>Okay, let’s see it in action. We already updated the <code>name</code> to <code>::name</code> to ensure the one-time binding. The rest of the code just stays as it is to demonstrate that our one-time binding works. Remember the button we added to update the <code>name</code> to <code>Christoph</code>? Well, try it again:</p>
+<p>Okay, let’s see it in action. We already updated the <code class="highlighter-rouge">name</code> to <code class="highlighter-rouge">::name</code> to ensure the one-time binding. The rest of the code just stays as it is to demonstrate that our one-time binding works. Remember the button we added to update the <code class="highlighter-rouge">name</code> to <code class="highlighter-rouge">Christoph</code>? Well, try it again:</p>
 
 <iframe src="http://embed.plnkr.co/WHHnp4KWKmd3O5twbzKV/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Perfect. <code>name</code> won’t ever change again. <code>Pascal</code> is a much better name anyway, right?</p>
+<p>Perfect. <code class="highlighter-rouge">name</code> won’t ever change again. <code class="highlighter-rouge">Pascal</code> is a much better name anyway, right?</p>
 
 
           

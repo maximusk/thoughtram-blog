@@ -102,91 +102,91 @@
 
 <p><img src="/assets/git-branching-commits-abstract-2.svg" alt="A simple commit history" /></p>
 
-<p>Let’s assume our entire repository history is made up only from those three commits. There’s a pointer called <code>master</code> pointing at commit <code>a5c3eb</code>. That’s all what branches are: they are movable pointers. Let’s create a branch called <code>feature</code>.</p>
+<p>Let’s assume our entire repository history is made up only from those three commits. There’s a pointer called <code class="highlighter-rouge">master</code> pointing at commit <code class="highlighter-rouge">a5c3eb</code>. That’s all what branches are: they are movable pointers. Let’s create a branch called <code class="highlighter-rouge">feature</code>.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">branch</span> <span class="n">feature</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">branch</span> <span class="n">feature</span></code></pre></figure>
 
 <p><img src="/assets/git-branching-new-branch.svg" alt="Creating another branch" /></p>
 
-<p>Seen that? We just created another pointer called <code>feature</code> pointing at the exact same commit. Basically, all Git does it creates a file called <code>feature</code> with the contents being a 40 char string, the SHA-1 revision name of the commit.</p>
+<p>Seen that? We just created another pointer called <code class="highlighter-rouge">feature</code> pointing at the exact same commit. Basically, all Git does it creates a file called <code class="highlighter-rouge">feature</code> with the contents being a 40 char string, the SHA-1 revision name of the commit.</p>
 
-<p>But wait! Now that we have two different branches pointing to the same commit. How does Git know which branch is currently checked out? This is where the <code>HEAD</code> pointer comes into play!</p>
+<p>But wait! Now that we have two different branches pointing to the same commit. How does Git know which branch is currently checked out? This is where the <code class="highlighter-rouge">HEAD</code> pointer comes into play!</p>
 
 <p><img src="/assets/git-branching-head-pointer.svg" alt="Understanding HEAD" /></p>
 
-<p>The <code>HEAD</code> is a special pointer that simply points to the currently checked out <em>branch</em> or <em>commit</em>. And again, it’s a simple file inside the <code>.git</code> folder called <code>HEAD</code> which in our case currently contains the string <em>master</em>.</p>
+<p>The <code class="highlighter-rouge">HEAD</code> is a special pointer that simply points to the currently checked out <em>branch</em> or <em>commit</em>. And again, it’s a simple file inside the <code class="highlighter-rouge">.git</code> folder called <code class="highlighter-rouge">HEAD</code> which in our case currently contains the string <em>master</em>.</p>
 
 <p>Ok then, what happens if we switch to our feature branch?</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="n">feature</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="n">feature</span></code></pre></figure>
 
 <p><img src="/assets/git-branching-head-pointer-2.svg" alt="Switching branches" /></p>
 
-<p>Exactly, all what happened is that <code>HEAD</code> is now pointing to <code>feature</code> instead of <code>master</code>. Switching between <code>master</code> and <code>feature</code> at this point boils down to Git replacing the string <em>master</em> with <em>feature</em> in the HEAD file. Super cheap!</p>
+<p>Exactly, all what happened is that <code class="highlighter-rouge">HEAD</code> is now pointing to <code class="highlighter-rouge">feature</code> instead of <code class="highlighter-rouge">master</code>. Switching between <code class="highlighter-rouge">master</code> and <code class="highlighter-rouge">feature</code> at this point boils down to Git replacing the string <em>master</em> with <em>feature</em> in the HEAD file. Super cheap!</p>
 
 <p>But what happens if we now create or modify some files and make another commit? Let’s find out.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">file</span><span class="p">.</span><span class="nf">txt</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">file</span><span class="p">.</span><span class="nf">txt</span>
 <span class="n">git</span> <span class="n">add</span> <span class="n">file</span><span class="p">.</span><span class="nf">txt</span>
-<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"yay, that's fun!"</span></code></pre></div>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"yay, that's fun!"</span></code></pre></figure>
 
 <p><img src="/assets/git-branching-head-pointer-3.svg" alt="Adding a new commit to feature" /></p>
 
-<p>We created a new commit <code>c57e22</code> and the <code>feature</code> pointer moved on to it. That’s because branches are simply movable pointers to commits. But why did <code>feature</code> move and <code>master</code> did not? Because <code>feature</code> is the currently checked out branch. And how does Git know? Because <code>HEAD</code> points to <code>feature</code>! Simple isn’t it?</p>
+<p>We created a new commit <code class="highlighter-rouge">c57e22</code> and the <code class="highlighter-rouge">feature</code> pointer moved on to it. That’s because branches are simply movable pointers to commits. But why did <code class="highlighter-rouge">feature</code> move and <code class="highlighter-rouge">master</code> did not? Because <code class="highlighter-rouge">feature</code> is the currently checked out branch. And how does Git know? Because <code class="highlighter-rouge">HEAD</code> points to <code class="highlighter-rouge">feature</code>! Simple isn’t it?</p>
 
-<p>Let’s switch back to <code>master</code>.</p>
+<p>Let’s switch back to <code class="highlighter-rouge">master</code>.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span></code></pre></figure>
 
 <p><img src="/assets/git-branching-head-pointer-4.svg" alt="Switching back to master" /></p>
 
-<p>What happened now is that the <code>HEAD</code> pointer changed to <code>master</code> and the state of the entire working directory was changed to what it was at <code>a5c3eb</code>.</p>
+<p>What happened now is that the <code class="highlighter-rouge">HEAD</code> pointer changed to <code class="highlighter-rouge">master</code> and the state of the entire working directory was changed to what it was at <code class="highlighter-rouge">a5c3eb</code>.</p>
 
 <p>Let’s modify a file and create another commit.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">anotherFile</span><span class="p">.</span><span class="nf">txt</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">anotherFile</span><span class="p">.</span><span class="nf">txt</span>
 <span class="n">git</span> <span class="n">add</span> <span class="n">anotherFile</span><span class="p">.</span><span class="nf">txt</span>
-<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"yay, more fun!"</span></code></pre></div>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"yay, more fun!"</span></code></pre></figure>
 
 <p><img src="/assets/git-branching-head-pointer-5.svg" alt="Adding a new commit to master" /></p>
 
-<p>A new commit <code>3aa2ff</code> appeared and <code>master</code> moved on to it. At this point our history has diverged. And this is the whole point of branches. They enable us to have parallel evolution of a code base.</p>
+<p>A new commit <code class="highlighter-rouge">3aa2ff</code> appeared and <code class="highlighter-rouge">master</code> moved on to it. At this point our history has diverged. And this is the whole point of branches. They enable us to have parallel evolution of a code base.</p>
 
 <p>At this point you may be wondering how to <em>merge</em> both ends back together. This is exactly what we will look at in our next Git episode. Stay tuned!</p>
 
 <h2 id="detached-head">Detached HEAD</h2>
 
-<p>Ever came across a detached <code>HEAD</code>? Now that we know how Git handles branches, it’s the perfect time to demystify the detached <code>HEAD</code>. You’ll be suprised how simple it is. In fact, you may have spotted a hint in the text above.</p>
+<p>Ever came across a detached <code class="highlighter-rouge">HEAD</code>? Now that we know how Git handles branches, it’s the perfect time to demystify the detached <code class="highlighter-rouge">HEAD</code>. You’ll be suprised how simple it is. In fact, you may have spotted a hint in the text above.</p>
 
 <blockquote>
-  <p>The <code>HEAD</code> is a special pointer that simply points to the currently checked out <em>branch</em> or <em>commit</em></p>
+  <p>The <code class="highlighter-rouge">HEAD</code> is a special pointer that simply points to the currently checked out <em>branch</em> or <em>commit</em></p>
 </blockquote>
 
 <p>Not only can we check out branches, we can also checkout any commit revision explicitly.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="mi">339</span><span class="n">aa3</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="mi">339</span><span class="n">aa3</span></code></pre></figure>
 
 <p><img src="/assets/git-detached-head-2.svg" alt="Checking out commits explicitly" /></p>
 
-<p>You see? What happened now is that <code>HEAD</code> points to <code>339aa3</code> explicitly and the entire working directory was changed to what it looked like at that commit.</p>
+<p>You see? What happened now is that <code class="highlighter-rouge">HEAD</code> points to <code class="highlighter-rouge">339aa3</code> explicitly and the entire working directory was changed to what it looked like at that commit.</p>
 
 <blockquote>
-  <p>When <code>HEAD</code> points to a commit hash explicitly (rather than to a branch) it’s in a <strong>detached</strong> state.</p>
+  <p>When <code class="highlighter-rouge">HEAD</code> points to a commit hash explicitly (rather than to a branch) it’s in a <strong>detached</strong> state.</p>
 </blockquote>
 
 <p>What happens if we create new commits from here? Let’s find out!</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">someFile</span><span class="p">.</span><span class="nf">txt</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">someFile</span><span class="p">.</span><span class="nf">txt</span>
 <span class="n">git</span> <span class="n">add</span> <span class="n">someFile</span><span class="p">.</span><span class="nf">txt</span>
-<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"detached HEAD fun"</span></code></pre></div>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"detached HEAD fun"</span></code></pre></figure>
 
 <p><img src="/assets/git-detached-head-3.svg" alt="Adding commits to a detached HEAD" /></p>
 
 <p>Let’s add one more!</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">someFile</span><span class="p">.</span><span class="nf">txt</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">vim</span> <span class="n">someFile</span><span class="p">.</span><span class="nf">txt</span>
 <span class="n">git</span> <span class="n">add</span> <span class="n">someFile</span><span class="p">.</span><span class="nf">txt</span>
-<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"more detached HEAD fun"</span></code></pre></div>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">"more detached HEAD fun"</span></code></pre></figure>
 
 <p><img src="/assets/git-detached-head-4.svg" alt="Adding even more" /></p>
 
@@ -203,7 +203,7 @@
 
 <p>No need to worry though. We can simply create a new branch right here!</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">bugfix</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">bugfix</span></code></pre></figure>
 
 <p><img src="/assets/git-detached-head-6.svg" alt="Giving it a name again" /></p>
 

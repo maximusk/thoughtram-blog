@@ -110,57 +110,57 @@
 
 <p>Okay, so what is the difference between a service and a factory in AngularJS? As we all know, we can define a service like this:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">sayHello</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p><code>.service()</code> is a method on our module that takes a name and a function that defines the service. Pretty straight forward. Once defined, we can inject and use that particular service in other components, like controllers, directives and filters, like this:</p>
+<p><code class="highlighter-rouge">.service()</code> is a method on our module that takes a name and a function that defines the service. Pretty straight forward. Once defined, we can inject and use that particular service in other components, like controllers, directives and filters, like this:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">MyService</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">MyService</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">MyService</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">();</span> <span class="c1">// logs 'hello'</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>Okay, clear. Now the same thing as a factory:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>Again, <code>.factory()</code> is a method on our module and it also takes a name and a function, that defines the factory. We can inject and use that thing exactly the same way we did with the service. Now what is the difference here?</p>
+<p>Again, <code class="highlighter-rouge">.factory()</code> is a method on our module and it also takes a name and a function, that defines the factory. We can inject and use that thing exactly the same way we did with the service. Now what is the difference here?</p>
 
-<p>Well, you might see that instead of working with <code>this</code> in the factory, we’re returning an object literal. Why is that? It turns out, <strong>a service is a constructor function</strong> whereas a factory is not. Somewhere deep inside of this Angular world, there’s this code that calls <code>Object.create()</code> with the service constructor function, when it gets instantiated. However, a factory function is really just a function that gets called, which is why we have to return an object explicitly.</p>
+<p>Well, you might see that instead of working with <code class="highlighter-rouge">this</code> in the factory, we’re returning an object literal. Why is that? It turns out, <strong>a service is a constructor function</strong> whereas a factory is not. Somewhere deep inside of this Angular world, there’s this code that calls <code class="highlighter-rouge">Object.create()</code> with the service constructor function, when it gets instantiated. However, a factory function is really just a function that gets called, which is why we have to return an object explicitly.</p>
 
-<p>To make that a bit more clear, we can simply take a look at the Angular source code. Here’s what the <code>factory()</code> function looks like:</p>
+<p>To make that a bit more clear, we can simply take a look at the Angular source code. Here’s what the <code class="highlighter-rouge">factory()</code> function looks like:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">factory</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">factoryFn</span><span class="p">,</span> <span class="nx">enforce</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">factory</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">factoryFn</span><span class="p">,</span> <span class="nx">enforce</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">provider</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="p">{</span>
     <span class="na">$get</span><span class="p">:</span> <span class="nx">enforce</span> <span class="o">!==</span> <span class="kc">false</span> <span class="p">?</span> <span class="nx">enforceReturnValue</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">factoryFn</span><span class="p">)</span> <span class="p">:</span> <span class="nx">factoryFn</span>
   <span class="p">});</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>It takes the name and the factory function that is passed and basically returns a provider with the same name, that has a <code>$get</code> method which is our factory function. So what is it with this provider thing? Well, whenever you ask the injector for a specific dependency, it basically asks the corresponding provider for an instance of that service, by calling the <code>$get()</code> method. That’s why <code>$get()</code> is required, when creating providers.</p>
+<p>It takes the name and the factory function that is passed and basically returns a provider with the same name, that has a <code class="highlighter-rouge">$get</code> method which is our factory function. So what is it with this provider thing? Well, whenever you ask the injector for a specific dependency, it basically asks the corresponding provider for an instance of that service, by calling the <code class="highlighter-rouge">$get()</code> method. That’s why <code class="highlighter-rouge">$get()</code> is required, when creating providers.</p>
 
-<p>In other words, if we inject <code>MyService</code> somewhere, what happens behind the scenes is:</p>
+<p>In other words, if we inject <code class="highlighter-rouge">MyService</code> somewhere, what happens behind the scenes is:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">MyServiceProvider</span><span class="p">.</span><span class="nx">$get</span><span class="p">();</span> <span class="c1">// return the instance of the service</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">MyServiceProvider</span><span class="p">.</span><span class="nx">$get</span><span class="p">();</span> <span class="c1">// return the instance of the service</span></code></pre></figure>
 
 <p>Alright, factory functions just get called, what about the service code? Here’s another snippet:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">service</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">constructor</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">service</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">constructor</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">factory</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="p">[</span><span class="s1">'$injector'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$injector</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">$injector</span><span class="p">.</span><span class="nx">instantiate</span><span class="p">(</span><span class="nx">constructor</span><span class="p">);</span>
   <span class="p">}]);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Oh look, it turns out that when we call <code>service()</code> it actually calls <code>factory()</code>. But it doesn’t just pass our service constructor function to the factory as it is. It passes a function that asks the injector to instantiate and object by the given constructor. In other words: a service calls a predefined factory, which ends up as <code>$get()</code> method on the corresponding provider. <code>$injector.instantiate()</code> is the method that ultimately calls <code>Object.create()</code> with the constructor function. That’s why we use <code>this</code> in services.</p>
+<p>Oh look, it turns out that when we call <code class="highlighter-rouge">service()</code> it actually calls <code class="highlighter-rouge">factory()</code>. But it doesn’t just pass our service constructor function to the factory as it is. It passes a function that asks the injector to instantiate and object by the given constructor. In other words: a service calls a predefined factory, which ends up as <code class="highlighter-rouge">$get()</code> method on the corresponding provider. <code class="highlighter-rouge">$injector.instantiate()</code> is the method that ultimately calls <code class="highlighter-rouge">Object.create()</code> with the constructor function. That’s why we use <code class="highlighter-rouge">this</code> in services.</p>
 
-<p>Okay, so it turns out that, no matter what we use, <code>service()</code> or <code>factory()</code>, it’s always a factory that is called which creates a provider for our service. Which brings us to the mostly asked question in the Angular history: Which one should I use?</p>
+<p>Okay, so it turns out that, no matter what we use, <code class="highlighter-rouge">service()</code> or <code class="highlighter-rouge">factory()</code>, it’s always a factory that is called which creates a provider for our service. Which brings us to the mostly asked question in the Angular history: Which one should I use?</p>
 
 <h2 id="which-one-to-use">Which one to use?</h2>
 
@@ -168,7 +168,7 @@
 
 <p>“Basically the difference between the service and factory is as follows:”</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'myService'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'myService'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
   <span class="c1">// service is just a constructor function</span>
   <span class="c1">// that will be called with 'new'</span>
@@ -188,7 +188,7 @@
       <span class="k">return</span> <span class="s2">"Hi "</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">"!"</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>We now already know what happens behind the scenes, but this answer adds another comment. It says we can run code <strong>before</strong> we return our object literal. That basically allows us to do some configuration stuff or conditionally create an object or not, which doesn’t seem to be possible when creating a service directly, which is why <strong>most resources recommend to use factories over services, but the reasoning is inappreciable.</strong></p>
 
@@ -196,7 +196,7 @@
 
 <p>Yeap, correct. A service is a constructor function, however, that doesn’t prevent us from doing additional work and return object literals. In fact, constructor functions in JavaScript can return whatever they want. So we can take our service code and write it in a way that it basically does the exact same thing as our factory:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
   <span class="c1">// we could do additional work here too</span>
   <span class="k">return</span> <span class="p">{</span>
@@ -204,7 +204,7 @@
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span>
     <span class="p">};</span>
   <span class="p">}</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>Hoppla, so what now? We just realised that, depending on how we write our services, there’s no difference between the two at all anymore. The big question remains: Which one should we use?</p>
 
@@ -214,13 +214,13 @@
 
 <p>For example, we can take our code and rewrite it in ES6 like this:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">class</span> <span class="nx">MyService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">class</span> <span class="nx">MyService</span> <span class="p">{</span>
   <span class="nx">sayHello</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="nx">MyService</span><span class="p">);</span></code></pre></div>
+<span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'MyService'</span><span class="p">,</span> <span class="nx">MyService</span><span class="p">);</span></code></pre></figure>
 
 <p>An ES6 class is really just a constructor function in ES5. We wrote about that in <a href="http://blog.thoughtram.io/angularjs/es6/2015/01/23/exploring-angular-1.3-using-es6.html">Using ES6 with Angular today</a>, if you haven’t read that article yet, I’d recommend checking that out.</p>
 

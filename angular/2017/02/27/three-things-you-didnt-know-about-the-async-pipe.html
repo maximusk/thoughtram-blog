@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Three things you didn't know about the AsyncPipe</h2>
-            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Feb 27, 2017<br>13 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Feb 27, 2017<br>14 minute read</span>
 
           </div>
         </hgroup>
@@ -94,7 +94,7 @@
           <p style="background-color: lightgoldenrodyellow; border: solid 2px #f9dead; padding: 1em; text-align: center; border-radius: 0.3em;">Contents are based on Angular version <strong>>= 2.x</strong> unless explicitly stated differently.</p>
           
 
-          <p>You sure heard about Angular’s <code>AsyncPipe</code> haven’t you? It’s this handy little pipe that we can use from within our templates so that we don’t have to deal with unwrapping data from Observables or Promises imperatively. Turns out the <code>AsyncPipe</code> is full of little wonders that may not be obvious at first sight. In this article we like to shed some light on the inner workings of this useful little tool.</p>
+          <p>You sure heard about Angular’s <code class="highlighter-rouge">AsyncPipe</code> haven’t you? It’s this handy little pipe that we can use from within our templates so that we don’t have to deal with unwrapping data from Observables or Promises imperatively. Turns out the <code class="highlighter-rouge">AsyncPipe</code> is full of little wonders that may not be obvious at first sight. In this article we like to shed some light on the inner workings of this useful little tool.</p>
 
 <div class="thtrm-toc is-sticky">
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
@@ -109,9 +109,9 @@
 
 <h2 id="subscribing-to-long-lived-observables">Subscribing to long-lived Observables</h2>
 
-<p>Often when we think about the <code>AsyncPipe</code>, we only think about values that resolve from some http call. We issue an http call, get an <code>Observable&lt;Response&gt;</code> back, apply some transformations (e.g. <code>map(...).filter(...)</code>) and finally expose an Observable to the template of our component. Here is what that typically looks like.</p>
+<p>Often when we think about the <code class="highlighter-rouge">AsyncPipe</code>, we only think about values that resolve from some http call. We issue an http call, get an <code class="highlighter-rouge">Observable&lt;Response&gt;</code> back, apply some transformations (e.g. <code class="highlighter-rouge">map(...).filter(...)</code>) and finally expose an Observable to the template of our component. Here is what that typically looks like.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
@@ -126,20 +126,20 @@
 </span><span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
-  <span class="nl">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Contact</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="na">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Contact</span><span class="o">&gt;&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">contactsService</span><span class="err">:</span> <span class="nx">ContactsService</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">contactsService</span><span class="p">:</span> <span class="nx">ContactsService</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">contactsService</span><span class="p">.</span><span class="nx">getContacts</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>In the described scenario our Observable is what we like to refer to as short-lived. The Observable emits exactly one value - an array of contacts in this case - and completes right after that. That’s the typical scenario when working with http and it’s basically the only scenario when working with Promises.</p>
 
 <p>However, we can totally have Observables that emit multiple values. Think about working with websockets for instance. We may have an array that builds up over time! Let’s simulate an Observable that emits an array of numbers. But instead of emitting just a single array once, it will emit an array every time a new item was added. To not let the array grow infinitely we will limit it to the last five items.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
@@ -150,17 +150,17 @@
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
   <span class="nx">items</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
                     <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">cur</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">[</span><span class="nx">cur</span><span class="p">,</span> <span class="p">...</span><span class="nx">acc</span><span class="p">].</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">[]);</span>             
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <iframe src="http://embed.plnkr.co/qG9tOINwYPL0gKf2Pxqd/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Notice how our list is kept nicely in sync without further ado thanks to the <code>AsyncPipe</code>!</p>
+<p>Notice how our list is kept nicely in sync without further ado thanks to the <code class="highlighter-rouge">AsyncPipe</code>!</p>
 
 <h2 id="keeping-track-of-references">Keeping track of references</h2>
 
-<p>Let’s back of and refactor above code to what it would look like without the help of the <code>AsyncPipe</code>. But while we’re at it, let’s introduce a button to restart generating numbers and pick a random background color for the elements each time we regenerate the sequence.</p>
+<p>Let’s back of and refactor above code to what it would look like without the help of the <code class="highlighter-rouge">AsyncPipe</code>. But while we’re at it, let’s introduce a button to restart generating numbers and pick a random background color for the elements each time we regenerate the sequence.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
@@ -186,7 +186,7 @@
           <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">[{</span><span class="nx">num</span><span class="p">,</span> <span class="nx">color</span> <span class="p">},</span> <span class="p">...</span><span class="nx">acc</span><span class="p">].</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">[])</span>
           <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <iframe src="http://embed.plnkr.co/sxYyq3m4PfnLfyeGW1Gx/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
@@ -194,7 +194,7 @@
 
 <p>Let’s refactor the code to track subscriptions and tear down our long-lived Observable every time that we create a new one.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nl">subscription</span><span class="p">:</span> <span class="nx">Subscription</span><span class="p">;</span>
@@ -212,15 +212,15 @@
           <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">[{</span><span class="nx">num</span><span class="p">,</span> <span class="nx">color</span> <span class="p">},</span> <span class="p">...</span><span class="nx">acc</span><span class="p">].</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">[])</span>
           <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <iframe src="http://embed.plnkr.co/kRDcQJEJkiBErNGdKKNl/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Every time we subscribe to our Observable we save the subscription in an instance member of our component. Then, when we run <code>newSeq</code> again we check if there’s a subscription that we need to call <code>unsubscribe</code> on. That’s why we don’t see our list flipping between different colors anymore no matter how often we click the button.</p>
+<p>Every time we subscribe to our Observable we save the subscription in an instance member of our component. Then, when we run <code class="highlighter-rouge">newSeq</code> again we check if there’s a subscription that we need to call <code class="highlighter-rouge">unsubscribe</code> on. That’s why we don’t see our list flipping between different colors anymore no matter how often we click the button.</p>
 
-<p>Now meet the <code>AsyncPipe</code> again. Let’s change the <code>ngFor</code> again to apply the <code>AsyncPipe</code> and get rid of all the manual bookkeeping.</p>
+<p>Now meet the <code class="highlighter-rouge">AsyncPipe</code> again. Let’s change the <code class="highlighter-rouge">ngFor</code> again to apply the <code class="highlighter-rouge">AsyncPipe</code> and get rid of all the manual bookkeeping.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"newSeq()"</span><span class="o">&gt;</span><span class="nx">New</span> <span class="nx">random</span> <span class="nx">sequence</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
@@ -230,7 +230,7 @@
 </span>    <span class="o">&lt;</span><span class="sr">/ul&gt;</span><span class="err">`
 </span><span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
 
   <span class="nx">constructor</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">newSeq</span><span class="p">();</span>
@@ -244,19 +244,19 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
                            <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">[{</span><span class="nx">num</span><span class="p">,</span> <span class="nx">color</span> <span class="p">},</span> <span class="p">...</span><span class="nx">acc</span><span class="p">].</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">[]);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <iframe src="http://embed.plnkr.co/Oga2810Sq4FJLA3klU7o/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>I’m sure you’ve heard that the <code>AsyncPipe</code> unsubscribes from Observables as soon as the component gets destroyed. But did you also know it unsubscribes as soon as the reference of the expression changes? That’s right, as soon as we assign a new Observable to <code>this.items</code> the <code>AsyncPipe</code> will automatically unsubscribe from the previous bound Observable! Not only does this make our code nice and clean, it’s protecting us from <em>very</em> subtle memory leaks.</p>
+<p>I’m sure you’ve heard that the <code class="highlighter-rouge">AsyncPipe</code> unsubscribes from Observables as soon as the component gets destroyed. But did you also know it unsubscribes as soon as the reference of the expression changes? That’s right, as soon as we assign a new Observable to <code class="highlighter-rouge">this.items</code> the <code class="highlighter-rouge">AsyncPipe</code> will automatically unsubscribe from the previous bound Observable! Not only does this make our code nice and clean, it’s protecting us from <em>very</em> subtle memory leaks.</p>
 
 <h2 id="marking-things-for-check">Marking things for check</h2>
 
-<p>Alright. We have one last nifty <code>AsyncPipe</code> feature for you! If you’ve read our article about <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">Angular’s change detection</a> you sure know that you can speed up Angular’s blazingly fast change detection even further using the <code>OnPush</code> strategy. Let’s refactor our example and introduce a <code>SeqComponent</code> to display the sequences while our root component will manage the data and pass it on via an input binding.</p>
+<p>Alright. We have one last nifty <code class="highlighter-rouge">AsyncPipe</code> feature for you! If you’ve read our article about <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">Angular’s change detection</a> you sure know that you can speed up Angular’s blazingly fast change detection even further using the <code class="highlighter-rouge">OnPush</code> strategy. Let’s refactor our example and introduce a <code class="highlighter-rouge">SeqComponent</code> to display the sequences while our root component will manage the data and pass it on via an input binding.</p>
 
-<p>Let’s start creating the <code>SeqComponent</code> which is pretty straight forward.</p>
+<p>Let’s start creating the <code class="highlighter-rouge">SeqComponent</code> which is pretty straight forward.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-seq'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
@@ -266,13 +266,13 @@
 </span><span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">SeqComponent</span> <span class="p">{</span>
   <span class="err">@</span><span class="nx">Input</span><span class="p">()</span>
-  <span class="nl">items</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+  <span class="na">items</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
 
-<p>Notice the <code>@Input()</code>decorator for <code>items</code> which means the component will receive those from the outside via a property binding.
-Our root component maintains an array <code>seqs</code> and pushes new long-lived Observables into it with the click of a button. It uses an <code>*ngFor</code> to pass each of these Observables on to a new <code>SeqComponent</code> instance. Also notice that we are using the <code>AsyncPipe</code> in our property binding expression (<code>[items]="seq | async"</code>) to pass on the plain array instead of the Observable since that’s what the <code>SeqComponent</code> expects.</p>
+<p>Notice the <code class="highlighter-rouge">@Input()</code>decorator for <code class="highlighter-rouge">items</code> which means the component will receive those from the outside via a property binding.
+Our root component maintains an array <code class="highlighter-rouge">seqs</code> and pushes new long-lived Observables into it with the click of a button. It uses an <code class="highlighter-rouge">*ngFor</code> to pass each of these Observables on to a new <code class="highlighter-rouge">SeqComponent</code> instance. Also notice that we are using the <code class="highlighter-rouge">AsyncPipe</code> in our property binding expression (<code class="highlighter-rouge">[items]="seq | async"</code>) to pass on the plain array instead of the Observable since that’s what the <code class="highlighter-rouge">SeqComponent</code> expects.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"newSeq()"</span><span class="o">&gt;</span><span class="nx">New</span> <span class="nx">random</span> <span class="nx">sequence</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
@@ -295,38 +295,38 @@ Our root component maintains an array <code>seqs</code> and pushes new long-live
     <span class="k">this</span><span class="p">.</span><span class="nx">seqs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
                            <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">[{</span><span class="nx">num</span><span class="p">,</span> <span class="nx">color</span> <span class="p">},</span> <span class="p">...</span><span class="nx">acc</span><span class="p">].</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">[]));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>So far, we haven’t made any changes to the underlying change detection strategy. If you click the button a couple of times, notice how we get multiple lists that update independently at a different timing.</p>
 
 <iframe src="http://embed.plnkr.co/aFqRxUXaokBTxqluKZTy/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>However, in terms of change detection, it means that all components are checked each time <em>any</em> of the Observables fire. That’s a waste of resources. We can do better by setting the change detection for our <code>SeqComponent</code> to <code>OnPush</code> which means it will only check it’s bindings if the inputs - the array in our case - changes.</p>
+<p>However, in terms of change detection, it means that all components are checked each time <em>any</em> of the Observables fire. That’s a waste of resources. We can do better by setting the change detection for our <code class="highlighter-rouge">SeqComponent</code> to <code class="highlighter-rouge">OnPush</code> which means it will only check it’s bindings if the inputs - the array in our case - changes.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">changeDetection</span><span class="p">:</span> <span class="nx">ChangeDetectionStrategy</span><span class="p">.</span><span class="nx">OnPush</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-seq'</span><span class="p">,</span>
   <span class="p">...</span>
-<span class="p">})</span></code></pre></div>
+<span class="p">})</span></code></pre></figure>
 
 <p>That works and seems to be an easy quick win. But here comes the thing: It only works because our Observable creates an entirely new array each time it emits a new value. And even though that’s actually not too bad and in fact beneficial in most scenarios, let’s consider we use a different implementation which <em>mutates</em> the existing array rather than recreating it every time.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
           <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
             <span class="nx">acc</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="nx">num</span><span class="p">,</span> <span class="nx">color</span><span class="p">});</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">acc</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
               <span class="nx">acc</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">acc</span><span class="p">;</span>
-          <span class="p">},</span> <span class="p">[])</span></code></pre></div>
+          <span class="p">},</span> <span class="p">[])</span></code></pre></figure>
 
-<p>If we try that out <code>OnPush</code> doesn’t seem to work anymore because the reference of <code>items</code> simply won’t change anymore. In fact, when we try that out we see each list doesn’t grow beyond its first element.</p>
+<p>If we try that out <code class="highlighter-rouge">OnPush</code> doesn’t seem to work anymore because the reference of <code class="highlighter-rouge">items</code> simply won’t change anymore. In fact, when we try that out we see each list doesn’t grow beyond its first element.</p>
 
 <iframe src="http://embed.plnkr.co/FTfazxpTsya8n7cEkcDO/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Meet the <code>AsyncPipe</code> again! Let’s change our <code>SeqComponent</code> so that it takes an Observable instead of an array as its input.</p>
+<p>Meet the <code class="highlighter-rouge">AsyncPipe</code> again! Let’s change our <code class="highlighter-rouge">SeqComponent</code> so that it takes an Observable instead of an array as its input.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">changeDetection</span><span class="p">:</span> <span class="nx">ChangeDetectionStrategy</span><span class="p">.</span><span class="nx">OnPush</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-seq'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
@@ -337,33 +337,33 @@ Our root component maintains an array <code>seqs</code> and pushes new long-live
 </span><span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">SeqComponent</span> <span class="p">{</span>
   <span class="err">@</span><span class="nx">Input</span><span class="p">()</span>
-  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
 
-<p>Also note that it now applies the <code>AsyncPipe</code> in its template since it’s not dealing with a plain array anymore. Our <code>AppComponent</code> needs to be changed as well to <strong>not</strong> apply the <code>AsyncPipe</code> in the property binding anymore.</p>
+<p>Also note that it now applies the <code class="highlighter-rouge">AsyncPipe</code> in its template since it’s not dealing with a plain array anymore. Our <code class="highlighter-rouge">AppComponent</code> needs to be changed as well to <strong>not</strong> apply the <code class="highlighter-rouge">AsyncPipe</code> in the property binding anymore.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="nx">my</span><span class="o">-</span><span class="nx">seq</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let seq of seqs"</span> <span class="p">[</span><span class="nx">items</span><span class="p">]</span><span class="o">=</span><span class="s2">"seq"</span><span class="o">&gt;&lt;</span><span class="sr">/my-seq</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="sr">/ul&gt;</span></code></pre></div>
+</span><span class="o">&lt;</span><span class="sr">/ul&gt;</span></code></pre></figure>
 
 <iframe src="http://embed.plnkr.co/HUgTj5qzAYcbNaHYWawu/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
 <p>Voila! That seems to work!</p>
 
-<p>Let’s recap, our array instance doesn’t change nor does the instance of our Observable ever change. So why would <code>OnPush</code> work in this case? The reason can be found in the source code of the <code>AsyncPipe</code> itself</p>
+<p>Let’s recap, our array instance doesn’t change nor does the instance of our Observable ever change. So why would <code class="highlighter-rouge">OnPush</code> work in this case? The reason can be found in the source code of the <code class="highlighter-rouge">AsyncPipe</code> itself</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">private</span> <span class="nx">_updateLatestValue</span><span class="p">(</span><span class="nx">async</span><span class="err">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">value</span><span class="err">:</span> <span class="nb">Object</span><span class="p">)</span><span class="err">:</span> <span class="k">void</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">private</span> <span class="nx">_updateLatestValue</span><span class="p">(</span><span class="nx">async</span><span class="err">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">value</span><span class="err">:</span> <span class="nb">Object</span><span class="p">)</span><span class="err">:</span> <span class="k">void</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">async</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">_obj</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_latestValue</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_ref</span><span class="p">.</span><span class="nx">markForCheck</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>The <code>AsyncPipe</code> marks the <code>ChangeDetectorRef</code> of our component to be checked, effectively telling the change detection that there may be a change in this component. If you like to get a more detailed understanding of how that works we recommend reading our <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">in-depth change detection article</a>.</p>
+<p>The <code class="highlighter-rouge">AsyncPipe</code> marks the <code class="highlighter-rouge">ChangeDetectorRef</code> of our component to be checked, effectively telling the change detection that there may be a change in this component. If you like to get a more detailed understanding of how that works we recommend reading our <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">in-depth change detection article</a>.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>We use to look at the <code>AsyncPipe</code> as a nifty little tool to save a couple of lines of code in our components. In practice though, it hides a lot of complexity from us that comes with managing async tasks. It’s pure gold.</p>
+<p>We use to look at the <code class="highlighter-rouge">AsyncPipe</code> as a nifty little tool to save a couple of lines of code in our components. In practice though, it hides a lot of complexity from us that comes with managing async tasks. It’s pure gold.</p>
 
 
           

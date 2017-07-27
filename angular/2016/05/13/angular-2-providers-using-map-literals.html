@@ -102,7 +102,7 @@
 
 <p>In other words, if we ask for a service dependency in one of our components like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">MyService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./my-service.service'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
@@ -112,13 +112,13 @@
 <span class="kr">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
 
   <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">myService</span><span class="err">:</span> <span class="nx">MyService</span><span class="p">)</span> <span class="p">{}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We would run into an error, because even though, we import <code>MyService</code> and use that type to annotate our constructor parameter, there’s nothing that tells Angular (or the injector) what to do, when someone asks for something of that type. Of course, Angular could simply automagically call <code>new</code> on the given type and that’s it, but then there’s no way to replace the actual dependency with an object of a different type, or maybe even the way we want to construct a dependency (class vs. factory vs. value).</p>
+<p>We would run into an error, because even though, we import <code class="highlighter-rouge">MyService</code> and use that type to annotate our constructor parameter, there’s nothing that tells Angular (or the injector) what to do, when someone asks for something of that type. Of course, Angular could simply automagically call <code class="highlighter-rouge">new</code> on the given type and that’s it, but then there’s no way to replace the actual dependency with an object of a different type, or maybe even the way we want to construct a dependency (class vs. factory vs. value).</p>
 
 <p>That’s why Angular has the concept of providers, which basically act as a sort of recipe that describe how an object of a certain type is created.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">MyService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./my-service.service'</span><span class="p">;</span>
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-component'</span><span class="p">,</span>
@@ -128,11 +128,11 @@
 <span class="kr">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
 
   <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">myService</span><span class="err">:</span> <span class="nx">MyService</span><span class="p">)</span> <span class="p">{}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>You might know that adding a provider as shown above is actually a shorthand syntax for developer ergonomics. The same logic can be expressed with this more verbose syntax:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">provide</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">provide</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
@@ -142,28 +142,28 @@
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>This enables us to create objects of different types, or even use completely different ways of constructing objects like using a factory function, or simply injecting a value.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// creates instance of MyOtherService</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// creates instance of MyOtherService</span>
 <span class="nx">provide</span><span class="p">(</span><span class="nx">MyService</span><span class="p">,</span> <span class="p">{</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">MyOtherService</span> <span class="p">})</span>
 
 <span class="c1">// uses a factory function to create a dependency</span>
 <span class="nx">provide</span><span class="p">(</span><span class="nx">MyService</span><span class="p">,</span> <span class="p">{</span> <span class="na">useFactory</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">return</span> <span class="p">{</span> <span class="na">foo</span><span class="p">:</span> <span class="s1">'bar'</span> <span class="p">}</span> <span class="p">})</span>
 
 <span class="c1">// injects a simple value</span>
-<span class="nx">provide</span><span class="p">(</span><span class="nx">MyService</span><span class="p">,</span> <span class="p">{</span> <span class="na">useValue</span><span class="p">:</span> <span class="kc">true</span> <span class="p">})</span></code></pre></div>
+<span class="nx">provide</span><span class="p">(</span><span class="nx">MyService</span><span class="p">,</span> <span class="p">{</span> <span class="na">useValue</span><span class="p">:</span> <span class="kc">true</span> <span class="p">})</span></code></pre></figure>
 
 <p>This is already pretty cool and powerful, because we can control what gets injected where in our application, without changing the application code itself.</p>
 
 <h2 id="providers-using-map-literals">Providers using Map Literals</h2>
 
-<p>As mentioned earlier, there’s a little change that makes the more verbose syntax a bit more ergonomic again. We can now define providers using Map literals. A Map literal, in TypeScript (or JavaScript) is really just an object hash. So instead of using the <code>provide()</code> function (which we need to import first), to create a provider, we can configure our providers using simple object structures.</p>
+<p>As mentioned earlier, there’s a little change that makes the more verbose syntax a bit more ergonomic again. We can now define providers using Map literals. A Map literal, in TypeScript (or JavaScript) is really just an object hash. So instead of using the <code class="highlighter-rouge">provide()</code> function (which we need to import first), to create a provider, we can configure our providers using simple object structures.</p>
 
 <p>Here’s one of our earlier snippets, but this time we use Map literals:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-component'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'{{myService.sayHello()}}'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
@@ -173,9 +173,9 @@
 <span class="kr">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
 
   <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">myService</span><span class="err">:</span> <span class="nx">MyService</span><span class="p">)</span> <span class="p">{}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Keep in mind that this is not a breaking change that has been introduced. It’s an additional syntax we can take advantage of. If you’re into saving key strokes, you might want to prefer Map literals over <code>provide()</code>.</p>
+<p>Keep in mind that this is not a breaking change that has been introduced. It’s an additional syntax we can take advantage of. If you’re into saving key strokes, you might want to prefer Map literals over <code class="highlighter-rouge">provide()</code>.</p>
 
 
           

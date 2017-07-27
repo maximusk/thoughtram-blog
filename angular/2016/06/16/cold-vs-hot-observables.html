@@ -115,7 +115,7 @@
 <ul id="markdown-toc">
   <li><a href="#hot-vs-cold-observables" id="markdown-toc-hot-vs-cold-observables">Hot vs Cold Observables</a></li>
   <li><a href="#making-cold-observables-hot" id="markdown-toc-making-cold-observables-hot">Making Cold Observables Hot</a></li>
-  <li><a href="#understanding-publish-refcount-and-connect" id="markdown-toc-understanding-publish-refcount-and-connect">Understanding <code>publish</code>, <code>refCount</code> and <code>connect</code></a></li>
+  <li><a href="#understanding-publish-refcount-and-connect" id="markdown-toc-understanding-publish-refcount-and-connect">Understanding <code class="highlighter-rouge">publish</code>, <code class="highlighter-rouge">refCount</code> and <code class="highlighter-rouge">connect</code></a></li>
   <li><a href="#when-to-use-what" id="markdown-toc-when-to-use-what">When to use what</a></li>
   <li><a href="#caveat-http-with-observables" id="markdown-toc-caveat-http-with-observables">Caveat: Http with Observables</a></li>
   <li><a href="#useful-shortcut" id="markdown-toc-useful-shortcut">Useful shortcut</a></li>
@@ -133,64 +133,64 @@
 
 <p>Ok, so far so good. Let’s see what that means in practice.</p>
 
-<p>We start with a basic Observable that simply emits the number <code>1</code>. We make two independent subscriptions to the same Observable and print out the output with a prefix so that we can tell them apart.</p>
+<p>We start with a basic Observable that simply emits the number <code class="highlighter-rouge">1</code>. We make two independent subscriptions to the same Observable and print out the output with a prefix so that we can tell them apart.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">observer</span> <span class="o">=&gt;</span> <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">observer</span> <span class="o">=&gt;</span> <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 
 <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"1st subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span>
-<span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span></code></pre></div>
+<span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span></code></pre></figure>
 
 <p>When we <a href="http://jsbin.com/mihoyifiku/1/edit?js,console">run this code</a> we’ll see the following output in the console.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1</span>
-<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1</span>
+<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1</span></code></pre></figure>
 
-<p>Ok, cool. But the interesting question remains: is <code>obs</code> cold or hot? Let’s forget for a moment that we know how <code>obs</code> was created and imagine we would have obtained a reference to <code>obs</code> by calling <code>getObservableFromSomewhere()</code> instead. If that was the case, we wouldn’t be able to tell whether it’s cold or hot. And that’s one important thing to understand. It’s not always possible from the subscriber side to know whether you are dealing with a cold or hot Observable.</p>
+<p>Ok, cool. But the interesting question remains: is <code class="highlighter-rouge">obs</code> cold or hot? Let’s forget for a moment that we know how <code class="highlighter-rouge">obs</code> was created and imagine we would have obtained a reference to <code class="highlighter-rouge">obs</code> by calling <code class="highlighter-rouge">getObservableFromSomewhere()</code> instead. If that was the case, we wouldn’t be able to tell whether it’s cold or hot. And that’s one important thing to understand. It’s not always possible from the subscriber side to know whether you are dealing with a cold or hot Observable.</p>
 
-<p>If we turn back to the definition that we cited in the beginning and think about what makes an Observable cold or hot, we can read between the lines and notice that if <code>obs</code> was cold it should produce <em>fresh</em>  values upon subscription. But the pity is, with a value such as <code>1</code> we can’t easily tell whether it was created freshly upon subscription or not. So let’s replace <code>1</code> with <code>Date.now()</code> and see what happens.</p>
+<p>If we turn back to the definition that we cited in the beginning and think about what makes an Observable cold or hot, we can read between the lines and notice that if <code class="highlighter-rouge">obs</code> was cold it should produce <em>fresh</em>  values upon subscription. But the pity is, with a value such as <code class="highlighter-rouge">1</code> we can’t easily tell whether it was created freshly upon subscription or not. So let’s replace <code class="highlighter-rouge">1</code> with <code class="highlighter-rouge">Date.now()</code> and see what happens.</p>
 
 <p>If we <a href="http://jsbin.com/xosipocoza/1/edit?js,console">run that code</a> again we’ll notice that we actually get different output per subscription. Notice the change in the last digit.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465990942935</span>
-<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465990942936</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465990942935</span>
+<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465990942936</span></code></pre></figure>
 
-<p>With this output it is clear that there must have been two calls to <code>observer.next(Date.now())</code>. In other words, the Observable <em>started producing</em> the values upon each subscription which makes it cold by definition.</p>
+<p>With this output it is clear that there must have been two calls to <code class="highlighter-rouge">observer.next(Date.now())</code>. In other words, the Observable <em>started producing</em> the values upon each subscription which makes it cold by definition.</p>
 
 <h2 id="making-cold-observables-hot">Making Cold Observables Hot</h2>
 
 <p>Now that we know that our Observable is clearly cold, let’s try to warm it up a little.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
             <span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">observer</span> <span class="o">=&gt;</span> <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()))</span>
             <span class="p">.</span><span class="nx">publish</span><span class="p">();</span>
 
 <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"1st subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span>
 <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span>
 
-<span class="nx">obs</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span></code></pre></div>
+<span class="nx">obs</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span></code></pre></figure>
 
-<p>Let’s ignore the <code>publish</code> and <code>connect</code> operators for a moment and solely focus on the <a href="http://jsbin.com/pupoledehi/1/edit?js,console">output</a>.</p>
+<p>Let’s ignore the <code class="highlighter-rouge">publish</code> and <code class="highlighter-rouge">connect</code> operators for a moment and solely focus on the <a href="http://jsbin.com/pupoledehi/1/edit?js,console">output</a>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465994477014</span>
-<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465994477014</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465994477014</span>
+<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span> <span class="mi">1465994477014</span></code></pre></figure>
 
-<p>Clearly we can see that there must have been only one call to <code>observer.next(Date.now())</code> with this setup as the numbers are identical. So, is it hot now? Well, kind of. Let’s put it that way: it’s warmer than a cold one but colder than a really hot one. It’s hot in the sense that there’s no new <em>value producer/source</em> (the thing calling <code>observer.next(val)</code>) created upon subscription. But it’s cold in the sense that it doesn’t start producing values <em>before</em> the subscriptions exist.</p>
+<p>Clearly we can see that there must have been only one call to <code class="highlighter-rouge">observer.next(Date.now())</code> with this setup as the numbers are identical. So, is it hot now? Well, kind of. Let’s put it that way: it’s warmer than a cold one but colder than a really hot one. It’s hot in the sense that there’s no new <em>value producer/source</em> (the thing calling <code class="highlighter-rouge">observer.next(val)</code>) created upon subscription. But it’s cold in the sense that it doesn’t start producing values <em>before</em> the subscriptions exist.</p>
 
-<p>We can fix that by moving the <code>connect</code> call before the subscriptions.</p>
+<p>We can fix that by moving the <code class="highlighter-rouge">connect</code> call before the subscriptions.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
             <span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">observer</span> <span class="o">=&gt;</span> <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()))</span>
             <span class="p">.</span><span class="nx">publish</span><span class="p">();</span>
 <span class="nx">obs</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
 
 <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"1st subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span>
-<span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span></code></pre></div>
+<span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber: "</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span></code></pre></figure>
 
-<p>However, when we <a href="http://jsbin.com/sokayofise/1/edit?js,console">run this code</a> we don’t see any output at all. And that’s expected behaviour because now <code>obs</code> is really really hot as in <em>it produces values no matter if anyone listens or not</em>. So by the time that our two subscribers start listening the value has long been pumped through.</p>
+<p>However, when we <a href="http://jsbin.com/sokayofise/1/edit?js,console">run this code</a> we don’t see any output at all. And that’s expected behaviour because now <code class="highlighter-rouge">obs</code> is really really hot as in <em>it produces values no matter if anyone listens or not</em>. So by the time that our two subscribers start listening the value has long been pumped through.</p>
 
-<p>In order to be able to understand the purpose of <code>publish</code> better, let’s use an Observable that will produce infinite values instead of just a single one.</p>
+<p>In order to be able to understand the purpose of <code class="highlighter-rouge">publish</code> better, let’s use an Observable that will produce infinite values instead of just a single one.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
             <span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
             <span class="p">.</span><span class="nx">publish</span><span class="p">()</span>
             <span class="p">.</span><span class="nx">refCount</span><span class="p">();</span>
@@ -198,42 +198,42 @@
 <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"1st subscriber:"</span> <span class="o">+</span> <span class="nx">v</span><span class="p">));</span>
 <span class="nx">setTimeout</span><span class="p">(()</span>
   <span class="c1">// delay for a little more than a second and then add second subscriber</span>
-  <span class="o">=&gt;</span> <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber:"</span> <span class="o">+</span> <span class="nx">v</span><span class="p">)),</span> <span class="mi">1100</span><span class="p">);</span></code></pre></div>
+  <span class="o">=&gt;</span> <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber:"</span> <span class="o">+</span> <span class="nx">v</span><span class="p">)),</span> <span class="mi">1100</span><span class="p">);</span></code></pre></figure>
 
 <p>The setup we use is slightly more complex from what we had before, so let’s break it down.</p>
 
 <ol>
   <li>
-    <p>We use <code>interval(1000)</code> to create an Observable that emits every second with an increasing index value starting at <code>0</code>.</p>
+    <p>We use <code class="highlighter-rouge">interval(1000)</code> to create an Observable that emits every second with an increasing index value starting at <code class="highlighter-rouge">0</code>.</p>
   </li>
   <li>
-    <p>We use <code>publish</code> to share the <em>value producer</em> across several subscriptions (one indicator of being hot!)</p>
+    <p>We use <code class="highlighter-rouge">publish</code> to share the <em>value producer</em> across several subscriptions (one indicator of being hot!)</p>
   </li>
   <li>
     <p>We defer the second subscription by one second.</p>
   </li>
 </ol>
 
-<p>Let’s just ignore <code>refCount</code> for now as we’re going to explain it later.</p>
+<p>Let’s just ignore <code class="highlighter-rouge">refCount</code> for now as we’re going to explain it later.</p>
 
 <p>We see the following output as we <a href="http://jsbin.com/kosavihiru/edit?js,console">run the script</a>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">0</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">0</span>
 <span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">1</span>
 <span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">1</span>
 <span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">2</span>
 <span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">2</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
-<p>Clearly, we can see that the second subscriber is not starting over at <code>0</code>. But that would have been the case if we didn’t use <code>publish</code> to share the value producing source across subscribers.</p>
+<p>Clearly, we can see that the second subscriber is not starting over at <code class="highlighter-rouge">0</code>. But that would have been the case if we didn’t use <code class="highlighter-rouge">publish</code> to share the value producing source across subscribers.</p>
 
-<h2 id="understanding-publish-refcount-and-connect">Understanding <code>publish</code>, <code>refCount</code> and <code>connect</code></h2>
+<h2 id="understanding-publish-refcount-and-connect">Understanding <code class="highlighter-rouge">publish</code>, <code class="highlighter-rouge">refCount</code> and <code class="highlighter-rouge">connect</code></h2>
 
-<p>But how hot is <code>obs</code> in this scenario? Let’s make it visible by defering both subscriptions by another 2 seconds. If it’s really hot we shouldn’t see the numbers <code>0</code> and <code>1</code> at all because they would have been emitted <em>before</em>  we start to listen, right?</p>
+<p>But how hot is <code class="highlighter-rouge">obs</code> in this scenario? Let’s make it visible by defering both subscriptions by another 2 seconds. If it’s really hot we shouldn’t see the numbers <code class="highlighter-rouge">0</code> and <code class="highlighter-rouge">1</code> at all because they would have been emitted <em>before</em>  we start to listen, right?</p>
 
 <p>Let’s try out and <a href="http://jsbin.com/nujokuwava/edit?js,console">run this code</a> instead.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
             <span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
             <span class="p">.</span><span class="nx">publish</span><span class="p">()</span>
             <span class="p">.</span><span class="nx">refCount</span><span class="p">();</span>
@@ -246,17 +246,17 @@
     <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span>
           <span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber:"</span> <span class="o">+</span> <span class="nx">v</span><span class="p">)),</span> <span class="mi">1100</span><span class="p">);</span>
 
-<span class="p">},</span><span class="mi">2000</span><span class="p">);</span></code></pre></div>
+<span class="p">},</span><span class="mi">2000</span><span class="p">);</span></code></pre></figure>
 
-<p>Interestingly we see exactly the same output as in the previous experiment which means we are dealing with an Observable that is rather warm than really hot. And that’s because of the way <code>refCount</code> works. The <code>publish</code> operator creates an <code>ConnectableObservable</code> which means it creates an Observable that shares one single subscription to the underlying source. However, the <code>publish</code> operator doesn’t subscribe to the underlying source just yet. It’s more like a gatekeeper that makes sure that subscriptions aren’t made to the underlying source but to the <code>ConnectableObservable</code> instead.</p>
+<p>Interestingly we see exactly the same output as in the previous experiment which means we are dealing with an Observable that is rather warm than really hot. And that’s because of the way <code class="highlighter-rouge">refCount</code> works. The <code class="highlighter-rouge">publish</code> operator creates an <code class="highlighter-rouge">ConnectableObservable</code> which means it creates an Observable that shares one single subscription to the underlying source. However, the <code class="highlighter-rouge">publish</code> operator doesn’t subscribe to the underlying source just yet. It’s more like a gatekeeper that makes sure that subscriptions aren’t made to the underlying source but to the <code class="highlighter-rouge">ConnectableObservable</code> instead.</p>
 
-<p>It’s the job of the <code>connect</code> operator to actually cause the <code>ConnectableObservable</code> to subscribe to the underlying source (the thing that produces values). In our case we’re using <code>refCount</code> which is an operator that builds up on <code>connect</code> and causes the <code>ConnectableObservable</code> to subscribe to the underlying source as soon as there is a first subscriber and to unsubscribe from it as soon as there’s no subscriber anymore. It simply keeps track of how many subscriptions are made to the <code>ConnectableObservable</code>.</p>
+<p>It’s the job of the <code class="highlighter-rouge">connect</code> operator to actually cause the <code class="highlighter-rouge">ConnectableObservable</code> to subscribe to the underlying source (the thing that produces values). In our case we’re using <code class="highlighter-rouge">refCount</code> which is an operator that builds up on <code class="highlighter-rouge">connect</code> and causes the <code class="highlighter-rouge">ConnectableObservable</code> to subscribe to the underlying source as soon as there is a first subscriber and to unsubscribe from it as soon as there’s no subscriber anymore. It simply keeps track of how many subscriptions are made to the <code class="highlighter-rouge">ConnectableObservable</code>.</p>
 
-<p>And this explains why we see values starting at <code>0</code> with our last experiment. It’s because the subscription to the underlying source is only made once that we have a first subscriber to the <code>ConnectableObservable</code>.</p>
+<p>And this explains why we see values starting at <code class="highlighter-rouge">0</code> with our last experiment. It’s because the subscription to the underlying source is only made once that we have a first subscriber to the <code class="highlighter-rouge">ConnectableObservable</code>.</p>
 
-<p>If we want <code>obs</code> to be truly hot, we have to call <code>connect</code> ourselves early on.</p>
+<p>If we want <code class="highlighter-rouge">obs</code> to be truly hot, we have to call <code class="highlighter-rouge">connect</code> ourselves early on.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span>
             <span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
             <span class="p">.</span><span class="nx">publish</span><span class="p">();</span>
 <span class="nx">obs</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
@@ -266,13 +266,13 @@
   <span class="nx">setTimeout</span><span class="p">(</span>
     <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"2nd subscriber:"</span> <span class="o">+</span> <span class="nx">v</span><span class="p">)),</span> <span class="mi">1000</span><span class="p">);</span>
 
-<span class="p">},</span><span class="mi">2000</span><span class="p">);</span></code></pre></div>
+<span class="p">},</span><span class="mi">2000</span><span class="p">);</span></code></pre></figure>
 
-<p>Notice how we get values starting from <code>2</code> when we <a href="http://jsbin.com/cumukoyana/1/edit?js,console">run this code</a>.</p>
+<p>Notice how we get values starting from <code class="highlighter-rouge">2</code> when we <a href="http://jsbin.com/cumukoyana/1/edit?js,console">run this code</a>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">2</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">2</span>
 <span class="mi">1</span><span class="nx">st</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">3</span>
-<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">3</span></code></pre></div>
+<span class="mi">2</span><span class="nx">nd</span> <span class="nx">subscriber</span><span class="err">:</span><span class="mi">3</span></code></pre></figure>
 
 <p>This means we now have a truly hot Observable that produces values no matter if someone listens or not.</p>
 
@@ -280,19 +280,19 @@
 
 <p>As we’ve seen the question whether an Observable is hot or cold is everything but black and white. In fact there are several strategies how values may be pushed to subscribers that we didn’t even touch on yet. In general we can say that we should be dealing with a hot Observable whenever we subscribe to something that is generating values no matter if someone is listening or not. When we subscribe to such a hot Observable, we don’t see past values but only new ones that were generated after our subscription.</p>
 
-<p>A typical example of a hot observable are <code>mousemove</code> events. The mouse moves happen regardless if someone is listening or not. When we start listening for them, we only get future events.</p>
+<p>A typical example of a hot observable are <code class="highlighter-rouge">mousemove</code> events. The mouse moves happen regardless if someone is listening or not. When we start listening for them, we only get future events.</p>
 
 <p>Cold Observables on the other hand are the lazy ones. They only start producing values when someone subscribes. But then again, it’s really not a black and white thing. An iced cold Observable starts reproducing the values it emits independently with every new subscriber as we’ve seen in the examples above. But how should we call an Observable that only starts generating values as the first subscriber subscribes and then shares and reemits the exact same values to every new subscriber? Things get blurry and categorizing only by cold and hot doesn’t really cut it for every possible use case.</p>
 
-<p>As a rule of thumb, when you have a cold Observable and you want multiple subscribers to it, and you don’t want them to cause regenerating the values but rather reusing existing values, you need to start thinking about <code>publish</code> and friends.</p>
+<p>As a rule of thumb, when you have a cold Observable and you want multiple subscribers to it, and you don’t want them to cause regenerating the values but rather reusing existing values, you need to start thinking about <code class="highlighter-rouge">publish</code> and friends.</p>
 
 <h2 id="caveat-http-with-observables">Caveat: Http with Observables</h2>
 
-<p>The <code>Http</code> service in Angular &gt;= 2.x returns cold Observables and the implications may surprise us.</p>
+<p>The <code class="highlighter-rouge">Http</code> service in Angular &gt;= 2.x returns cold Observables and the implications may surprise us.</p>
 
-<p>Consider this <a href="http://plnkr.co/edit/Vq9fHqfTIo6OU746LW1c?p=preview">simple component</a> that requests a <code>contacts.json</code> file from a server and renders the contacts as a list in the template.</p>
+<p>Consider this <a href="http://plnkr.co/edit/Vq9fHqfTIo6OU746LW1c?p=preview">simple component</a> that requests a <code class="highlighter-rouge">contacts.json</code> file from a server and renders the contacts as a list in the template.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
@@ -303,49 +303,49 @@
   <span class="p">...</span>
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
-  <span class="nx">constructor</span> <span class="p">(</span><span class="nx">http</span><span class="err">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
+  <span class="na">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nx">constructor</span> <span class="p">(</span><span class="na">http</span><span class="p">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
                         <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>As we can see above, we’re exposing an <code>Observable&lt;Array&lt;any&gt;&gt;</code> to the template and subscribe to it from the template using the <code>AsyncPipe</code>.</p>
+<p>As we can see above, we’re exposing an <code class="highlighter-rouge">Observable&lt;Array&lt;any&gt;&gt;</code> to the template and subscribe to it from the template using the <code class="highlighter-rouge">AsyncPipe</code>.</p>
 
-<p>The <code>contacts.json</code> contains a simple object with an <code>items</code> property holding the collection of contacts.</p>
+<p>The <code class="highlighter-rouge">contacts.json</code> contains a simple object with an <code class="highlighter-rouge">items</code> property holding the collection of contacts.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span>
   <span class="s2">"items"</span><span class="err">:</span> <span class="p">[</span>
     <span class="p">{</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"John Conner"</span> <span class="p">},</span>
     <span class="p">{</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Arnold Schwarzenegger"</span> <span class="p">}</span>
   <span class="p">]</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Now the interesting question is: What happens if we’d subscribe to it twice by adding another list to our template?</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">List</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="mi">1</span><span class="nx">st</span> <span class="nx">List</span>
 <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let contact of contacts | async"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
 </span><span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
 </span><span class="mi">2</span><span class="nx">st</span> <span class="nx">List</span>
 <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let contact of contacts | async"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="sr">/ul&gt;</span></code></pre></div>
+</span><span class="o">&lt;</span><span class="sr">/ul&gt;</span></code></pre></figure>
 
-<p>If we <a href="http://plnkr.co/edit/E21Vv1L2H3KiOYqLgr6m?p=preview">run that code</a> and take a look at the network tab of our browser, we’ll notice that the browser fetches <code>contacts.json</code> twice! And that’s in stark contrast to what we’re used to when working with Promises for example. In fact, simply importing the <code>toPromise</code> operator and adding it as the last operator to our Observable causes the second request to <a href="http://plnkr.co/edit/RXGyYPB4c3pL2bk6m2l2?p=preview">vanish</a>.</p>
+<p>If we <a href="http://plnkr.co/edit/E21Vv1L2H3KiOYqLgr6m?p=preview">run that code</a> and take a look at the network tab of our browser, we’ll notice that the browser fetches <code class="highlighter-rouge">contacts.json</code> twice! And that’s in stark contrast to what we’re used to when working with Promises for example. In fact, simply importing the <code class="highlighter-rouge">toPromise</code> operator and adding it as the last operator to our Observable causes the second request to <a href="http://plnkr.co/edit/RXGyYPB4c3pL2bk6m2l2?p=preview">vanish</a>.</p>
 
 <p>But let’s not fall back to Promises just yet. With all our knowledge regarding cold and hot Observables we should be able to simply fix our Observable so that it shares one single subscription to the underlying source - the Observable that issues the HTTP call.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
                     <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">)</span>
                     <span class="p">.</span><span class="nx">publish</span><span class="p">()</span>
-                    <span class="p">.</span><span class="nx">refCount</span><span class="p">();</span></code></pre></div>
+                    <span class="p">.</span><span class="nx">refCount</span><span class="p">();</span></code></pre></figure>
 
 <p><a href="http://plnkr.co/edit/RvnMFxtl58SRgGW8eamC?p=preview">That</a> should do it, right? Well, almost. We can see that there’s no second request anymore. But there’s still a big issue that makes the code behave quite differently from what we are used with Promises.</p>
 
 <p>Consider we’d want the second list to show up after a delay of 500ms. We could change the code to this.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="mi">1</span><span class="nx">st</span> <span class="nx">List</span>
@@ -360,9 +360,9 @@
   <span class="p">...</span>
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="na">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nl">contacts2</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
-  <span class="nx">constructor</span> <span class="p">(</span><span class="nx">http</span><span class="err">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">constructor</span> <span class="p">(</span><span class="na">http</span><span class="p">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
                         <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">)</span>
                         <span class="p">.</span><span class="nx">publish</span><span class="p">()</span>
@@ -370,25 +370,25 @@
 
     <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contacts2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">contacts</span><span class="p">,</span> <span class="mi">500</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Notice that we are still using our one and only Observable but we are reexposing it as <code>contacts2</code> after 500ms. But when we <a href="http://plnkr.co/edit/coxJ88q0F0HON06kpYnk?p=preview">run the code</a>, we notice that our second list isn’t showing up!</p>
+<p>Notice that we are still using our one and only Observable but we are reexposing it as <code class="highlighter-rouge">contacts2</code> after 500ms. But when we <a href="http://plnkr.co/edit/coxJ88q0F0HON06kpYnk?p=preview">run the code</a>, we notice that our second list isn’t showing up!</p>
 
-<p>If you think about it, it makes perfect sense. With the use of <code>publish</code> we caused the Observable to share a single subscription to the underlying source - we made it hot. But maybe we made it a little too hot. Now when we have a second subscriber starting to listen after 500ms it will only get notified about new values that arrive after its subscription. What we rather want is that new subscribers see exactly the old values that were already emitted earlier. Fortunately we can have exactly that behaviour by using <code>publishLast</code> instead of <code>publish</code>.</p>
+<p>If you think about it, it makes perfect sense. With the use of <code class="highlighter-rouge">publish</code> we caused the Observable to share a single subscription to the underlying source - we made it hot. But maybe we made it a little too hot. Now when we have a second subscriber starting to listen after 500ms it will only get notified about new values that arrive after its subscription. What we rather want is that new subscribers see exactly the old values that were already emitted earlier. Fortunately we can have exactly that behaviour by using <code class="highlighter-rouge">publishLast</code> instead of <code class="highlighter-rouge">publish</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
                     <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">)</span>
                     <span class="p">.</span><span class="nx">publishLast</span><span class="p">()</span>
-                    <span class="p">.</span><span class="nx">refCount</span><span class="p">();</span></code></pre></div>
+                    <span class="p">.</span><span class="nx">refCount</span><span class="p">();</span></code></pre></figure>
 
 <p>Now when we <a href="http://plnkr.co/edit/nyatJl5qXp8KtyN1TX80?p=preview">run that code</a> we see our second list after 500ms but we still don’t see a second request. In other words, we created an Observable that emits upon subscription with the data that was fetched with the first request.</p>
 
 <h2 id="useful-shortcut">Useful shortcut</h2>
-<p>Since using publish and refCount together is such a useful pattern there is an operator that combines them, and it’s called <code>.share()</code></p>
+<p>Since using publish and refCount together is such a useful pattern there is an operator that combines them, and it’s called <code class="highlighter-rouge">.share()</code></p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></div>
+  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></figure>
 
 <p>Whew! We came a long way. We hope this gives you a clearer picture of what the term hot vs cold actually means when it comes to Observables.</p>
 

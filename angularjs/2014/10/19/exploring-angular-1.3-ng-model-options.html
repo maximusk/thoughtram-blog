@@ -92,7 +92,7 @@
 
           
 
-          <p>Hi again. This is the second article of “Exploring Angular 1.3”. If you haven’t read the <a href="/angularjs/2014/10/14/exploring-angular-1.3-one-time-bindings.html">first one</a> you might want to check out that too. In this article, we cover another feature that turns out to be very useful in our daily development of Angular applications. Introducing the <code>ngModelOptions</code> directive.
+          <p>Hi again. This is the second article of “Exploring Angular 1.3”. If you haven’t read the <a href="/angularjs/2014/10/14/exploring-angular-1.3-one-time-bindings.html">first one</a> you might want to check out that too. In this article, we cover another feature that turns out to be very useful in our daily development of Angular applications. Introducing the <code class="highlighter-rouge">ngModelOptions</code> directive.
 We’ve written a few other articles on 1.3 already. Here’s a list:</p>
 
 <ul>
@@ -103,95 +103,95 @@ We’ve written a few other articles on 1.3 already. Here’s a list:</p>
 <div class="thtrm-toc is-sticky">
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
 <ul id="markdown-toc">
-  <li><a href="#updating-ngmodel-with-updateon" id="markdown-toc-updating-ngmodel-with-updateon">Updating <code>ngModel</code> with <code>updateOn</code></a></li>
-  <li><a href="#delaying-the-model-update-with-debounce" id="markdown-toc-delaying-the-model-update-with-debounce">Delaying the model update with <code>debounce</code></a></li>
-  <li><a href="#synchronizing-model-and-view-with-rollbackviewvalue" id="markdown-toc-synchronizing-model-and-view-with-rollbackviewvalue">Synchronizing model and view with <code>$rollbackViewValue</code></a></li>
+  <li><a href="#updating-ngmodel-with-updateon" id="markdown-toc-updating-ngmodel-with-updateon">Updating <code class="highlighter-rouge">ngModel</code> with <code class="highlighter-rouge">updateOn</code></a></li>
+  <li><a href="#delaying-the-model-update-with-debounce" id="markdown-toc-delaying-the-model-update-with-debounce">Delaying the model update with <code class="highlighter-rouge">debounce</code></a></li>
+  <li><a href="#synchronizing-model-and-view-with-rollbackviewvalue" id="markdown-toc-synchronizing-model-and-view-with-rollbackviewvalue">Synchronizing model and view with <code class="highlighter-rouge">$rollbackViewValue</code></a></li>
 </ul>
 
 </div>
 
-<p><code>ngModelOptions</code> allows us to control how <code>ngModel</code> updates are done. This includes things like updating the model only after certain events are triggered or a debouncing delay, so that the view value is reflected back to the model only after a timer expires. To get an idea of what that actually means, let’s start with the probably simplest use case that sets up a two-way binding using an <code>input</code> element that has a <code>ngModel</code> directive applied:</p>
+<p><code class="highlighter-rouge">ngModelOptions</code> allows us to control how <code class="highlighter-rouge">ngModel</code> updates are done. This includes things like updating the model only after certain events are triggered or a debouncing delay, so that the view value is reflected back to the model only after a timer expires. To get an idea of what that actually means, let’s start with the probably simplest use case that sets up a two-way binding using an <code class="highlighter-rouge">input</code> element that has a <code class="highlighter-rouge">ngModel</code> directive applied:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">ng-model=</span><span class="s">"name"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">ng-model=</span><span class="s">"name"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
-<p>Now, when typing something into the <code>input</code> element, the model gets updated accordingly and then reflected back to the view, which displays the value in our <code>p</code> element. Try it out yourself real quick.</p>
+<p>Now, when typing something into the <code class="highlighter-rouge">input</code> element, the model gets updated accordingly and then reflected back to the view, which displays the value in our <code class="highlighter-rouge">p</code> element. Try it out yourself real quick.</p>
 
 <iframe src="http://embed.plnkr.co/dB0p5wysKLvjK7oKAA3b/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
 <p><a href="http://weknowgifs.com/wp-content/uploads/2013/03/its-magic-shia-labeouf-gif.gif">Magic</a>. If you’re not familiar with what’s going on here, I recommend heading over to the official docs and reading the chapter about the <a href="https://docs.angularjs.org/guide/concepts">concepts of Angular</a>.</p>
 
-<p>The reason why the view is updated immediately, is that every time the <code>input</code> element fires an <code>input</code> event, Angulars <code>$digest</code> loop is executed until the model stabilizes. And that’s nice because we don’t have set up any event listeners and update the DOM manually to reflect model values in the view; Angular takes care of that.</p>
+<p>The reason why the view is updated immediately, is that every time the <code class="highlighter-rouge">input</code> element fires an <code class="highlighter-rouge">input</code> event, Angulars <code class="highlighter-rouge">$digest</code> loop is executed until the model stabilizes. And that’s nice because we don’t have set up any event listeners and update the DOM manually to reflect model values in the view; Angular takes care of that.</p>
 
-<p>However, that also means that, because of the <code>$digest</code> that happens to be triggered on every single keystroke,  Angular has to process all registered watchers on the scope whenever you type something into the <code>input</code> element. Depending on how many watchers are registered and of course how efficient the watcher callbacks are, this can be very expensive. So wouldn’t it be great if we could somehow manage to trigger a <code>$digest</code> only after the user stopped typing for, let’s say, 300 milliseconds? Or only when the user removes the focus of the <code>input</code> element?</p>
+<p>However, that also means that, because of the <code class="highlighter-rouge">$digest</code> that happens to be triggered on every single keystroke,  Angular has to process all registered watchers on the scope whenever you type something into the <code class="highlighter-rouge">input</code> element. Depending on how many watchers are registered and of course how efficient the watcher callbacks are, this can be very expensive. So wouldn’t it be great if we could somehow manage to trigger a <code class="highlighter-rouge">$digest</code> only after the user stopped typing for, let’s say, 300 milliseconds? Or only when the user removes the focus of the <code class="highlighter-rouge">input</code> element?</p>
 
-<p>Yes, and we can do so thanks to Angular 1.3 and the <code>ngModelOptions</code> directive.</p>
+<p>Yes, and we can do so thanks to Angular 1.3 and the <code class="highlighter-rouge">ngModelOptions</code> directive.</p>
 
-<h2 id="updating-ngmodel-with-updateon">Updating <code>ngModel</code> with <code>updateOn</code></h2>
+<h2 id="updating-ngmodel-with-updateon">Updating <code class="highlighter-rouge">ngModel</code> with <code class="highlighter-rouge">updateOn</code></h2>
 
-<p><code>ngModelOptions</code> comes with a couple of options to control how <code>ngModel</code> updates are done. With the <code>updateOn</code> parameter, we can define which events our <code>input</code> should be bound to. For example, if we want our model to be updated only after the user removed the focus of our <code>input</code> element, we can simply do so by applying the <code>ngModelOptions</code> with the following configuration:</p>
+<p><code class="highlighter-rouge">ngModelOptions</code> comes with a couple of options to control how <code class="highlighter-rouge">ngModel</code> updates are done. With the <code class="highlighter-rouge">updateOn</code> parameter, we can define which events our <code class="highlighter-rouge">input</code> should be bound to. For example, if we want our model to be updated only after the user removed the focus of our <code class="highlighter-rouge">input</code> element, we can simply do so by applying the <code class="highlighter-rouge">ngModelOptions</code> with the following configuration:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
   <span class="na">type=</span><span class="s">"text"</span>
   <span class="na">ng-model=</span><span class="s">"name"</span>
   <span class="na">ng-model-options=</span><span class="s">"{ updateOn: 'blur' }"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
-<p>This tells Angular that instead of updating the model immediately after each keystroke, it should only update when the <code>input</code> fires an <code>onBlur</code> event. Here’s an example to show what it looks like in action.</p>
+<p>This tells Angular that instead of updating the model immediately after each keystroke, it should only update when the <code class="highlighter-rouge">input</code> fires an <code class="highlighter-rouge">onBlur</code> event. Here’s an example to show what it looks like in action.</p>
 
 <iframe src="http://embed.plnkr.co/F5IGCe/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>If we do want to update the model with the default events that belong to that control and add other events on top of that, we can use a special event called <code>default</code>. Adding more then just one event can be done with a space delimited list. The following code updates the model whenever a user types into the input, or removes the focus of it.</p>
+<p>If we do want to update the model with the default events that belong to that control and add other events on top of that, we can use a special event called <code class="highlighter-rouge">default</code>. Adding more then just one event can be done with a space delimited list. The following code updates the model whenever a user types into the input, or removes the focus of it.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
   <span class="na">type=</span><span class="s">"text"</span>
   <span class="na">ng-model=</span><span class="s">"name"</span>
   <span class="na">ng-model-options=</span><span class="s">"{ updateOn: 'default blur' }"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<span class="nt">&lt;p&gt;</span>Hello {{name}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
 <p>Alright, now that we know how that works, let’s take a look at how we can update the model after a timer expires.</p>
 
-<h2 id="delaying-the-model-update-with-debounce">Delaying the model update with <code>debounce</code></h2>
+<h2 id="delaying-the-model-update-with-debounce">Delaying the model update with <code class="highlighter-rouge">debounce</code></h2>
 
-<p>We can delay the model update with <code>ngModelOptions</code> in order to reduce the amount of <code>$digest</code> cycles that are going to be triggered when a user interacts with our model. But not only that this ensures fewer <code>$digest</code> cycles, it’s also a powerful feature that can be used to implement a nice user experience when dealing with asynchronous code execution.</p>
+<p>We can delay the model update with <code class="highlighter-rouge">ngModelOptions</code> in order to reduce the amount of <code class="highlighter-rouge">$digest</code> cycles that are going to be triggered when a user interacts with our model. But not only that this ensures fewer <code class="highlighter-rouge">$digest</code> cycles, it’s also a powerful feature that can be used to implement a nice user experience when dealing with asynchronous code execution.</p>
 
-<p>Just imagine an <code>input[type="search"]</code> element, where every time a user types into the field, the model gets updated and an asynchronous request is made to a server to get a response with search results depending on the given query. This works. However, we probably don’t want to update the model on every keystroke but rather once the user has finished typing a meaningful search term. We can do exactly that with <code>ngModelOptions</code>’ <code>debounce</code> parameter.</p>
+<p>Just imagine an <code class="highlighter-rouge">input[type="search"]</code> element, where every time a user types into the field, the model gets updated and an asynchronous request is made to a server to get a response with search results depending on the given query. This works. However, we probably don’t want to update the model on every keystroke but rather once the user has finished typing a meaningful search term. We can do exactly that with <code class="highlighter-rouge">ngModelOptions</code>’ <code class="highlighter-rouge">debounce</code> parameter.</p>
 
-<p><code>debounce</code> defines an integer value which represents a model update delay in milliseconds. Which means, if we take the example mentioned above, that we want to update our model 300 milliseconds after the user stopped typing, we can do so by defining a debounce value of <code>300</code> like this:</p>
+<p><code class="highlighter-rouge">debounce</code> defines an integer value which represents a model update delay in milliseconds. Which means, if we take the example mentioned above, that we want to update our model 300 milliseconds after the user stopped typing, we can do so by defining a debounce value of <code class="highlighter-rouge">300</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
   <span class="na">type=</span><span class="s">"search"</span>
   <span class="na">ng-model=</span><span class="s">"searchQuery"</span>
   <span class="na">ng-model-options=</span><span class="s">"{ debounce: 300 }"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;p&gt;</span>Search results for: {{searchQuery}}<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<span class="nt">&lt;p&gt;</span>Search results for: {{searchQuery}}<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
-<p>Now, when typing into the <code>input</code> field, there’s a slight delay until the model updates. You can try it out right here:</p>
+<p>Now, when typing into the <code class="highlighter-rouge">input</code> field, there’s a slight delay until the model updates. You can try it out right here:</p>
 
 <iframe src="http://embed.plnkr.co/PNxIXX/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>We can go even further and configure how the update delay should be done for certain events. Controlling the debounce delay for specific events can be done by defining an object literal instead of a primitive integer value, where keys represent the event name and values the debounce delay. A delay of <code>0</code> triggers an immediate model update.</p>
+<p>We can go even further and configure how the update delay should be done for certain events. Controlling the debounce delay for specific events can be done by defining an object literal instead of a primitive integer value, where keys represent the event name and values the debounce delay. A delay of <code class="highlighter-rouge">0</code> triggers an immediate model update.</p>
 
-<p>The following code generates a model update delay of 300 milliseconds when the user types into our <code>input</code>, but an immediate update when removing the focus:</p>
+<p>The following code generates a model update delay of 300 milliseconds when the user types into our <code class="highlighter-rouge">input</code>, but an immediate update when removing the focus:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span>
   <span class="na">type=</span><span class="s">"search"</span>
   <span class="na">ng-model=</span><span class="s">"searchQuery"</span>
   <span class="na">ng-model-options=</span><span class="s">"{ updateOn: 'default blur', debounce: { 'default': 300, 'blur': 0 } }"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;p&gt;</span>Search results for: {{searchQuery}}<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<span class="nt">&lt;p&gt;</span>Search results for: {{searchQuery}}<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
 <p>Super powerful right? There are a few other options that are worth to checkout out. You can read about them in the <a href="https://docs.angularjs.org/api/ng/directive/ngModelOptions">official docs</a>.</p>
 
-<h2 id="synchronizing-model-and-view-with-rollbackviewvalue">Synchronizing model and view with <code>$rollbackViewValue</code></h2>
+<h2 id="synchronizing-model-and-view-with-rollbackviewvalue">Synchronizing model and view with <code class="highlighter-rouge">$rollbackViewValue</code></h2>
 
-<p>Due to the fact that we are able to control with <code>ngModelOptions</code> how and when model updates are done, the model and the view can get out of sync. For example, when we configure our <code>input</code> element to update the model only when it loses its focus, the moment when the user types into the field, the <code>input</code> value differs from the actual value in the model.</p>
+<p>Due to the fact that we are able to control with <code class="highlighter-rouge">ngModelOptions</code> how and when model updates are done, the model and the view can get out of sync. For example, when we configure our <code class="highlighter-rouge">input</code> element to update the model only when it loses its focus, the moment when the user types into the field, the <code class="highlighter-rouge">input</code> value differs from the actual value in the model.</p>
 
-<p>There might be situations, where you want to roll the view value back to what it was, before the change has been made. For such cases, Angular introduces a so called <code>$rollbackViewValue</code> method that can be invoked to synchronize the model and view. Basically what this method does is, it takes the value that is currently in the model and reflects it back to the view. In addition, it cancels all debounced changes.</p>
+<p>There might be situations, where you want to roll the view value back to what it was, before the change has been made. For such cases, Angular introduces a so called <code class="highlighter-rouge">$rollbackViewValue</code> method that can be invoked to synchronize the model and view. Basically what this method does is, it takes the value that is currently in the model and reflects it back to the view. In addition, it cancels all debounced changes.</p>
 
-<p>To demonstrate this use case, we can setup a <code>form</code> that has an <code>input</code> element that updates the model when the user removes the focus. As long as the user didn’t remove the focus of the <code>input</code> element, he can hit the <code>Esc</code> key to discard his changes and get the value of the model back. Try it out yourself:</p>
+<p>To demonstrate this use case, we can setup a <code class="highlighter-rouge">form</code> that has an <code class="highlighter-rouge">input</code> element that updates the model when the user removes the focus. As long as the user didn’t remove the focus of the <code class="highlighter-rouge">input</code> element, he can hit the <code class="highlighter-rouge">Esc</code> key to discard his changes and get the value of the model back. Try it out yourself:</p>
 
 <iframe src="http://embed.plnkr.co/KQbeSE/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>So it turns out that <code>ngModelOptions</code> is a super powerful directive that helps us making our apps more intuitive. Go and check out the <a href="https://code.angularjs.org/1.3.0/docs/api/ng/directive/ngModelOptions">docs</a> about the <code>allowInvalid</code> and <code>getterSetter</code> options, to see what else is possible!</p>
+<p>So it turns out that <code class="highlighter-rouge">ngModelOptions</code> is a super powerful directive that helps us making our apps more intuitive. Go and check out the <a href="https://code.angularjs.org/1.3.0/docs/api/ng/directive/ngModelOptions">docs</a> about the <code class="highlighter-rouge">allowInvalid</code> and <code class="highlighter-rouge">getterSetter</code> options, to see what else is possible!</p>
 
 
           

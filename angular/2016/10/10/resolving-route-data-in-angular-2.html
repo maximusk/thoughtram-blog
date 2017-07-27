@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Resolving route data in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Oct 10, 2016, last updated on Dec 18, 2016<br>10 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Oct 10, 2016, last updated on Dec 18, 2016<br>11 minute read</span>
 
           </div>
         </hgroup>
@@ -94,7 +94,7 @@
           <p style="background-color: lightgoldenrodyellow; border: solid 2px #f9dead; padding: 1em; text-align: center; border-radius: 0.3em;">Contents are based on Angular version <strong>>= 2.x</strong> unless explicitly stated differently.</p>
           
 
-          <p>Not long ago, we wrote about <a href="/angular/2016/07/18/guards-in-angular-2.html">Navigation Guards</a> and how they let us control the navigation flow of our application’s users. Guards like <code>CanActivate</code>, <code>CanDeactivate</code> and <code>CanLoad</code> are great when it comes to taking the decision if a user is allowed to activate a certain route, leaving a certain route, or even asynchronously loading a route.</p>
+          <p>Not long ago, we wrote about <a href="/angular/2016/07/18/guards-in-angular-2.html">Navigation Guards</a> and how they let us control the navigation flow of our application’s users. Guards like <code class="highlighter-rouge">CanActivate</code>, <code class="highlighter-rouge">CanDeactivate</code> and <code class="highlighter-rouge">CanLoad</code> are great when it comes to taking the decision if a user is allowed to activate a certain route, leaving a certain route, or even asynchronously loading a route.</p>
 
 <p>However, one thing that these guards don’t allow us to do, is to ensure that certain data is loaded before a route is actually activated. For example, in a contacts application where we’re able to click on a contact to view a contact’s details, the contact data should’ve been loaded before the component we’re routing to is instantiated, otherwise we might end up with a UI that already renders its view and a few moments later, the actual data arrives (of course, there are many ways to get around this). <strong>Route resolvers</strong> allow us to do exactly that and in this article we’re going to explore how they work!</p>
 
@@ -124,18 +124,18 @@
 
 <p>Let’s just stick with the scenario of a contacts application. We have a route for a contacts list, and a route for contacts details. Here’s what the route configuration might look like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Routes</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Routes</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsListComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./contacts-list'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsDetailComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./contacts-detail'</span><span class="p">;</span>
 
 <span class="kr">export</span> <span class="kr">const</span> <span class="nx">AppRoutes</span><span class="err">:</span> <span class="nx">Routes</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">ContactsListComponent</span> <span class="p">},</span>
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">'contact/:id'</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">ContactsDetailComponent</span> <span class="p">}</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
 <p>And of course, we use that configuration to configure the router for our application:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">RouterModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">AppRoutes</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./app.routes'</span><span class="p">;</span>
@@ -147,13 +147,13 @@
   <span class="p">],</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
 <p>Nothing special going on here. However, if this is all new to you, you might want to read our <a href="/angular/2016/06/14/routing-in-angular-2-revisited.html">article on routing</a>.</p>
 
-<p>Let’s take a look at the <code>ContactsDetailComponent</code>. This component is responsible of displaying contact data, so it somehow has to get access to a contact object, that matches the <code>id</code> provided in the route URL (hence the <code>:id</code> parameter in the route configuration). In our article on routing in Angular, we’ve learned that we can easily <a href="/angular/2016/06/14/routing-in-angular-2-revisited.html#access-route-parameters">access route parameters</a> using the <code>ActivatedRoute</code> like this:</p>
+<p>Let’s take a look at the <code class="highlighter-rouge">ContactsDetailComponent</code>. This component is responsible of displaying contact data, so it somehow has to get access to a contact object, that matches the <code class="highlighter-rouge">id</code> provided in the route URL (hence the <code class="highlighter-rouge">:id</code> parameter in the route configuration). In our article on routing in Angular, we’ve learned that we can easily <a href="/angular/2016/06/14/routing-in-angular-2-revisited.html#access-route-parameters">access route parameters</a> using the <code class="highlighter-rouge">ActivatedRoute</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">ActivatedRoute</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'../contacts.service'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">Contact</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'../interfaces/contact'</span><span class="p">;</span>
@@ -176,26 +176,26 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">contactsService</span><span class="p">.</span><span class="nx">getContact</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
         <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">contact</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contact</span> <span class="o">=</span> <span class="nx">contact</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Okay, cool. So the only thing <code>ContactsDetailComponent</code> does, is to fetch a contact object by the given id and assign that object to its local <code>contact</code> property, which then allows us to interpolate expressions like <code>{{contact.name}}</code> in the template of the component.</p>
+<p>Okay, cool. So the only thing <code class="highlighter-rouge">ContactsDetailComponent</code> does, is to fetch a contact object by the given id and assign that object to its local <code class="highlighter-rouge">contact</code> property, which then allows us to interpolate expressions like <code class="highlighter-rouge"><span class="p">{</span><span class="err">{contact.name</span><span class="p">}</span><span class="err">}</span></code> in the template of the component.</p>
 
 <p>Let’s take a look at the component’s template:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h2&gt;</span>{{contact?.name}}<span class="nt">&lt;/h2&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h2&gt;</span>{{contact?.name}}<span class="nt">&lt;/h2&gt;</span>
 
 <span class="nt">&lt;dl&gt;</span>
   <span class="nt">&lt;dt&gt;</span>Phone<span class="nt">&lt;/dt&gt;</span>
   <span class="nt">&lt;dd&gt;</span>{{contact?.phone}}<span class="nt">&lt;/dd&gt;</span>
   <span class="nt">&lt;dt&gt;</span>Website<span class="nt">&lt;/dt&gt;</span>
   <span class="nt">&lt;dd&gt;</span>{{contact?.website}}<span class="nt">&lt;/dd&gt;</span>
-<span class="nt">&lt;/dl&gt;</span></code></pre></div>
+<span class="nt">&lt;/dl&gt;</span></code></pre></figure>
 
-<p>Notice that we’ve attached Angular’s Safe Navigation Operator to all of our expressions that rely on <code>contact</code>. The reason for that is, that <code>contact</code> will be undefined at the time this component is initialized, since we’re fetching the data asynchronously. The Safe Navigation Operator ensures that Angular won’t throw any errors when we’re trying to read from an object that is <code>null</code> or <code>undefined</code>.</p>
+<p>Notice that we’ve attached Angular’s Safe Navigation Operator to all of our expressions that rely on <code class="highlighter-rouge">contact</code>. The reason for that is, that <code class="highlighter-rouge">contact</code> will be undefined at the time this component is initialized, since we’re fetching the data asynchronously. The Safe Navigation Operator ensures that Angular won’t throw any errors when we’re trying to read from an object that is <code class="highlighter-rouge">null</code> or <code class="highlighter-rouge">undefined</code>.</p>
 
-<p>In order to demonstrate this issue, let’s assume <code>ContactsService#getContact()</code> takes 3 seconds until it emits a contact object. In fact, we can easily fake that delay right away like this:</p>
+<p>In order to demonstrate this issue, let’s assume <code class="highlighter-rouge">ContactsService#getContact()</code> takes 3 seconds until it emits a contact object. In fact, we can easily fake that delay right away like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsService</span> <span class="p">{</span>
@@ -207,23 +207,23 @@
       <span class="na">website</span><span class="p">:</span> <span class="s1">'http://thoughtram.io'</span><span class="p">,</span>
     <span class="p">}).</span><span class="nx">delay</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Take a look at the demo and notice how the UI flickers until the data arrives.</p>
 
 <iframe src="http://embed.plnkr.co/QRoowb/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Depending on our template, adding Safe Navigation Operators everywhere can be quite tiring as well. In addition to that, some constructs don’t support that operator, like <code>NgModel</code> and <code>RouterLink</code> directives. Let’s take a look at how we can solve this using route resolvers.</p>
+<p>Depending on our template, adding Safe Navigation Operators everywhere can be quite tiring as well. In addition to that, some constructs don’t support that operator, like <code class="highlighter-rouge">NgModel</code> and <code class="highlighter-rouge">RouterLink</code> directives. Let’s take a look at how we can solve this using route resolvers.</p>
 
 <h2 id="defining-resolvers">Defining resolvers</h2>
 
-<p>As mentioned ealier, route resolvers allow us to provide the needed data for a route, before the route is activated. There are different ways to create a resolver and we’ll start with the easiest: a function. A resolver is a function that returns either <code>Observable&lt;any&gt;</code>, <code>Promise&lt;any&gt;</code> or just data. This is great, because our <code>ContactsService#getContact()</code> method returns an <code>Observable&lt;Contact&gt;</code>.</p>
+<p>As mentioned ealier, route resolvers allow us to provide the needed data for a route, before the route is activated. There are different ways to create a resolver and we’ll start with the easiest: a function. A resolver is a function that returns either <code class="highlighter-rouge">Observable&lt;any&gt;</code>, <code class="highlighter-rouge">Promise&lt;any&gt;</code> or just data. This is great, because our <code class="highlighter-rouge">ContactsService#getContact()</code> method returns an <code class="highlighter-rouge">Observable&lt;Contact&gt;</code>.</p>
 
 <p>Resolvers need to be registered via providers. Our article on <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">Dependency Injection in Angular</a> explains nicely how to make functions available via DI.</p>
 
 <p>Here’s a resolver function that resolves with a static contact object:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">ContactsService</span><span class="p">,</span>
@@ -238,13 +238,13 @@
       <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>Let’s ignore for a second that we don’t always want to return the same contact object when this resolver is used. The point here is that we can register a simple resolver function using Angular’s dependency injection. Now, how do we attach this resolver to a route configuration? That’s pretty straight forward. All we have to do is add a <code>resolve</code> property to a route configuration, which is an object where each key points to a resolver.</p>
+<p>Let’s ignore for a second that we don’t always want to return the same contact object when this resolver is used. The point here is that we can register a simple resolver function using Angular’s dependency injection. Now, how do we attach this resolver to a route configuration? That’s pretty straight forward. All we have to do is add a <code class="highlighter-rouge">resolve</code> property to a route configuration, which is an object where each key points to a resolver.</p>
 
 <p>Here’s how we add our resolver function to our route configuration:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">AppRoutes</span><span class="err">:</span> <span class="nx">Routes</span> <span class="o">=</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">AppRoutes</span><span class="err">:</span> <span class="nx">Routes</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">...</span>
   <span class="p">{</span> 
     <span class="nl">path</span><span class="p">:</span> <span class="s1">'contact/:id'</span><span class="p">,</span>
@@ -253,13 +253,13 @@
       <span class="nl">contact</span><span class="p">:</span> <span class="s1">'contact'</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
-<p>That’s it? Yes! <code>'contact'</code> is the provider token we refer to when attaching resolvers to route configurations. Of course, this can also be an <a href="/angular/2016/05/23/opaque-tokens-in-angular-2.html">OpaqueToken</a>, or a class (as discussed later).</p>
+<p>That’s it? Yes! <code class="highlighter-rouge">'contact'</code> is the provider token we refer to when attaching resolvers to route configurations. Of course, this can also be an <a href="/angular/2016/05/23/opaque-tokens-in-angular-2.html">OpaqueToken</a>, or a class (as discussed later).</p>
 
-<p>Now, the next thing we need to do is to change the way <code>ContactsDetailComponent</code> gets hold of the contact object. Everything that is resolved via route resolvers is exposed on an <code>ActivatedRoute</code>’s <code>data</code> property. In other words, for now we can get rid of the <code>ContactsService</code> dependency like this:</p>
+<p>Now, the next thing we need to do is to change the way <code class="highlighter-rouge">ContactsDetailComponent</code> gets hold of the contact object. Everything that is resolved via route resolvers is exposed on an <code class="highlighter-rouge">ActivatedRoute</code>’s <code class="highlighter-rouge">data</code> property. In other words, for now we can get rid of the <code class="highlighter-rouge">ContactsService</code> dependency like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsDetailComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
   <span class="nx">contact</span><span class="p">;</span>
@@ -269,15 +269,15 @@
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">contact</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">snapshot</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="s1">'contact'</span><span class="p">];</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Here’s the code in action:</p>
 
 <iframe src="http://embed.plnkr.co/Od0Bv2/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>In fact, when defining a resolver as a function, we get access to the <code>ActivatedRouteSnapshot</code>, as well as the <code>RouterStateSnapshot</code> like this:</p>
+<p>In fact, when defining a resolver as a function, we get access to the <code class="highlighter-rouge">ActivatedRouteSnapshot</code>, as well as the <code class="highlighter-rouge">RouterStateSnapshot</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">ContactsService</span><span class="p">,</span>
@@ -288,17 +288,17 @@
       <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>This is useful in many scenarios where we need access to things like router parameters, which we actually do. However, we also need a <code>ContactsService</code> instance, which we <strong>don’t</strong> get injected here. So how do we create resolver that need dependency injection?</p>
+<p>This is useful in many scenarios where we need access to things like router parameters, which we actually do. However, we also need a <code class="highlighter-rouge">ContactsService</code> instance, which we <strong>don’t</strong> get injected here. So how do we create resolver that need dependency injection?</p>
 
 <h2 id="resolvers-with-dependencies">Resolvers with dependencies</h2>
 
-<p>As we know, dependency injection works on class constructors, so what we need is a class. We can create resolvers as classes as well! The only thing we need to do, is to implement the <code>Resolve</code> interface, which ensures that our resolver class has a <code>resolve()</code> method. This <code>resolve()</code> method is pretty much the same function we have currently registered via DI.</p>
+<p>As we know, dependency injection works on class constructors, so what we need is a class. We can create resolvers as classes as well! The only thing we need to do, is to implement the <code class="highlighter-rouge">Resolve</code> interface, which ensures that our resolver class has a <code class="highlighter-rouge">resolve()</code> method. This <code class="highlighter-rouge">resolve()</code> method is pretty much the same function we have currently registered via DI.</p>
 
 <p>Here’s what our contact resolver could look like as a class implementation:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">Resolve</span><span class="p">,</span> <span class="nx">ActivatedRouteSnapshot</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./contacts.service'</span><span class="p">;</span>
 
@@ -310,22 +310,22 @@
   <span class="nx">resolve</span><span class="p">(</span><span class="na">route</span><span class="p">:</span> <span class="nx">ActivatedRouteSnapshot</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">contactsService</span><span class="p">.</span><span class="nx">getContact</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">paramMap</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'id'</span><span class="p">));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>As soon as our resolver is a class, our provider configuration becomes simpler as well, because the class can be used as provider token!</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">ContactsService</span><span class="p">,</span>
     <span class="nx">ContactResolve</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
 <p>And of course, we use the same token to configure the resolver on our routes:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">AppRoutes</span><span class="err">:</span> <span class="nx">Routes</span> <span class="o">=</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">AppRoutes</span><span class="err">:</span> <span class="nx">Routes</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">...</span>
   <span class="p">{</span> 
     <span class="nl">path</span><span class="p">:</span> <span class="s1">'contact/:id'</span><span class="p">,</span>
@@ -334,9 +334,9 @@
       <span class="nl">contact</span><span class="p">:</span> <span class="nx">ContactResolve</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
-<p>Angular is smart enough to detect if a resolver is a function or a class and if it’s a class, it’ll call <code>resolve()</code> on it. Check out the demo below to see this code in action and note how Angular delays the component instantiation until the data has arrived.</p>
+<p>Angular is smart enough to detect if a resolver is a function or a class and if it’s a class, it’ll call <code class="highlighter-rouge">resolve()</code> on it. Check out the demo below to see this code in action and note how Angular delays the component instantiation until the data has arrived.</p>
 
 <iframe src="http://embed.plnkr.co/u2qR9J/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 

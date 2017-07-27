@@ -96,17 +96,17 @@
 
 <h2 id="lifecycle-hooks">Lifecycle Hooks</h2>
 
-<p>Lifecycle hooks in Angular landed first in the Angular 2 alpha release and they are more or less inspired by the <a href="http://webcomponents.org/articles/introduction-to-custom-elements/#lifecycle-callbacks">Custom Elements lifecycle callbacks</a>. By inspired we mean that they are not exactly the same. They’re not only named differently and do different things, there are also more. An Angular 2 component comes with lifecycle hooks like <code>ngOnInit()</code>, <code>ngOnDestroy()</code>, <code>ngOnChanges()</code> and many more. We get a very detailed overview of these in the <a href="https://angular.io/docs/ts/latest/guide/lifecycle-hooks.html">official docs</a>.</p>
+<p>Lifecycle hooks in Angular landed first in the Angular 2 alpha release and they are more or less inspired by the <a href="http://webcomponents.org/articles/introduction-to-custom-elements/#lifecycle-callbacks">Custom Elements lifecycle callbacks</a>. By inspired we mean that they are not exactly the same. They’re not only named differently and do different things, there are also more. An Angular 2 component comes with lifecycle hooks like <code class="highlighter-rouge">ngOnInit()</code>, <code class="highlighter-rouge">ngOnDestroy()</code>, <code class="highlighter-rouge">ngOnChanges()</code> and many more. We get a very detailed overview of these in the <a href="https://angular.io/docs/ts/latest/guide/lifecycle-hooks.html">official docs</a>.</p>
 
 <p>However, this article is on Angular 1.5. Since Angular 1 is evolving in a way to keep the gap to Angular 2 as small as possible, some lifecycle callbacks have been backported to the current “best Angular yet”. Let’s take a look at them one by one.</p>
 
 <p><strong>Note: The Angular lifecycle-hooks were introduced in version 1.5.3.</strong></p>
 
-<h2 id="oninit"><code>$onInit()</code></h2>
+<h2 id="oninit"><code class="highlighter-rouge">$onInit()</code></h2>
 
 <p>This lifecycle hook will be executed when all controllers on an element have been constructed and after their bindings are initialized. This hook is meant to be used for any kind of initialization work of a controller. To get a better idea of how this behaves, let’s take a look at some code.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">mod</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'app'</span><span class="p">,</span> <span class="p">[]);</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">mod</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'app'</span><span class="p">,</span> <span class="p">[]);</span>
 
 <span class="kd">function</span> <span class="nx">MyCmpController</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'Pascal'</span><span class="p">;</span>
@@ -115,27 +115,27 @@
 <span class="nx">mod</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'myCmp'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;{{$ctrl.name}}&lt;/h1&gt;'</span><span class="p">,</span>
   <span class="na">controller</span><span class="p">:</span> <span class="nx">MyCmpController</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>We start off with an <a href="https://docs.angularjs.org/guide/component">Angular 1.5 component</a> <code>myCmp</code>. A component has a controller and a template, and in our example, our component simply has a <code>name</code> property that we interpolate. <code>$ctrl</code> is the default <code>controllerAs</code> namespace, which is super nice because we don’t have to set it up.</p>
+<p>We start off with an <a href="https://docs.angularjs.org/guide/component">Angular 1.5 component</a> <code class="highlighter-rouge">myCmp</code>. A component has a controller and a template, and in our example, our component simply has a <code class="highlighter-rouge">name</code> property that we interpolate. <code class="highlighter-rouge">$ctrl</code> is the default <code class="highlighter-rouge">controllerAs</code> namespace, which is super nice because we don’t have to set it up.</p>
 
-<p>We can now move the initialization work into the <code>$onInit</code> lifecycle hook, by defining the hook on the controller instance:</p>
+<p>We can now move the initialization work into the <code class="highlighter-rouge">$onInit</code> lifecycle hook, by defining the hook on the controller instance:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">MyCmpController</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">MyCmpController</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">$onInit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'My Component'</span><span class="p">;</span>
   <span class="p">};</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Okay great. But uhm… what’s the big deal? Well, while the resulting output will be the same, we now have the nice side effect that this component doesn’t do any initialization work when its constructor is called. Imagine we’d need to do some http requests during initialization of this component or controller. We’d need to take care of mocking these requests whenever we construct such a component. Now we have a better place for these kind of things.</p>
 
 <p><strong>Intercomponent Communication</strong></p>
 
-<p>Another nice thing about <code>$onInit</code>, is that we can access controllers of parent components on our own component’s controller, as those are exposed to it for intercomponent communication. This means it’s not even necessary anymore to have a <code>link()</code> function to access other directive controllers.</p>
+<p>Another nice thing about <code class="highlighter-rouge">$onInit</code>, is that we can access controllers of parent components on our own component’s controller, as those are exposed to it for intercomponent communication. This means it’s not even necessary anymore to have a <code class="highlighter-rouge">link()</code> function to access other directive controllers.</p>
 
-<p>For example, if we’d build a <code>&lt;tabs&gt;</code> component and a <code>&lt;tab&gt;</code> component, where the latter needs access to the <code>TabsController</code> to register itself on it, we can simply ask for it using the <code>require</code> property an call it directly via the controller instance.</p>
+<p>For example, if we’d build a <code class="highlighter-rouge">&lt;tabs&gt;</code> component and a <code class="highlighter-rouge">&lt;tab&gt;</code> component, where the latter needs access to the <code class="highlighter-rouge">TabsController</code> to register itself on it, we can simply ask for it using the <code class="highlighter-rouge">require</code> property an call it directly via the controller instance.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">mod</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'myTab'</span><span class="p">,</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">mod</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'myTab'</span><span class="p">,</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="na">require</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">tabsCtrl</span><span class="p">:</span> <span class="s1">'^myTabs'</span>
@@ -145,29 +145,29 @@
       <span class="k">this</span><span class="p">.</span><span class="nx">tabsCtrl</span><span class="p">.</span><span class="nx">addTab</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
     <span class="p">};</span>
   <span class="p">}</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>So after all, this aligns perfectly with what we’ve predicted a long time ago in our article on <a href="http://blog.thoughtram.io/angularjs/2015/01/02/exploring-angular-1.3-bindToController.html">binding to directive controllers</a>.</p>
 
-<h2 id="onchanges"><code>$onChanges()</code></h2>
+<h2 id="onchanges"><code class="highlighter-rouge">$onChanges()</code></h2>
 
-<p>This hook allows us to react to changes of one-way bindings of a component. One-way bindings have also been introduced in Angular 1.5 and align a bit more with Angular 2’s uni-directional data flow. Let’s say we make the <code>name</code> property of our <code>myCmp</code> configurable from the outside world using a one-way binding:</p>
+<p>This hook allows us to react to changes of one-way bindings of a component. One-way bindings have also been introduced in Angular 1.5 and align a bit more with Angular 2’s uni-directional data flow. Let’s say we make the <code class="highlighter-rouge">name</code> property of our <code class="highlighter-rouge">myCmp</code> configurable from the outside world using a one-way binding:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">mod</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'myCmp'</span><span class="p">,</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">mod</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'myCmp'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;{{$ctrl.name}}&lt;/h1&gt;'</span><span class="p">,</span>
   <span class="na">bindings</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">name</span><span class="p">:</span> <span class="s1">'&lt;'</span>
   <span class="p">},</span>
   <span class="na">controller</span><span class="p">:</span> <span class="nx">MyCmpController</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>We can now bind an expression to the component’s <code>name</code> property like this:</p>
+<p>We can now bind an expression to the component’s <code class="highlighter-rouge">name</code> property like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-cmp</span> <span class="na">name=</span><span class="s">"someExpression"</span><span class="nt">&gt;&lt;/my-cmp&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-cmp</span> <span class="na">name=</span><span class="s">"someExpression"</span><span class="nt">&gt;&lt;/my-cmp&gt;</span></code></pre></figure>
 
-<p>Let’s say we want to prepend the name with “Howdy” when the name is “Pascal” and otherwise simply greet with “Hello”. We can do that using the <code>$onChanges()</code> lifecycle hook. It gets called with an object that holds the changes of all one-way bindings with the <code>currentValue</code> and the <code>previousValue</code>.</p>
+<p>Let’s say we want to prepend the name with “Howdy” when the name is “Pascal” and otherwise simply greet with “Hello”. We can do that using the <code class="highlighter-rouge">$onChanges()</code> lifecycle hook. It gets called with an object that holds the changes of all one-way bindings with the <code class="highlighter-rouge">currentValue</code> and the <code class="highlighter-rouge">previousValue</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">MyCmpController</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">MyCmpController</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">$onChanges</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">changesObj</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">changesObj</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
       <span class="kd">var</span> <span class="nx">prefix</span><span class="p">;</span>
@@ -176,17 +176,17 @@
       <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">prefix</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">};</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Neat stuff!</p>
 
-<h2 id="ondestroy"><code>$onDestroy()</code></h2>
+<h2 id="ondestroy"><code class="highlighter-rouge">$onDestroy()</code></h2>
 
-<p><code>$onDestroy()</code> is a hook that is called when its containing scope is destroyed. We can use this hook to release external resources, watches and event handlers.</p>
+<p><code class="highlighter-rouge">$onDestroy()</code> is a hook that is called when its containing scope is destroyed. We can use this hook to release external resources, watches and event handlers.</p>
 
-<p>For example, if we’d manually set up a <code>click</code> handler (instead of using <code>ng-click</code>), we need unregister the event handler when the component is destroyed, otherwise it’ll keep hanging around and leaks memory.</p>
+<p>For example, if we’d manually set up a <code class="highlighter-rouge">click</code> handler (instead of using <code class="highlighter-rouge">ng-click</code>), we need unregister the event handler when the component is destroyed, otherwise it’ll keep hanging around and leaks memory.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">MyCmpController</span><span class="p">(</span><span class="nx">$element</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">MyCmpController</span><span class="p">(</span><span class="nx">$element</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="kd">var</span> <span class="nx">clickHandler</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="c1">// do something</span>
@@ -199,17 +199,17 @@
   <span class="k">this</span><span class="p">.</span><span class="nx">$onDestroy</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">$element</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="nx">clickHandler</span><span class="p">);</span>
   <span class="p">};</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<h2 id="postlink"><code>$postLink()</code></h2>
+<h2 id="postlink"><code class="highlighter-rouge">$postLink()</code></h2>
 
-<p>There has been a lot of discussion around the fact that <code>bindToController</code> pushes us into the direction not to use <code>compile()</code> and <code>link()</code> anymore, and rather stick to simply <code>controller()</code> because it does the same job almost all the time, because it seemed unclear what to do when DOM manipulation needs to be done.</p>
+<p>There has been a lot of discussion around the fact that <code class="highlighter-rouge">bindToController</code> pushes us into the direction not to use <code class="highlighter-rouge">compile()</code> and <code class="highlighter-rouge">link()</code> anymore, and rather stick to simply <code class="highlighter-rouge">controller()</code> because it does the same job almost all the time, because it seemed unclear what to do when DOM manipulation needs to be done.</p>
 
-<p>Well, it turns out there has always been the local injectable <code>$element</code>, which is basically a reference to the DOM element on which our directive is applied. This reference can and could be used to do DOM manipulation, even in the controller.</p>
+<p>Well, it turns out there has always been the local injectable <code class="highlighter-rouge">$element</code>, which is basically a reference to the DOM element on which our directive is applied. This reference can and could be used to do DOM manipulation, even in the controller.</p>
 
 <p>This still gave some Angular users a weird feeling because there’s this one rule to not do DOM manipulations in the controller. This rule still applies, unless we’re talking about directive controllers. And a component controller <strong>is</strong> a directive controller.</p>
 
-<p>In Angular 1.5 it gets even better, because there’s a lifecycle hook called <code>$postLink()</code>, which not only can be the place where we do all of the DOM manipulation, but it’s also the hook where we know that all child directives have been compiled and linked.</p>
+<p>In Angular 1.5 it gets even better, because there’s a lifecycle hook called <code class="highlighter-rouge">$postLink()</code>, which not only can be the place where we do all of the DOM manipulation, but it’s also the hook where we know that all child directives have been compiled and linked.</p>
 
 <p>We’ll see if there are going to be more lifecycle hooks that Angular 1.5 can take advantage of. We clearly can’t simply backport all of Angular 2’s lifecycle hooks, because the compilation process is not exactly the same, so some lifecycle hooks don’t really make sense in an Angular 1 world.</p>
 

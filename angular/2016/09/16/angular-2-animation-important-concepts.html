@@ -100,7 +100,7 @@
   <p>“… controllers should not directly modify DOM elements!”</p>
 </blockquote>
 
-<p>made Animation features intimidating as hell. But <strong>Angular animations are not scary!</strong> Templates are closely associated/integrated with <code>@Component</code>. We will notice that animations following a similar pattern.</p>
+<p>made Animation features intimidating as hell. But <strong>Angular animations are not scary!</strong> Templates are closely associated/integrated with <code class="highlighter-rouge">@Component</code>. We will notice that animations following a similar pattern.</p>
 
 <p>Let’s build a component that hides and shows its contents, uses fade animation effects, and allows external components to easily trigger those fade effects.</p>
 
@@ -108,7 +108,7 @@
 
 <p>Here is a simple Angular component with hide and show features. This sample, however, does not have animations (yet):</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-fader'</span><span class="p">,</span>
     <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">div</span> <span class="o">*</span><span class="nx">ngIf</span><span class="o">=</span><span class="s2">"visibility == 'shown'"</span> <span class="o">&gt;</span>
@@ -125,17 +125,17 @@
   <span class="nx">ngOnChanges</span><span class="p">()</span> <span class="p">{</span>
    <span class="k">this</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">isVisible</span> <span class="p">?</span> <span class="s1">'shown'</span> <span class="p">:</span> <span class="s1">'hidden'</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>This component simply publishes an <code>@Input() isVisible</code> property; which allows other external components to show/hide the text content… without any animations.</p>
+<p>This component simply publishes an <code class="highlighter-rouge">@Input() isVisible</code> property; which allows other external components to show/hide the text content… without any animations.</p>
 
 <iframe src="http://embed.plnkr.co/vUPTsY/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
 <h3 id="enable-animations-module">Enable Animations Module</h3>
 
-<p>Since Angular 4.x, there’s a new module <code>BrowserAnimationsModule</code> that introduces all animation capabilities. That’s why we first have add that to our application module’s <code>imports</code> like this:</p>
+<p>Since Angular 4.x, there’s a new module <code class="highlighter-rouge">BrowserAnimationsModule</code> that introduces all animation capabilities. That’s why we first have add that to our application module’s <code class="highlighter-rouge">imports</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserAnimationsModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser/animations'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserAnimationsModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser/animations'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
@@ -144,70 +144,70 @@
   <span class="p">]</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>Once that is done, we can use any kind of animation API in our application. If we want to use animation function like <code>trigger()</code> or <code>state()</code>, we need to import them also from <code>'@angular/platform-browser/animations'</code> instead of <code>'@angular/core'</code>.</p>
+<p>Once that is done, we can use any kind of animation API in our application. If we want to use animation function like <code class="highlighter-rouge">trigger()</code> or <code class="highlighter-rouge">state()</code>, we need to import them also from <code class="highlighter-rouge">'@angular/platform-browser/animations'</code> instead of <code class="highlighter-rouge">'@angular/core'</code>.</p>
 
 <h3 id="configure-component-animations">Configure Component Animations</h3>
 
-<p>We want the <code>my-fader</code> component to <strong>fade-in</strong> or <strong>fade-out</strong> its text content. And we want to <em>animate</em> those fades effects.</p>
+<p>We want the <code class="highlighter-rouge">my-fader</code> component to <strong>fade-in</strong> or <strong>fade-out</strong> its text content. And we want to <em>animate</em> those fades effects.</p>
 
 <p>To start animating, let’s first add animation metadata to our component.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...,</span>
   <span class="na">template</span> <span class="p">:</span> <span class="err">``</span><span class="p">,</span>
   <span class="na">animations</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...</span>
   <span class="p">]</span>
 <span class="p">)]</span>
-<span class="kr">class</span> <span class="nx">MyComponent</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span></code></pre></div>
+<span class="kr">class</span> <span class="nx">MyComponent</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span></code></pre></figure>
 
-<p>Above we show that the <code>animations</code> metadata property is defined in the <code>@Component</code> decorator. Just like <code>template</code> metadata property!</p>
+<p>Above we show that the <code class="highlighter-rouge">animations</code> metadata property is defined in the <code class="highlighter-rouge">@Component</code> decorator. Just like <code class="highlighter-rouge">template</code> metadata property!</p>
 
-<p>Since our component has a <code>visibility</code> property whose state can change between <code>shown</code> and <code>hidden</code>, let’s configure animations to trigger and animate during each value change.</p>
+<p>Since our component has a <code class="highlighter-rouge">visibility</code> property whose state can change between <code class="highlighter-rouge">shown</code> and <code class="highlighter-rouge">hidden</code>, let’s configure animations to trigger and animate during each value change.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
   <span class="nx">trigger</span><span class="p">(</span><span class="s1">'visibilityChanged'</span><span class="p">,</span> <span class="p">[</span>
   <span class="nx">state</span><span class="p">(</span><span class="s1">'shown'</span> <span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">1</span> <span class="p">})),</span> 
   <span class="nx">state</span><span class="p">(</span><span class="s1">'hidden'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}))</span>
   <span class="p">])</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
 <p>Before we add more metadata, let’s talk about the syntax above. What does it mean… and why is this syntax used?</p>
 
-<p>The techno-speak above is saying that when the <code>visibilityChanged</code> property changes and the value <code>== shown</code>, then the target element opacity changes to 1. And when the value changes to <code>== hidden</code>, the target element opacity should change to 0.</p>
+<p>The techno-speak above is saying that when the <code class="highlighter-rouge">visibilityChanged</code> property changes and the value <code class="highlighter-rouge">== shown</code>, then the target element opacity changes to 1. And when the value changes to <code class="highlighter-rouge">== hidden</code>, the target element opacity should change to 0.</p>
 
 <blockquote>
-  <p>Note: The <code>[@visibilityChanged]</code> binding is on <code>&lt;div&gt;</code> child content element in the <code>&lt;my-fader&gt;</code> component. It is NOT on the <code>&lt;my-fader&gt;</code> element itself. In other words, the animation target in our example is actually the <code>&lt;div&gt;</code> element; not the component <strong>host</strong> element.</p>
+  <p>Note: The <code class="highlighter-rouge">[@visibilityChanged]</code> binding is on <code class="highlighter-rouge">&lt;div&gt;</code> child content element in the <code class="highlighter-rouge">&lt;my-fader&gt;</code> component. It is NOT on the <code class="highlighter-rouge">&lt;my-fader&gt;</code> element itself. In other words, the animation target in our example is actually the <code class="highlighter-rouge">&lt;div&gt;</code> element; not the component <strong>host</strong> element.</p>
 </blockquote>
 
-<p>Now, you might also wonder where <code>visibilityChanged</code> comes from? Because our component property is just called <code>visibility</code>. Hold your wild horses Mr. StageCoach, we’ll clarify that soon!” Let’s first talk about animation durations.</p>
+<p>Now, you might also wonder where <code class="highlighter-rouge">visibilityChanged</code> comes from? Because our component property is just called <code class="highlighter-rouge">visibility</code>. Hold your wild horses Mr. StageCoach, we’ll clarify that soon!” Let’s first talk about animation durations.</p>
 
 <p>We want to animate these changes over a time duration instead of instantly hiding/showing the content. We need to configure a <em>transition</em> to specify animation durations. With Angular this is also suprisingly easy:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
   <span class="nx">trigger</span><span class="p">(</span><span class="err">’</span><span class="nx">visibilityChanged</span><span class="s1">', [
     state('</span><span class="nx">shown</span><span class="s1">' , style({ opacity: 1 })), 
     state('</span><span class="nx">hidden</span><span class="s1">', style({ opacity: 0 })),
     transition('</span><span class="o">*</span> <span class="o">=&gt;</span> <span class="o">*</span><span class="s1">', animate('</span><span class="p">.</span><span class="mi">5</span><span class="nx">s</span><span class="err">'</span><span class="p">))</span>
   <span class="p">])</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
-<p>With the above <code>transition</code>, we added information to the animation configuration so each trigger value change will have a 500 msec transition.</p>
+<p>With the above <code class="highlighter-rouge">transition</code>, we added information to the animation configuration so each trigger value change will have a 500 msec transition.</p>
 
-<p>So a <strong>fade-in</strong> (opacity 0 -&gt; 1, with a duration of 500 msec) will occur when the value changes from <code>hidden</code> to <code>shown</code>. And likewise the <strong>fade-out</strong> (opacity 1 -&gt; 0, with a duration of 500 msec) will occur when the value changes from <code>shown</code> to <code>hidden</code>. By the way, you could also have used <code>animate('500ms')</code> to indicate the millsecond duration explicitly.</p>
+<p>So a <strong>fade-in</strong> (opacity 0 -&gt; 1, with a duration of 500 msec) will occur when the value changes from <code class="highlighter-rouge">hidden</code> to <code class="highlighter-rouge">shown</code>. And likewise the <strong>fade-out</strong> (opacity 1 -&gt; 0, with a duration of 500 msec) will occur when the value changes from <code class="highlighter-rouge">shown</code> to <code class="highlighter-rouge">hidden</code>. By the way, you could also have used <code class="highlighter-rouge">animate('500ms')</code> to indicate the millsecond duration explicitly.</p>
 
-<p>And what does the <code>transition('* =&gt; *', ...)</code> mean? Think of <code>* =&gt; *</code> as a transition from one state to another state; where <code>*</code> is a wildcard to mean <strong>any</strong> state value. If we wanted the <em>fade-out</em> to be slower than the <em>fade-in</em>, here is how we would configure the animation metadata:</p>
+<p>And what does the <code class="highlighter-rouge">transition('* =&gt; *', ...)</code> mean? Think of <code class="highlighter-rouge">* =&gt; *</code> as a transition from one state to another state; where <code class="highlighter-rouge">*</code> is a wildcard to mean <strong>any</strong> state value. If we wanted the <em>fade-out</em> to be slower than the <em>fade-in</em>, here is how we would configure the animation metadata:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
   <span class="nx">trigger</span><span class="p">(</span><span class="err">’</span><span class="nx">visibilityChanged</span><span class="s1">', [
     state('</span><span class="nx">shown</span><span class="s1">' , style({ opacity: 1 })),
     state('</span><span class="nx">hidden</span><span class="s1">', style({ opacity: 0 })),
     transition('</span><span class="nx">shown</span> <span class="o">=&gt;</span> <span class="nx">hidden</span><span class="s1">', animate('</span><span class="mi">600</span><span class="nx">ms</span><span class="s1">')),
     transition('</span><span class="nx">hidden</span> <span class="o">=&gt;</span> <span class="nx">shown</span><span class="s1">', animate('</span><span class="mi">300</span><span class="nx">ms</span><span class="err">'</span><span class="p">)),</span>
   <span class="p">])</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
 <p>See how easy this is? This notation is so easy to understand.</p>
 
@@ -223,21 +223,21 @@
 While we configured the Animation metadata,  I am sure you are wondering:</p>
 
 <ul>
-  <li>How is the animation property <code>visibilityChanged</code> actually connected to the component?</li>
+  <li>How is the animation property <code class="highlighter-rouge">visibilityChanged</code> actually connected to the component?</li>
   <li>How are the animations linked to the component’s properties?</li>
 </ul>
 
 <p>Since data-binding features are already supported between the <strong>component</strong> and its <strong>template</strong>,  Angular uses a <u>special</u> template animation syntax to support triggering the animation after data-binding changes. So in the component template, we can do this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="err">[@</span><span class="na">visibilityChanged</span><span class="err">]="</span><span class="na">visibility</span><span class="err">"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="err">[@</span><span class="na">visibilityChanged</span><span class="err">]="</span><span class="na">visibility</span><span class="err">"</span><span class="nt">&gt;</span>
   Can you see me? I should fade in or out...
-<span class="nt">&lt;/div&gt;</span></code></pre></div>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
 
-<p>Above the <code>@visibilityChanged</code> is the special template animation property and it uses databinding  <code>[@visibilityChanged]=“visibility”</code> to bind the component’s visibility property to the animation  trigger property <code>visibilityChanged</code>.</p>
+<p>Above the <code class="highlighter-rouge">@visibilityChanged</code> is the special template animation property and it uses databinding  <code class="highlighter-rouge">[@visibilityChanged]=“visibility”</code> to bind the component’s visibility property to the animation  trigger property <code class="highlighter-rouge">visibilityChanged</code>.</p>
 
 <p>Here is the entire component definition updated with Animation features:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnChanges</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnChanges</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">trigger</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">animate</span><span class="p">,</span> <span class="nx">transition</span><span class="p">,</span> <span class="nx">style</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser/animations'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
@@ -263,15 +263,16 @@ While we configured the Animation metadata,  I am sure you are wondering:</p>
   <span class="nx">ngOnChanges</span><span class="p">()</span> <span class="p">{</span>
    <span class="k">this</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">isVisible</span> <span class="p">?</span> <span class="s1">'shown'</span> <span class="p">:</span> <span class="s1">'hidden'</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p><br /></p>
 
 <h3 id="reducing-complexity">Reducing Complexity</h3>
 
-<p>What if - instead of the using the extra <code>visibility</code> property - you just wanted to use the <code>isVisible</code> property directly? This would obviate <code>ngOnChanges()</code> and reduce the code complexity to:</p>
+<p>What if - instead of the using the extra <code class="highlighter-rouge">visibility</code> property - you just wanted to use the <code class="highlighter-rouge">isVisible</code> property directly? This would obviate <code class="highlighter-rouge">ngOnChanges()</code> and reduce the code complexity to:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"> 
+ <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
    <span class="na">animations</span><span class="p">:</span> <span class="p">[</span>
      <span class="nx">trigger</span><span class="p">(</span><span class="s1">'visibilityChanged'</span><span class="p">,</span> <span class="p">[</span>
        <span class="nx">state</span><span class="p">(</span><span class="s1">'shown'</span> <span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">1</span> <span class="p">})),</span>
@@ -287,17 +288,19 @@ While we configured the Animation metadata,  I am sure you are wondering:</p>
  <span class="p">})</span>
  <span class="kr">export</span> <span class="kr">class</span> <span class="nx">FaderComponent</span> <span class="p">{</span>
    <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">isVisible</span> <span class="err">:</span> <span class="kr">boolean</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
- <span class="p">}</span></code></pre></div>
+ <span class="p">}</span>
+ 
+ </code></pre></figure>
 
 <p>I love the tersity of this code. But this will not work without another <strong>important</strong> change to the animation metadata!</p>
 
 <blockquote>
-  <p>Remember that the <code>@visibilityChanged</code> animation trigger property has defined states for the values: <code>shown</code> or <code>hidden</code>.</p>
+  <p>Remember that the <code class="highlighter-rouge">@visibilityChanged</code> animation trigger property has defined states for the values: <code class="highlighter-rouge">shown</code> or <code class="highlighter-rouge">hidden</code>.</p>
 </blockquote>
 
-<p>If you use the <code>myFader::isVisible</code> boolean property, then your animation state values must be changed to <code>true</code> and <code>false</code> since those are the possible values of the <code>isVisible</code> property.</p>
+<p>If you use the <code class="highlighter-rouge">myFader::isVisible</code> boolean property, then your animation state values must be changed to <code class="highlighter-rouge">true</code> and <code class="highlighter-rouge">false</code> since those are the possible values of the <code class="highlighter-rouge">isVisible</code> property.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnChanges</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnChanges</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">trigger</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">animate</span><span class="p">,</span> <span class="nx">transition</span><span class="p">,</span> <span class="nx">style</span> <span class="p">}</span> <span class="nx">form</span> <span class="s1">'@angular/platform-browser/animations'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
@@ -319,14 +322,14 @@ While we configured the Animation metadata,  I am sure you are wondering:</p>
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">FaderComponent</span> <span class="kr">implements</span> <span class="nx">OnChanges</span> <span class="p">{</span>
   <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">isVisible</span> <span class="p">:</span> <span class="kr">boolean</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p><br /></p>
 
 <iframe src="http://embed.plnkr.co/74lprkmzUGjT7UWbiyUr/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
 <blockquote>
-  <p>Extra Bonus: The demo has some extra features. The <em>host</em> <code>my-fader</code> element now has a purple background; when you hide the <code>my-fader</code> content children you will see the host background. This change was added so you can visually see the differences between the <em>host</em> and the <em>target</em> animation elements.</p>
+  <p>Extra Bonus: The demo has some extra features. The <em>host</em> <code class="highlighter-rouge">my-fader</code> element now has a purple background; when you hide the <code class="highlighter-rouge">my-fader</code> content children you will see the host background. This change was added so you can visually see the differences between the <em>host</em> and the <em>target</em> animation elements.</p>
 </blockquote>
 
 <h3 id="our-animation-workflow">Our Animation Workflow</h3>
@@ -334,10 +337,10 @@ While we configured the Animation metadata,  I am sure you are wondering:</p>
 <p>Above we have an improved the component definition; enhanced with animation features. Here is a workflow of the [animation] process:</p>
 
 <ol>
-  <li>the input value for <code>isVisible</code> changes,</li>
-  <li>the template databinding updates the <code>@visibilityChanged</code> property,</li>
+  <li>the input value for <code class="highlighter-rouge">isVisible</code> changes,</li>
+  <li>the template databinding updates the <code class="highlighter-rouge">@visibilityChanged</code> property,</li>
   <li>the animation trigger is invoked,</li>
-  <li>the <code>@visibilityChanged</code> value is used to identify the <strong>state</strong> animations and transitions, and</li>
+  <li>the <code class="highlighter-rouge">@visibilityChanged</code> value is used to identify the <strong>state</strong> animations and transitions, and</li>
   <li>the target element opacity (and other properties) change-animates for xxx msecs</li>
 </ol>
 
@@ -365,9 +368,9 @@ While we configured the Animation metadata,  I am sure you are wondering:</p>
 
 <p>Components should never be concerned with the details regarding animation of child components. Parent components can monitor and alter the public <strong>state</strong> of child components, but should never attempt to modify the internals of those components.</p>
 
-<p>In our examples (above), parent components can simply change the state of the child <code>my-fader</code> instances and then magically the contents of the <code>my-fader</code> instance will fadeIn or fadeOut.</p>
+<p>In our examples (above), parent components can simply change the state of the child <code class="highlighter-rouge">my-fader</code> instances and then magically the contents of the <code class="highlighter-rouge">my-fader</code> instance will fadeIn or fadeOut.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span> <span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
 
@@ -380,13 +383,13 @@ While we configured the Animation metadata,  I am sure you are wondering:</p>
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">MyAppComponent</span> <span class="p">{</span>  
   <span class="nl">showFader</span> <span class="p">:</span> <span class="kr">boolean</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <iframe src="http://embed.plnkr.co/NbWGjs/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
 <h3 id="summary">Summary</h3>
 
-<p>The Angular Animation engine and compiler does all the hard work preparing, managing, and running the animations. Developers use the <code>@Component</code> metadata to declaratively define the component styles, templates, and [now] animations. And it is the component <strong>template</strong> that serves as the <em>bridge</em> to link the component instance state to the animation trigger property.</p>
+<p>The Angular Animation engine and compiler does all the hard work preparing, managing, and running the animations. Developers use the <code class="highlighter-rouge">@Component</code> metadata to declaratively define the component styles, templates, and [now] animations. And it is the component <strong>template</strong> that serves as the <em>bridge</em> to link the component instance state to the animation trigger property.</p>
 
 <p><br /></p>
 

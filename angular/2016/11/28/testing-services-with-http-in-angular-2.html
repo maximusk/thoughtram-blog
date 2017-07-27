@@ -121,9 +121,9 @@
 
 <p>At thoughtram, we’re currently recording screencasts and video tutorials, to provide additional content to our blog readers. In order to make all these videos more explorable, we’re also building a little application that lets users browse and watch them. The video data is hosted on Vimeo, so we’ve created a service that fetches the data from their API.</p>
 
-<p>Here’s what our <code>VideoService</code> roughly looks like:</p>
+<p>Here’s what our <code class="highlighter-rouge">VideoService</code> roughly looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span><span class="p">,</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span><span class="p">,</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">VIMEO_API_URL</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'../config'</span><span class="p">;</span>
 
 <span class="kr">import</span> <span class="s1">'rxjs/add/operator/map'</span><span class="p">;</span>
@@ -137,26 +137,26 @@
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">apiUrl</span><span class="p">}</span><span class="sr">/videos`</span><span class="err">)
 </span>                    <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">res</span> <span class="o">=&gt;</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">data</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><code>getVideos()</code> returns an <code>Observable&lt;Array&lt;Video&gt;&gt;</code>. This is just an excerpt of the actual service we use in production. In reality, we cache the responses so we don’t peform an http request every single time we call this method.</p>
+<p><code class="highlighter-rouge">getVideos()</code> returns an <code class="highlighter-rouge">Observable&lt;Array&lt;Video&gt;&gt;</code>. This is just an excerpt of the actual service we use in production. In reality, we cache the responses so we don’t peform an http request every single time we call this method.</p>
 
 <blockquote>
-  <p><strong>Special Tip</strong>: If the <code>@Inject()</code> decorator is new to you, make sure to checkout this <a href="/angular/2015/09/17/resolve-service-dependencies-in-angular-2.html">article</a></p>
+  <p><strong>Special Tip</strong>: If the <code class="highlighter-rouge">@Inject()</code> decorator is new to you, make sure to checkout this <a href="/angular/2015/09/17/resolve-service-dependencies-in-angular-2.html">article</a></p>
 </blockquote>
 
 <p>To use this service in our application, we first need to create a provider for it on our application module, later we will use it in our tests:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">HttpModule</span><span class="p">]</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">VideoService</span><span class="p">]</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
 <p>Since the API returns an Observable, we need to subscribe to it to actually perform the http request. That’s why the call side of the method looks something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">VideoDashboard</span> <span class="p">{</span>
   
   <span class="kr">private</span> <span class="nx">videos</span> <span class="o">=</span> <span class="p">[];</span>
@@ -167,7 +167,7 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">videoService</span><span class="p">.</span><span class="nx">getVideos</span><span class="p">()</span>
         <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">videos</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">videos</span> <span class="o">=</span> <span class="nx">videos</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Notice how we’re passing a callback function to access the video data that is emitted by the Observable. We need to keep that in mind when testing these methods, because we can’t call them synchronously. To get an introduction to Observables in conjunction with Angular, make sure to read <a href="/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html">this article</a>.</p>
 
@@ -175,23 +175,23 @@
 
 <h2 id="configuring-a-testing-module">Configuring a testing module</h2>
 
-<p>Before we can start writing test specs for our service APIs, we need to configure a testing module. This is needed because in our tests, we want to make sure that we aren’t performing actual http requests and use a <code>MockBackend</code> instead. Our goal is to isolate the test scenario as much as we can without touching any other <strong>real</strong> dependencies. Since NgModules configure injectors, a testing module allows us to do exactly that.</p>
+<p>Before we can start writing test specs for our service APIs, we need to configure a testing module. This is needed because in our tests, we want to make sure that we aren’t performing actual http requests and use a <code class="highlighter-rouge">MockBackend</code> instead. Our goal is to isolate the test scenario as much as we can without touching any other <strong>real</strong> dependencies. Since NgModules configure injectors, a testing module allows us to do exactly that.</p>
 
 <p>When testing services or components that don’t have any dependencies, we can just go ahead an instantiate them manually, using their constructors like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should do something'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should do something'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">service</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VimeoService</span><span class="p">();</span>
 
   <span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">foo</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">'bar'</span><span class="p">);</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <blockquote>
   <p><strong>Special Tip</strong>: When testing components and services that don’t have any dependencies, we don’t necessarily need to create a testing module.</p>
 </blockquote>
 
-<p>To configure a testing module, we use Angular’s <code>TestBed</code>. <code>TestBed</code> is Angular’s primary API to configure and initialize environments for unit testing and provides methods for creating components and services in unit tests. We can create a module that overrides the actual dependencies with testing dependencies, using <code>TestBed.configureTestingModule()</code>.</p>
+<p>To configure a testing module, we use Angular’s <code class="highlighter-rouge">TestBed</code>. <code class="highlighter-rouge">TestBed</code> is Angular’s primary API to configure and initialize environments for unit testing and provides methods for creating components and services in unit tests. We can create a module that overrides the actual dependencies with testing dependencies, using <code class="highlighter-rouge">TestBed.configureTestingModule()</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">TestBed</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core/testing'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">TestBed</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core/testing'</span><span class="p">;</span>
 
 <span class="nx">describe</span><span class="p">(</span><span class="s1">'VideoService'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
 
@@ -202,13 +202,13 @@
     <span class="p">});</span>
 
   <span class="p">});</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>This will create an NgModule for every test spec, as we’re running this code as part of a <code>beforeEach()</code> block. This is a <a href="https://jasmine.github.io/">Jasmine</a> API. If you aren’t familiar with Jasmine, we highly recommend reading their documentation.</p>
+<p>This will create an NgModule for every test spec, as we’re running this code as part of a <code class="highlighter-rouge">beforeEach()</code> block. This is a <a href="https://jasmine.github.io/">Jasmine</a> API. If you aren’t familiar with Jasmine, we highly recommend reading their documentation.</p>
 
-<p>Okay, but what does a configuration for such a testing module look like? Well, it’s an NgModule, so it has pretty much the same API. Let’s start with adding an <code>import</code> for <code>HttpModule</code> and a provider for <code>VideoService</code> like this:</p>
+<p>Okay, but what does a configuration for such a testing module look like? Well, it’s an NgModule, so it has pretty much the same API. Let’s start with adding an <code class="highlighter-rouge">import</code> for <code class="highlighter-rouge">HttpModule</code> and a provider for <code class="highlighter-rouge">VideoService</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">HttpModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">HttpModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">VideoService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./video.service'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">VIMEO_API_URL</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'../config'</span><span class="p">;</span>
 <span class="p">...</span>
@@ -219,13 +219,13 @@
     <span class="nx">VideoService</span>
   <span class="p">]</span>
 <span class="p">});</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
-<p>This configures an injector for our tests that knows how to create our <code>VideoService</code>, as well as the <code>Http</code> service. However, what we actually want is an <code>Http</code> service that doesn’t really perform http requests. How do we do that? It turns out that the <code>Http</code> service uses a <code>ConnectionBackend</code> to perform requests. If we find a way to swap that one out with a different backend, we get what we want.</p>
+<p>This configures an injector for our tests that knows how to create our <code class="highlighter-rouge">VideoService</code>, as well as the <code class="highlighter-rouge">Http</code> service. However, what we actually want is an <code class="highlighter-rouge">Http</code> service that doesn’t really perform http requests. How do we do that? It turns out that the <code class="highlighter-rouge">Http</code> service uses a <code class="highlighter-rouge">ConnectionBackend</code> to perform requests. If we find a way to swap that one out with a different backend, we get what we want.</p>
 
-<p>To give a better picture, here’s what the constructor of Angular’s <code>Http</code> service looks like:</p>
+<p>To give a better picture, here’s what the constructor of Angular’s <code class="highlighter-rouge">Http</code> service looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Http</span> <span class="p">{</span>
 
   <span class="nx">constructor</span><span class="p">(</span>
@@ -234,35 +234,35 @@
   <span class="p">)</span> <span class="p">{}</span>
 
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>By adding an <code>HttpModule</code> to our testing module, providers for <code>Http</code>, <code>ConnectionBackend</code> and <code>RequestOptions</code> are already configured. However, using an NgModule’s <code>providers</code> property, we can <strong>override</strong> providers that have been introduced by other imported NgModules! This is where Angular’s dependency injection really shines!</p>
+<p>By adding an <code class="highlighter-rouge">HttpModule</code> to our testing module, providers for <code class="highlighter-rouge">Http</code>, <code class="highlighter-rouge">ConnectionBackend</code> and <code class="highlighter-rouge">RequestOptions</code> are already configured. However, using an NgModule’s <code class="highlighter-rouge">providers</code> property, we can <strong>override</strong> providers that have been introduced by other imported NgModules! This is where Angular’s dependency injection really shines!</p>
 
 <h3 id="overriding-the-http-backend">Overriding the Http Backend</h3>
 
-<p>In practice, this means we need to create a new provider for <code>Http</code>, which instantiates the class with a different <code>ConnectionBackend</code>. Angular’s http module comes with a testing class <code>MockBackend</code>. <strong>That</strong> one not only ensures that no real http requests are performed, it also provides APIs to subscribe to opened connections and send mock responses.</p>
+<p>In practice, this means we need to create a new provider for <code class="highlighter-rouge">Http</code>, which instantiates the class with a different <code class="highlighter-rouge">ConnectionBackend</code>. Angular’s http module comes with a testing class <code class="highlighter-rouge">MockBackend</code>. <strong>That</strong> one not only ensures that no real http requests are performed, it also provides APIs to subscribe to opened connections and send mock responses.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">HttpModule</span><span class="p">,</span> <span class="nx">Http</span><span class="p">,</span> <span class="nx">BaseRequestOptions</span><span class="p">,</span> <span class="nx">XHRBackend</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">HttpModule</span><span class="p">,</span> <span class="nx">Http</span><span class="p">,</span> <span class="nx">BaseRequestOptions</span><span class="p">,</span> <span class="nx">XHRBackend</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">MockBackend</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http/testing'</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="nx">TestBed</span><span class="p">.</span><span class="nx">configureTestingModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...</span>
-    <span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">XHRBackend</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">MockBackend</span> <span class="p">}</span>
+    <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">XHRBackend</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">MockBackend</span> <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">});</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
-<p>Wow, that was easy! We simply tell our injector to inject an instance of <code>MockBackend</code> whenever someone asks for an <code>XHRBackend</code>, which is what Angular’s Http module does behind the scenes.</p>
+<p>Wow, that was easy! We simply tell our injector to inject an instance of <code class="highlighter-rouge">MockBackend</code> whenever someone asks for an <code class="highlighter-rouge">XHRBackend</code>, which is what Angular’s Http module does behind the scenes.</p>
 
-<p>Awesome! We’ve created a testing module that uses an <code>Http</code> service with a <code>MockBackend</code>. Now let’s take a look at how to actually test our service.</p>
+<p>Awesome! We’ve created a testing module that uses an <code class="highlighter-rouge">Http</code> service with a <code class="highlighter-rouge">MockBackend</code>. Now let’s take a look at how to actually test our service.</p>
 
 <h2 id="testing-the-service">Testing the service</h2>
 
-<p>When writing unit tests with Jasmine, every test spec is written as an <code>it()</code> block, where an assertion is made and then checked if that assertion is true or not. We won’t go into too much detail here, since there’s a lot of documentation for Jasmine out there. We want to test if our <code>VideoService</code> returns an <code>Observable&lt;Array&lt;Video&gt;&gt;</code>, so let’s start with the following <code>it()</code> statement:</p>
+<p>When writing unit tests with Jasmine, every test spec is written as an <code class="highlighter-rouge">it()</code> block, where an assertion is made and then checked if that assertion is true or not. We won’t go into too much detail here, since there’s a lot of documentation for Jasmine out there. We want to test if our <code class="highlighter-rouge">VideoService</code> returns an <code class="highlighter-rouge">Observable&lt;Array&lt;Video&gt;&gt;</code>, so let’s start with the following <code class="highlighter-rouge">it()</code> statement:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">describe</span><span class="p">(</span><span class="s1">'VideoService'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">describe</span><span class="p">(</span><span class="s1">'VideoService'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">describe</span><span class="p">(</span><span class="s1">'getVideos()'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
 
@@ -270,24 +270,24 @@
       <span class="c1">// test goes here</span>
     <span class="p">});</span>
   <span class="p">});</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>We’ve also added another nested <code>describe()</code> block so we can group all tests that are related to that particular method we test. Okay, next we need to get an instance of our <code>VideoService</code>. Since we’ve created a testing module that comes with all providers for our services, we can use dependency injection to inject instances accordingly.</p>
+<p>We’ve also added another nested <code class="highlighter-rouge">describe()</code> block so we can group all tests that are related to that particular method we test. Okay, next we need to get an instance of our <code class="highlighter-rouge">VideoService</code>. Since we’ve created a testing module that comes with all providers for our services, we can use dependency injection to inject instances accordingly.</p>
 
 <h3 id="injecting-services">Injecting Services</h3>
 
-<p>Angular’s testing module comes with a helper function <code>inject()</code>, which injects service dependencies. This turns out to be super handy as we don’t have to take care of getting access to the injector ourselves. <code>inject()</code> takes a list of provider tokens and a function with the test code, and it <strong>returns</strong> a function in which the test code is executed. That’s why we can pass it straight to our spec and remove the anonymous function we’ve introduced in the first place:</p>
+<p>Angular’s testing module comes with a helper function <code class="highlighter-rouge">inject()</code>, which injects service dependencies. This turns out to be super handy as we don’t have to take care of getting access to the injector ourselves. <code class="highlighter-rouge">inject()</code> takes a list of provider tokens and a function with the test code, and it <strong>returns</strong> a function in which the test code is executed. That’s why we can pass it straight to our spec and remove the anonymous function we’ve introduced in the first place:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">TestBed</span><span class="p">,</span> <span class="nx">inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core/testing'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">TestBed</span><span class="p">,</span> <span class="nx">inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core/testing'</span><span class="p">;</span>
 <span class="p">...</span>
 <span class="nx">it</span><span class="p">(</span><span class="s1">'should return an Observable&lt;Array&lt;Video&gt;&gt;'</span><span class="p">,</span>
   <span class="nx">inject</span><span class="p">([</span><span class="cm">/* provider tokens */</span><span class="p">],</span> <span class="p">(</span><span class="cm">/* dependencies */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="c1">// test goes here</span>
-<span class="p">}));</span></code></pre></div>
+<span class="p">}));</span></code></pre></figure>
 
-<p>Cool, now we have all the tools we need to inject our services and write a test. Let’s go ahead an do exactly that. Once we have our service injected, we can call <code>getVideos()</code> and subscribe to the Observable it returns, to then test if the emitted value is the one we expect.</p>
+<p>Cool, now we have all the tools we need to inject our services and write a test. Let’s go ahead an do exactly that. Once we have our service injected, we can call <code class="highlighter-rouge">getVideos()</code> and subscribe to the Observable it returns, to then test if the emitted value is the one we expect.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should return an Observable&lt;Array&lt;Video&gt;&gt;'</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should return an Observable&lt;Array&lt;Video&gt;&gt;'</span><span class="p">,</span>
   <span class="nx">inject</span><span class="p">([</span><span class="nx">VideoService</span><span class="p">],</span> <span class="p">(</span><span class="nx">videoService</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
 
     <span class="nx">videoService</span><span class="p">.</span><span class="nx">getVideos</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">videos</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -297,17 +297,17 @@
       <span class="nx">expect</span><span class="p">(</span><span class="nx">videos</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">name</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">'Video 2'</span><span class="p">);</span>
       <span class="nx">expect</span><span class="p">(</span><span class="nx">videos</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="nx">name</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">'Video 3'</span><span class="p">);</span>
     <span class="p">});</span>
-<span class="p">}));</span></code></pre></div>
+<span class="p">}));</span></code></pre></figure>
 
-<p><strong>This test is not finished yet.</strong> Right now we’re having a test that expects some certain data that is going to be emitted by <code>getVideos()</code>, however, remember we’ve swapped out the <code>Http</code> backend so there’s no actual http request performed? Right, if there’s no request performed, this Observable won’t emit anything. We need a way to fake a response that is emitted when we subscribe to our Observable.</p>
+<p><strong>This test is not finished yet.</strong> Right now we’re having a test that expects some certain data that is going to be emitted by <code class="highlighter-rouge">getVideos()</code>, however, remember we’ve swapped out the <code class="highlighter-rouge">Http</code> backend so there’s no actual http request performed? Right, if there’s no request performed, this Observable won’t emit anything. We need a way to fake a response that is emitted when we subscribe to our Observable.</p>
 
 <h3 id="mocking-http-responses">Mocking http responses</h3>
 
-<p>As mentioned earlier, <code>MockBackend</code> provides APIs to not only subscribe to http connections, it also enables us to send mock responses. What we want is, when the underlying <code>Http</code> service creates a connection (performs a request), send a fake http response with the data we’re asserting in our <code>getVideos()</code> subscription.</p>
+<p>As mentioned earlier, <code class="highlighter-rouge">MockBackend</code> provides APIs to not only subscribe to http connections, it also enables us to send mock responses. What we want is, when the underlying <code class="highlighter-rouge">Http</code> service creates a connection (performs a request), send a fake http response with the data we’re asserting in our <code class="highlighter-rouge">getVideos()</code> subscription.</p>
 
-<p>We can subscribe to all opened http connections via <code>MockBackend.connections</code>, and get access to a <code>MockConnection</code> like this:</p>
+<p>We can subscribe to all opened http connections via <code class="highlighter-rouge">MockBackend.connections</code>, and get access to a <code class="highlighter-rouge">MockConnection</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should return an Observable&lt;Array&lt;Video&gt;&gt;'</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should return an Observable&lt;Array&lt;Video&gt;&gt;'</span><span class="p">,</span>
   <span class="nx">inject</span><span class="p">([</span><span class="nx">VideoService</span><span class="p">,</span> <span class="nx">XHRBackend</span><span class="p">],</span> <span class="p">(</span><span class="nx">videoService</span><span class="p">,</span> <span class="nx">mockBackend</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="nx">mockBackend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="c1">// This is called every time someone subscribes to</span>
@@ -317,11 +317,11 @@
     <span class="p">});</span>
 
     <span class="p">...</span>
-<span class="p">}));</span></code></pre></div>
+<span class="p">}));</span></code></pre></figure>
 
-<p>The next thing we need to do, is to make the connection send a response. We use <code>MockConnection.mockRespond()</code> for that, which takes an instance of Angular’s <code>Response</code> class. In order to define what the response looks like, we need to create <code>ResponseOptions</code> and define the response body we want to send (which is a string):</p>
+<p>The next thing we need to do, is to make the connection send a response. We use <code class="highlighter-rouge">MockConnection.mockRespond()</code> for that, which takes an instance of Angular’s <code class="highlighter-rouge">Response</code> class. In order to define what the response looks like, we need to create <code class="highlighter-rouge">ResponseOptions</code> and define the response body we want to send (which is a string):</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="kr">const</span> <span class="nx">mockResponse</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">data</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span> <span class="na">id</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">name</span><span class="p">:</span> <span class="s1">'Video 0'</span> <span class="p">},</span>
@@ -336,7 +336,7 @@
     <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">mockResponse</span><span class="p">)</span>
   <span class="p">})));</span>
 <span class="p">});</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
 <p>Cool! With this code we now get a fake response inside that particular test spec. Even though it looks like we’re done, <strong>there’s one more thing we need to do</strong>.</p>
 
@@ -344,32 +344,32 @@
 
 <p><s>Because the code we want to test is asynchronous, we need to inform Jasmine when the asynchronous operation is done, so it can run our assertions.</s></p>
 
-<p><a href="http://stackoverflow.com/questions/41273244/angular-testing-http-with-mockbackend-is-async-really-required">Johannes Hoppe pointed out</a> that <code>MockConnection.mockRespond()</code> actually emits <strong>synchronously</strong>, not asynchronously, which means that the rest of this section is not needed for our particular test (Thank you Johannes!). However, it’s still a useful gem if we <strong>are</strong> writing tests that need asynchronous operations, read on!</p>
+<p><a href="http://stackoverflow.com/questions/41273244/angular-testing-http-with-mockbackend-is-async-really-required">Johannes Hoppe pointed out</a> that <code class="highlighter-rouge">MockConnection.mockRespond()</code> actually emits <strong>synchronously</strong>, not asynchronously, which means that the rest of this section is not needed for our particular test (Thank you Johannes!). However, it’s still a useful gem if we <strong>are</strong> writing tests that need asynchronous operations, read on!</p>
 
 <p>When testing asynchronous code, assertions might be executed later in another tick. That’s why we can explicitly tell Jasmine that we’re writing an asynchronous test. We just need to also tell Jasmine, when the actual code is “done”.</p>
 
-<p>Jasmine usually provides access to a function <code>done()</code> that we can ask for inside our test spec and then call it when we think our code is done. This looks something like this:</p>
+<p>Jasmine usually provides access to a function <code class="highlighter-rouge">done()</code> that we can ask for inside our test spec and then call it when we think our code is done. This looks something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should do something async'</span><span class="p">,</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should do something async'</span><span class="p">,</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="nx">expect</span><span class="p">(</span><span class="kc">true</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
     <span class="nx">done</span><span class="p">();</span>
   <span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>Angular makes this a little bit more convenient. It comes with another helper function <code>async()</code> which takes a test spec and then runs <code>done()</code> behind the scenes for us. This is pretty cool, because we can write our test code as if it was synchronous!</p>
+<p>Angular makes this a little bit more convenient. It comes with another helper function <code class="highlighter-rouge">async()</code> which takes a test spec and then runs <code class="highlighter-rouge">done()</code> behind the scenes for us. This is pretty cool, because we can write our test code as if it was synchronous!</p>
 
-<p>How does that work? Well… Angular takes advantage of a feature called Zones. It creates a “testZone”, which automatically figures out when it needs to call <code>done()</code>. If you havent heard about Zones before, we wrote about them <a href="/angular/2016/01/22/understanding-zones.html">here</a> and <a href="/angular/2016/02/01/zones-in-angular-2.html">here</a>.</p>
+<p>How does that work? Well… Angular takes advantage of a feature called Zones. It creates a “testZone”, which automatically figures out when it needs to call <code class="highlighter-rouge">done()</code>. If you havent heard about Zones before, we wrote about them <a href="/angular/2016/01/22/understanding-zones.html">here</a> and <a href="/angular/2016/02/01/zones-in-angular-2.html">here</a>.</p>
 
 <blockquote>
-  <p><strong>Special Tip</strong>: Angular’s <code>async()</code> function executes test specs in a test zone!</p>
+  <p><strong>Special Tip</strong>: Angular’s <code class="highlighter-rouge">async()</code> function executes test specs in a test zone!</p>
 </blockquote>
 
 <h2 id="the-complete-code">The complete code</h2>
 
-<p>Putting it all together, here’s what the test spec for the <code>getVideos()</code> method looks like:</p>
+<p>Putting it all together, here’s what the test spec for the <code class="highlighter-rouge">getVideos()</code> method looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">TestBed</span><span class="p">,</span> <span class="nx">async</span><span class="p">,</span> <span class="nx">inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core/testing'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">TestBed</span><span class="p">,</span> <span class="nx">async</span><span class="p">,</span> <span class="nx">inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core/testing'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span>
   <span class="nx">HttpModule</span><span class="p">,</span>
   <span class="nx">Http</span><span class="p">,</span>
@@ -425,9 +425,9 @@
 
     <span class="p">}));</span>
   <span class="p">});</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>This pattern works for pretty much every test that involves http operations. Hopefully this gave you a better understanding of what <code>TestBed</code>, <code>MockBackend</code> and <code>async</code> are all about.</p>
+<p>This pattern works for pretty much every test that involves http operations. Hopefully this gave you a better understanding of what <code class="highlighter-rouge">TestBed</code>, <code class="highlighter-rouge">MockBackend</code> and <code class="highlighter-rouge">async</code> are all about.</p>
 
 
           

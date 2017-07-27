@@ -165,20 +165,20 @@
 
 <p><strong>1. Create a directory on your machine where you want to put your code.</strong></p>
 
-<div class="highlight"><pre><code class="language-shell" data-lang="shell">mkdir ~/ml-fun</code></pre></div>
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">mkdir ~/ml-fun</code></pre></figure>
 
 <p><strong>2. Create a docker container from our existing image</strong></p>
 
-<p>When we create a container from an image we can map a local directory (e.g <code>/Users/cburgdorf/ml-fun</code> to a directory inside our container (e.g <code>/ml-fun</code>). That way we can simply use our favourite editor from our host system to work on the code.</p>
+<p>When we create a container from an image we can map a local directory (e.g <code class="highlighter-rouge">/Users/cburgdorf/ml-fun</code> to a directory inside our container (e.g <code class="highlighter-rouge">/ml-fun</code>). That way we can simply use our favourite editor from our host system to work on the code.</p>
 
-<p>We use the <code>--name</code> parameter to assign a name to our container that we can easily remember (e.g. <code>keras-playground</code>).</p>
+<p>We use the <code class="highlighter-rouge">--name</code> parameter to assign a name to our container that we can easily remember (e.g. <code class="highlighter-rouge">keras-playground</code>).</p>
 
-<div class="highlight"><pre><code class="language-shell" data-lang="shell">docker create -it -v ~/ml-fun:/projects/ml-fun
-              --name keras-playground thoughtram/keras</code></pre></div>
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">docker create -it -v ~/ml-fun:/projects/ml-fun
+              --name keras-playground thoughtram/keras</code></pre></figure>
 
 <p><strong>3. The last thing left to do is to <em>start</em> the container</strong></p>
 
-<div class="highlight"><pre><code class="language-shell" data-lang="shell">docker start keras-playground</code></pre></div>
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">docker start keras-playground</code></pre></figure>
 
 <h2 id="lets-build-our-first-neural-network">Let’s build our first neural network.</h2>
 
@@ -186,18 +186,18 @@
 
 <p>Many people say that hand-writing recognition would be the <em>hello world</em> of machine learning but for now, let’s go even simpler than that. Let’s teach a neural network to understand the XOR gate. XOR represents the inequality function, i.e., the output is true if the inputs are not alike otherwise the output is false.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></code></pre></div>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></code></pre></figure>
 
 <p>Our job is to build a neural network that will predict the correct output for any of the four different inputs. Obviously, that isn’t a real world use case to throw a neural network at. This task is actually much simpler to solve with traditional programming techniques. Simply put all four states into a HashMap and map them to the desired result.</p>
 
 <p>That said, it’s pretty much the simplest thing we can put together in just a couple of lines to demonstrate how a neural network works.</p>
 
-<p>Let’s go and create a new file <code>keras_xor.py</code> in the directory that we mapped from our host machine into the container. We’ll put in the following code.</p>
+<p>Let’s go and create a new file <code class="highlighter-rouge">keras_xor.py</code> in the directory that we mapped from our host machine into the container. We’ll put in the following code.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
 <span class="kn">from</span> <span class="nn">keras.layers.core</span> <span class="kn">import</span> <span class="n">Activation</span><span class="p">,</span> <span class="n">Dense</span>
 
@@ -217,25 +217,25 @@
 
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></div>
+<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></figure>
 
 <p>We don’t have to understand the code entirely just yet. The most important part is that we set up <em>training data</em> and <em>target data</em> according to how the XOR gate is supposed to work.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># the four samples, each with two inputs</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># the four samples, each with two inputs</span>
 <span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span>
 
 <span class="c"># the four expected results, each with one output</span>
-<span class="n">target_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></div>
+<span class="n">target_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></figure>
 
-<p>To run our code we have to use <code>docker exec</code>, pass the name of the container and the command which we want to run <em>inside</em> the container.</p>
+<p>To run our code we have to use <code class="highlighter-rouge">docker exec</code>, pass the name of the container and the command which we want to run <em>inside</em> the container.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">keras</span><span class="o">-</span><span class="n">playground</span> <span class="n">python</span> <span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="n">ml</span><span class="o">-</span><span class="n">fun</span><span class="o">/</span><span class="n">keras_xor</span><span class="o">.</span><span class="n">py</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">keras</span><span class="o">-</span><span class="n">playground</span> <span class="n">python</span> <span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="n">ml</span><span class="o">-</span><span class="n">fun</span><span class="o">/</span><span class="n">keras_xor</span><span class="o">.</span><span class="n">py</span></code></pre></figure>
 
-<p>Alternatively we could execute a <code>bash</code> session in the container and then invoke the script from there. Doesn’t matter much.</p>
+<p>Alternatively we could execute a <code class="highlighter-rouge">bash</code> session in the container and then invoke the script from there. Doesn’t matter much.</p>
 
 <p>Our output for this command should look somewhat like this.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">...</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">...</span>
 <span class="n">Epoch</span> <span class="mi">14</span><span class="o">/</span><span class="mi">500</span>
 <span class="mi">0</span><span class="n">s</span> <span class="o">-</span> <span class="n">loss</span><span class="p">:</span> <span class="mf">0.2376</span> <span class="o">-</span> <span class="n">binary_accuracy</span><span class="p">:</span> <span class="mf">0.5000</span>
 <span class="n">Epoch</span> <span class="mi">15</span><span class="o">/</span><span class="mi">500</span>
@@ -249,23 +249,23 @@
 <span class="p">[[</span> <span class="mf">0.</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">1.</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">1.</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.</span><span class="p">]]</span></code></pre></div>
+ <span class="p">[</span> <span class="mf">0.</span><span class="p">]]</span></code></pre></figure>
 
 <p>The last four lines are the prediction for our input which was</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></figure>
 
-<p>If you paid attention you’ll notice that <code>0, 1, 1, 0</code> is actually the correct result for our input according to how the XOR gate is defined.</p>
+<p>If you paid attention you’ll notice that <code class="highlighter-rouge">0, 1, 1, 0</code> is actually the correct result for our input according to how the XOR gate is defined.</p>
 
 <p>But what do all these lines above the prediction actually mean? Training a neural network happens in iterations so called <em>epochs</em>. After each epoch the neural network calculates how bad it performs, the so called <em>loss</em>. By adjusting the <em>weights</em> of the neurons the neural network tries to reduce the loss to effectively get better after each epoch.</p>
 
-<p>Because we’ve set <code>verbose=2</code> when we called <code>model.fit(...)</code> we log some info about how our neural network is doing after each epoch. Notice that there’s also a value called <code>binary_accuracy</code> in these logs. The accuracy tells us how good the predictions of our neural network are after each epoch. In that sense it’s like the opposite of the loss with the main difference being that the accuracy is a percentage based number where 0.75 means 75 % and 1.00 means 100 %. However, while the loss is actually used as a feedback mechanism to the network itself to learn, the accuracy is really just a metric for us to observe.</p>
+<p>Because we’ve set <code class="highlighter-rouge">verbose=2</code> when we called <code class="highlighter-rouge">model.fit(...)</code> we log some info about how our neural network is doing after each epoch. Notice that there’s also a value called <code class="highlighter-rouge">binary_accuracy</code> in these logs. The accuracy tells us how good the predictions of our neural network are after each epoch. In that sense it’s like the opposite of the loss with the main difference being that the accuracy is a percentage based number where 0.75 means 75 % and 1.00 means 100 %. However, while the loss is actually used as a feedback mechanism to the network itself to learn, the accuracy is really just a metric for us to observe.</p>
 
 <p>From the accuracy that is logged after each epoch we can see that the predictions weren’t correct right from the beginning. That’s because our neural network starts off pretty dumb and keeps learning with each epoch.</p>
 
-<p>If you want to see what the prediction is like after the first epoch just change the value of <code>ng_epoch</code> to <code>1</code>.</p>
+<p>If you want to see what the prediction is like after the first epoch just change the value of <code class="highlighter-rouge">ng_epoch</code> to <code class="highlighter-rouge">1</code>.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></code></pre></figure>
 
 <p>Run again and you’ll see the predictions are really bad in the beginning.</p>
 

@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Template-driven Forms in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Mar 21, 2016, last updated on Dec 18, 2016<br>11 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Mar 21, 2016, last updated on Dec 18, 2016<br>12 minute read</span>
 
           </div>
         </hgroup>
@@ -94,7 +94,7 @@
           <p style="background-color: lightgoldenrodyellow; border: solid 2px #f9dead; padding: 1em; text-align: center; border-radius: 0.3em;">Contents are based on Angular version <strong>>= 2.x</strong> unless explicitly stated differently.</p>
           
 
-          <p>Angular comes with three different ways of building forms in our applications. There’s the template-driven approach which allows us to build forms with very little to none application code required, then there’s the model-driven <strong>or reactive</strong> approach using low level APIs, which makes our forms testable without a DOM being required, and last but not least, we can build our forms model-driven but with a higher level API called the <code>FormBuilder</code>.</p>
+          <p>Angular comes with three different ways of building forms in our applications. There’s the template-driven approach which allows us to build forms with very little to none application code required, then there’s the model-driven <strong>or reactive</strong> approach using low level APIs, which makes our forms testable without a DOM being required, and last but not least, we can build our forms model-driven but with a higher level API called the <code class="highlighter-rouge">FormBuilder</code>.</p>
 
 <p>Hearing all these different solutions, it’s kind of natural that there are also probably many different tools to reach the goal. This can be sometimes confusing and with this article we want to clarify a subset of form directives by focussing on template-driven forms in Angular.</p>
 
@@ -114,12 +114,12 @@
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
 <ul id="markdown-toc">
   <li><a href="#activating-new-form-apis" id="markdown-toc-activating-new-form-apis">Activating new Form APIs</a></li>
-  <li><a href="#ngform-directive" id="markdown-toc-ngform-directive"><code>ngForm</code> Directive</a>    <ul>
+  <li><a href="#ngform-directive" id="markdown-toc-ngform-directive"><code class="highlighter-rouge">ngForm</code> Directive</a>    <ul>
       <li><a href="#submitting-a-form-and-accessing-its-value" id="markdown-toc-submitting-a-form-and-accessing-its-value">Submitting a form and Accessing its value</a></li>
     </ul>
   </li>
-  <li><a href="#ngmodel-directive" id="markdown-toc-ngmodel-directive"><code>ngModel</code> Directive</a></li>
-  <li><a href="#ngmodelgroup-directive" id="markdown-toc-ngmodelgroup-directive"><code>ngModelGroup</code> Directive</a></li>
+  <li><a href="#ngmodel-directive" id="markdown-toc-ngmodel-directive"><code class="highlighter-rouge">ngModel</code> Directive</a></li>
+  <li><a href="#ngmodelgroup-directive" id="markdown-toc-ngmodelgroup-directive"><code class="highlighter-rouge">ngModelGroup</code> Directive</a></li>
   <li><a href="#what-about-ngmodel-with-expressions" id="markdown-toc-what-about-ngmodel-with-expressions">What about ngModel with expressions?</a></li>
   <li><a href="#more-to-cover" id="markdown-toc-more-to-cover">More to cover</a></li>
 </ul>
@@ -130,11 +130,11 @@
 
 <p>The form APIs have changed in RC2 and in order to not break all existing apps that have been built with RC1 and use forms, these <strong>new APIs are added on top</strong> of the existing ones. That means, we need to tell Angular explicitly which APIs we want to use (of course, this will go away in the final release).</p>
 
-<p>In order to activate the new APIs we need to import Angular’s <code>FormsModule</code> into our application module.</p>
+<p>In order to activate the new APIs we need to import Angular’s <code class="highlighter-rouge">FormsModule</code> into our application module.</p>
 
 <p>Here’s what that could look like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">FormsModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
@@ -143,20 +143,20 @@
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="kr">export</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
 <p>We then bootstrap our application module like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">platformBrowserDynamic</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser-dynamic'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">platformBrowserDynamic</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser-dynamic'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">AppModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./app.module'</span><span class="p">;</span>
 
-<span class="nx">platformBrowserDynamic</span><span class="p">().</span><span class="nx">bootstrapModule</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">);</span></code></pre></div>
+<span class="nx">platformBrowserDynamic</span><span class="p">().</span><span class="nx">bootstrapModule</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">);</span></code></pre></figure>
 
-<h2 id="ngform-directive"><code>ngForm</code> Directive</h2>
+<h2 id="ngform-directive"><code class="highlighter-rouge">ngForm</code> Directive</h2>
 
 <p>Let’s start off with a simple login form that asks for some user data:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>
 
@@ -173,58 +173,58 @@
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">"submit"</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
 <p>We’ve probably all built one of those forms several times. A simple HTML form with input controls for a name and an address of a user. Nothing special going on here.</p>
 
-<p>What we can’t see here is that Angular comes with a directive <code>ngForm</code> that matches the <code>&lt;form&gt;</code> selector, so in fact, our form element already has an instance of <code>ngForm</code> applied. <code>ngForm</code> is there for a reason. It provides us information about the current state of the form including:</p>
+<p>What we can’t see here is that Angular comes with a directive <code class="highlighter-rouge">ngForm</code> that matches the <code class="highlighter-rouge">&lt;form&gt;</code> selector, so in fact, our form element already has an instance of <code class="highlighter-rouge">ngForm</code> applied. <code class="highlighter-rouge">ngForm</code> is there for a reason. It provides us information about the current state of the form including:</p>
 
 <ul>
   <li>A JSON representation of the form value</li>
   <li>Validity state of the entire form</li>
 </ul>
 
-<p><strong>Accessing the <code>ngForm</code> instance</strong></p>
+<p><strong>Accessing the <code class="highlighter-rouge">ngForm</code> instance</strong></p>
 
-<p>Angular comes with a very convenient way of exposing directive instances in a component’s template using the <code>exportAs</code> property of the directive metadata. For example, if we’d build a directive <code>draggable</code>, we could expose an instance to the template via the name <code>draggable</code> like so:</p>
+<p>Angular comes with a very convenient way of exposing directive instances in a component’s template using the <code class="highlighter-rouge">exportAs</code> property of the directive metadata. For example, if we’d build a directive <code class="highlighter-rouge">draggable</code>, we could expose an instance to the template via the name <code class="highlighter-rouge">draggable</code> like so:</p>
 
-<div class="highlight"><pre><code class="language-ts" data-lang="ts">@Directive({
-  selector: '[draggable]',
-  exportAs: 'draggable'
-})
-class Draggable {
-  ...
-}</code></pre></div>
+<figure class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="err">@</span><span class="nx">Directive</span><span class="p">({</span>
+  <span class="na">selector</span><span class="p">:</span> <span class="s1">'[draggable]'</span><span class="p">,</span>
+  <span class="na">exportAs</span><span class="p">:</span> <span class="s1">'draggable'</span>
+<span class="p">})</span>
+<span class="kr">class</span> <span class="nx">Draggable</span> <span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>And then, in the template where it’s used, we can simply ask for it using Angular’s local variable mechanism:</p>
 
-<div class="highlight"><pre><code class="language-ts" data-lang="ts">&lt;div draggable #myDraggable="draggable"&gt;I'm draggable!&lt;/div&gt;</code></pre></div>
+<figure class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="o">&lt;</span><span class="nx">div</span> <span class="nx">draggable</span> <span class="err">#</span><span class="nx">myDraggable</span><span class="o">=</span><span class="s2">"draggable"</span><span class="o">&gt;</span><span class="nx">I</span><span class="err">'</span><span class="nx">m</span> <span class="nx">draggable</span><span class="o">!&lt;</span><span class="sr">/div&gt;</span></code></pre></figure>
 
-<p>From this point on <code>myDraggable</code> is a reference to an instance of <code>Draggable</code> and we can use it throughout our entire template as part of other expressions.</p>
+<p>From this point on <code class="highlighter-rouge">myDraggable</code> is a reference to an instance of <code class="highlighter-rouge">Draggable</code> and we can use it throughout our entire template as part of other expressions.</p>
 
-<p>You might wonder why that’s interesting. Well, it turns out that <code>ngForm</code> directive is exposed as <code>ngForm</code>, which means we can get an instance of our form without writing any application code like this:</p>
+<p>You might wonder why that’s interesting. Well, it turns out that <code class="highlighter-rouge">ngForm</code> directive is exposed as <code class="highlighter-rouge">ngForm</code>, which means we can get an instance of our form without writing any application code like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
 <h3 id="submitting-a-form-and-accessing-its-value">Submitting a form and Accessing its value</h3>
 
-<p>We can now use <code>form</code> to access the form’s value and it’s validity state. Let’s log the value of the form when it’s submitted. All we have to do is to add a handler to the form’s <code>submit</code> event and pass it the form’s value. In fact, there’s a property on the <code>ngForm</code> instance called <code>value</code>, so this is what it’d look like:</p>
+<p>We can now use <code class="highlighter-rouge">form</code> to access the form’s value and it’s validity state. Let’s log the value of the form when it’s submitted. All we have to do is to add a handler to the form’s <code class="highlighter-rouge">submit</code> event and pass it the form’s value. In fact, there’s a property on the <code class="highlighter-rouge">ngForm</code> instance called <code class="highlighter-rouge">value</code>, so this is what it’d look like:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span> <span class="err">(</span><span class="na">submit</span><span class="err">)="</span><span class="na">logForm</span><span class="err">(</span><span class="na">form</span><span class="err">.</span><span class="na">value</span><span class="err">)"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span> <span class="err">(</span><span class="na">submit</span><span class="err">)="</span><span class="na">logForm</span><span class="err">(</span><span class="na">form</span><span class="err">.</span><span class="na">value</span><span class="err">)"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
-<p>Even though this would work, it turns out that there’s another output event <code>ngForm</code> fires when it’s submitted. It’s called <code>ngSubmit</code>, and it seems to be doing exactly the same as <code>submit</code> at a first glance. However, <code>ngSubmit</code> ensures that the form doesn’t submit when the handler code throws (which is the default behaviour of <code>submit</code>) and causes an actual http post request. Let’s use <code>ngSubmit</code> instead as this is the best practice:</p>
+<p>Even though this would work, it turns out that there’s another output event <code class="highlighter-rouge">ngForm</code> fires when it’s submitted. It’s called <code class="highlighter-rouge">ngSubmit</code>, and it seems to be doing exactly the same as <code class="highlighter-rouge">submit</code> at a first glance. However, <code class="highlighter-rouge">ngSubmit</code> ensures that the form doesn’t submit when the handler code throws (which is the default behaviour of <code class="highlighter-rouge">submit</code>) and causes an actual http post request. Let’s use <code class="highlighter-rouge">ngSubmit</code> instead as this is the best practice:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span> <span class="err">(</span><span class="na">ngSubmit</span><span class="err">)="</span><span class="na">logForm</span><span class="err">(</span><span class="na">form</span><span class="err">.</span><span class="na">value</span><span class="err">)"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span> <span class="err">(</span><span class="na">ngSubmit</span><span class="err">)="</span><span class="na">logForm</span><span class="err">(</span><span class="na">form</span><span class="err">.</span><span class="na">value</span><span class="err">)"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
 <p>In addition, we might have a component that looks something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="p">...</span>
 <span class="p">})</span>
@@ -233,17 +233,17 @@ class Draggable {
   <span class="nx">logForm</span><span class="p">(</span><span class="nx">value</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Running this code makes us realize, that the form’s value is an empty object. This seems natural, because there’s nothing in our component’s template yet, that tells the form that the input controls are part of this form. We need a way to register them. This is where <code>ngModel</code> comes into play.</p>
+<p>Running this code makes us realize, that the form’s value is an empty object. This seems natural, because there’s nothing in our component’s template yet, that tells the form that the input controls are part of this form. We need a way to register them. This is where <code class="highlighter-rouge">ngModel</code> comes into play.</p>
 
-<h2 id="ngmodel-directive"><code>ngModel</code> Directive</h2>
+<h2 id="ngmodel-directive"><code class="highlighter-rouge">ngModel</code> Directive</h2>
 
-<p>In order to register form controls on an <code>ngForm</code> instance, we use the <code>ngModel</code> directive. In combination with a <code>name</code> attribute, <code>ngModel</code> creates a form control abstraction for us behind the scenes. Every form control that is registered with <code>ngModel</code> will automatically show up in <code>form.value</code> and can then easily be used for further post processing.</p>
+<p>In order to register form controls on an <code class="highlighter-rouge">ngForm</code> instance, we use the <code class="highlighter-rouge">ngModel</code> directive. In combination with a <code class="highlighter-rouge">name</code> attribute, <code class="highlighter-rouge">ngModel</code> creates a form control abstraction for us behind the scenes. Every form control that is registered with <code class="highlighter-rouge">ngModel</code> will automatically show up in <code class="highlighter-rouge">form.value</code> and can then easily be used for further post processing.</p>
 
 <p>Let’s give our form object some structure and register our form controls:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span> <span class="err">(</span><span class="na">ngSubmit</span><span class="err">)="</span><span class="na">logForm</span><span class="err">(</span><span class="na">form</span><span class="err">.</span><span class="na">value</span><span class="err">)"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span> <span class="err">(</span><span class="na">ngSubmit</span><span class="err">)="</span><span class="na">logForm</span><span class="err">(</span><span class="na">form</span><span class="err">.</span><span class="na">value</span><span class="err">)"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"firstname"</span> <span class="na">ngModel</span><span class="nt">&gt;</span>
 
@@ -260,21 +260,21 @@ class Draggable {
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"city"</span> <span class="na">ngModel</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">"submit"</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
 <p>Great! If we now enter some values and submit the form, we’ll see that our application will log something like this:</p>
 
-<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
   </span><span class="err">firstname:</span><span class="w"> </span><span class="err">'Pascal',</span><span class="w">
   </span><span class="err">lastname:</span><span class="w"> </span><span class="err">'Precht',</span><span class="w">
   </span><span class="err">street:</span><span class="w"> </span><span class="err">'thoughtram</span><span class="w"> </span><span class="err">Road',</span><span class="w">
   </span><span class="err">zip:</span><span class="w"> </span><span class="err">'00011',</span><span class="w">
   </span><span class="err">city:</span><span class="w"> </span><span class="err">'San</span><span class="w"> </span><span class="err">Francisco'</span><span class="w">
-</span><span class="p">}</span></code></pre></div>
+</span><span class="p">}</span></code></pre></figure>
 
 <p>Isn’t that cool? We can basically take this JSON object as it is and send it straight to a remote server for whatever we want to do with it. Oh wait, what if we actually want to have some more structure and make our form object look like this?</p>
 
-<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
   </span><span class="err">name:</span><span class="w"> </span><span class="err">{</span><span class="w">
     </span><span class="err">firstname:</span><span class="w"> </span><span class="err">'Pascal',</span><span class="w">
     </span><span class="err">lastname:</span><span class="w"> </span><span class="err">'Precht',</span><span class="w">
@@ -284,19 +284,19 @@ class Draggable {
     </span><span class="err">zip:</span><span class="w"> </span><span class="err">'00011',</span><span class="w">
     </span><span class="err">city:</span><span class="w"> </span><span class="err">'San</span><span class="w"> </span><span class="err">Francisco'</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span><span class="err">}</span></code></pre></div>
+</span><span class="err">}</span></code></pre></figure>
 
-<p>Do we now have to wire everything together by hand when the form is submitted? Nope! Angular has us covered - introducing <code>ngModelGroup</code>.</p>
+<p>Do we now have to wire everything together by hand when the form is submitted? Nope! Angular has us covered - introducing <code class="highlighter-rouge">ngModelGroup</code>.</p>
 
-<h2 id="ngmodelgroup-directive"><code>ngModelGroup</code> Directive</h2>
+<h2 id="ngmodelgroup-directive"><code class="highlighter-rouge">ngModelGroup</code> Directive</h2>
 
-<p><code>ngModelGroup</code> enables us to semantically group our form controls. In other words, there can’t be a control group without controls. In addition to that, it also tracks validity state of the inner form controls. This comes in very handy if we want to check the validity state of just a sub set of the form.</p>
+<p><code class="highlighter-rouge">ngModelGroup</code> enables us to semantically group our form controls. In other words, there can’t be a control group without controls. In addition to that, it also tracks validity state of the inner form controls. This comes in very handy if we want to check the validity state of just a sub set of the form.</p>
 
 <p>And if you now think: “Wait, isn’t a form then also just a control group”, then you’re right my friend. A form is also just a control group.</p>
 
-<p>Let’s semantically group our form control values with <code>ngModelGroup</code>:</p>
+<p>Let’s semantically group our form control values with <code class="highlighter-rouge">ngModelGroup</code>:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">ngModelGroup=</span><span class="s">"name"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">ngModelGroup=</span><span class="s">"name"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"firstname"</span> <span class="na">ngModel</span><span class="nt">&gt;</span>
 
@@ -313,13 +313,13 @@ class Draggable {
 
   <span class="nt">&lt;label&gt;</span>City:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"city"</span> <span class="na">ngModel</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/fieldset&gt;</span></code></pre></div>
+<span class="nt">&lt;/fieldset&gt;</span></code></pre></figure>
 
-<p>As you can see, all we did was wrapping form controls in <code>&lt;fieldset&gt;</code> elements and applied <code>ngModelGroup</code> directives to them. There’s no specific reason we used <code>&lt;fieldset&gt;</code> elements. We could’ve used <code>&lt;div&gt;</code>s too. The point is, that there has to be an element, where we add <code>ngModelGroup</code> so it will be registered at our <code>ngForm</code> instance.</p>
+<p>As you can see, all we did was wrapping form controls in <code class="highlighter-rouge">&lt;fieldset&gt;</code> elements and applied <code class="highlighter-rouge">ngModelGroup</code> directives to them. There’s no specific reason we used <code class="highlighter-rouge">&lt;fieldset&gt;</code> elements. We could’ve used <code class="highlighter-rouge">&lt;div&gt;</code>s too. The point is, that there has to be an element, where we add <code class="highlighter-rouge">ngModelGroup</code> so it will be registered at our <code class="highlighter-rouge">ngForm</code> instance.</p>
 
 <p>We can see that it worked out by submitting the form and looking at the output:</p>
 
-<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
   </span><span class="err">name:</span><span class="w"> </span><span class="err">{</span><span class="w">
     </span><span class="err">firstname:</span><span class="w"> </span><span class="err">'Pascal',</span><span class="w">
     </span><span class="err">lastname:</span><span class="w"> </span><span class="err">'Precht',</span><span class="w">
@@ -329,27 +329,27 @@ class Draggable {
     </span><span class="err">zip:</span><span class="w"> </span><span class="err">'00011',</span><span class="w">
     </span><span class="err">city:</span><span class="w"> </span><span class="err">'San</span><span class="w"> </span><span class="err">Francisco'</span><span class="w">
   </span><span class="p">}</span><span class="w">
-</span><span class="err">}</span></code></pre></div>
+</span><span class="err">}</span></code></pre></figure>
 
 <p>Awesome! We now get the wanted object structure out of our form without writing any application code.</p>
 
 <h2 id="what-about-ngmodel-with-expressions">What about ngModel with expressions?</h2>
 
-<p>So <code>ngModel</code> is the thing in Angular that implements two-way data binding. It’s not the only thing that does that, but it’s in most cases the directive we want to use for simple scenarios. So far we’ve used <code>ngModel</code> as attribute directive without any value, but we might want to use it with an expression to bind an existing domain model to our form. This, of course works out of the box!</p>
+<p>So <code class="highlighter-rouge">ngModel</code> is the thing in Angular that implements two-way data binding. It’s not the only thing that does that, but it’s in most cases the directive we want to use for simple scenarios. So far we’ve used <code class="highlighter-rouge">ngModel</code> as attribute directive without any value, but we might want to use it with an expression to bind an existing domain model to our form. This, of course works out of the box!</p>
 
 <p>There are two ways to handle this, depending on what we want to do. One thing we can do is to apply property binding using the brackets syntax, so we can bind an existing value to a form control using one-way binding:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">ngModelGroup=</span><span class="s">"name"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">ngModelGroup=</span><span class="s">"name"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"firstname"</span> <span class="err">[</span><span class="na">ngModel</span><span class="err">]="</span><span class="na">firstname</span><span class="err">"</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;label&gt;</span>Lastname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"lastname"</span> <span class="err">[</span><span class="na">ngModel</span><span class="err">]="</span><span class="na">lastname</span><span class="err">"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/fieldset&gt;</span></code></pre></div>
+<span class="nt">&lt;/fieldset&gt;</span></code></pre></figure>
 
 <p>Whereas the corresponding model could look something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="p">...</span>
 <span class="p">})</span>
@@ -361,11 +361,11 @@ class Draggable {
   <span class="nx">logForm</span><span class="p">(</span><span class="nx">value</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>In addition, we can of course use <code>ngModel</code> and two-way data binding, in case we want to reflect the model values somewhere else in our template:</p>
+<p>In addition, we can of course use <code class="highlighter-rouge">ngModel</code> and two-way data binding, in case we want to reflect the model values somewhere else in our template:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">ngModelGroup=</span><span class="s">"name"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">ngModelGroup=</span><span class="s">"name"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"firstname"</span> <span class="err">[(</span><span class="na">ngModel</span><span class="err">)]="</span><span class="na">firstname</span><span class="err">"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p&gt;</span>You entered {{firstname}}<span class="nt">&lt;/p&gt;</span>
@@ -373,7 +373,7 @@ class Draggable {
   <span class="nt">&lt;label&gt;</span>Lastname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"lastname"</span> <span class="err">[(</span><span class="na">ngModel</span><span class="err">)]="</span><span class="na">lastname</span><span class="err">"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p&gt;</span>You entered {{lastname}}<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/fieldset&gt;</span></code></pre></div>
+<span class="nt">&lt;/fieldset&gt;</span></code></pre></figure>
 
 <p>This just simply works as expected.</p>
 

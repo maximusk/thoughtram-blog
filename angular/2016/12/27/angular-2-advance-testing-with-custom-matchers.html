@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Testing Angular Directives with Custom Matchers</h2>
-            <span>by <a href="http://twitter.com/" title="Thomas Burleson on Twitter">Thomas Burleson</a> on Dec 27, 2016, last updated on Dec 27, 2016<br>22 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Thomas Burleson on Twitter">Thomas Burleson</a> on Dec 27, 2016, last updated on Dec 27, 2016<br>23 minute read</span>
 
           </div>
         </hgroup>
@@ -165,12 +165,12 @@ learn about Angular testing:</p>
 
 <p>The biggest take-aways from these articles is the singular concept that instead of manually 
 instantiating and testing classes, Angular developers <u>should consider using</u> 
-the <code>TestBed.configureTestingModule()</code> to prepare an entire test Angular DI <strong>environment</strong> for each
+the <code class="highlighter-rouge">TestBed.configureTestingModule()</code> to prepare an entire test Angular DI <strong>environment</strong> for each
 test module (*.spec.ts).</p>
 
 <blockquote>
-  <p>We would not use <code>TestBed.configureTestingModule()</code> when we are testing a service that 
-doesn’t have any dependencies. It’d be easier and less verbose to just instantiate using <code>new</code>. The 
+  <p>We would not use <code class="highlighter-rouge">TestBed.configureTestingModule()</code> when we are testing a service that 
+doesn’t have any dependencies. It’d be easier and less verbose to just instantiate using <code class="highlighter-rouge">new</code>. The 
 <strong>TestBed</strong> is for useful for dependencies and injections.</p>
 </blockquote>
 
@@ -178,7 +178,7 @@ doesn’t have any dependencies. It’d be easier and less verbose to just insta
 
 <p>Consider the traditional approach of manually instantiating and testing a Service or component:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ServiceA</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./services/ServiceA'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ServiceA</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./services/ServiceA'</span><span class="p">;</span>
 
 <span class="nx">describe</span><span class="p">(</span><span class="s1">'ServiceA'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="nx">it</span><span class="p">(</span><span class="s1">'should emit greeting event'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -188,7 +188,7 @@ doesn’t have any dependencies. It’d be easier and less verbose to just insta
     <span class="p">});</span>
     <span class="nx">inst</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">();</span>
   <span class="p">});</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>It’s fine to do it this way, because <strong>ServiceA</strong> obviously does not need anything 
 else to be instantiated; it is a self-contained service without external dependencies.</p>
@@ -206,7 +206,7 @@ Dependency Injection. This is the same approach developers use in their regular 
 easily instantiated and tested. Here is an example - shown below - that we will continue to 
 use in this article:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">MyComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./viewer/MyComponent'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">MyComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./viewer/MyComponent'</span><span class="p">;</span>
 
 <span class="cm">/**
  * Configure testbed to register components and prepare services
@@ -238,13 +238,13 @@ use in this article:</p>
   <span class="k">return</span> <span class="nx">TestBed</span>
     <span class="p">.</span><span class="nx">overrideComponent</span><span class="p">(</span><span class="nx">MyComponent</span><span class="p">,</span> <span class="p">{</span><span class="na">set</span><span class="p">:</span> <span class="p">{</span><span class="na">template</span><span class="p">:</span> <span class="nx">template</span><span class="p">}}</span> <span class="p">)</span>
     <span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span><span class="nx">MyComponent</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Before each test, we want configure a new, fresh testing module with <u>only</u> the providers, 
 components, and directives we <u>need for the current test module</u>.</p>
 
 <blockquote>
-  <p>And notice that we just created a reusable <strong>Helper</strong> function: <code>createTestComponent()</code>. 
+  <p>And notice that we just created a reusable <strong>Helper</strong> function: <code class="highlighter-rouge">createTestComponent()</code>. 
 This cool utility function will construct an instance of MyComponent [using the configured TestBed] 
 using any custom HTML template you specify.</p>
 </blockquote>
@@ -268,7 +268,7 @@ have complex dependencies upon providers and non-trivial construction processes.
 
 <blockquote>
   <p>We are not using external templates nor any other resources or services that are asynchronous. 
-So we do not discuss the <code>async()</code> nor the the <code>TestBed::compileComponents()</code> functions.</p>
+So we do not discuss the <code class="highlighter-rouge">async()</code> nor the the <code class="highlighter-rouge">TestBed::compileComponents()</code> functions.</p>
 </blockquote>
 
 <h2 id="testing-directives">1) Testing Directives</h2>
@@ -311,17 +311,17 @@ directive.</p>
 <h3 id="configuring-the-testbed">Configuring the TestBed</h3>
 
 <p>Very similar to the TestBed sample shown above, we will configure a testing module but we will 
-not <em>import</em> an external test component. My test component <code>TestLayoutComponent</code> is itself defined 
+not <em>import</em> an external test component. My test component <code class="highlighter-rouge">TestLayoutComponent</code> is itself defined 
 within our test (*.spec.ts) module.</p>
 
 <blockquote>
-  <p>Using an internal test component enables each test module <br />e.g. <br /><code>&lt;directive&gt;.spec.ts</code><br /> to define 
+  <p>Using an internal test component enables each test module <br />e.g. <br /><code class="highlighter-rouge">&lt;directive&gt;.spec.ts</code><br /> to define 
 and use its own custom test component with custom properties.</p>
 </blockquote>
 
 <p>Here is the initial configuration:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span><span class="nx">ComponentFixture</span><span class="p">,</span> <span class="nx">TestBed</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core/testing'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span>
   <span class="nx">FlexLayoutModule</span><span class="p">,</span>
@@ -375,14 +375,14 @@ and use its own custom test component with custom properties.</p>
   <span class="k">return</span> <span class="nx">TestBed</span>
     <span class="p">.</span><span class="nx">overrideComponent</span><span class="p">(</span><span class="nx">TestLayoutComponent</span><span class="p">,</span> <span class="p">{</span><span class="na">set</span><span class="p">:</span> <span class="p">{</span><span class="na">template</span><span class="p">:</span> <span class="nx">template</span><span class="p">}}</span> <span class="p">)</span>
     <span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span><span class="nx">TestLayoutComponent</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>We now have everything we need to write a Directive test quickly.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should compile with custom directives'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should compile with custom directives'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">fixture</span> <span class="o">=</span> <span class="nx">createTestComponent</span><span class="p">(</span><span class="s1">'&lt;div fxLayout&gt;&lt;/div&gt;'</span><span class="p">);</span>
   <span class="nx">expect</span><span class="p">(</span> <span class="nx">fixture</span> <span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>Wow! That is pretty easy.</p>
 
@@ -401,7 +401,7 @@ here will confirm that the initial CSS is correctly assigned.</p>
 
 <p>The traditional approach would probably implement something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should add correct styles for `fxLayout` with template bindings'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">it</span><span class="p">(</span><span class="s1">'should add correct styles for `fxLayout` with template bindings'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">template</span> <span class="o">=</span> <span class="s1">'&lt;div [fxLayout]="direction"&gt;&lt;/div&gt;'</span><span class="p">;</span>
   <span class="kd">let</span> <span class="nx">fixture</span> <span class="o">=</span> <span class="nx">createTestComponent</span><span class="p">(</span><span class="nx">template</span><span class="p">);</span>
   <span class="kd">let</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">fixture</span><span class="p">.</span><span class="nx">debugElement</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">nativeElement</span><span class="p">;</span>
@@ -416,19 +416,19 @@ here will confirm that the initial CSS is correctly assigned.</p>
     <span class="nx">fixture</span><span class="p">.</span><span class="nx">detectChanges</span><span class="p">();</span>
     
   <span class="nx">expect</span><span class="p">(</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">'flex-direction'</span><span class="p">]</span> <span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">'row'</span><span class="p">);</span> 
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>In the code above, we</p>
 
 <ul>
-  <li>defined a custom template with bindings to the component property <code>direction</code>,</li>
+  <li>defined a custom template with bindings to the component property <code class="highlighter-rouge">direction</code>,</li>
   <li>use deeply nested references to get access to the native element,</li>
   <li>test each style individually.</li>
 </ul>
 
 <p>All this in one (1) single test. And truly it is not easily read.</p>
 
-<p>Now imagine that our test module has more than 20 individual <code>it(...)</code> tests!</p>
+<p>Now imagine that our test module has more than 20 individual <code class="highlighter-rouge">it(...)</code> tests!</p>
 
 <blockquote>
   <p>That would be a lot of duplicate code. <br /> And there is certainly nothing DRY (“do not repeat yourself”) about 
@@ -456,9 +456,9 @@ complexities of:</p>
 <p>Those complexities are now encapsulated in a Helper function and a Custom Matcher (respectively).</p>
 
 <p>The custom Helper function <strong>expectNativeEl( )</strong> is similar to the standard <strong>expect( )</strong> function.
-In fact, it is wrapper function that internalizes the <code>expect( )</code> call.</p>
+In fact, it is wrapper function that internalizes the <code class="highlighter-rouge">expect( )</code> call.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="cm">/**
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="cm">/**
  * Note: this helper only accesses the 1st-level child within a component
  *       A different helper method is need to access deep-level DOM nodes
  */</span>
@@ -467,19 +467,19 @@ In fact, it is wrapper function that internalizes the <code>expect( )</code> cal
 
   <span class="c1">// Return response of `expect(...)`</span>
   <span class="k">return</span> <span class="nx">expect</span><span class="p">(</span><span class="nx">fixture</span><span class="p">.</span><span class="nx">debugElement</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">nativeElement</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <blockquote>
-  <p>It is important to note that these helper methods always return the value of an <code>expect(...)</code> call!</p>
+  <p>It is important to note that these helper methods always return the value of an <code class="highlighter-rouge">expect(...)</code> call!</p>
 </blockquote>
 
 <p>And the resulting code change uses a similar notation to our standard training. So</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expect</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expect</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></figure>
 
 <p>becomes</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expectNativeEl</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expectNativeEl</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></figure>
 
 <h3 id="testing-nested-dom">Testing Nested DOM</h3>
 
@@ -488,9 +488,9 @@ In fact, it is wrapper function that internalizes the <code>expect( )</code> cal
 <p>Angular’s <strong>DebugElement</strong> has several query features:</p>
 
 <ul>
-  <li><code>query(predicate: Predicate&lt;DebugElement&gt;): DebugElement;</code></li>
-  <li><code>queryAll(predicate: Predicate&lt;DebugElement&gt;): DebugElement[];</code></li>
-  <li><code>queryAllNodes(predicate: Predicate&lt;DebugNode&gt;): DebugNode[];</code></li>
+  <li><code class="highlighter-rouge">query(predicate: Predicate&lt;DebugElement&gt;): DebugElement;</code></li>
+  <li><code class="highlighter-rouge">queryAll(predicate: Predicate&lt;DebugElement&gt;): DebugElement[];</code></li>
+  <li><code class="highlighter-rouge">queryAllNodes(predicate: Predicate&lt;DebugNode&gt;): DebugNode[];</code></li>
 </ul>
 
 <blockquote>
@@ -504,7 +504,7 @@ In fact, it is wrapper function that internalizes the <code>expect( )</code> cal
 <p>In this example, we actually want to test the <u>nested DOM node</u> that hosts the attribute <strong>fxFlex</strong>. 
 Using another helper method <strong>expectDomForQuery( )</strong> makes that easy.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="cm">/**
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="cm">/**
  * Create component instance using custom template, the query for the native DOM node
  * based on the query selector
  */</span>
@@ -526,19 +526,19 @@ Using another helper method <strong>expectDomForQuery( )</strong> makes that eas
  */</span>
 <span class="kd">function</span>  <span class="nx">queryFor</span><span class="p">(</span><span class="nx">fixture</span><span class="err">:</span><span class="nx">ComponentFixture</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">selector</span><span class="err">:</span><span class="nx">string</span><span class="p">)</span><span class="err">:</span><span class="nx">any</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">fixture</span><span class="p">.</span><span class="nx">debugElement</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">By</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="nx">selector</span><span class="p">))</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>And the resulting code change is again a similar notation to our standard training:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expect</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expect</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></figure>
 
 <p>becomes</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expectDomForQuery</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expectDomForQuery</span><span class="p">(...).</span><span class="nx">toBe</span></code></pre></figure>
 
 <h3 id="more-special-helpers">More Special Helpers</h3>
 
-<p>Earlier, we showed a code snapshot that had a <em>special helper</em> <code>activateMediaQuery( )</code>:</p>
+<p>Earlier, we showed a code snapshot that had a <em>special helper</em> <code class="highlighter-rouge">activateMediaQuery( )</code>:</p>
 
 <p><img src="/images/dry_tests/example1.jpg" alt="Unit Test with Matchers and Helpers" /></p>
 
@@ -546,12 +546,12 @@ Using another helper method <strong>expectDomForQuery( )</strong> makes that eas
 activates (<em>aka</em> when the viewport size changes). The API uses selectors with dot-notation to 
 indicate which values should be used for which mediaQuery:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">fxLayout=</span><span class="s">"row"</span> <span class="na">fxLayout</span><span class="err">.</span><span class="na">md=</span><span class="s">"column"</span><span class="nt">&gt;&lt;/div&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">fxLayout=</span><span class="s">"row"</span> <span class="na">fxLayout</span><span class="err">.</span><span class="na">md=</span><span class="s">"column"</span><span class="nt">&gt;&lt;/div&gt;</span></code></pre></figure>
 
 <p>Testing these features presents several additional requirements:</p>
 
 <ul>
-  <li>mock the window API <code>window.matchMedia(...)</code></li>
+  <li>mock the window API <code class="highlighter-rouge">window.matchMedia(...)</code></li>
   <li>simulate a mediaQuery activation</li>
   <li>trigger fixture.detectChange() after a simulated activation</li>
   <li>hide all these details from individual tests (DRY)</li>
@@ -560,7 +560,7 @@ indicate which values should be used for which mediaQuery:</p>
 <p>Thankfully the Flex-Layout library actually publishes a MockMatchMedia class. And we use this class
 in our TestBed configuration below:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">fixture</span><span class="err">:</span> <span class="nx">ComponentFixture</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">fixture</span><span class="err">:</span> <span class="nx">ComponentFixture</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
 
 <span class="cm">/**
  * Special Helper
@@ -583,22 +583,22 @@ in our TestBed configuration below:</p>
       <span class="p">{</span><span class="na">provide</span><span class="p">:</span> <span class="nx">MatchMedia</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">MockMatchMedia</span><span class="p">}</span>   <span class="c1">//Special mock config</span>
     <span class="p">]</span>
   <span class="p">})</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>Let’s explore three (3) very interesting things are happening in this code:</p>
 
 <ul>
   <li>configure Dependency Injection providers to override a class with a mock,</li>
-  <li>dynamic injection using <code>injector.get(MatchMedia)</code>, and</li>
+  <li>dynamic injection using <code class="highlighter-rouge">injector.get(MatchMedia)</code>, and</li>
   <li>use special helper <strong>activateMediaQuery( )</strong> function that hides all these details</li>
 </ul>
 
 <p><strong>(1) Overriding DI Providers</strong></p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">MatchMedia</span><span class="p">,</span> <span class="nx">useClass</span><span class="err">:</span> <span class="nx">MockMatchMedia</span> <span class="p">}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">MatchMedia</span><span class="p">,</span> <span class="nx">useClass</span><span class="err">:</span> <span class="nx">MockMatchMedia</span> <span class="p">}</span></code></pre></figure>
 
-<p>tells the TestBed DI system to provide an instance of the <code>MockMatchMedia</code> <strong>whenever</strong> any code 
-asks for an instance of the <code>MatchMedia</code> token to be injected via DI.</p>
+<p>tells the TestBed DI system to provide an instance of the <code class="highlighter-rouge">MockMatchMedia</code> <strong>whenever</strong> any code 
+asks for an instance of the <code class="highlighter-rouge">MatchMedia</code> token to be injected via DI.</p>
 
 <blockquote>
   <p>You can read more about the Angular DI systems here:<br /> <a href="http://blog.thoughtram.io/angular/2015/05/18/dependency-injection-in-angular-2.html">Dependency Injection in Angular</a></p>
@@ -606,8 +606,8 @@ asks for an instance of the <code>MatchMedia</code> token to be injected via DI.
 
 <p><strong>(2) Dynamic Injection</strong></p>
 
-<p>Our special helper <code>activateMediaQuery()</code> needs a dynamic injected instance of the MatchMedia token. 
-Using the <code>fixture</code> instance, we can access the injector service for our components. With the injector,
+<p>Our special helper <code class="highlighter-rouge">activateMediaQuery()</code> needs a dynamic injected instance of the MatchMedia token. 
+Using the <code class="highlighter-rouge">fixture</code> instance, we can access the injector service for our components. With the injector,
 we can dynamically get a <strong>MockMatchMedia</strong> instance using the provider token <strong>MatchMedia</strong>.</p>
 
 <blockquote>
@@ -619,7 +619,7 @@ encapsulated in our TestBed… and the use of the injector is hidden within our 
 
 <p>Now our individual tests simply use the easy special helper function <strong>activateMediaQuery( )</strong>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">activateMediayQuery</span><span class="p">(</span><span class="s1">'md'</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">activateMediayQuery</span><span class="p">(</span><span class="s1">'md'</span><span class="p">);</span></code></pre></figure>
 
 <p>That is very, very cool!</p>
 
@@ -634,7 +634,7 @@ Jasmine documentation:</p>
 <img src="https://cloud.githubusercontent.com/assets/210413/21524374/334a2f68-ccdb-11e6-816c-5059fc91d806.png" alt="pic9" />
 </a></p>
 
-<p>Remember that matchers are used <strong>after</strong> the <code>expect()</code> call and should encapsulate complex logic 
+<p>Remember that matchers are used <strong>after</strong> the <code class="highlighter-rouge">expect()</code> call and should encapsulate complex logic 
 and reduce code-clutter in our test code.</p>
 
 <blockquote>
@@ -645,38 +645,38 @@ and reduce code-clutter in our test code.</p>
 
 <h3 id="building-a-typescript-matcher">Building a TypeScript Matcher</h3>
 
-<p>Similar to <code>expect(...).toBeTruthy()</code>, we want a custom matcher <code>toHaveCSSStyle( )</code>:</p>
+<p>Similar to <code class="highlighter-rouge">expect(...).toBeTruthy()</code>, we want a custom matcher <code class="highlighter-rouge">toHaveCSSStyle( )</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expectNativeEl</span><span class="p">(</span><span class="nx">fixture</span><span class="p">).</span><span class="nx">toHaveCssStyle</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expectNativeEl</span><span class="p">(</span><span class="nx">fixture</span><span class="p">).</span><span class="nx">toHaveCssStyle</span><span class="p">({</span>
   <span class="s1">'display'</span><span class="p">:</span> <span class="s1">'flex'</span><span class="p">,</span>
   <span class="s1">'flex-direction'</span><span class="p">:</span> <span class="s1">'row'</span><span class="p">,</span>
   <span class="s1">'box-sizing'</span><span class="p">:</span> <span class="s1">'border-box'</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>Creating a matcher in JavaScript is documented on the Jasmine site. Our challenge is the harder 
 goal of creating a <em>custom matcher</em> implemented in TypeScript using well-defined types.</p>
 
 <ul>
-  <li>we need to enhance the <code>expect()</code> API, and</li>
+  <li>we need to enhance the <code class="highlighter-rouge">expect()</code> API, and</li>
   <li>we need to implement custom matchers.</li>
 </ul>
 
-<p>The global Jasmine <code>expect()</code> method normally returns <code>&lt;any&gt;</code> value. To use custom matchers 
+<p>The global Jasmine <code class="highlighter-rouge">expect()</code> method normally returns <code class="highlighter-rouge">&lt;any&gt;</code> value. To use custom matchers 
 (with types), we want the <strong>expect( )</strong> function to support returning either a standard matcher or 
 a custom matcher.</p>
 
 <p>Here is a teaser that shows how that is done:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">expect</span><span class="err">:</span> <span class="p">(</span><span class="nx">actual</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">NgMatchers</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span> <span class="nx">_global</span><span class="p">.</span><span class="nx">expect</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">expect</span><span class="err">:</span> <span class="p">(</span><span class="nx">actual</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">NgMatchers</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span> <span class="nx">_global</span><span class="p">.</span><span class="nx">expect</span><span class="p">;</span>
 
-<span class="kr">export</span> <span class="kr">interface</span> <span class="nx">NgMatchers</span> <span class="kr">extends</span> <span class="nx">jasmine</span><span class="p">.</span><span class="nx">Matchers</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">};</span></code></pre></div>
+<span class="kr">export</span> <span class="kr">interface</span> <span class="nx">NgMatchers</span> <span class="kr">extends</span> <span class="nx">jasmine</span><span class="p">.</span><span class="nx">Matchers</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">};</span></code></pre></figure>
 
-<p>We assigned the global <em>expect</em> function reference to a new export that states that <code>expect()</code> calls 
+<p>We assigned the global <em>expect</em> function reference to a new export that states that <code class="highlighter-rouge">expect()</code> calls 
 now return references to a <strong>NgMatchers</strong> interface.</p>
 
-<p>Here are the full implementation details of our <code>custom-matchers.ts</code> module:</p>
+<p>Here are the full implementation details of our <code class="highlighter-rouge">custom-matchers.ts</code> module:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">declare</span> <span class="kd">var</span> <span class="nx">global</span><span class="err">:</span> <span class="nx">any</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">declare</span> <span class="kd">var</span> <span class="nx">global</span><span class="err">:</span> <span class="nx">any</span><span class="p">;</span>
 <span class="kr">const</span> <span class="nx">_global</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">(</span><span class="k">typeof</span> <span class="nb">window</span> <span class="o">===</span> <span class="s1">'undefined'</span> <span class="p">?</span> <span class="nx">global</span> <span class="p">:</span> <span class="nb">window</span><span class="p">);</span>
 
 <span class="cm">/**
@@ -723,21 +723,21 @@ now return references to a <strong>NgMatchers</strong> interface.</p>
     <span class="p">};</span>
   <span class="p">}</span>
 
-<span class="p">};</span></code></pre></div>
+<span class="p">};</span></code></pre></figure>
 
-<p>With the above definitions, we can now use <code>expect(...).toHaveCssStyles(...)</code> without any 
+<p>With the above definitions, we can now use <code class="highlighter-rouge">expect(...).toHaveCssStyles(...)</code> without any 
 TypeScript complaints.</p>
 
 <p>Wait!</p>
 
 <p>We need one to discuss one more addition to our custom-matcher code. Did you notice the call to 
-<strong>getDOM()</strong>.hasStyle() ? But where does <code>getDOM</code> come from?</p>
+<strong>getDOM()</strong>.hasStyle() ? But where does <code class="highlighter-rouge">getDOM</code> come from?</p>
 
 <p>After some inspection of the <strong>@angular/core</strong> code, we were able to 
 get a reference to the special Angular DOM Adapter:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">__platform_browser_private__</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
-<span class="kr">const</span> <span class="nx">getDOM</span> <span class="o">=</span> <span class="nx">__platform_browser_private__</span><span class="p">.</span><span class="nx">getDOM</span><span class="p">;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">__platform_browser_private__</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">getDOM</span> <span class="o">=</span> <span class="nx">__platform_browser_private__</span><span class="p">.</span><span class="nx">getDOM</span><span class="p">;</span></code></pre></figure>
 
 <blockquote>
   <p>Please note that the <strong>getDOM()</strong> is a private Angular API and may change in the future.</p>
@@ -747,7 +747,7 @@ get a reference to the special Angular DOM Adapter:</p>
 
 <p>Now we are <em>golden</em> with features. Let’s import and use our custom Jasmine matcher.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">customMatchers</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'../utils/testing/custom-matchers'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">customMatchers</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'../utils/testing/custom-matchers'</span><span class="p">;</span>
 
 <span class="nx">describe</span><span class="p">(</span><span class="s1">'layout directive'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
 
@@ -757,16 +757,16 @@ get a reference to the special Angular DOM Adapter:</p>
     <span class="c1">// TestBed stuff here...</span>
   <span class="p">});</span>
 
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>Notice that we must register the custom matchers in a <code>beforeEach()</code> call to configure the 
+<p>Notice that we must register the custom matchers in a <code class="highlighter-rouge">beforeEach()</code> call to configure the 
 matchers for each subsequent test. And now everything is ready for the individual tests:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expect</span><span class="p">(...).</span><span class="nx">toHaveCssStyle</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">expect</span><span class="p">(...).</span><span class="nx">toHaveCssStyle</span><span class="p">({</span>
   <span class="s1">'display'</span><span class="p">:</span> <span class="s1">'flex'</span><span class="p">,</span>
   <span class="s1">'flex-direction'</span><span class="p">:</span> <span class="s1">'row'</span><span class="p">,</span>
   <span class="s1">'box-sizing'</span><span class="p">:</span> <span class="s1">'border-box'</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <h2 id="protractor--e2e">Protractor + e2e</h2>
 
