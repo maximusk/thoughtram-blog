@@ -527,6 +527,17 @@
 &lt;p&gt;It’s been a couple of month since we’ve last run our training in the USA, 
 so we are very pleased to announce that our Angular Master Class is coming to &lt;strong&gt;Houston in August!&lt;/strong&gt;&lt;/p&gt;
 
+&lt;p&gt;And we found the perfect, artsy venue that will get everyone into the right state of mind to learn the nuances and power of Angular.
+The event takes place on the &lt;strong&gt;August 22 - 25, 2017&lt;/strong&gt; in the Bisong Art Gallery.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.google.com/maps/place/Bisong+Art+Gallery/@29.7682252,-95.3704114,14.27z/data=!4m5!3m4!1s0x8640bf298647bd0d:0x78cc6f2afbb33e48!8m2!3d29.7675697!4d-95.35409?hl=en&quot; target=&quot;_blank&quot;&gt;
+  &lt;img src=&quot;/images/amc_houston_hall2.jpg&quot; alt=&quot;AMC Houston Event Location&quot; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Click on the picture above to see the map to the venue location.&lt;/p&gt;
+&lt;/blockquote&gt;
+
 &lt;p&gt;You or your team should attend our 4-day &lt;strong&gt;Angular Master Class&lt;/strong&gt; training.
 This is the first time we’ll run a public &lt;strong&gt;4-day&lt;/strong&gt; training!
 The reason we added another day is because we want to teach our brand new material on  &lt;strong&gt;Redux and ngrx&lt;/strong&gt;.&lt;/p&gt;
@@ -542,23 +553,6 @@ The reason we added another day is because we want to teach our brand new materi
   &lt;p&gt;We have also updated our course and lab exercises to Angular Material and Angular Flex-Layout, you can read about that here: &lt;a href=&quot;https://blog.thoughtram.io/angular/2017/01/08/a-revamped-angular-master-class.html&quot;&gt;Revamped Angular Master Class&lt;/a&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h4 id=&quot;on-premise-private-training&quot;&gt;On-Premise, Private Training?&lt;/h4&gt;
-
-&lt;p&gt;If you would like private, on-site training for a team of 10 or more developers, please contact us at &lt;a href=&quot;mailto:hello@thoughtram.io?subject=Re Private AMC Training&quot;&gt;hello@thoughtram.io&lt;/a&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;where-is-the-houston-training&quot;&gt;Where is the Houston Training?&lt;/h4&gt;
-
-&lt;p&gt;And we found the perfect, artsy venue that will get everyone into the right state of mind to learn the nuances and power of Angular.
-The event takes place on the &lt;strong&gt;August 22 - 25, 2017&lt;/strong&gt; in the Bisong Art Gallery.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.google.com/maps/place/Bisong+Art+Gallery/@29.7682252,-95.3704114,14.27z/data=!4m5!3m4!1s0x8640bf298647bd0d:0x78cc6f2afbb33e48!8m2!3d29.7675697!4d-95.35409?hl=en&quot; target=&quot;_blank&quot;&gt;
-  &lt;img src=&quot;/images/amc_houston_hall2.jpg&quot; alt=&quot;AMC Houston Event Location&quot; /&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Click on the picture above to see the map to the venue location.&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;h4 id=&quot;about-the-training&quot;&gt;About the Training&lt;/h4&gt;
 
 &lt;p&gt;These are intense, full 8-hour days… but don’t worry, we make the classroom fun. thoughtram teaches the class with two (2) trainers. And almost every 30 minutes, students work with hands-on, coding lab exercises.&lt;/p&gt;
@@ -566,9 +560,13 @@ The event takes place on the &lt;strong&gt;August 22 - 25, 2017&lt;/strong&gt; i
 &lt;p&gt;We also have social time after class on Day 2 and Day 4. Leverage the social times for networking, offline questions, and simply relaxing with your fellow Angular-philes.
 So come to our training, have a blast, and get the best acceleration into Angular possible.&lt;/p&gt;
 
+&lt;h4 id=&quot;on-premise-private-training&quot;&gt;On-Premise, Private Training?&lt;/h4&gt;
+
+&lt;p&gt;If you would like private, on-site training for a team of 10 or more developers, please contact us at &lt;a href=&quot;mailto:hello@thoughtram.io?subject=Re Private AMC Training&quot;&gt;hello@thoughtram.io&lt;/a&gt;&lt;/p&gt;
+
 &lt;h3 id=&quot;tickets-on-sale-now&quot;&gt;Tickets on sale now&lt;/h3&gt;
 
-&lt;p&gt;You can find more information on our official &lt;a href=&quot;https://amc-houston.eventbrite.com/?aff=blogAnnouncement&quot;&gt;event page&lt;/a&gt;, or grab your ticket right here!&lt;/p&gt;
+&lt;p&gt;You can find more information on our official &lt;a href=&quot;https://amc-houston.eventbrite.com/?aff=blogAnnouncement&quot;&gt;event page&lt;/a&gt;, or grab your public training ticket right here!&lt;/p&gt;
 
 &lt;iframe src=&quot;//eventbrite.de/tickets-external?eid=35632678300&amp;amp;ref=etckt&quot; frameborder=&quot;0&quot; vspace=&quot;0&quot; hspace=&quot;0&quot; marginheight=&quot;5&quot; marginwidth=&quot;5&quot; scrolling=&quot;auto&quot; allowtransparency=&quot;true&quot;&gt;&lt;/iframe&gt;
 
