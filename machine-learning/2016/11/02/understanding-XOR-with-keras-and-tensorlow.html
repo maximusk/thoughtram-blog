@@ -114,7 +114,7 @@
 
 <p>Let’s take another look at our model from the previous article. We’ll be exploring what it actually means line by line.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
 <span class="kn">from</span> <span class="nn">keras.layers.core</span> <span class="kn">import</span> <span class="n">Dense</span>
 
@@ -134,45 +134,45 @@
 
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></figure>
+<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></div>
 
 <p>Let’s focus on the list of imports first. These are all things that we need to bring into scope because we need them in the rest of the code.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
-<span class="kn">from</span> <span class="nn">keras.layers.core</span> <span class="kn">import</span> <span class="n">Dense</span></code></pre></figure>
+<span class="kn">from</span> <span class="nn">keras.layers.core</span> <span class="kn">import</span> <span class="n">Dense</span></code></pre></div>
 
-<p>The Python ecosystem has pretty strong math support. One of the most popular libraries is <code class="highlighter-rouge">numpy</code> which makes working with arrays a joy. <a href="https://keras.io/">Keras</a> also uses numpy internally and expects numpy arrays as inputs. We import <code class="highlighter-rouge">numpy</code> and alias it as <code class="highlighter-rouge">np</code> which is pretty common thing to do when writing this kind of code.</p>
+<p>The Python ecosystem has pretty strong math support. One of the most popular libraries is <code>numpy</code> which makes working with arrays a joy. <a href="https://keras.io/">Keras</a> also uses numpy internally and expects numpy arrays as inputs. We import <code>numpy</code> and alias it as <code>np</code> which is pretty common thing to do when writing this kind of code.</p>
 
-<p>Keras offers two different APIs to construct a model: a <em>functional</em> and a <em>sequential</em> one. We’re using the sequential API hence the second import of <code class="highlighter-rouge">Sequential</code> from <code class="highlighter-rouge">keras.models</code>.</p>
+<p>Keras offers two different APIs to construct a model: a <em>functional</em> and a <em>sequential</em> one. We’re using the sequential API hence the second import of <code>Sequential</code> from <code>keras.models</code>.</p>
 
-<p>Neural networks consist of different layers where input data flows through and gets transformed on its way. There are a bunch of different layer types available in Keras. These different types of layer help us to model individual kinds of neural nets for various machine learning tasks. In our specific case the <code class="highlighter-rouge">Dense</code> layer is what we want. We’ll explain it in more detail later on.</p>
+<p>Neural networks consist of different layers where input data flows through and gets transformed on its way. There are a bunch of different layer types available in Keras. These different types of layer help us to model individual kinds of neural nets for various machine learning tasks. In our specific case the <code>Dense</code> layer is what we want. We’ll explain it in more detail later on.</p>
 
 <p>What follows are two sets of data.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># the four different states of the XOR gate</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># the four different states of the XOR gate</span>
 <span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span>
 
 <span class="c"># the four expected results in the same order</span>
-<span class="n">target_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></figure>
+<span class="n">target_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></div>
 
-<p>We initialize <code class="highlighter-rouge">training_data</code> as a two-dimensional array (an array of arrays) where each of the inner arrays has exactly two items. As we’ve already described in the previous article, each of these pairs has a corresponding expected result. That’s why we could solve the whole task with a simple hash map but let’s carry on.</p>
+<p>We initialize <code>training_data</code> as a two-dimensional array (an array of arrays) where each of the inner arrays has exactly two items. As we’ve already described in the previous article, each of these pairs has a corresponding expected result. That’s why we could solve the whole task with a simple hash map but let’s carry on.</p>
 
-<p>We setup <code class="highlighter-rouge">target_data</code> as another two-dimensional array. All the inner arrays in <code class="highlighter-rouge">target_data</code> contain just a single item though. Each inner array of <code class="highlighter-rouge">training_data</code> relates to its counterpart in <code class="highlighter-rouge">target_data</code>. At least, that’s essentially what we want the neural net to learn over time. The value <code class="highlighter-rouge">[0, 0]</code> means <code class="highlighter-rouge">0</code>, <code class="highlighter-rouge">[0, 1]</code> means <code class="highlighter-rouge">1</code> and so on and so forth.</p>
+<p>We setup <code>target_data</code> as another two-dimensional array. All the inner arrays in <code>target_data</code> contain just a single item though. Each inner array of <code>training_data</code> relates to its counterpart in <code>target_data</code>. At least, that’s essentially what we want the neural net to learn over time. The value <code>[0, 0]</code> means <code>0</code>, <code>[0, 1]</code> means <code>1</code> and so on and so forth.</p>
 
 <p>Let’s get to the most interesting part, the model!</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
 <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">))</span></code></pre></figure>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">))</span></code></pre></div>
 
-<p>The first line sets up an empty model using the <code class="highlighter-rouge">Sequential</code> API. But what’s going on in the second line?</p>
+<p>The first line sets up an empty model using the <code>Sequential</code> API. But what’s going on in the second line?</p>
 
-<p>We’re adding a <code class="highlighter-rouge">Dense</code> layer to our model which we’ll explain in more detail a bit later. For now, let’s focus on its configuration.  We set <code class="highlighter-rouge">input_dim=2</code> because each of our input samples is an array of length <code class="highlighter-rouge">2</code> (<code class="highlighter-rouge">[0, 1]</code>, <code class="highlighter-rouge">[1, 0]</code> etc.). If we had input data such as <code class="highlighter-rouge">[0, 1, 1]</code> our <code class="highlighter-rouge">input_dim</code> would be <code class="highlighter-rouge">3</code>. You get the idea.</p>
+<p>We’re adding a <code>Dense</code> layer to our model which we’ll explain in more detail a bit later. For now, let’s focus on its configuration.  We set <code>input_dim=2</code> because each of our input samples is an array of length <code>2</code> (<code>[0, 1]</code>, <code>[1, 0]</code> etc.). If we had input data such as <code>[0, 1, 1]</code> our <code>input_dim</code> would be <code>3</code>. You get the idea.</p>
 
-<p>The more interesting question is: What does the <code class="highlighter-rouge">16</code> stand for? It’s the dimension of the output for this layer. If we think about our model in terms of neurons it means that we have two input neurons (<code class="highlighter-rouge">input_dim=2</code>) spreading into 16 neurons in a so called hidden layer.</p>
+<p>The more interesting question is: What does the <code>16</code> stand for? It’s the dimension of the output for this layer. If we think about our model in terms of neurons it means that we have two input neurons (<code>input_dim=2</code>) spreading into 16 neurons in a so called hidden layer.</p>
 
-<p>We also added another layer with an output dimension of <code class="highlighter-rouge">1</code> and without an explicit input dimension. In this case the input dimension is implicitly bound to be <code class="highlighter-rouge">16</code> since that’s the output dimension of the previous layer.</p>
+<p>We also added another layer with an output dimension of <code>1</code> and without an explicit input dimension. In this case the input dimension is implicitly bound to be <code>16</code> since that’s the output dimension of the previous layer.</p>
 
 <p>We can visualize our model like this.</p>
 
@@ -180,62 +180,62 @@
 
 <p>Let’s just take it as this for now. We’ll come back to look at what the number of neurons means in a moment.</p>
 
-<p>But there’s one more thing in the current snippet that may scare us: <code class="highlighter-rouge">activation='relu'</code>. What does that mean? Do we finally have to talk about the scary math? Not really! Remember that neural networks are all about taking your inputs and transforming them into some output. Obviously there has to be some sort of math in between. There also need to be some moving parts, otherwise there wouldn’t be a chance for the model to learn anything. The moving parts are the so called weights and a <strong>simplified</strong> version of the math looks roughly like this.</p>
+<p>But there’s one more thing in the current snippet that may scare us: <code>activation='relu'</code>. What does that mean? Do we finally have to talk about the scary math? Not really! Remember that neural networks are all about taking your inputs and transforming them into some output. Obviously there has to be some sort of math in between. There also need to be some moving parts, otherwise there wouldn’t be a chance for the model to learn anything. The moving parts are the so called weights and a <strong>simplified</strong> version of the math looks roughly like this.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">output</span> <span class="o">=</span> <span class="n">activation</span><span class="p">(</span><span class="nb">input</span> <span class="n">x</span> <span class="n">weight</span><span class="p">)</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">output</span> <span class="o">=</span> <span class="n">activation</span><span class="p">(</span><span class="nb">input</span> <span class="n">x</span> <span class="n">weight</span><span class="p">)</span></code></pre></div>
 
-<p>By setting <code class="highlighter-rouge">activation='relu'</code> we specify that we want to use the <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">relu</a> function as the activation function. But really it doesn’t matter as much as you may think. We could totally change this to use the <a href="https://en.wikipedia.org/wiki/Sigmoid_function">sigmoid</a> function and it would still work. We could even use no activation function at all so that our algorithm essentially becomes.</p>
+<p>By setting <code>activation='relu'</code> we specify that we want to use the <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">relu</a> function as the activation function. But really it doesn’t matter as much as you may think. We could totally change this to use the <a href="https://en.wikipedia.org/wiki/Sigmoid_function">sigmoid</a> function and it would still work. We could even use no activation function at all so that our algorithm essentially becomes.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">output</span> <span class="o">=</span> <span class="nb">input</span> <span class="n">x</span> <span class="n">weight</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">output</span> <span class="o">=</span> <span class="nb">input</span> <span class="n">x</span> <span class="n">weight</span></code></pre></div>
 
 <p>Yes, that’s right. You can solve the XOR problem even without any activation function at all. It would just take much more time to train the model. Please don’t get us wrong. We aren’t saying the activation function doesn’t matter. In fact it matters a lot. But for our specific task which is very trivial, it matters less than people may think when they see the code for the very first time.</p>
 
-<p>There’s one last thing we have to do before we can start training our model. We have to configure the learning process by calling <code class="highlighter-rouge">model.compile(...)</code> with a set of parameters.</p>
+<p>There’s one last thing we have to do before we can start training our model. We have to configure the learning process by calling <code>model.compile(...)</code> with a set of parameters.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">'mean_squared_error'</span><span class="p">,</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">'mean_squared_error'</span><span class="p">,</span>
               <span class="n">optimizer</span><span class="o">=</span><span class="s">'adam'</span><span class="p">,</span>
-              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s">'binary_accuracy'</span><span class="p">])</span></code></pre></figure>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s">'binary_accuracy'</span><span class="p">])</span></code></pre></div>
 
 <p>In order for the neural network to be able to make the right adjustments to the weights we need to be able to tell how good our model is performing. Or to be more specific, with neural nets we always want to calculate a number that tells us how bad our model performs and then try to get that number lower.</p>
 
-<p>That number is the so called <em>loss</em> and we can decide how the loss is calculated. Similar to how we picked <code class="highlighter-rouge">relu</code> as our activation function we picked <code class="highlighter-rouge">mean_squared_error</code> as our loss function simply because it’s a well proven loss function. We could change it to <code class="highlighter-rouge">binary_crossentropy</code> and our model would still continue to work. Again, we aren’t saying all loss functions can be used interchangeably. They do serve specific use cases. It’s just that we don’t have to understand all the heavy math behind each function to get going!</p>
+<p>That number is the so called <em>loss</em> and we can decide how the loss is calculated. Similar to how we picked <code>relu</code> as our activation function we picked <code>mean_squared_error</code> as our loss function simply because it’s a well proven loss function. We could change it to <code>binary_crossentropy</code> and our model would still continue to work. Again, we aren’t saying all loss functions can be used interchangeably. They do serve specific use cases. It’s just that we don’t have to understand all the heavy math behind each function to get going!</p>
 
-<p>That brings us to the next parameter, the optimizer. The job of the optimizer is it to find the right adjustments for the weights. I’m sure by now you may guess how we picked <code class="highlighter-rouge">adam</code> as our optimizer of choice. Right, because it’s a well proven one!</p>
+<p>That brings us to the next parameter, the optimizer. The job of the optimizer is it to find the right adjustments for the weights. I’m sure by now you may guess how we picked <code>adam</code> as our optimizer of choice. Right, because it’s a well proven one!</p>
 
-<p>The third parameter, <code class="highlighter-rouge">metrics</code> is actually much more interesting for our learning efforts. Here we can specify which metrics to collect during the training. We are interested in the <code class="highlighter-rouge">binary_accuracy</code> which gives us access to a number that tells us exactly how accurate our predictions are. More on that later.</p>
+<p>The third parameter, <code>metrics</code> is actually much more interesting for our learning efforts. Here we can specify which metrics to collect during the training. We are interested in the <code>binary_accuracy</code> which gives us access to a number that tells us exactly how accurate our predictions are. More on that later.</p>
 
-<p>And that’s all we have to set up before we can start training our model. We kick off the training by calling <code class="highlighter-rouge">model.fit(...)</code> with a bunch of parameters.</p>
+<p>And that’s all we have to set up before we can start training our model. We kick off the training by calling <code>model.fit(...)</code> with a bunch of parameters.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></code></pre></div>
 
 <p>The first two params are training and target data, the third one is the number of epochs (learning iterations) and the last one tells keras how much info to print out during the training.</p>
 
 <p>Once the training phase finished we can start making predictions.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></div>
 
 <p>Please note that in a real world scenario our predictions would be tested against data that the neural network hasn’t seen during the training. That’s because we usually want to see if our model generalizes well. In other words, does it work with new data or does it just memorize all the data and expected results it had seen in the training phase? However, with this toy task there are really only our four states and four expected outputs. No way to proof generalization here.</p>
 
-<p>Also note that we are rounding the output to get clear binary answers. Neural networks  calculate probabilities. If we wouldn’t round we would see something like <code class="highlighter-rouge">0.9993...</code> and <code class="highlighter-rouge">0.00034...</code> instead of <code class="highlighter-rouge">1</code> and <code class="highlighter-rouge">0</code> which isn’t exactly what we want.</p>
+<p>Also note that we are rounding the output to get clear binary answers. Neural networks  calculate probabilities. If we wouldn’t round we would see something like <code>0.9993...</code> and <code>0.00034...</code> instead of <code>1</code> and <code>0</code> which isn’t exactly what we want.</p>
 
 <h2 id="finding-the-right-model">Finding the right model</h2>
 
-<p>Now that we know what all those numbers mean. Let’s take a closer look at how we configured the layers. Why did we pick the <code class="highlighter-rouge">Dense</code> layer in the first place?</p>
+<p>Now that we know what all those numbers mean. Let’s take a closer look at how we configured the layers. Why did we pick the <code>Dense</code> layer in the first place?</p>
 
-<p>The answer is simple: Because our input data is one-dimensional. Wait! Didn’t we just say we setup <code class="highlighter-rouge">training_data</code> as a two-dimensional array? Yes, that’s right. It’s an array of arrays but only because it’s an array holding different samples to feed into our network. Each sample though is one-dimensional. That is what counts for when we have to pick between different types of layers. Consider each sample would be an array or arrays instead.</p>
+<p>The answer is simple: Because our input data is one-dimensional. Wait! Didn’t we just say we setup <code>training_data</code> as a two-dimensional array? Yes, that’s right. It’s an array of arrays but only because it’s an array holding different samples to feed into our network. Each sample though is one-dimensional. That is what counts for when we have to pick between different types of layers. Consider each sample would be an array or arrays instead.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">other_training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">other_training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
                                  <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span>
                                 <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
                                  <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
                                 <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
                                  <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span>
                                 <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
-                                 <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></figure>
+                                 <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></div>
 
-<p>If that was the case we’d have to pick a different layer because a <code class="highlighter-rouge">Dense</code> layer is really only for one-dimensional input. We’ll get to the more advanced use cases with two-dimensional input data in another blog post soon.</p>
+<p>If that was the case we’d have to pick a different layer because a <code>Dense</code> layer is really only for one-dimensional input. We’ll get to the more advanced use cases with two-dimensional input data in another blog post soon.</p>
 
-<p>Now that we know we have to pick a <code class="highlighter-rouge">Dense</code> layer, how do we find the right configuration? We’ve already learned why we set the <code class="highlighter-rouge">input_dim</code> to <code class="highlighter-rouge">2</code> and that setting the output dimension to <code class="highlighter-rouge">16</code> means spreading into 16 neurons in a so called hidden layer. But why 16?</p>
+<p>Now that we know we have to pick a <code>Dense</code> layer, how do we find the right configuration? We’ve already learned why we set the <code>input_dim</code> to <code>2</code> and that setting the output dimension to <code>16</code> means spreading into 16 neurons in a so called hidden layer. But why 16?</p>
 
 <p>The answer may surprise you but it’s simply a question of measuring the performance of our model and tweaking the size of the model accordingly. Remember that this number affects the number of weights that exists in our model. More weights mean more room for the model to care for certain features in the data we feed to it.</p>
 
@@ -247,7 +247,7 @@
 
 <p>Let’s run our code and take a look at the output. If you aren’t sure how to run it please revisit out <a href="/machine-learning/2016/09/23/beginning-ml-with-keras-and-tensorflow.html">previous post</a>.</p>
 
-<figure class="highlight"><pre><code class="language-shell" data-lang="shell">Epoch 1/20000
+<div class="highlight"><pre><code class="language-shell" data-lang="shell">Epoch 1/20000
 0s - loss: 0.7443 - binary_accuracy: 0.2500
 Epoch 2/20000
 0s - loss: 0.7428 - binary_accuracy: 0.2500
@@ -264,28 +264,28 @@ Epoch 81/20000
 Epoch 283/20000
 0s - loss: 0.5948 - binary_accuracy: 0.7500
 Epoch 284/20000
-0s - loss: 0.5943 - binary_accuracy: 1.0000</code></pre></figure>
+0s - loss: 0.5943 - binary_accuracy: 1.0000</code></pre></div>
 
-<p>Since we’ve set <code class="highlighter-rouge">verbose=2</code> and <code class="highlighter-rouge">metrics=['binary_accuracy']</code> earlier we get all these nice infos after each epoch. The interesting number we want to focus on is <code class="highlighter-rouge">binary_accuracy</code>. Guess what the <code class="highlighter-rouge">0.2500</code> at the first two epochs mean? If you’re thinking it means that our model predicts one out of our four states correctly you’re damn right. It took us 63 epochs to predict half of the four states correctly. After 284 epochs the model makes perfect predictions for all of our four XOR states.</p>
+<p>Since we’ve set <code>verbose=2</code> and <code>metrics=['binary_accuracy']</code> earlier we get all these nice infos after each epoch. The interesting number we want to focus on is <code>binary_accuracy</code>. Guess what the <code>0.2500</code> at the first two epochs mean? If you’re thinking it means that our model predicts one out of our four states correctly you’re damn right. It took us 63 epochs to predict half of the four states correctly. After 284 epochs the model makes perfect predictions for all of our four XOR states.</p>
 
 <p>Now we can start making changes to our model and see how it affects the performance. Let’s try to increase the size of our hidden layer from 16 to 32.</p>
 
-<figure class="highlight"><pre><code class="language-shell" data-lang="shell">0s - loss: 0.6023 - binary_accuracy: 0.7500
+<div class="highlight"><pre><code class="language-shell" data-lang="shell">0s - loss: 0.6023 - binary_accuracy: 0.7500
 Epoch 124/20000
-0s - loss: 0.6015 - binary_accuracy: 1.0000</code></pre></figure>
+0s - loss: 0.6015 - binary_accuracy: 1.0000</code></pre></div>
 
 <p>Now, that’s cool! Took us only 124 epochs to get to an accuracy of 100%!</p>
 
 <p>What if we stack in another layer?</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">))</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">))</span>
 <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">))</span></code></pre></figure>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">))</span></code></pre></div>
 
 <p>Interesting. That change brings us down to 56 epochs to solve the task. But would that be the same as just using one hidden layer with a size of 64?</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">))</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">))</span></code></pre></div>
 
 <p>Turns out, it isn’t. With this configuration our model starts making perfect predictions after 32 epochs.</p>
 
@@ -295,26 +295,26 @@ Epoch 124/20000
 
 <p>Let’s see if we can hold our claim of solving XOR without any activation function at all. We change our model to look like this.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
 <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'linear'</span><span class="p">))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'linear'</span><span class="p">))</span></code></pre></figure>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'linear'</span><span class="p">))</span></code></pre></div>
 
-<p>Wait? But this says we actually do use an activation function called <code class="highlighter-rouge">linear</code>! What’s going on here?</p>
+<p>Wait? But this says we actually do use an activation function called <code>linear</code>! What’s going on here?</p>
 
 <p>If we look at the keras source code we’ll see it is defined as <a href="https://github.com/fchollet/keras/blob/25dbe8097fba9a6a429e19d0625d78c3b8731527/keras/activations.py#L45-L49">this</a>.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="s">'''
     The function returns the variable that is passed in, so all types work.
     '''</span>
-    <span class="k">return</span> <span class="n">x</span></code></pre></figure>
+    <span class="k">return</span> <span class="n">x</span></code></pre></div>
 
 <p>The function simply returns it’s input without applying any math, so it’s essentially the same as using no activation function at all.</p>
 
 <p>Honestly, this is just a little fun experiment but if we increase the number of epochs we can see that even with this config we can build up a net to make 100 % correct predictions.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Epoch</span> <span class="mi">3718</span><span class="o">/</span><span class="mi">20000</span>
-<span class="mi">0</span><span class="n">s</span> <span class="o">-</span> <span class="n">loss</span><span class="p">:</span> <span class="mf">0.2500</span> <span class="o">-</span> <span class="n">binary_accuracy</span><span class="p">:</span> <span class="mf">1.0000</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Epoch</span> <span class="mi">3718</span><span class="o">/</span><span class="mi">20000</span>
+<span class="mi">0</span><span class="n">s</span> <span class="o">-</span> <span class="n">loss</span><span class="p">:</span> <span class="mf">0.2500</span> <span class="o">-</span> <span class="n">binary_accuracy</span><span class="p">:</span> <span class="mf">1.0000</span></code></pre></div>
 
 <h2 id="conclusion">Conclusion</h2>
 

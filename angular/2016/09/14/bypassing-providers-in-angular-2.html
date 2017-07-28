@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Bypassing Providers in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Sep 14, 2016, last updated on Dec 18, 2016<br>6 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Sep 14, 2016, last updated on Dec 18, 2016<br>5 minute read</span>
 
           </div>
         </hgroup>
@@ -126,23 +126,23 @@
 
 <p>What we see here is a tree of components, which is usually what an application in Angular is composed of. We also see that every component comes with its own injector. This allows us to configure how and what is going to be created when we ask for dependencies, on a component level.</p>
 
-<p>Let’s say we have an application where we use a <code class="highlighter-rouge">DataService</code> to perform actions like fetching data, adding data and deleting data. To make this service injectable,  we need to create a provider for it first.</p>
+<p>Let’s say we have an application where we use a <code>DataService</code> to perform actions like fetching data, adding data and deleting data. To make this service injectable,  we need to create a provider for it first.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{}</span> <span class="c1">// this is usually imported from somewhere</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{}</span> <span class="c1">// this is usually imported from somewhere</span>
 
 <span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">DataService</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
 
 <p>Once we created the provider, we can ask for dependencies of that type in our components like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">SomeComponent</span> <span class="p">{</span>
   
   <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">contactService</span><span class="err">:</span> <span class="nx">DataService</span><span class="p">)</span> <span class="p">{}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>In fact, all components in our component tree will now get exactly the same instance, because their injectors will keep looking upwards in the tree for a provider, until they find one.</p>
 
@@ -150,13 +150,13 @@
 
 <p>We can get a different instance of the same service by adding another provider with the same configuration to the injector tree. Providers can be defined on components as well, to configure the corresponding injector.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">DataService</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">SomeOtherComponent</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">SomeOtherComponent</span> <span class="p">{}</span></code></pre></div>
 
-<p>This will affect the dependency lookup in the sense that all children components and the <code class="highlighter-rouge">SomeOtherComponent</code> component itself will get the <code class="highlighter-rouge">DataService</code> instance from <code class="highlighter-rouge">SomeOtherComponent</code>’s injector, instead of the one configured in the <code class="highlighter-rouge">NgModule</code>.</p>
+<p>This will affect the dependency lookup in the sense that all children components and the <code>SomeOtherComponent</code> component itself will get the <code>DataService</code> instance from <code>SomeOtherComponent</code>’s injector, instead of the one configured in the <code>NgModule</code>.</p>
 
 <p><img src="/images/injector-tree-3.svg" alt="Injector Tree with multiple Providers" /></p>
 
@@ -168,15 +168,15 @@
 
 <p>With the current setup, both providers use the exact same token, so there’s no way for us we can distinguish between the two different dependency instances.</p>
 
-<p>Luckily, Angular comes with a couple more provider strategies (<code class="highlighter-rouge">useValue</code>, <code class="highlighter-rouge">useFactory</code>, …), that define how dependencies are created. One of them is <code class="highlighter-rouge">useExisting</code>, and we’ll now take a look at how it solves our problem.</p>
+<p>Luckily, Angular comes with a couple more provider strategies (<code>useValue</code>, <code>useFactory</code>, …), that define how dependencies are created. One of them is <code>useExisting</code>, and we’ll now take a look at how it solves our problem.</p>
 
-<h2 id="creating-alias-tokens-with-useexisting">Creating alias tokens with <code class="highlighter-rouge">useExisting</code></h2>
+<h2 id="creating-alias-tokens-with-useexisting">Creating alias tokens with <code>useExisting</code></h2>
 
-<p><code class="highlighter-rouge">useExisting</code> is a bit different than the other provider strategies. It’s the only strategy that doesn’t actually create an instance, but instead, <strong>it points to another token</strong> which in turn will create the instance.</p>
+<p><code>useExisting</code> is a bit different than the other provider strategies. It’s the only strategy that doesn’t actually create an instance, but instead, <strong>it points to another token</strong> which in turn will create the instance.</p>
 
-<p>To give an example, let’s say we want to be able to not only use the <code class="highlighter-rouge">DataService</code> type as a token to ask for the dependency, but also the token <code class="highlighter-rouge">RootDataService</code>. We can easily do that with the following provider configuration (as always, we can do the same in <code class="highlighter-rouge">@Component</code> decorators):</p>
+<p>To give an example, let’s say we want to be able to not only use the <code>DataService</code> type as a token to ask for the dependency, but also the token <code>RootDataService</code>. We can easily do that with the following provider configuration (as always, we can do the same in <code>@Component</code> decorators):</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{}</span> <span class="c1">// this is usually imported from somewhere</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{}</span> <span class="c1">// this is usually imported from somewhere</span>
 <span class="kr">class</span> <span class="nx">RootDataService</span> <span class="p">{}</span> <span class="c1">// alias token, also usually imported from somewhere</span>
 
 <span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
@@ -186,21 +186,21 @@
     <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">RootDataService</span><span class="p">,</span> <span class="na">useExisting</span><span class="p">:</span> <span class="nx">DataService</span> <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
 
-<p>What this does is, it tells Angular when someone asks for a dependency for the token <code class="highlighter-rouge">RootDataService</code>, inject the dependency instance that is created for the token <code class="highlighter-rouge">DataService</code>. Or in other words, we just created an alias that gives us the exact same instance that we get for the <code class="highlighter-rouge">DataService</code> token.</p>
+<p>What this does is, it tells Angular when someone asks for a dependency for the token <code>RootDataService</code>, inject the dependency instance that is created for the token <code>DataService</code>. Or in other words, we just created an alias that gives us the exact same instance that we get for the <code>DataService</code> token.</p>
 
 <p>We can then go ahead and use the alias token to inject our service instance just like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">SomeComponent</span> <span class="p">{</span>
   
   <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">contactService</span><span class="err">:</span> <span class="nx">RootDataService</span><span class="p">)</span> <span class="p">{}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Again, this is the exact same instance. Now, why is this helpful? Well… now that we have two different tokens to get the same instance, it’s no longer a problem that another provider in the injector tree “shadows” the provider from our root injector. We can now ask for the dependency instance of <code class="highlighter-rouge">DataService</code> that is created at the very top of our tree, no matter where we are in the component tree, because the alias token still points to the original instance.</p>
+<p>Again, this is the exact same instance. Now, why is this helpful? Well… now that we have two different tokens to get the same instance, it’s no longer a problem that another provider in the injector tree “shadows” the provider from our root injector. We can now ask for the dependency instance of <code>DataService</code> that is created at the very top of our tree, no matter where we are in the component tree, because the alias token still points to the original instance.</p>
 
-<p>One more thing we could do is to get rid off the class definition <code class="highlighter-rouge">RootDataService</code>. We only created it so we can use it as a token, other than that, there’s no use for it. Luckily, we can also use strings to create tokens, or even better, <a href="/angular/2016/05/23/opaque-tokens-in-angular-2.html">we use OpaqueTokens</a>.</p>
+<p>One more thing we could do is to get rid off the class definition <code>RootDataService</code>. We only created it so we can use it as a token, other than that, there’s no use for it. Luckily, we can also use strings to create tokens, or even better, <a href="/angular/2016/05/23/opaque-tokens-in-angular-2.html">we use OpaqueTokens</a>.</p>
 
 <p>To see things in action, check out the demos below!</p>
 

@@ -115,62 +115,62 @@
 
 <p>In order to understand what that means, let’s take a look at this code snippet here:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="err">[(</span><span class="na">ngModel</span><span class="err">)]="</span><span class="na">username</span><span class="err">"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="err">[(</span><span class="na">ngModel</span><span class="err">)]="</span><span class="na">username</span><span class="err">"</span><span class="nt">&gt;</span>
 
-<span class="nt">&lt;p&gt;</span>Hello {{username}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;p&gt;</span>Hello {{username}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
-<p>Right, this is that one demo that blew our minds back in 2009, implemented in Angular 2.x. When typing into the input, the input’s value is written into the <code class="highlighter-rouge">username</code> model and then reflected back into the view, resulting in a nice greeting.</p>
+<p>Right, this is that one demo that blew our minds back in 2009, implemented in Angular 2.x. When typing into the input, the input’s value is written into the <code>username</code> model and then reflected back into the view, resulting in a nice greeting.</p>
 
-<p>How does this all work? Well, as mentioned earlier, since version 2.x, two-way data binding in Angular really just boils down to property binding and event binding. There is no such thing as two-way data binding. Without the <code class="highlighter-rouge">ngModel</code> directive, we could easily implement two-way data binding just like this:</p>
+<p>How does this all work? Well, as mentioned earlier, since version 2.x, two-way data binding in Angular really just boils down to property binding and event binding. There is no such thing as two-way data binding. Without the <code>ngModel</code> directive, we could easily implement two-way data binding just like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="err">[</span><span class="na">value</span><span class="err">]="</span><span class="na">username</span><span class="err">"</span> <span class="err">(</span><span class="na">input</span><span class="err">)="</span><span class="na">username =</span><span class="err"> </span><span class="s">$event.target.value"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="err">[</span><span class="na">value</span><span class="err">]="</span><span class="na">username</span><span class="err">"</span> <span class="err">(</span><span class="na">input</span><span class="err">)="</span><span class="na">username =</span><span class="err"> </span><span class="s">$event.target.value"</span><span class="nt">&gt;</span>
 
-<span class="nt">&lt;p&gt;</span>Hello {{username}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;p&gt;</span>Hello {{username}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
 <p>Let’s take a closer look at what’s going on here:</p>
 
 <ul>
-  <li><strong>[value]=”username”</strong> - Binds the expression <code class="highlighter-rouge">username</code> to the input element’s <code class="highlighter-rouge">value</code> property</li>
-  <li><strong>(input)=”expression”</strong> - Is a declarative way of binding an expression to the input element’s <code class="highlighter-rouge">input</code> event (yes there’s such event)</li>
-  <li><strong>username = $event.target.value</strong> - The expression that gets executed when the <code class="highlighter-rouge">input</code> event is fired</li>
+  <li><strong>[value]=”username”</strong> - Binds the expression <code>username</code> to the input element’s <code>value</code> property</li>
+  <li><strong>(input)=”expression”</strong> - Is a declarative way of binding an expression to the input element’s <code>input</code> event (yes there’s such event)</li>
+  <li><strong>username = $event.target.value</strong> - The expression that gets executed when the <code>input</code> event is fired</li>
   <li><strong>$event</strong> - Is an expression exposed in event bindings by Angular, which has the value of the event’s payload</li>
 </ul>
 
-<p>Considering these observations, it becomes very clear what’s happening. We’re binding the value of the <code class="highlighter-rouge">username</code> expression to the input’s <code class="highlighter-rouge">value</code> property (data goes into the component).</p>
+<p>Considering these observations, it becomes very clear what’s happening. We’re binding the value of the <code>username</code> expression to the input’s <code>value</code> property (data goes into the component).</p>
 
-<p>We also bind an expression to the element’s <code class="highlighter-rouge">input</code> event. This expression assigns the value of <code class="highlighter-rouge">$event.target.value</code> to the <code class="highlighter-rouge">username</code> model. But what is <code class="highlighter-rouge">$event.target.value</code>? As mentioned, <code class="highlighter-rouge">$event</code> is the payload that’s emitted by the event. Now, what is the payload of the <code class="highlighter-rouge">input</code> event? It’s an <a href="https://developer.mozilla.org/en-US/docs/Web/Events/input">InputEventObject</a>, which comes with a <code class="highlighter-rouge">target</code> property, which is a reference to the DOM object that fired the event (our input element). So all we do is, we’re reading from the input’s <code class="highlighter-rouge">value</code> property when a user enters a value (data comes out of the component).</p>
+<p>We also bind an expression to the element’s <code>input</code> event. This expression assigns the value of <code>$event.target.value</code> to the <code>username</code> model. But what is <code>$event.target.value</code>? As mentioned, <code>$event</code> is the payload that’s emitted by the event. Now, what is the payload of the <code>input</code> event? It’s an <a href="https://developer.mozilla.org/en-US/docs/Web/Events/input">InputEventObject</a>, which comes with a <code>target</code> property, which is a reference to the DOM object that fired the event (our input element). So all we do is, we’re reading from the input’s <code>value</code> property when a user enters a value (data comes out of the component).</p>
 
 <p><strong>That’s it. That’s two-way data binding in a nutshell.</strong> Wasn’t that hard right?</p>
 
-<p>Okay cool, but when does <code class="highlighter-rouge">ngModel</code> come into play then? Since a scenario like the one shown above is very common, it just makes sense to have a directive that abstracts things away and safes us some keystrokes.</p>
+<p>Okay cool, but when does <code>ngModel</code> come into play then? Since a scenario like the one shown above is very common, it just makes sense to have a directive that abstracts things away and safes us some keystrokes.</p>
 
 <h2 id="understanding-ngmodel">Understanding ngModel</h2>
 
-<p>If we take a look at the source code, we’ll notice that <code class="highlighter-rouge">ngModel</code> actually comes with a property and event binding as well. Here’s what our example looks like using <code class="highlighter-rouge">ngModel</code>, but without using the shorthand syntax:</p>
+<p>If we take a look at the source code, we’ll notice that <code>ngModel</code> actually comes with a property and event binding as well. Here’s what our example looks like using <code>ngModel</code>, but without using the shorthand syntax:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="err">[</span><span class="na">ngModel</span><span class="err">]="</span><span class="na">username</span><span class="err">"</span> <span class="err">(</span><span class="na">ngModelChange</span><span class="err">)="</span><span class="na">username =</span><span class="err"> </span><span class="s">$event"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="err">[</span><span class="na">ngModel</span><span class="err">]="</span><span class="na">username</span><span class="err">"</span> <span class="err">(</span><span class="na">ngModelChange</span><span class="err">)="</span><span class="na">username =</span><span class="err"> </span><span class="s">$event"</span><span class="nt">&gt;</span>
 
-<span class="nt">&lt;p&gt;</span>Hello {{username}}!<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;p&gt;</span>Hello {{username}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
-<p>Same rules apply. The property binding <code class="highlighter-rouge">[ngModel]</code> takes care of updating the underlying input DOM element. The event binding <code class="highlighter-rouge">(ngModelChange)</code> notifies the outside world when there was a change in the DOM. We also notice that the handler expression uses only <code class="highlighter-rouge">$event</code> and no longer <code class="highlighter-rouge">$event.target.value</code>. Why is that? As we’ve mentioned earlier, <code class="highlighter-rouge">$event</code> is the payload of the emitted event. In other words, <code class="highlighter-rouge">ngModelChange</code> takes care of extracting <code class="highlighter-rouge">target.value</code> from the inner <code class="highlighter-rouge">$event</code> payload, and simply emits that (to be technically correct, it’s actually the <code class="highlighter-rouge">DefaultValueAccessor</code> that takes of the extracting that value and also writing to the underlying DOM object).</p>
+<p>Same rules apply. The property binding <code>[ngModel]</code> takes care of updating the underlying input DOM element. The event binding <code>(ngModelChange)</code> notifies the outside world when there was a change in the DOM. We also notice that the handler expression uses only <code>$event</code> and no longer <code>$event.target.value</code>. Why is that? As we’ve mentioned earlier, <code>$event</code> is the payload of the emitted event. In other words, <code>ngModelChange</code> takes care of extracting <code>target.value</code> from the inner <code>$event</code> payload, and simply emits that (to be technically correct, it’s actually the <code>DefaultValueAccessor</code> that takes of the extracting that value and also writing to the underlying DOM object).</p>
 
-<p>Last but not least, since writing <code class="highlighter-rouge">username</code> and <code class="highlighter-rouge">ngModel</code> twice is still too much, Angular allows the shorthand syntax using <code class="highlighter-rouge">[()]</code>, also called “Banana in a box”. So after all, it’s really an implementation detail of <code class="highlighter-rouge">ngModel</code> that enables two-way data binding.</p>
+<p>Last but not least, since writing <code>username</code> and <code>ngModel</code> twice is still too much, Angular allows the shorthand syntax using <code>[()]</code>, also called “Banana in a box”. So after all, it’s really an implementation detail of <code>ngModel</code> that enables two-way data binding.</p>
 
 <h2 id="creating-custom-two-way-data-bindings">Creating custom two-way data bindings</h2>
 
-<p>Using this knowledge, we can now build our own custom two-way data bindings. All we have to do is to follow the same rules that <code class="highlighter-rouge">ngModel</code> follows, which are:</p>
+<p>Using this knowledge, we can now build our own custom two-way data bindings. All we have to do is to follow the same rules that <code>ngModel</code> follows, which are:</p>
 
 <ul>
-  <li>Introduce a property binding (e.g. <code class="highlighter-rouge">[foo]</code>)</li>
-  <li>Introduce a event binding with the same name, plus a <code class="highlighter-rouge">Change</code> suffix (e.g. <code class="highlighter-rouge">(fooChange)</code>)</li>
+  <li>Introduce a property binding (e.g. <code>[foo]</code>)</li>
+  <li>Introduce a event binding with the same name, plus a <code>Change</code> suffix (e.g. <code>(fooChange)</code>)</li>
   <li>Make sure the event binding takes care of property extraction (if needed)</li>
 </ul>
 
-<p>As you can see, there’s a bit more work involved to make two-way data binding work compared to Angular 1. However, we should also always consider if a custom two-way data binding implementation is really needed, or if we can just take advantage of <code class="highlighter-rouge">ngModel</code>. This, for example is the case when building <a href="/angular/2016/07/27/custom-form-controls-in-angular-2.html">custom form controls</a>.</p>
+<p>As you can see, there’s a bit more work involved to make two-way data binding work compared to Angular 1. However, we should also always consider if a custom two-way data binding implementation is really needed, or if we can just take advantage of <code>ngModel</code>. This, for example is the case when building <a href="/angular/2016/07/27/custom-form-controls-in-angular-2.html">custom form controls</a>.</p>
 
 <p>Let’s say we create a custom counter component and ignore of a second that this would rather be a custom form control.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'custom-counter'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"decrement()"</span><span class="o">&gt;-&lt;</span><span class="sr">/button</span><span class="err">&gt;
@@ -197,11 +197,11 @@
   <span class="nx">increment</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">counter</span><span class="o">++</span><span class="err">'</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>It has an internal <code class="highlighter-rouge">counter</code> property that is used to display the current counter value. In order to make this property two-way data bound, the first thing we have to do is to make it an <code class="highlighter-rouge">Input</code> property. Let’s add the <code class="highlighter-rouge">@Input()</code> decorator:</p>
+<p>It has an internal <code>counter</code> property that is used to display the current counter value. In order to make this property two-way data bound, the first thing we have to do is to make it an <code>Input</code> property. Let’s add the <code>@Input()</code> decorator:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">CustomCounterComponent</span> <span class="p">{</span>
 
   <span class="nx">counterValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -211,15 +211,15 @@
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>This already enables us to bind expression to that property as a consumer of that component like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;custom-counter</span> <span class="err">[</span><span class="na">counter</span><span class="err">]="</span><span class="na">someValue</span><span class="err">"</span><span class="nt">&gt;&lt;/custom-counter&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;custom-counter</span> <span class="err">[</span><span class="na">counter</span><span class="err">]="</span><span class="na">someValue</span><span class="err">"</span><span class="nt">&gt;&lt;/custom-counter&gt;</span></code></pre></div>
 
-<p>The next thing we need to do, is to introduce an <code class="highlighter-rouge">@Output()</code> event with the same name, plus the <code class="highlighter-rouge">Change</code> suffix. We want to emit that event, whenever the value of the <code class="highlighter-rouge">counter</code> property changes. Let’s add an <code class="highlighter-rouge">@Output()</code> property and emit the latest value in the setter interceptor:</p>
+<p>The next thing we need to do, is to introduce an <code>@Output()</code> event with the same name, plus the <code>Change</code> suffix. We want to emit that event, whenever the value of the <code>counter</code> property changes. Let’s add an <code>@Output()</code> property and emit the latest value in the setter interceptor:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">CustomCounterComponent</span> <span class="p">{</span>
 
   <span class="p">...</span>
@@ -230,23 +230,23 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">counterChange</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>That’s it! We can now bind an expression to that property using the two-way data binding syntax:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;custom-counter</span> <span class="err">[(</span><span class="na">counter</span><span class="err">)]="</span><span class="na">someValue</span><span class="err">"</span><span class="nt">&gt;&lt;/custom-counter&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;custom-counter</span> <span class="err">[(</span><span class="na">counter</span><span class="err">)]="</span><span class="na">someValue</span><span class="err">"</span><span class="nt">&gt;&lt;/custom-counter&gt;</span>
 
-<span class="nt">&lt;p&gt;</span>counterValue = {{someValue}}<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;p&gt;</span>counterValue = {{someValue}}<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
 <p>Check out the demo and try it out!</p>
 
 <iframe src="https://embed.plnkr.co/RtrRej/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Again, please keep in mind that a component like a custom counter, would better serve as a custom form control and takes advantage of <code class="highlighter-rouge">ngModel</code> to implement two-way data binding as explained in <a href="/angular/2016/07/27/custom-form-controls-in-angular-2.html">this article</a>.</p>
+<p>Again, please keep in mind that a component like a custom counter, would better serve as a custom form control and takes advantage of <code>ngModel</code> to implement two-way data binding as explained in <a href="/angular/2016/07/27/custom-form-controls-in-angular-2.html">this article</a>.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>Angular doesn’t come with built-in two-way data binding anymore, but with APIs that allow to implement this type of binding using property and event bindings. <code class="highlighter-rouge">ngModel</code> comes as a built-in directive as part of the <code class="highlighter-rouge">FormsModule</code> to implement two-way data binding and should be preferred when building components that serve as custom form controls.</p>
+<p>Angular doesn’t come with built-in two-way data binding anymore, but with APIs that allow to implement this type of binding using property and event bindings. <code>ngModel</code> comes as a built-in directive as part of the <code>FormsModule</code> to implement two-way data binding and should be preferred when building components that serve as custom form controls.</p>
 
 
           

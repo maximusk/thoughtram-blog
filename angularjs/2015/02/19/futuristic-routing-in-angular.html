@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Futuristic Routing in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Feb 19, 2015, last updated on Dec 16, 2016<br>19 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Feb 19, 2015, last updated on Dec 16, 2016<br>18 minute read</span>
 
           </div>
         </hgroup>
@@ -116,28 +116,28 @@
 
 <p>Before we start off showing what the new router is going to look like, let’s recap what kind of routing Angular comes with. The Angular source tries to be as modular as possible. Code components, that aren’t necessary to get an Angular application running, but provide nice additional functionality that might be needed, are sliced into their own modules.</p>
 
-<p>And so is the basic Angular router. It’s implemented in the <code class="highlighter-rouge">ngRoute</code> module and can easily be installed through package managers like npm. Once installed, we can add it as module dependency to our application like so:</p>
+<p>And so is the basic Angular router. It’s implemented in the <code>ngRoute</code> module and can easily be installed through package managers like npm. Once installed, we can add it as module dependency to our application like so:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'ngRoute'</span><span class="p">]);</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'ngRoute'</span><span class="p">]);</span></code></pre></div>
 
-<p>In order to configure routes for our application, we use the <code class="highlighter-rouge">$routeProvider</code> that we can access in our app’s config phase. <code class="highlighter-rouge">$routeProvider</code> comes with methods like <code class="highlighter-rouge">.when()</code> and <code class="highlighter-rouge">.otherwise()</code> to define which route maps to which controller and template. Here’s a quick example:</p>
+<p>In order to configure routes for our application, we use the <code>$routeProvider</code> that we can access in our app’s config phase. <code>$routeProvider</code> comes with methods like <code>.when()</code> and <code>.otherwise()</code> to define which route maps to which controller and template. Here’s a quick example:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$routeProvider</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$routeProvider</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$routeProvider</span>
     <span class="p">.</span><span class="nx">when</span><span class="p">(</span><span class="s1">'/welcome'</span><span class="p">,</span> <span class="p">{</span>
       <span class="na">template</span><span class="p">:</span> <span class="s1">'welcome.html'</span><span class="p">,</span>
       <span class="na">controller</span><span class="p">:</span> <span class="s1">'WelcomeController'</span>
     <span class="p">})</span>
     <span class="p">.</span><span class="nx">otherwise</span><span class="p">(</span><span class="s1">'/welcome'</span><span class="p">);</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>We can see very nicely that the route <code class="highlighter-rouge">/welcome</code> maps to the controller <code class="highlighter-rouge">WelcomeController</code> and the template <code class="highlighter-rouge">welcome.html</code>. In addition, if at runtime a route is given that is not covered by any <code class="highlighter-rouge">.when()</code> configuration, the app defaults to <code class="highlighter-rouge">/welcome</code> route, that’s what <code class="highlighter-rouge">.otherwise()</code> is for.</p>
+<p>We can see very nicely that the route <code>/welcome</code> maps to the controller <code>WelcomeController</code> and the template <code>welcome.html</code>. In addition, if at runtime a route is given that is not covered by any <code>.when()</code> configuration, the app defaults to <code>/welcome</code> route, that’s what <code>.otherwise()</code> is for.</p>
 
-<p>If we have some additional dependencies that should be resolved before a route’s controller is instantiated, we can do that with the <code class="highlighter-rouge">resolve</code> property, which is an object literal that maps each member to a promise that either resolves or rejects later at runtime. These resolved dependencies are available to be injected in the controller instance. In order to instantiate the route’s controller, all specified promises need to resolve. If only one promise gets rejected, the route change is cancelled since the corresponding controller can’t be instantiated.</p>
+<p>If we have some additional dependencies that should be resolved before a route’s controller is instantiated, we can do that with the <code>resolve</code> property, which is an object literal that maps each member to a promise that either resolves or rejects later at runtime. These resolved dependencies are available to be injected in the controller instance. In order to instantiate the route’s controller, all specified promises need to resolve. If only one promise gets rejected, the route change is cancelled since the corresponding controller can’t be instantiated.</p>
 
 <p>Here’s an example where a promise needs to be resolved first, before a controller can be instantiated:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$routeProvider</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$routeProvider</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$routeProvider</span>
     <span class="p">.</span><span class="nx">when</span><span class="p">(</span><span class="s1">'/welcome'</span><span class="p">,</span> <span class="p">{</span>
       <span class="na">template</span><span class="p">:</span> <span class="s1">'welcome.html'</span><span class="p">,</span>
@@ -153,92 +153,92 @@
 
 <span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'WelcomeController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// do something with person</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>If you’re not familiar with promises we’ve written an <a href="http://blog.thoughtram.io/angularjs/2014/12/18/exploring-angular-1.3-es6-style-promises.html">article</a> that gives a brief introduction. Also, if this <code class="highlighter-rouge">resolve</code> property looks completely new to you we recommend reading the <a href="https://docs.angularjs.org/api/ngRoute/provider/$routeProvider">official docs</a>.</p>
+<p>If you’re not familiar with promises we’ve written an <a href="http://blog.thoughtram.io/angularjs/2014/12/18/exploring-angular-1.3-es6-style-promises.html">article</a> that gives a brief introduction. Also, if this <code>resolve</code> property looks completely new to you we recommend reading the <a href="https://docs.angularjs.org/api/ngRoute/provider/$routeProvider">official docs</a>.</p>
 
 <p>Let’s take a quick look at our main template to see where our route templates are loaded and rendered.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-view</span><span class="nt">&gt;&lt;/div&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-view</span><span class="nt">&gt;&lt;/div&gt;</span></code></pre></div>
 
 <p>That’s it. One single entry point where, depending on our route, a template is loaded and it’s corresponding controller is instantiated. And here we already see the first weak points of Angular’s built-in routing implementation. The basic routing we get so far is just a simple URL to controller/template mapping. There’s no way to have sibling or nested components.</p>
 
-<p>Since <code class="highlighter-rouge">ngRoute</code> lacks such advanced routing features, the community has built their own router component, that solves all these problems - <a href="http://github.com/angular-ui/ui-router">ui-router</a>.</p>
+<p>Since <code>ngRoute</code> lacks such advanced routing features, the community has built their own router component, that solves all these problems - <a href="http://github.com/angular-ui/ui-router">ui-router</a>.</p>
 
-<p>But of course, the Angular team is listening. And that’s why they implement a new more powerful router that is available for both, the <code class="highlighter-rouge">1.x</code> as well as the <code class="highlighter-rouge">2.x</code> branch.</p>
+<p>But of course, the Angular team is listening. And that’s why they implement a new more powerful router that is available for both, the <code>1.x</code> as well as the <code>2.x</code> branch.</p>
 
 <h2 id="introducing-the-new-router">Introducing the new router</h2>
 
 <p>You might have seen that Christoph and I gave a talk on “<a href="http://thoughtram.io/the-best-angular-yet">The Best Angular Yet!</a>” at Amsterdam’s Angular conference <a href="http://ng-nl.org">NG-NL</a>. There we already gave a little sneak peak on what the new router will look like. At the time of writing this article and giving that presentation, the router was still in development, so things might have changed over time but we try to keep this article updated.</p>
 
-<p>The new router will be quite different. One of it’s main goals is that it works for both Angular <code class="highlighter-rouge">2.x</code> and Angular <code class="highlighter-rouge">&gt;=1.4</code>. That means, both need to share as much code as possible, since Angular version 2.0.0 is written in <s>AtScript</s> TypeScript. There are a couple more differences but we are going to take a look at them step by step.</p>
+<p>The new router will be quite different. One of it’s main goals is that it works for both Angular <code>2.x</code> and Angular <code>&gt;=1.4</code>. That means, both need to share as much code as possible, since Angular version 2.0.0 is written in <s>AtScript</s> TypeScript. There are a couple more differences but we are going to take a look at them step by step.</p>
 
 <p>We can install the new router via npm by running the following shell command:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install angular-new-router</code></pre></figure>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install angular-new-router</code></pre></div>
 
-<p>Once installed we can take a look at <code class="highlighter-rouge">node_modules/angular-new-router/dist/</code> and see that there are two versions of the router source - <code class="highlighter-rouge">router.es5.js</code> and <code class="highlighter-rouge">router.js</code>. The former one is an “angularfied” version of the router. So it’s basically the router code in ECMAScript 5 plus some additional Angular 1 specific components like service provider and directives. The latter one is the compiled AtScript code as AMD module so it can be used in other applications as well.</p>
+<p>Once installed we can take a look at <code>node_modules/angular-new-router/dist/</code> and see that there are two versions of the router source - <code>router.es5.js</code> and <code>router.js</code>. The former one is an “angularfied” version of the router. So it’s basically the router code in ECMAScript 5 plus some additional Angular 1 specific components like service provider and directives. The latter one is the compiled AtScript code as AMD module so it can be used in other applications as well.</p>
 
-<p>Currently we are interested in the Angular 1 components, so what we need to do is to embed <code class="highlighter-rouge">router.es5.js</code> and add the new router module as dependency to our application like this:</p>
+<p>Currently we are interested in the Angular 1 components, so what we need to do is to embed <code>router.es5.js</code> and add the new router module as dependency to our application like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'ngComponentRouter'</span><span class="p">]);</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'ngComponentRouter'</span><span class="p">]);</span></code></pre></div>
 
-<p>Great! Next up: configuration. Here we’re going to encouter the first big difference when using the new router. As we know, in Angular 1 we have this <code class="highlighter-rouge">.config()</code> phase where we have access to service providers in order to configure services that are used later at runtime. That’s why we can use the <code class="highlighter-rouge">$routeProvider</code> of <code class="highlighter-rouge">ngRoute</code> to configure our routes.</p>
+<p>Great! Next up: configuration. Here we’re going to encouter the first big difference when using the new router. As we know, in Angular 1 we have this <code>.config()</code> phase where we have access to service providers in order to configure services that are used later at runtime. That’s why we can use the <code>$routeProvider</code> of <code>ngRoute</code> to configure our routes.</p>
 
-<p>However, it turned out that there are a lot of problems with having a separation between configuration and run phases, which is why there won’t be such a thing in Angular &gt;= 2.0.0. And so there isn’t in the new router. Now you might wonder how we are able to configure our routes with the new router, if there’s no provider that we can access during our application’s <code class="highlighter-rouge">.config()</code>.</p>
+<p>However, it turned out that there are a lot of problems with having a separation between configuration and run phases, which is why there won’t be such a thing in Angular &gt;= 2.0.0. And so there isn’t in the new router. Now you might wonder how we are able to configure our routes with the new router, if there’s no provider that we can access during our application’s <code>.config()</code>.</p>
 
 <p>Well, let’s take a look at some code.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$router</span><span class="p">.</span><span class="nx">config</span><span class="p">([</span>
     <span class="p">{</span>
       <span class="na">path</span><span class="p">:</span> <span class="s1">'/'</span><span class="p">,</span>
       <span class="na">component</span><span class="p">:</span> <span class="s1">'welcome'</span>
     <span class="p">}</span>
   <span class="p">]);</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Oh what’s happening here? All we do is creating a new controller that asks for the <code class="highlighter-rouge">$router</code> service, which we use to configure itself. The configuration is pretty straight forward. We use <code class="highlighter-rouge">$router.config()</code> and pass it an array with configuration objects that each have a property <code class="highlighter-rouge">path</code> to set the route and a property <code class="highlighter-rouge">component</code> that sets the name of the component to be instantiated.</p>
+<p>Oh what’s happening here? All we do is creating a new controller that asks for the <code>$router</code> service, which we use to configure itself. The configuration is pretty straight forward. We use <code>$router.config()</code> and pass it an array with configuration objects that each have a property <code>path</code> to set the route and a property <code>component</code> that sets the name of the component to be instantiated.</p>
 
 <p>We’re going to talk about what a component actually is in a second, but let’s first take a look at our template. So let’s assume we have an HTML document, this is what our application could look like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-controller=</span><span class="s">"AppController"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-controller=</span><span class="s">"AppController"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;ng-outlet&gt;&lt;/ng-outlet&gt;</span>
-<span class="nt">&lt;/body&gt;</span></code></pre></figure>
+<span class="nt">&lt;/body&gt;</span></code></pre></div>
 
-<p>Right, there’s no <code class="highlighter-rouge">&lt;ng-view&gt;</code> anymore. Instead the new router comes with a directive called <code class="highlighter-rouge">&lt;ng-outlet&gt;</code> which can also be used as an attribute in case it’s needed. An outlet basically is a “hole” where component templates are loaded into. So the above code in it’s current state is pretty much the same as using <code class="highlighter-rouge">&lt;ng-view&gt;</code> with the old routing system.</p>
+<p>Right, there’s no <code>&lt;ng-view&gt;</code> anymore. Instead the new router comes with a directive called <code>&lt;ng-outlet&gt;</code> which can also be used as an attribute in case it’s needed. An outlet basically is a “hole” where component templates are loaded into. So the above code in it’s current state is pretty much the same as using <code>&lt;ng-view&gt;</code> with the old routing system.</p>
 
-<p>But what gets loaded into our outlet you ask? Good question! This is where components come into play. When we configured the router, we said that the route <code class="highlighter-rouge">/</code> loads and instantiates the <code class="highlighter-rouge">welcome</code> component. But we haven’t talked about what the <code class="highlighter-rouge">welcome</code> component actually is.</p>
+<p>But what gets loaded into our outlet you ask? Good question! This is where components come into play. When we configured the router, we said that the route <code>/</code> loads and instantiates the <code>welcome</code> component. But we haven’t talked about what the <code>welcome</code> component actually is.</p>
 
-<p><strong>A component</strong> in Angular 1, when using the new router, <strong>is a controller with a template and an optional router</strong> for that component. So if we say we have a <code class="highlighter-rouge">welcome</code> component, we need to create a corresponding controller and template for it. In fact, the new router already comes with a default configuration to load and instantiate components. This configuration behaves as follows:</p>
+<p><strong>A component</strong> in Angular 1, when using the new router, <strong>is a controller with a template and an optional router</strong> for that component. So if we say we have a <code>welcome</code> component, we need to create a corresponding controller and template for it. In fact, the new router already comes with a default configuration to load and instantiate components. This configuration behaves as follows:</p>
 
 <ul>
-  <li>Load the component template asynchronously from <code class="highlighter-rouge">components/[COMPONENT_NAME]/[COMPONENT_NAME].html</code></li>
-  <li>Instantiate <code class="highlighter-rouge">[COMPONENT_NAME]Controller</code></li>
+  <li>Load the component template asynchronously from <code>components/[COMPONENT_NAME]/[COMPONENT_NAME].html</code></li>
+  <li>Instantiate <code>[COMPONENT_NAME]Controller</code></li>
 </ul>
 
-<p>Applying this to our configuration, it means that the router automatically tries to load <code class="highlighter-rouge">components/welcome/welcome.html</code> and instantiate <code class="highlighter-rouge">WelcomeController</code>.</p>
+<p>Applying this to our configuration, it means that the router automatically tries to load <code>components/welcome/welcome.html</code> and instantiate <code>WelcomeController</code>.</p>
 
-<p>If we’re not okay with that configuration, we can simply override this default behaviour by using the <code class="highlighter-rouge">$componentMapperProvider</code> in our application configuration. It provides us with methods to configure the names of controllers to be instantiated as well as the paths from where to load component templates.</p>
+<p>If we’re not okay with that configuration, we can simply override this default behaviour by using the <code>$componentMapperProvider</code> in our application configuration. It provides us with methods to configure the names of controllers to be instantiated as well as the paths from where to load component templates.</p>
 
-<p>The following code forces the router to load <code class="highlighter-rouge">[COMPONENT_NAME].html</code> instead of <code class="highlighter-rouge">components/[COMPONENT_NAME]/[COMPONENT_NAME].html</code>:</p>
+<p>The following code forces the router to load <code>[COMPONENT_NAME].html</code> instead of <code>components/[COMPONENT_NAME]/[COMPONENT_NAME].html</code>:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$componentMapperProvider</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$componentMapperProvider</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$componentMapperProvider</span><span class="p">.</span><span class="nx">setTemplateMapping</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// name == component name</span>
     <span class="k">return</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">'.html'</span><span class="p">;</span>
   <span class="p">});</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Let’s create <code class="highlighter-rouge">WelcomeController</code> (for simplicity reasons I define the controller directly on <code class="highlighter-rouge">app</code> rather than introducing a new module for that component, but you can do that of course).</p>
+<p>Let’s create <code>WelcomeController</code> (for simplicity reasons I define the controller directly on <code>app</code> rather than introducing a new module for that component, but you can do that of course).</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'WelcomeController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'WelcomeController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>And here the corresponding template <code class="highlighter-rouge">welcome.html</code>:</p>
+<p>And here the corresponding template <code>welcome.html</code>:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span></code></pre></div>
 
 <p>The component is now ready to be loaded and instantiated. Let’s see the code in action:</p>
 
@@ -248,33 +248,33 @@
 
 <p>Now we have a component with a controller that doesn’t do anything. Adding behaviour to our component works the way we are used to it. We simply define methods and properties on a component’s controller.</p>
 
-<p>Just keep in mind that the new router enforces <code class="highlighter-rouge">controller as</code> syntax, which means we have to define our methods and properties on the controller itself instead of <code class="highlighter-rouge">$scope</code>. The controller is then exposed with the component name on the scope, which leads us to use <code class="highlighter-rouge">welcome</code> as controller reference in our template.</p>
+<p>Just keep in mind that the new router enforces <code>controller as</code> syntax, which means we have to define our methods and properties on the controller itself instead of <code>$scope</code>. The controller is then exposed with the component name on the scope, which leads us to use <code>welcome</code> as controller reference in our template.</p>
 
-<p>As an example let’s add a property and method to our <code class="highlighter-rouge">WelcomeController</code>:</p>
+<p>As an example let’s add a property and method to our <code>WelcomeController</code>:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'WelcomeController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'WelcomeController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'Pascal'</span><span class="p">;</span>
 
   <span class="k">this</span><span class="p">.</span><span class="nx">changeName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'Christoph'</span><span class="p">;</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>In our component template, we can access the controller properties via the <code class="highlighter-rouge">welcome</code> identifier like this:</p>
+<p>In our component template, we can access the controller properties via the <code>welcome</code> identifier like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span>
 <span class="nt">&lt;p&gt;</span>Hello {{welcome.name}}<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">"welcome.changeName()"</span><span class="nt">&gt;</span>Change Name!<span class="nt">&lt;/button&gt;</span></code></pre></figure>
+<span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">"welcome.changeName()"</span><span class="nt">&gt;</span>Change Name!<span class="nt">&lt;/button&gt;</span></code></pre></div>
 
-<p>If you’re not familiar with the <code class="highlighter-rouge">controller as</code> syntax. you might want to check out our article on <a href="http://blog.thoughtram.io/angularjs/2015/01/02/exploring-angular-1.3-bindToController.html">Binding to Directive Controllers</a>. Here’s our updated example as runnable app:</p>
+<p>If you’re not familiar with the <code>controller as</code> syntax. you might want to check out our article on <a href="http://blog.thoughtram.io/angularjs/2015/01/02/exploring-angular-1.3-bindToController.html">Binding to Directive Controllers</a>. Here’s our updated example as runnable app:</p>
 
 <iframe src="http://embed.plnkr.co/ie9d2F/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
 <h2 id="linking-to-other-components">Linking to other components</h2>
 
-<p>In order to have a very easy way to navigate from one component to another, the <code class="highlighter-rouge">ngComponentRouter</code> module comes with a <code class="highlighter-rouge">routerLink</code> directive that we can use to tell our application, where to navigate. Let’s say we have another component <code class="highlighter-rouge">user</code>, we’d extend our application with a new configuration for that component.</p>
+<p>In order to have a very easy way to navigate from one component to another, the <code>ngComponentRouter</code> module comes with a <code>routerLink</code> directive that we can use to tell our application, where to navigate. Let’s say we have another component <code>user</code>, we’d extend our application with a new configuration for that component.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$router</span><span class="p">.</span><span class="nx">config</span><span class="p">([</span>
     <span class="p">{</span>
       <span class="na">path</span><span class="p">:</span> <span class="s1">'/'</span><span class="p">,</span>
@@ -285,38 +285,38 @@
       <span class="na">component</span><span class="p">:</span> <span class="s1">'user'</span>
     <span class="p">}</span>
   <span class="p">]);</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>And as we’ve learned, we also need a corresponding controller and template to actually assemble our component. Here’s our <code class="highlighter-rouge">UserController</code>:</p>
+<p>And as we’ve learned, we also need a corresponding controller and template to actually assemble our component. Here’s our <code>UserController</code>:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'UserController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'UserController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>And here’s the template <code class="highlighter-rouge">user.html</code>.</p>
+<p>And here’s the template <code>user.html</code>.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>User<span class="nt">&lt;/h1&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>User<span class="nt">&lt;/h1&gt;</span></code></pre></div>
 
-<p>Now, in order to get there from our <code class="highlighter-rouge">welcome</code> component, all we have to do is to add an anchor tag to our <code class="highlighter-rouge">welcome</code> component template and us the <code class="highlighter-rouge">routerLink</code> directive accordingly.</p>
+<p>Now, in order to get there from our <code>welcome</code> component, all we have to do is to add an anchor tag to our <code>welcome</code> component template and us the <code>routerLink</code> directive accordingly.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span>
 <span class="nt">&lt;p&gt;</span>Hello {{welcome.name}}<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">"welcome.changeName()"</span><span class="nt">&gt;</span>Change Name!<span class="nt">&lt;/button&gt;</span>
-<span class="nt">&lt;p&gt;&lt;a</span> <span class="na">ng-link=</span><span class="s">"user"</span><span class="nt">&gt;</span>User View<span class="nt">&lt;/a&gt;&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;p&gt;&lt;a</span> <span class="na">ng-link=</span><span class="s">"user"</span><span class="nt">&gt;</span>User View<span class="nt">&lt;/a&gt;&lt;/p&gt;</span></code></pre></div>
 
-<p>As you can see, we don’t have to set an <code class="highlighter-rouge">href</code> attribute, since <code class="highlighter-rouge">routerLink</code> takes care of that. The directive itself takes a component name to navigate to once the link is clicked, which in our case is <code class="highlighter-rouge">user</code>. Again, here the running code:</p>
+<p>As you can see, we don’t have to set an <code>href</code> attribute, since <code>routerLink</code> takes care of that. The directive itself takes a component name to navigate to once the link is clicked, which in our case is <code>user</code>. Again, here the running code:</p>
 
 <iframe src="http://embed.plnkr.co/dds8KE/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
 <h2 id="linking-with-dynamic-parameters">Linking with dynamic parameters</h2>
 
-<p>Of course, just navigating to a component in some cases isn’t enough. We might have routes that take some additional parameters in order to post process that data accordingly. Our <code class="highlighter-rouge">user</code> component doesn’t do anything right now, but we might want to display some data of a certain user depending on a given user id.</p>
+<p>Of course, just navigating to a component in some cases isn’t enough. We might have routes that take some additional parameters in order to post process that data accordingly. Our <code>user</code> component doesn’t do anything right now, but we might want to display some data of a certain user depending on a given user id.</p>
 
-<p>Configuring a route that expects query parameters works pretty similar to what we already know when doing that with the original router. We can define placeholders in our route definition by using the <code class="highlighter-rouge">:</code> symbol followed by an identifer that is used to later expose the value of that placeholder in a dedicated <code class="highlighter-rouge">$routeParams</code> service.</p>
+<p>Configuring a route that expects query parameters works pretty similar to what we already know when doing that with the original router. We can define placeholders in our route definition by using the <code>:</code> symbol followed by an identifer that is used to later expose the value of that placeholder in a dedicated <code>$routeParams</code> service.</p>
 
 <p>To get a better idea, here’s our updated route configuration that takes an additional user id parameter:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$router</span><span class="p">.</span><span class="nx">config</span><span class="p">([</span>
     <span class="p">{</span>
       <span class="na">path</span><span class="p">:</span> <span class="s1">'/'</span><span class="p">,</span>
@@ -327,20 +327,20 @@
       <span class="na">component</span><span class="p">:</span> <span class="s1">'user'</span>
     <span class="p">}</span>
   <span class="p">]);</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Simple right? As already mentioned, query parameter are exposed on the <code class="highlighter-rouge">$routeParams</code> service as simple hash. Which means, in order to access a given user id from that route, all we have to do is to inject <code class="highlighter-rouge">$routeParams</code> into our component’s controller and ask for the paramters we’re looking for.</p>
+<p>Simple right? As already mentioned, query parameter are exposed on the <code>$routeParams</code> service as simple hash. Which means, in order to access a given user id from that route, all we have to do is to inject <code>$routeParams</code> into our component’s controller and ask for the paramters we’re looking for.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'UserController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$routeParams</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'UserController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$routeParams</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">userId</span> <span class="o">=</span> <span class="nx">$routeParams</span><span class="p">.</span><span class="nx">userId</span><span class="p">;</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Okay cool. But how do we <strong>link</strong> to a component that takes parameters? We’ve learned that <code class="highlighter-rouge">ngComponentRouter</code> comes with a <code class="highlighter-rouge">routerLink</code> directive that takes a component name. It turns out, we can set parameters, for a route we want to navigate to, with that directive too! All we need to do is to pass a hash literal to specify the values. Here’s our updated <code class="highlighter-rouge">welcome</code> component template:</p>
+<p>Okay cool. But how do we <strong>link</strong> to a component that takes parameters? We’ve learned that <code>ngComponentRouter</code> comes with a <code>routerLink</code> directive that takes a component name. It turns out, we can set parameters, for a route we want to navigate to, with that directive too! All we need to do is to pass a hash literal to specify the values. Here’s our updated <code>welcome</code> component template:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Welcome!<span class="nt">&lt;/h1&gt;</span>
 <span class="nt">&lt;p&gt;</span>Hello {{welcome.name}}<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">"welcome.changeName()"</span><span class="nt">&gt;</span>Change Name!<span class="nt">&lt;/button&gt;</span>
-<span class="nt">&lt;p&gt;&lt;a</span> <span class="na">ng-link=</span><span class="s">"user({ userId: 3 })"</span><span class="nt">&gt;</span>User View<span class="nt">&lt;/a&gt;&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;p&gt;&lt;a</span> <span class="na">ng-link=</span><span class="s">"user({ userId: 3 })"</span><span class="nt">&gt;</span>User View<span class="nt">&lt;/a&gt;&lt;/p&gt;</span></code></pre></div>
 
 <p>You can see it in action right here:</p>
 
@@ -348,11 +348,11 @@
 
 <h2 id="sibling-components">Sibling Components</h2>
 
-<p>What we’ve done so far is not a very complex scenario, nor does it show the advantage over Angular’s basic routing with <code class="highlighter-rouge">ngRoute</code>. There are other scenarios where the power of the new router really shines. One of them is being able to have sibling components per route. Exactly, we’re finally able to load more than one component at a time!</p>
+<p>What we’ve done so far is not a very complex scenario, nor does it show the advantage over Angular’s basic routing with <code>ngRoute</code>. There are other scenarios where the power of the new router really shines. One of them is being able to have sibling components per route. Exactly, we’re finally able to load more than one component at a time!</p>
 
-<p>Imagine, when a user visits our app, we not only want to have a <code class="highlighter-rouge">welcome</code> component be loaded, we want to spin up another component for our navigation as well. So we end up with two components at the same time for one single route - <code class="highlighter-rouge">navigation</code> and <code class="highlighter-rouge">welcome</code>. We can configure our <code class="highlighter-rouge">$router</code> accordingly by specifying a <code class="highlighter-rouge">components</code> property which describes what components should be loaded for which outlet. Let’s see how that works.</p>
+<p>Imagine, when a user visits our app, we not only want to have a <code>welcome</code> component be loaded, we want to spin up another component for our navigation as well. So we end up with two components at the same time for one single route - <code>navigation</code> and <code>welcome</code>. We can configure our <code>$router</code> accordingly by specifying a <code>components</code> property which describes what components should be loaded for which outlet. Let’s see how that works.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$router</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$router</span><span class="p">.</span><span class="nx">config</span><span class="p">([</span>
     <span class="p">{</span>
       <span class="na">path</span><span class="p">:</span> <span class="s1">'/'</span><span class="p">,</span>
@@ -362,26 +362,26 @@
       <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">]);</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Here we see that we expect <em>two</em> outlets <code class="highlighter-rouge">navigation</code> and <code class="highlighter-rouge">main</code> and we say that we want to load the <code class="highlighter-rouge">navigation</code> and <code class="highlighter-rouge">welcome</code> component respectively. Of course, we now need a <code class="highlighter-rouge">NavigationController</code> and <code class="highlighter-rouge">navigation.html</code> to make this work. Here’s a simple controller with an even simpler template:</p>
+<p>Here we see that we expect <em>two</em> outlets <code>navigation</code> and <code>main</code> and we say that we want to load the <code>navigation</code> and <code>welcome</code> component respectively. Of course, we now need a <code>NavigationController</code> and <code>navigation.html</code> to make this work. Here’s a simple controller with an even simpler template:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'NavigationController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'NavigationController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h2&gt;</span>Navigation<span class="nt">&lt;/h2&gt;</span>
-<span class="nt">&lt;p&gt;</span>Yay, navigation goes here.<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h2&gt;</span>Navigation<span class="nt">&lt;/h2&gt;</span>
+<span class="nt">&lt;p&gt;</span>Yay, navigation goes here.<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
-<p>Now we need to decide, <em>where</em> our components are actually rendered. We’ve learned that a component has outlets, in fact, a component can have multiple outlets. In our router configuration we said we have an outlet <code class="highlighter-rouge">navigation</code> and <code class="highlighter-rouge">main</code>. All we need to do is to use the <code class="highlighter-rouge">&lt;ng-outlet&gt;</code> directive multiple times and give them the names accordingly.</p>
+<p>Now we need to decide, <em>where</em> our components are actually rendered. We’ve learned that a component has outlets, in fact, a component can have multiple outlets. In our router configuration we said we have an outlet <code>navigation</code> and <code>main</code>. All we need to do is to use the <code>&lt;ng-outlet&gt;</code> directive multiple times and give them the names accordingly.</p>
 
-<p>Here’s our updated <code class="highlighter-rouge">index.html</code> that now introduces two outlets, one for each component specified in the router configuration:</p>
+<p>Here’s our updated <code>index.html</code> that now introduces two outlets, one for each component specified in the router configuration:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-controller=</span><span class="s">"AppController"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-controller=</span><span class="s">"AppController"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;nav</span> <span class="na">ng-outlet=</span><span class="s">"navigation"</span><span class="nt">&gt;&lt;/nav&gt;</span>
 
   <span class="nt">&lt;main</span> <span class="na">ng-outlet=</span><span class="s">"main"</span><span class="nt">&gt;&lt;/main&gt;</span>
-<span class="nt">&lt;/body&gt;</span></code></pre></figure>
+<span class="nt">&lt;/body&gt;</span></code></pre></div>
 
 <p>That’s it! Running this code in the browser shows that now two sibling components are loaded for one route.</p>
 
@@ -389,7 +389,7 @@
 
 <p>Following the development on the new router and also actively contributing to it, there’ve been a couple of questions popping up that we haven’t covered in this article yet. In fact, most of them aren’t answered yet but you can follow them on GitHub since we’ve created issues accordingly. To give you an idea of what questions we are talking about, we’ve asked ourself for example if a <a href="https://github.com/angular/router/issues/117">component can have it’s own sub components and outlets</a> or <a href="https://github.com/angular/router/issues/118">how to link to routes that have multiple outlets</a>.</p>
 
-<p>We also haven’t talked about nested routing and or if there’s a <a href="https://github.com/angular/router/issues/100"><code class="highlighter-rouge">resolve</code> equivalent</a> in the new router, but once we have answers to all these questions, we either going to update this article or write separate ones that cover each topic isolated.</p>
+<p>We also haven’t talked about nested routing and or if there’s a <a href="https://github.com/angular/router/issues/100"><code>resolve</code> equivalent</a> in the new router, but once we have answers to all these questions, we either going to update this article or write separate ones that cover each topic isolated.</p>
 
 <p>In the meantime check out the official <a href="http://github.com/angular/router">repository</a> or take a look at the <a href="http://angular.github.io/router/">online documentation</a>. Don’t forget to contribute, we always need your help!</p>
 

@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">ngMessages in Angular 1.3</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Jan 23, 2015, last updated on Nov 8, 2016<br>12 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Jan 23, 2015, last updated on Nov 8, 2016<br>11 minute read</span>
 
           </div>
         </hgroup>
@@ -96,13 +96,13 @@
 
 <p>While the validators pipeline seems to make our life a lot easier and we as developers think it can’t get any better, it turns out there’s another bigger feature that adds even more awesomeness to the world of forms when building Angular applications: <strong>ngMessages</strong>.</p>
 
-<p><a href="https://docs.angularjs.org/api/ngMessages">ngMessages</a> is an entire new module that comes with a couple of directives to enhance the support for displaying messages within templates. Which means, even if in this article we’re using it just for forms, we’re not restricted to do so. But let’s start right away and take a look at a scenario that <code class="highlighter-rouge">ngMessages</code> tries to solve.</p>
+<p><a href="https://docs.angularjs.org/api/ngMessages">ngMessages</a> is an entire new module that comes with a couple of directives to enhance the support for displaying messages within templates. Which means, even if in this article we’re using it just for forms, we’re not restricted to do so. But let’s start right away and take a look at a scenario that <code>ngMessages</code> tries to solve.</p>
 
 <div class="thtrm-toc is-sticky">
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
 <ul id="markdown-toc">
   <li><a href="#displaying-messages-in-forms---the-old-way" id="markdown-toc-displaying-messages-in-forms---the-old-way">Displaying messages in forms - The old way</a></li>
-  <li><a href="#displaying-messages-in-forms-with-ngmessages" id="markdown-toc-displaying-messages-in-forms-with-ngmessages">Displaying messages in forms with <code class="highlighter-rouge">ngMessages</code></a></li>
+  <li><a href="#displaying-messages-in-forms-with-ngmessages" id="markdown-toc-displaying-messages-in-forms-with-ngmessages">Displaying messages in forms with <code>ngMessages</code></a></li>
   <li><a href="#prioritization-and-multiple-messages" id="markdown-toc-prioritization-and-multiple-messages">Prioritization and multiple messages</a></li>
   <li><a href="#reusing-existing-messages" id="markdown-toc-reusing-existing-messages">Reusing existing messages</a></li>
 </ul>
@@ -113,27 +113,27 @@
 
 <p>Providing a good user experience is always important. When building forms, it’s pretty common to display messages to the user depending on the data that the user entered into the form fields. This, for example, could be a message that tells the user that a specific field is required to be filled out, or a message that says that the given data doesn’t match a certain pattern.</p>
 
-<p>We’ve already learned about the <a href="http://blog.thoughtram.io/angularjs/2015/01/11/exploring-angular-1.3-validators-pipeline.html">validators pipeline</a> that lets us easily determine if the value of a form field is valid or not. Each state of an input element is exposed on the associated scope of a form (as long as a <code class="highlighter-rouge">name</code> attribute is applied), which makes it super easy to conditionally display DOM elements that have (validation) messages.</p>
+<p>We’ve already learned about the <a href="http://blog.thoughtram.io/angularjs/2015/01/11/exploring-angular-1.3-validators-pipeline.html">validators pipeline</a> that lets us easily determine if the value of a form field is valid or not. Each state of an input element is exposed on the associated scope of a form (as long as a <code>name</code> attribute is applied), which makes it super easy to conditionally display DOM elements that have (validation) messages.</p>
 
 <p>Let’s say we want to build a common login form where the user needs to enter an email address and a password, like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"loginForm"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"loginForm"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Email:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">ng-model=</span><span class="s">"email"</span> <span class="na">name=</span><span class="s">"email"</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;label&gt;</span>Password:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"password"</span> <span class="na">ng-model=</span><span class="s">"password"</span> <span class="na">name=</span><span class="s">"password"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+<span class="nt">&lt;/form&gt;</span></code></pre></div>
 
-<p>Notice the <code class="highlighter-rouge">name</code> attributes on the <code class="highlighter-rouge">&lt;form&gt;</code> and <code class="highlighter-rouge">&lt;input&gt;</code> elements. These make sure the form’s <code class="highlighter-rouge">FormController</code> instance, that holds the state of the form, is exposed on the scope. Giving the <code class="highlighter-rouge">&lt;input&gt;</code> elements names exposes <em>their</em> state on the <code class="highlighter-rouge">FormController</code>. In other words, <code class="highlighter-rouge">loginForm</code> is now an actual expressions on the scope that we can use to evaluate data in our template.</p>
+<p>Notice the <code>name</code> attributes on the <code>&lt;form&gt;</code> and <code>&lt;input&gt;</code> elements. These make sure the form’s <code>FormController</code> instance, that holds the state of the form, is exposed on the scope. Giving the <code>&lt;input&gt;</code> elements names exposes <em>their</em> state on the <code>FormController</code>. In other words, <code>loginForm</code> is now an actual expressions on the scope that we can use to evaluate data in our template.</p>
 
-<p>We also specify the <code class="highlighter-rouge">type</code> of each <code class="highlighter-rouge">&lt;input&gt;</code> which adds some default validations to the fields behind the scenes. In fact, we can visualize the form’s state by adding the following expression to our document:</p>
+<p>We also specify the <code>type</code> of each <code>&lt;input&gt;</code> which adds some default validations to the fields behind the scenes. In fact, we can visualize the form’s state by adding the following expression to our document:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">{{ loginForm | json }}</code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html">{{ loginForm | json }}</code></pre></div>
 
-<p>While entering an email address, Angular automatically validates the data given to the field and exposes the state to <code class="highlighter-rouge">loginForm</code>. That means, as long as we’re entering data which isn’t valid, the <code class="highlighter-rouge">$error</code> property of <code class="highlighter-rouge">loginForm</code> gets extended with a new object <code class="highlighter-rouge">email</code> that has all information about the state of the field.</p>
+<p>While entering an email address, Angular automatically validates the data given to the field and exposes the state to <code>loginForm</code>. That means, as long as we’re entering data which isn’t valid, the <code>$error</code> property of <code>loginForm</code> gets extended with a new object <code>email</code> that has all information about the state of the field.</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
   </span><span class="nt">"$error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="nt">"email"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="p">{</span><span class="w">
@@ -160,11 +160,11 @@
     </span><span class="p">]</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="err">...</span><span class="w">
-</span><span class="err">}</span></code></pre></figure>
+</span><span class="err">}</span></code></pre></div>
 
-<p>In addition to that, due to adding <code class="highlighter-rouge">name</code> attributes to the field itself, there’s also an <code class="highlighter-rouge">email</code> and <code class="highlighter-rouge">password</code> property on <code class="highlighter-rouge">loginForm</code> which have an <code class="highlighter-rouge">$error</code> object themselves. The <code class="highlighter-rouge">$error</code> object on form fields is a simple key/value store that represents the error state for each applied validator on a field.</p>
+<p>In addition to that, due to adding <code>name</code> attributes to the field itself, there’s also an <code>email</code> and <code>password</code> property on <code>loginForm</code> which have an <code>$error</code> object themselves. The <code>$error</code> object on form fields is a simple key/value store that represents the error state for each applied validator on a field.</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
   </span><span class="err">...</span><span class="w">
   </span><span class="nt">"email"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="err">...</span><span class="w">
@@ -173,27 +173,27 @@
     </span><span class="p">},</span><span class="w">
     </span><span class="err">...</span><span class="w">
   </span><span class="err">}</span><span class="w">
-</span><span class="p">}</span></code></pre></figure>
+</span><span class="p">}</span></code></pre></div>
 
-<p>So, in order to display a message when there’s an error with the default email validation (which we get automatically by specifying the <code class="highlighter-rouge">type</code>), all we need to do is to conditionally add a DOM node to the document like this:</p>
+<p>So, in order to display a message when there’s an error with the default email validation (which we get automatically by specifying the <code>type</code>), all we need to do is to conditionally add a DOM node to the document like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.email"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.email"</span><span class="nt">&gt;</span>
   Please enter a valid email
-<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
-<p>Again, <code class="highlighter-rouge">loginForm.email</code> is the field reference, <code class="highlighter-rouge">$error.email</code> is the result of the <code class="highlighter-rouge">email</code> validation. To make it more clear, we can extend the example by adding a <code class="highlighter-rouge">required</code> attribute to the field, which also adds a validator to the field behind the scenes.</p>
+<p>Again, <code>loginForm.email</code> is the field reference, <code>$error.email</code> is the result of the <code>email</code> validation. To make it more clear, we can extend the example by adding a <code>required</code> attribute to the field, which also adds a validator to the field behind the scenes.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">ng-model=</span><span class="s">"email"</span> <span class="na">name=</span><span class="s">"email"</span> <span class="na">required</span><span class="nt">&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">ng-model=</span><span class="s">"email"</span> <span class="na">name=</span><span class="s">"email"</span> <span class="na">required</span><span class="nt">&gt;</span></code></pre></div>
 
 <p>Displaying an error message accordingly could look like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.required"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.required"</span><span class="nt">&gt;</span>
   Please enter your email
-<span class="nt">&lt;/p&gt;</span></code></pre></figure>
+<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
-<p>I think we get the idea. Now imagine instead of just two different validations, we have five validations for just one field and we want to display a message for each. The markup for our form gets out of control very quickly. Here’s how our <code class="highlighter-rouge">password</code> field could be extended with conditional messages.</p>
+<p>I think we get the idea. Now imagine instead of just two different validations, we have five validations for just one field and we want to display a message for each. The markup for our form gets out of control very quickly. Here’s how our <code>password</code> field could be extended with conditional messages.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;label&gt;</span>Password:<span class="nt">&lt;/label&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;label&gt;</span>Password:<span class="nt">&lt;/label&gt;</span>
 <span class="nt">&lt;input</span>
   <span class="na">name=</span><span class="s">"password"</span>
   <span class="na">ng-model=</span><span class="s">"password"</span>
@@ -208,80 +208,80 @@
 <span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.minlength"</span><span class="nt">&gt;</span>...
 <span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.pattern"</span><span class="nt">&gt;</span>...
 <span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.validator4"</span><span class="nt">&gt;</span>...
-<span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.validator5"</span><span class="nt">&gt;</span>...</code></pre></figure>
+<span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"loginForm.email.$error.validator5"</span><span class="nt">&gt;</span>...</code></pre></div>
 
-<p>We probably also want to control what message shows up when, especially when multiple messages occur at the same time. Try to build that with just <code class="highlighter-rouge">ngIf</code> directives all over the place. And this is where <code class="highlighter-rouge">ngMessages</code> comes into play.</p>
+<p>We probably also want to control what message shows up when, especially when multiple messages occur at the same time. Try to build that with just <code>ngIf</code> directives all over the place. And this is where <code>ngMessages</code> comes into play.</p>
 
-<h2 id="displaying-messages-in-forms-with-ngmessages">Displaying messages in forms with <code class="highlighter-rouge">ngMessages</code></h2>
+<h2 id="displaying-messages-in-forms-with-ngmessages">Displaying messages in forms with <code>ngMessages</code></h2>
 
-<p><code class="highlighter-rouge">ngMessages</code> comes as a separate module. In order to use it, we first need to install it. One way to do so is to use npm:</p>
+<p><code>ngMessages</code> comes as a separate module. In order to use it, we first need to install it. One way to do so is to use npm:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install angular-messages</code></pre></figure>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install angular-messages</code></pre></div>
 
 <p>Then, we need to embed the actual script in our document:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"path/to/angular-messages.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"path/to/angular-messages.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></div>
 
-<p>Once done, we declare <code class="highlighter-rouge">ngMessages</code> as module dependency of our app and we are ready to go.</p>
+<p>Once done, we declare <code>ngMessages</code> as module dependency of our app and we are ready to go.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">angular.module('myApp', ['ngMessages']);</code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html">angular.module('myApp', ['ngMessages']);</code></pre></div>
 
-<p>Alright. The module is now installed and ready to be used. Let’s take a look at what our login form would look when <code class="highlighter-rouge">ngMessages</code> is used. The module comes with two directives - <code class="highlighter-rouge">ngMessages</code> and <code class="highlighter-rouge">ngMessage</code>.</p>
+<p>Alright. The module is now installed and ready to be used. Let’s take a look at what our login form would look when <code>ngMessages</code> is used. The module comes with two directives - <code>ngMessages</code> and <code>ngMessage</code>.</p>
 
-<p>Whereas <code class="highlighter-rouge">ngMessages</code> directive gets an expression that evaluates to an object where each member can control if a certain message is displayed or not, <code class="highlighter-rouge">ngMessage</code> directive is in charge of displaying that particular message.</p>
+<p>Whereas <code>ngMessages</code> directive gets an expression that evaluates to an object where each member can control if a certain message is displayed or not, <code>ngMessage</code> directive is in charge of displaying that particular message.</p>
 
-<p>Things are a bit easier to understand when actual code is shown, so here’s what our DOM looks like when <code class="highlighter-rouge">ngMessages</code> is used:</p>
+<p>Things are a bit easier to understand when actual code is shown, so here’s what our DOM looks like when <code>ngMessages</code> is used:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-messages=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-messages=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-message=</span><span class="s">"required"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/p&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-message=</span><span class="s">"minlength"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/p&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-message=</span><span class="s">"pattern"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/p&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-message=</span><span class="s">"validator4"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/p&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-message=</span><span class="s">"validator5"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
-<p>We have an element where <code class="highlighter-rouge">ngMessages</code> directive is applied. As mentioned earlier, <code class="highlighter-rouge">ngMessages</code> gets an expression that evaluates to an object where each member is either <code class="highlighter-rouge">true</code> or <code class="highlighter-rouge">false</code>. This fits perfectly to what <code class="highlighter-rouge">FormController</code> exposes on the scope, when fields have validations errors and a <code class="highlighter-rouge">name</code> attribute applied.</p>
+<p>We have an element where <code>ngMessages</code> directive is applied. As mentioned earlier, <code>ngMessages</code> gets an expression that evaluates to an object where each member is either <code>true</code> or <code>false</code>. This fits perfectly to what <code>FormController</code> exposes on the scope, when fields have validations errors and a <code>name</code> attribute applied.</p>
 
-<p>With <code class="highlighter-rouge">ngMessage</code> directive, we can just conditionally display messages by providing it with a name of a validator that is applied to the corresponding form field. Now, whenever a validator declares the value of the password field invalid, it displays the message that belongs to it.</p>
+<p>With <code>ngMessage</code> directive, we can just conditionally display messages by providing it with a name of a validator that is applied to the corresponding form field. Now, whenever a validator declares the value of the password field invalid, it displays the message that belongs to it.</p>
 
-<p>In case we don’t want to pollute our DOM with additional elements, just to apply the directives, <code class="highlighter-rouge">ngMessages</code> and <code class="highlighter-rouge">ngMessage</code> are not restricted to attributes. We can also use them as elements. In that case, <code class="highlighter-rouge">for</code> and <code class="highlighter-rouge">when</code> attributes are needed to pass expressions accordingly.</p>
+<p>In case we don’t want to pollute our DOM with additional elements, just to apply the directives, <code>ngMessages</code> and <code>ngMessage</code> are not restricted to attributes. We can also use them as elements. In that case, <code>for</code> and <code>when</code> attributes are needed to pass expressions accordingly.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;ng-message</span> <span class="na">when=</span><span class="s">"required"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/ng-message&gt;</span>
   <span class="nt">&lt;ng-message</span> <span class="na">when=</span><span class="s">"minlength"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/ng-message&gt;</span>
   <span class="nt">&lt;ng-message</span> <span class="na">when=</span><span class="s">"pattern"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/ng-message&gt;</span>
   <span class="nt">&lt;ng-message</span> <span class="na">when=</span><span class="s">"validator4"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/ng-message&gt;</span>
   <span class="nt">&lt;ng-message</span> <span class="na">when=</span><span class="s">"validator5"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/ng-message&gt;</span>
-<span class="nt">&lt;/ng-messages&gt;</span></code></pre></figure>
+<span class="nt">&lt;/ng-messages&gt;</span></code></pre></div>
 
-<p>Taking a closer look at this code snippet, you might think this is a very familiar construct. Right. It looks pretty much like using <code class="highlighter-rouge">ngSwitch</code> and <code class="highlighter-rouge">ngSwitchWhen</code> directives. In fact, it <strong>is</strong> almost the same.</p>
+<p>Taking a closer look at this code snippet, you might think this is a very familiar construct. Right. It looks pretty much like using <code>ngSwitch</code> and <code>ngSwitchWhen</code> directives. In fact, it <strong>is</strong> almost the same.</p>
 
-<p>So what is the difference and why do we want to use one version over the other? Well, it turns out <code class="highlighter-rouge">ngMessages</code> is much more powerful.</p>
+<p>So what is the difference and why do we want to use one version over the other? Well, it turns out <code>ngMessages</code> is much more powerful.</p>
 
 <h2 id="prioritization-and-multiple-messages">Prioritization and multiple messages</h2>
 
-<p>Only one message is displayed at a time by default when using <code class="highlighter-rouge">ngMessages</code>. However, there might be cases where we want to display multiple message for a single field at a time. This we cannot do with <code class="highlighter-rouge">ngSwitch</code>, since it only renders a single match of the given construct. In order to display multiple messages, we can apply the <code class="highlighter-rouge">ng-messages-multiple</code> attribute to our <code class="highlighter-rouge">ngMessages</code> directive. This causes all messages to be displayed where the corresponding validations fail.</p>
+<p>Only one message is displayed at a time by default when using <code>ngMessages</code>. However, there might be cases where we want to display multiple message for a single field at a time. This we cannot do with <code>ngSwitch</code>, since it only renders a single match of the given construct. In order to display multiple messages, we can apply the <code>ng-messages-multiple</code> attribute to our <code>ngMessages</code> directive. This causes all messages to be displayed where the corresponding validations fail.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">ng-messages-multiple</span> <span class="na">for=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">ng-messages-multiple</span> <span class="na">for=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/ng-messages&gt;</span></code></pre></figure>
+<span class="nt">&lt;/ng-messages&gt;</span></code></pre></div>
 
-<p>Or, if we want to display a single one, we at least want to prioritize which message shows up when. For example, before we want to display a message that says the given value doesn’t match a particular pattern, we first want to make sure we have at least six characters (<code class="highlighter-rouge">minlength</code>) and therefore displaying a message for that first.</p>
+<p>Or, if we want to display a single one, we at least want to prioritize which message shows up when. For example, before we want to display a message that says the given value doesn’t match a particular pattern, we first want to make sure we have at least six characters (<code>minlength</code>) and therefore displaying a message for that first.</p>
 
 <p>We can do so by simply assembling our DOM accordingly. Messages that appear first in the DOM are also displayed first. The following construct displays a message for entering a value that is too short, before it informs the user that the given value doesn’t match certain pattern:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"loginForm.password.$error"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;ng-message</span> <span class="na">when=</span><span class="s">"minlength"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/ng-message&gt;</span>
   <span class="nt">&lt;ng-message</span> <span class="na">when=</span><span class="s">"pattern"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/ng-message&gt;</span>
-<span class="nt">&lt;/ng-messages&gt;</span></code></pre></figure>
+<span class="nt">&lt;/ng-messages&gt;</span></code></pre></div>
 
 <h2 id="reusing-existing-messages">Reusing existing messages</h2>
 
-<p>It gets even better. It’s pretty common to have the same messages for the same validations across many forms. Instead of redefining the same message over and over again to have it available in each and every form, <code class="highlighter-rouge">ngMessages</code> directive expects yet another optional attribute called <code class="highlighter-rouge">ng-messages-include</code> that lets us include predefined messages at different places in our application.</p>
+<p>It gets even better. It’s pretty common to have the same messages for the same validations across many forms. Instead of redefining the same message over and over again to have it available in each and every form, <code>ngMessages</code> directive expects yet another optional attribute called <code>ng-messages-include</code> that lets us include predefined messages at different places in our application.</p>
 
-<p>All we need to do is to define a template that contains the messages we want to reuse and give it an id so we can reference it via <code class="highlighter-rouge">ng-messages-include</code>.</p>
+<p>All we need to do is to define a template that contains the messages we want to reuse and give it an id so we can reference it via <code>ng-messages-include</code>.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"script/ng-template"</span> <span class="na">id=</span><span class="s">"required-message"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"script/ng-template"</span> <span class="na">id=</span><span class="s">"required-message"</span><span class="nt">&gt;</span>
   <span class="o">&lt;</span><span class="nx">ng</span><span class="o">-</span><span class="nx">message</span> <span class="nx">when</span><span class="o">=</span><span class="s2">"required"</span><span class="o">&gt;</span>
     <span class="nx">This</span> <span class="nx">field</span> <span class="nx">is</span> <span class="nx">required</span><span class="o">!</span>
   <span class="o">&lt;</span><span class="sr">/ng-messages</span><span class="err">&gt;
@@ -294,13 +294,13 @@
 <span class="c">&lt;!-- somewhere else --&gt;</span>
 <span class="nt">&lt;ng-messages</span> <span class="na">ng-messages-include=</span><span class="s">"required-message"</span> <span class="na">for=</span><span class="s">"otherForm.field.$error"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/ng-messages&gt;</span></code></pre></figure>
+<span class="nt">&lt;/ng-messages&gt;</span></code></pre></div>
 
 <p style="background: #f47676; border-radius: 0.3em; padding: 1em; border: red 1px solid;"><strong>Breaking change in Angular 1.4</strong>: <br /><code>ngMessagesInclude</code> is no longer an attribute in Angular 1.4. If you're using an Angular version &gt;= 1.4, we recommend reading <a href="http://blog.thoughtram.io/2015/06/06/ng-messages-revisited.html" tile="ngMessages revisited">this article</a> on breaking changes introduced in ngMessages.</p>
 
-<p>If the template is <em>not</em> present in the document, Angular performs a <code class="highlighter-rouge">$templateRequest</code> to fetch the template first.</p>
+<p>If the template is <em>not</em> present in the document, Angular performs a <code>$templateRequest</code> to fetch the template first.</p>
 
-<p>Now we’ve learned that how we can define templates in order to reuse messages at different places in our application. You might think that this is a scenario where <a href="http://webcomponents.org/articles/introduction-to-template-element/">HTML Templates</a> would be a better fit, instead of doing script overloading. I agree on that, since this is what the <code class="highlighter-rouge">&lt;template&gt;</code> element has been designed for. Unfortunately, at the time of writing this article, this was not supported, which is why I’ve created a corresponding issue <a href="https://github.com/angular/angular.js/issues/10846">here</a>.</p>
+<p>Now we’ve learned that how we can define templates in order to reuse messages at different places in our application. You might think that this is a scenario where <a href="http://webcomponents.org/articles/introduction-to-template-element/">HTML Templates</a> would be a better fit, instead of doing script overloading. I agree on that, since this is what the <code>&lt;template&gt;</code> element has been designed for. Unfortunately, at the time of writing this article, this was not supported, which is why I’ve created a corresponding issue <a href="https://github.com/angular/angular.js/issues/10846">here</a>.</p>
 
 <p>There’s a lot more to cover and I recommend heading over to the official <a href="https://docs.angularjs.org/api/ngMessages">docs</a> to learn everything you need to know. This module is not only a time-saver but also adds some very powerful features to our declarative world.</p>
 

@@ -98,7 +98,7 @@
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
 <ul id="markdown-toc">
   <li><a href="#asynchronous-worlds-with-promises" id="markdown-toc-asynchronous-worlds-with-promises">Asynchronous worlds with Promises</a></li>
-  <li><a href="#promises-in-angular-and-q" id="markdown-toc-promises-in-angular-and-q">Promises in Angular and <code class="highlighter-rouge">$q</code></a></li>
+  <li><a href="#promises-in-angular-and-q" id="markdown-toc-promises-in-angular-and-q">Promises in Angular and <code>$q</code></a></li>
   <li><a href="#es6-style-promises-in-angular-13" id="markdown-toc-es6-style-promises-in-angular-13">ES6 style Promises in Angular 1.3</a></li>
 </ul>
 
@@ -112,15 +112,15 @@
 
 <p>Here’s an example:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">onceDone</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">onceDone</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="c1">// do something once `onceDone()` calls you</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Here we have a function <code class="highlighter-rouge">onceDone()</code> that expects a function that is executed, once the <code class="highlighter-rouge">onceDone()</code> function is done with its work and it doesn’t block the rest of the code that might be there.</p>
+<p>Here we have a function <code>onceDone()</code> that expects a function that is executed, once the <code>onceDone()</code> function is done with its work and it doesn’t block the rest of the code that might be there.</p>
 
 <p>Okay, that’s clear. But where and how come promises into play? There’s a scenario that JavaScript developers love to call “<em>callback hell</em>”. Callback hell is something that we have, when we nest a lot of functions in JavaScript that are asynchronous and have callbacks to be executed. Just take a look at the following code snippet.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">onceDone</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">files</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">onceDone</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">files</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">files</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">fileIndex</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">filename</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">values</span><span class="p">.</span><span class="nx">width</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
@@ -128,47 +128,47 @@
       <span class="p">});</span>
     <span class="p">});</span>
   <span class="p">});</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
 <p>You get the idea right? While it is very common to have function calls that get a function callback, it can lead to very hard to get right code when we have to nest a lot of these. I recommend to head over to <a href="http://callbackhell.com">callbackhell.com</a> to get a better picture, if things are still unclear.</p>
 
 <p>We can get around this issue by defining named functions first, and pass just these as callbacks instead of using anonymous functions all the time, but it’s still not a very handy way to handle asynchronous JavaScript. And this is where promises come in.</p>
 
-<p>Promises are a software abstraction or proxies, that make working with asynchronous operations much more pleasant. Coming back to our <code class="highlighter-rouge">onceDone()</code> function example, here’s what the code would look like if <code class="highlighter-rouge">onceDone()</code> used promises.</p>
+<p>Promises are a software abstraction or proxies, that make working with asynchronous operations much more pleasant. Coming back to our <code>onceDone()</code> function example, here’s what the code would look like if <code>onceDone()</code> used promises.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">onceDone</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">onceDone</span><span class="p">();</span>
 
 <span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="c1">// do something once `onceDone` calls you</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Looks very similar right? But there’s a huge difference. As you can see, <code class="highlighter-rouge">onceDone()</code> returns something that is a promise which we can treat as first-class objects. This promise holds the actual state of the asynchronous code that has been called, which can be <code class="highlighter-rouge">fulfilled</code>, <code class="highlighter-rouge">rejected</code> or <code class="highlighter-rouge">pending</code>. We can pass promises around and even aggregating them. That’s a whole different way of handling our asynchronous code.</p>
+<p>Looks very similar right? But there’s a huge difference. As you can see, <code>onceDone()</code> returns something that is a promise which we can treat as first-class objects. This promise holds the actual state of the asynchronous code that has been called, which can be <code>fulfilled</code>, <code>rejected</code> or <code>pending</code>. We can pass promises around and even aggregating them. That’s a whole different way of handling our asynchronous code.</p>
 
-<p>What we also see, is that the promise has a method <code class="highlighter-rouge">.then()</code>. This method expects two parameters which are functions of which one gets called when the asynchronous execution was fulfilled and the other one when it was rejected.</p>
+<p>What we also see, is that the promise has a method <code>.then()</code>. This method expects two parameters which are functions of which one gets called when the asynchronous execution was fulfilled and the other one when it was rejected.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">functionThatReturnsAPromise</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">functionThatReturnsAPromise</span><span class="p">();</span>
 
-<span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">fulfilledHandler</span><span class="p">,</span> <span class="nx">rejectedHandler</span><span class="p">);</span></code></pre></figure>
+<span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">fulfilledHandler</span><span class="p">,</span> <span class="nx">rejectedHandler</span><span class="p">);</span></code></pre></div>
 
-<p>As I mentioned, we can aggregate them. <code class="highlighter-rouge">.then()</code> also returns a promise that resolves with the return value of the executed handler (<code class="highlighter-rouge">fulfilled</code> or <code class="highlighter-rouge">rejected</code>). That enables us to chain promises like this:</p>
+<p>As I mentioned, we can aggregate them. <code>.then()</code> also returns a promise that resolves with the return value of the executed handler (<code>fulfilled</code> or <code>rejected</code>). That enables us to chain promises like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">functionThatReturnsAPromise</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">functionThatReturnsAPromise</span><span class="p">();</span>
 
 <span class="nx">promise</span>
   <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">fulfilledHandler</span><span class="p">,</span> <span class="nx">rejectedHandler</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">doSomethingElse</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">doEvenMore</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">doThis</span><span class="p">);</span></code></pre></figure>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">doThis</span><span class="p">);</span></code></pre></div>
 
 <p>Compare this with our callback hell code snippet and you know why promises are so powerful. In fact, there’s <strong>a lot</strong> more about promises to tell, but that’s out of the scope of this article. If you want to read more about promises in general, I recommend reading <a href="https://blog.domenic.me/youre-missing-the-point-of-promises/">Domenic’s article</a> and the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">MDN docs</a> on promises. But let’s get back to promises in Angular.</p>
 
-<h2 id="promises-in-angular-and-q">Promises in Angular and <code class="highlighter-rouge">$q</code></h2>
+<h2 id="promises-in-angular-and-q">Promises in Angular and <code>$q</code></h2>
 
 <p>Angular comes with a promise implementation by default. It has a <a href="https://docs.angularjs.org/api/ng/service/$q">$q</a> service that we can of course inject and use though-out our application. Angular’s implementation is highly inspired by <a href="https://github.com/kriskowal/q">Kris Kowal’s Q library</a> which is an implementation of the <a href="https://promisesaplus.com/">Promises/A spec</a>.</p>
 
-<p>It comes with a <code class="highlighter-rouge">Deferred API</code> which lets you get instances of deferred objects that hold a promise object. We can use the API of a deferred to either resolve or reject a promise depending on what our code should do. Here’s a quick example:</p>
+<p>It comes with a <code>Deferred API</code> which lets you get instances of deferred objects that hold a promise object. We can use the API of a deferred to either resolve or reject a promise depending on what our code should do. Here’s a quick example:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// `$q` is injected before</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// `$q` is injected before</span>
 
 <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
 
@@ -184,40 +184,40 @@
 
 <span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="c1">// do something when `anAsyncFunction` fulfilled</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>We have a function <code class="highlighter-rouge">anAsyncFunction()</code> which is asynchronous and we use the deferred API to get a promise out of it. One thing to notice here is that our function doesn’t know anything about promises but we use the deferred API to get a promise back. The deferred API comes with a few more features that I don’t want to detail here, but you can read about them in the <a href="https://docs.angularjs.org/api/ng/service/$q#the-deferred-api">official docs</a>.</p>
+<p>We have a function <code>anAsyncFunction()</code> which is asynchronous and we use the deferred API to get a promise out of it. One thing to notice here is that our function doesn’t know anything about promises but we use the deferred API to get a promise back. The deferred API comes with a few more features that I don’t want to detail here, but you can read about them in the <a href="https://docs.angularjs.org/api/ng/service/$q#the-deferred-api">official docs</a>.</p>
 
-<p>Have you ever used Angular’s <code class="highlighter-rouge">$http</code> service? Sure you did. And as we know, XMLHttpRequests are asynchronous too. Guess what <code class="highlighter-rouge">$http</code> service uses to expose its <code class="highlighter-rouge">.success()</code> and <code class="highlighter-rouge">.error()</code> APIs? Right. Promises. When making XHR calls with <code class="highlighter-rouge">$http</code> we’re also using <code class="highlighter-rouge">$q</code> implicitly. It just adds some sugar APIs to the promise it returns:</p>
+<p>Have you ever used Angular’s <code>$http</code> service? Sure you did. And as we know, XMLHttpRequests are asynchronous too. Guess what <code>$http</code> service uses to expose its <code>.success()</code> and <code>.error()</code> APIs? Right. Promises. When making XHR calls with <code>$http</code> we’re also using <code>$q</code> implicitly. It just adds some sugar APIs to the promise it returns:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'some/restful/endpoint'</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'some/restful/endpoint'</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// do something with `data`</span>
   <span class="p">})</span>
   <span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// oups, something went wrong</span>
-  <span class="p">});</span></code></pre></figure>
+  <span class="p">});</span></code></pre></div>
 
 <p>In fact, we can use the promise native APIs to achieve the same:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'some/restful/endpoint'</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'some/restful/endpoint'</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// do something with `data`</span>
   <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// oups, something went wrong</span>
-  <span class="p">});</span></code></pre></figure>
+  <span class="p">});</span></code></pre></div>
 
 <p>Okay, so we now got a picture of promises in Angular. There’s also a nice talk by the awesome <a href="https://www.youtube.com/watch?v=33kl0iQByME">Dave</a> on promises at <a href="http://ngeurope.org">ngEurope</a>, I recommend checking that one out too. But what is it with the ES6 style promises that we’ve mentioned in the blog title?</p>
 
 <h2 id="es6-style-promises-in-angular-13">ES6 style Promises in Angular 1.3</h2>
 
-<p>Although it’s nice to have the deferred API in Angular to deal with promises, it turns out that the ECMAScript standard defines a slight different API. Taking a look at the <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">MDN docs on Promises</a>, we see that <code class="highlighter-rouge">Promise</code> is a constructor in ES6 that takes an <code class="highlighter-rouge">executor</code> function that has access to a <code class="highlighter-rouge">resolve</code> and a <code class="highlighter-rouge">reject</code> function to resolve and reject promises respectively.</p>
+<p>Although it’s nice to have the deferred API in Angular to deal with promises, it turns out that the ECMAScript standard defines a slight different API. Taking a look at the <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">MDN docs on Promises</a>, we see that <code>Promise</code> is a constructor in ES6 that takes an <code>executor</code> function that has access to a <code>resolve</code> and a <code>reject</code> function to resolve and reject promises respectively.</p>
 
-<p>Angular 1.3 streamlined its promise APIs <strong>partly</strong> with the ES6 standard. I say partly here, because not all methods are supported yet. However, what the team <em>has</em> streamlined is that <code class="highlighter-rouge">$q</code> can also be used as a constructor now.</p>
+<p>Angular 1.3 streamlined its promise APIs <strong>partly</strong> with the ES6 standard. I say partly here, because not all methods are supported yet. However, what the team <em>has</em> streamlined is that <code>$q</code> can also be used as a constructor now.</p>
 
 <p>So instead of doing creating a deferred like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">myFunctionThatReturnsAPromise</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">myFunctionThatReturnsAPromise</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">deferred</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">();</span>
 
   <span class="nx">anAsyncFunction</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
@@ -229,11 +229,11 @@
   <span class="k">return</span> <span class="nx">deferred</span><span class="p">.</span><span class="nx">promise</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nx">myFunctionThatReturnsAPromise</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">yay</span><span class="p">,</span> <span class="nx">nay</span><span class="p">);</span></code></pre></figure>
+<span class="nx">myFunctionThatReturnsAPromise</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">yay</span><span class="p">,</span> <span class="nx">nay</span><span class="p">);</span></code></pre></div>
 
 <p>We can now use the promise constructor API and return it directly without creating a deferred object first:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">myFunctionThatReturnsAPromise</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">myFunctionThatReturnsAPromise</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">$q</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">anAsyncFunction</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">resolve</span><span class="p">(</span><span class="nx">success</span><span class="p">);</span>
@@ -241,11 +241,11 @@
       <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
     <span class="p">});</span>
   <span class="p">});</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Even if this is just an optical difference at a first glance, it’s nice to know that we can safe the lines of code to create a deferred first. Also, the fact that the <code class="highlighter-rouge">$q</code> API is now closer to the actual spec makes the code more reusable in the future.</p>
+<p>Even if this is just an optical difference at a first glance, it’s nice to know that we can safe the lines of code to create a deferred first. Also, the fact that the <code>$q</code> API is now closer to the actual spec makes the code more reusable in the future.</p>
 
-<p>Now we might wonder, if we have to change all of our code where we’ve used <code class="highlighter-rouge">$q.defer()</code> to work with promises. The answer is no. As mentioned at the beginning of the article, this is a nice small addition (rather than a new feature or replacement) in the 1.3 release that doesn’t break the code.</p>
+<p>Now we might wonder, if we have to change all of our code where we’ve used <code>$q.defer()</code> to work with promises. The answer is no. As mentioned at the beginning of the article, this is a nice small addition (rather than a new feature or replacement) in the 1.3 release that doesn’t break the code.</p>
 
 
           

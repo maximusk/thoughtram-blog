@@ -102,7 +102,7 @@
 
 <p>Let’s start off with annotations. As mentioned, the Angular team announced AtScript  as their language extension to JavaScript. AtScript comes with features like <strong>Type Annotations</strong>, <strong>Field Annotations</strong> and <strong>MetaData Annotations</strong>. We’re going to focus on metadata annotations. Let’s take a look at the following Angular component to get an idea of what metadata annotations can look like:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'tabs'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
@@ -113,42 +113,42 @@
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We have a class <code class="highlighter-rouge">Tabs</code> that is basically empty. The class has one annotation <code class="highlighter-rouge">@Component</code>. If we’d remove all annotations, what would be left is just an empty class that doesn’t have any special meaning right? So it seems that <code class="highlighter-rouge">@Component</code> add some metadata to the class in order to give it a specific meaning. This is what annotations are all about. They are a declarative way to add metadata to code.</p>
+<p>We have a class <code>Tabs</code> that is basically empty. The class has one annotation <code>@Component</code>. If we’d remove all annotations, what would be left is just an empty class that doesn’t have any special meaning right? So it seems that <code>@Component</code> add some metadata to the class in order to give it a specific meaning. This is what annotations are all about. They are a declarative way to add metadata to code.</p>
 
-<p><code class="highlighter-rouge">@Component</code> is an annotation that tells Angular, that the class, which the annotation is attached to, is a component.</p>
+<p><code>@Component</code> is an annotation that tells Angular, that the class, which the annotation is attached to, is a component.</p>
 
 <p>Okay, even if that seems to be quite clear, there are a few questions coming up:</p>
 
 <ul>
   <li>Where do those annotations come from? This is nothing that JavaScript gives us out of the box right?</li>
-  <li>Who defined this annotations called <code class="highlighter-rouge">@Component</code>?</li>
+  <li>Who defined this annotations called <code>@Component</code>?</li>
   <li>If this is part of AtScript, what does that translate to, so we can use it in today’s browsers?</li>
 </ul>
 
-<p>Let’s answer these one by one. Where do those annotations come from? To answer that question, we need to complete the code sample. <code class="highlighter-rouge">@Component</code> is something we need to import from the Angular framework like this:</p>
+<p>Let’s answer these one by one. Where do those annotations come from? To answer that question, we need to complete the code sample. <code>@Component</code> is something we need to import from the Angular framework like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> 
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> 
   <span class="nx">ComponentMetadata</span> <span class="nx">as</span> <span class="nx">Component</span><span class="p">,</span>
-<span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span></code></pre></figure>
+<span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span></code></pre></div>
 
 <p>This pretty much answers our first question. Both annotations are provided by the framework. Let’s take a look at what the implementation of those annotations look like:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">ComponentMetadata</span> <span class="kr">extends</span> <span class="nx">DirectiveMetadata</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">ComponentMetadata</span> <span class="kr">extends</span> <span class="nx">DirectiveMetadata</span> <span class="p">{</span>
 
   <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We can see that <code class="highlighter-rouge">ComponentMetadata</code> is in fact an implementation detail of the Angular framework. This answers our second question.</p>
+<p>We can see that <code>ComponentMetadata</code> is in fact an implementation detail of the Angular framework. This answers our second question.</p>
 
-<p>But wait. It’s just yet another class? How can just a simple class change the way how other classes behave? And why are we able to use those classes as annotations by just prefixing them with an <code class="highlighter-rouge">@</code> sign? Well, actually we can’t. Annotations are not available in browser’s of today, which means we need to transpile it to something that <em>does</em> run in current browsers.</p>
+<p>But wait. It’s just yet another class? How can just a simple class change the way how other classes behave? And why are we able to use those classes as annotations by just prefixing them with an <code>@</code> sign? Well, actually we can’t. Annotations are not available in browser’s of today, which means we need to transpile it to something that <em>does</em> run in current browsers.</p>
 
 <p>Even though we have a couple of transpilers we can choose from. Babel, Traceur, TypeScript, … It turns out there’s only one that actually implements annotations as we know them from AtScript: Traceur. Taking the component code from above, this is what it translates to using Traceur:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">Tabs</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">Tabs</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="kd">function</span> <span class="nx">Tabs</span><span class="p">()</span> <span class="p">{}</span>
 
   <span class="nx">Tabs</span><span class="p">.</span><span class="nx">annotations</span> <span class="o">=</span> <span class="p">[</span>
@@ -156,32 +156,32 @@
   <span class="p">];</span>
 
   <span class="k">return</span> <span class="nx">Tabs</span><span class="p">;</span>
-<span class="p">})</span></code></pre></figure>
+<span class="p">})</span></code></pre></div>
 
-<p>In the end, a class is just a function, which is also just an object, and all annotations end up as instance calls on the <code class="highlighter-rouge">annotations</code> property of the class. When I said “all” annotations end up there, I actually lied a bit. We can have parameter annotations as well and whose will be assigned to a class’ <code class="highlighter-rouge">parameters</code> property. So if we have code like this:</p>
+<p>In the end, a class is just a function, which is also just an object, and all annotations end up as instance calls on the <code>annotations</code> property of the class. When I said “all” annotations end up there, I actually lied a bit. We can have parameter annotations as well and whose will be assigned to a class’ <code>parameters</code> property. So if we have code like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{</span>
 
   <span class="nx">constructor</span><span class="p">(</span><span class="err">@</span><span class="nx">Annotation</span><span class="p">()</span> <span class="nx">foo</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>This would translate to something like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">MyClass</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">MyClass</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="kd">function</span> <span class="nx">MyClass</span><span class="p">()</span> <span class="p">{}</span>
 
   <span class="nx">MyClass</span><span class="p">.</span><span class="nx">parameters</span> <span class="o">=</span> <span class="p">[[</span><span class="k">new</span> <span class="nx">Annotation</span><span class="p">()]];</span>
 
   <span class="k">return</span> <span class="nx">MyClass</span><span class="p">;</span>
-<span class="p">})</span></code></pre></figure>
+<span class="p">})</span></code></pre></div>
 
 <p>The reason why this translate to a nested array, is because a parameter can have more than one annotation.</p>
 
-<p>Okay, so now we know what those metadata annotations are and what they translate to, but we still don’t know how something like <code class="highlighter-rouge">@Component</code> makes a normal class actually a component in Angular. It turns out that Angular itself takes care of that. Annotations are really just metadata added to code. That’s why <code class="highlighter-rouge">@Component</code> is a very specific implementation detail of Angular. In fact, there are a couple of other annotations that the framework comes with. But also only the framework knows what to do with that information.</p>
+<p>Okay, so now we know what those metadata annotations are and what they translate to, but we still don’t know how something like <code>@Component</code> makes a normal class actually a component in Angular. It turns out that Angular itself takes care of that. Annotations are really just metadata added to code. That’s why <code>@Component</code> is a very specific implementation detail of Angular. In fact, there are a couple of other annotations that the framework comes with. But also only the framework knows what to do with that information.</p>
 
-<p>Another very interesting learning is that Angular expects the metadata on <code class="highlighter-rouge">annotations</code> and <code class="highlighter-rouge">parameters</code> properties of classes. If Traceur would not translate them to those particular properties, Angular wouldn’t know from where to get the metadata. Which makes <strong>AtScript Annotations</strong> just a very specific implementation of what annotations could actually be.</p>
+<p>Another very interesting learning is that Angular expects the metadata on <code>annotations</code> and <code>parameters</code> properties of classes. If Traceur would not translate them to those particular properties, Angular wouldn’t know from where to get the metadata. Which makes <strong>AtScript Annotations</strong> just a very specific implementation of what annotations could actually be.</p>
 
 <p>Wouldn’t it be nicer if you as a consumer could decide where your metadata is attached to in your code? Yes! And this is where decorators come into play.</p>
 
@@ -189,18 +189,18 @@
 
 <p>Decorators are a <a href="https://github.com/wycats/javascript-decorators">proposed standard</a> for ECMAScript 2016 by Yehuda Katz, to annotate and modify classes and properties at design time. This sounds pretty much like what annotations do right? Well… sort of. Let’s take a look at what a decorator looks like:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// A simple decorator</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// A simple decorator</span>
 <span class="err">@</span><span class="nx">decoratorExpression</span>
-<span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">class</span> <span class="nx">MyClass</span> <span class="p">{</span> <span class="p">}</span></code></pre></div>
 
-<p>Wait. This looks exactly like an AtScript annotation! That’s right. But it isn’t. From a consumer perspective, a decorator indeed looks like the thing that we know as “AtScript Annotation”. There is a significant difference though. <strong>We</strong> are in charge of what our decorator does to our code. Taking the code above, a corresponding decorator implementation for <code class="highlighter-rouge">@decoratorExpression</code> could look like this:</p>
+<p>Wait. This looks exactly like an AtScript annotation! That’s right. But it isn’t. From a consumer perspective, a decorator indeed looks like the thing that we know as “AtScript Annotation”. There is a significant difference though. <strong>We</strong> are in charge of what our decorator does to our code. Taking the code above, a corresponding decorator implementation for <code>@decoratorExpression</code> could look like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">decoratorExpression</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">decoratorExpression</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
    <span class="c1">// Add a property on target</span>
    <span class="nx">target</span><span class="p">.</span><span class="nx">annotated</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Right. A decorator is just a function that gives you access to the <code class="highlighter-rouge">target</code> that needs to be decorated. Get the idea? Instead of having a transpiler that decides where your annotations go, we are in charge of defining what a specific decoration/annotation does.</p>
+<p>Right. A decorator is just a function that gives you access to the <code>target</code> that needs to be decorated. Get the idea? Instead of having a transpiler that decides where your annotations go, we are in charge of defining what a specific decoration/annotation does.</p>
 
 <p>This, of course, also enables us to implement a decorator that adds metadata to our code the same way AtScript annotations do (I keep referring to “AtScript annotations” because what they do, is really an AtScript specific thing). Or in other words: with decorators, we can build annotations.</p>
 
@@ -212,11 +212,11 @@
 
 <p>It turns out that it actually doesn’t. TypeScript supports decorators, but doesn’t know about Angular specific annotations. Which makes sense, because they are an implementation detail of Angular. That also means that either we as consumers, or the framework needs to provide those decorators in order to make the code compile. Only the latter really makes sense. Luckily, generators for both, annotation and parameter decorators, have landed in the Angular code base lately. So what the framework behind the scenes does is, it comes with metadata annotation implementations, which are then passed to the decorator generator to make decorators out of them. That’s also why we have to write the following code when transpiling with traceur:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span>
   <span class="nx">ComponentMetadata</span> <span class="nx">as</span> <span class="nx">Component</span>
-<span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span></code></pre></figure>
+<span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span></code></pre></div>
 
-<p>As we can see, we’re actually importing the metadata rather than the decorator. This is simply just because traceur doesn’t understand decorators, but does understand <code class="highlighter-rouge">@Component</code> annotations. Which is why we’re also importing them with these namespaces respectively.</p>
+<p>As we can see, we’re actually importing the metadata rather than the decorator. This is simply just because traceur doesn’t understand decorators, but does understand <code>@Component</code> annotations. Which is why we’re also importing them with these namespaces respectively.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 

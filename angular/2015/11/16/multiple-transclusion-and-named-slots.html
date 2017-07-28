@@ -116,19 +116,19 @@
 
 <p>It’s actually way simpler than it sounds. In Angular world, when we build directives, transclusion allows us to take the HTML from the outer world, that is in between our directive tags, and insert it somewhere inside our directive template, which the outside world doesn’t really know about.</p>
 
-<p>The easiest way to illustrate that is the <code class="highlighter-rouge">&lt;details&gt;</code> element. <code class="highlighter-rouge">&lt;details&gt;</code> renders a UI component (in some browers), which we can click on to open and close it.</p>
+<p>The easiest way to illustrate that is the <code>&lt;details&gt;</code> element. <code>&lt;details&gt;</code> renders a UI component (in some browers), which we can click on to open and close it.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;details&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;details&gt;</span>
   <span class="nt">&lt;p&gt;</span>Hey y'all I've put some content here.<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/details&gt;</span></code></pre></figure>
+<span class="nt">&lt;/details&gt;</span></code></pre></div>
 
-<p>As you can see, we can put some HTML in between the <code class="highlighter-rouge">&lt;details&gt;</code> tags and it gets somehow magically projected somewhere else. The thing that makes this possible are <strong>Content Insertion Points</strong> which are part of the <strong>Shadow DOM</strong> specification. They allow us to mark places in an element’s template where Light DOM is going to be projected.</p>
+<p>As you can see, we can put some HTML in between the <code>&lt;details&gt;</code> tags and it gets somehow magically projected somewhere else. The thing that makes this possible are <strong>Content Insertion Points</strong> which are part of the <strong>Shadow DOM</strong> specification. They allow us to mark places in an element’s template where Light DOM is going to be projected.</p>
 
 <p>Angular’s transclusion feature is basically some sort of polyfill for this kind of functionality, however, pretty much implemented in an Angular specific way. It really just works with the framework.</p>
 
-<p>We can easily reimplement a <code class="highlighter-rouge">&lt;details&gt;</code> element with Angular like this:</p>
+<p>We can easily reimplement a <code>&lt;details&gt;</code> element with Angular like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
 
 <span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'ngDetails'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
@@ -142,9 +142,9 @@
 </span>      <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"content"</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">show</span><span class="o">=</span><span class="s2">"open"</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">transclude</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;
 </span>    <span class="err">`</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Setting <code class="highlighter-rouge">transclude</code> to <code class="highlighter-rouge">true</code> enables transclusion for the directive, whereas <code class="highlighter-rouge">ng-transclude</code> in the template tells Angular where to put the HTML from the outside world. Of course, this is a very very simple reimplementation, but it’s really just to demonstrate the point of transclusion.</p>
+<p>Setting <code>transclude</code> to <code>true</code> enables transclusion for the directive, whereas <code>ng-transclude</code> in the template tells Angular where to put the HTML from the outside world. Of course, this is a very very simple reimplementation, but it’s really just to demonstrate the point of transclusion.</p>
 
 <p><a href="http://twitter.com/teropa">Tero</a> has written an <a href="http://teropa.info/blog/2015/06/09/transclusion.html">amazing guide</a> on transclusion, if you want to dig deeper on that topic I highly recommend his guide.</p>
 
@@ -152,44 +152,44 @@
 
 <h2 id="content-selection-and-shadow-dom">Content Selection and Shadow DOM</h2>
 
-<p>Shadow DOM uses a <code class="highlighter-rouge">&lt;content&gt;</code> tag to specify insertion points. If we’d reimplement the <code class="highlighter-rouge">&lt;details&gt;</code> tag with web components technologies, our component’s template could look something like this (simplified):</p>
+<p>Shadow DOM uses a <code>&lt;content&gt;</code> tag to specify insertion points. If we’d reimplement the <code>&lt;details&gt;</code> tag with web components technologies, our component’s template could look something like this (simplified):</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"summary"</span><span class="o">&gt;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"summary"</span><span class="o">&gt;</span>
   <span class="nx">Details</span>
 <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
 </span><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"content"</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="nx">content</span><span class="o">&gt;&lt;</span><span class="sr">/content</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="sr">/div&gt;</span></code></pre></figure>
+</span><span class="o">&lt;</span><span class="sr">/div&gt;</span></code></pre></div>
 
-<p>This is more or less the equivalent of transclusion in Angular. However, Shadow DOM takes it even further. It allows us to specify what we want to project into our shadow DOM. This is where the <code class="highlighter-rouge">select</code> attribute comes into play. Let’s say we’re only interested in projecting <code class="highlighter-rouge">&lt;h2&gt;</code> elements, we can update our template with content selection like this:</p>
+<p>This is more or less the equivalent of transclusion in Angular. However, Shadow DOM takes it even further. It allows us to specify what we want to project into our shadow DOM. This is where the <code>select</code> attribute comes into play. Let’s say we’re only interested in projecting <code>&lt;h2&gt;</code> elements, we can update our template with content selection like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"summary"</span><span class="o">&gt;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"summary"</span><span class="o">&gt;</span>
   <span class="nx">Details</span>
 <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
 </span><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"content"</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="nx">content</span> <span class="nx">select</span><span class="o">=</span><span class="s2">"h2"</span><span class="o">&gt;&lt;</span><span class="sr">/content</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="sr">/div&gt;</span></code></pre></figure>
+</span><span class="o">&lt;</span><span class="sr">/div&gt;</span></code></pre></div>
 
-<p>Super powerful! The specification has even evolved more with another <code class="highlighter-rouge">&lt;slot&gt;</code> tag which is a bit more powerful. However, after all it everything boils down to what we’ve seen so far.</p>
+<p>Super powerful! The specification has even evolved more with another <code>&lt;slot&gt;</code> tag which is a bit more powerful. However, after all it everything boils down to what we’ve seen so far.</p>
 
 <p>This is where multiple transclusion comes into play, <strong>with Angular 1.5 we can finally do exactly that</strong>!</p>
 
 <h2 id="multiple-transclusion">Multiple Transclusion</h2>
 
-<p>Multiple transclusion has been proposed a loooong time ago. In fact, Vojta <a href="https://github.com/angular/angular.js/issues/4357">came up with this</a> over two years ago. Now, thanks to <a href="https://github.com/angular/angular.js/commit/a4ada8ba9c4358273575e16778e76446ad080054">Pete</a>, it’s right here. So let’s get back to our <code class="highlighter-rouge">&lt;ng-details&gt;</code> implementation and take a look at it.</p>
+<p>Multiple transclusion has been proposed a loooong time ago. In fact, Vojta <a href="https://github.com/angular/angular.js/issues/4357">came up with this</a> over two years ago. Now, thanks to <a href="https://github.com/angular/angular.js/commit/a4ada8ba9c4358273575e16778e76446ad080054">Pete</a>, it’s right here. So let’s get back to our <code>&lt;ng-details&gt;</code> implementation and take a look at it.</p>
 
-<p>The <code class="highlighter-rouge">&lt;details&gt;</code> tag allows us to configure a “summary” which defaults to <code class="highlighter-rouge">"Details"</code>. In order to change it, all we have to do is to put a <code class="highlighter-rouge">&lt;summary&gt;</code> tag inside the <code class="highlighter-rouge">&lt;details&gt;</code> element like this:</p>
+<p>The <code>&lt;details&gt;</code> tag allows us to configure a “summary” which defaults to <code>"Details"</code>. In order to change it, all we have to do is to put a <code>&lt;summary&gt;</code> tag inside the <code>&lt;details&gt;</code> element like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;details&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;details&gt;</span>
   <span class="nt">&lt;summary&gt;</span>Click me!<span class="nt">&lt;/summary&gt;</span>
   <span class="nt">&lt;p&gt;</span>Hey y'all I've put some content here.<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/details&gt;</span></code></pre></figure>
+<span class="nt">&lt;/details&gt;</span></code></pre></div>
 
-<p>This we couldn’t do with Angular’s transclusion before, because we can’t just take all the DOM as it is. We would need to take the <code class="highlighter-rouge">&lt;summary&gt;</code>, transclude at a specific place in our template, and then we’d need to transclude the rest somewhere else.</p>
+<p>This we couldn’t do with Angular’s transclusion before, because we can’t just take all the DOM as it is. We would need to take the <code>&lt;summary&gt;</code>, transclude at a specific place in our template, and then we’d need to transclude the rest somewhere else.</p>
 
-<p>With multpile transclusion we can totally do that. We just have to extend our directive a tiny little bit (note that we’re using <code class="highlighter-rouge">&lt;span&gt;</code> as summary element, but you can use whatever you want):</p>
+<p>With multpile transclusion we can totally do that. We just have to extend our directive a tiny little bit (note that we’re using <code>&lt;span&gt;</code> as summary element, but you can use whatever you want):</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
 
 <span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'ngDetails'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
@@ -205,39 +205,39 @@
 </span>      <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"content"</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">show</span><span class="o">=</span><span class="s2">"open"</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">transclude</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;
 </span>    <span class="err">`</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
 <p>We basically made two changes:</p>
 
 <ul>
-  <li>We changed the <code class="highlighter-rouge">transclude</code> property to an object which specifies the transclusion slots. The key is the name of a <s>element or directive in camel-case</s> slot we can later use in our template, the value the name of an <s>element or directive in camel-case</s> we want to transclude.</li>
-  <li>We replaced the default <code class="highlighter-rouge">"Details"</code> summary with an element that has <code class="highlighter-rouge">ng-transclude="summarySlot"</code>. As you can see, <code class="highlighter-rouge">ng-transclude</code> now excepts a string which is the name of a transclusion slot that we’ve defined earlier.</li>
+  <li>We changed the <code>transclude</code> property to an object which specifies the transclusion slots. The key is the name of a <s>element or directive in camel-case</s> slot we can later use in our template, the value the name of an <s>element or directive in camel-case</s> we want to transclude.</li>
+  <li>We replaced the default <code>"Details"</code> summary with an element that has <code>ng-transclude="summarySlot"</code>. As you can see, <code>ng-transclude</code> now excepts a string which is the name of a transclusion slot that we’ve defined earlier.</li>
 </ul>
 
-<p>The original <code class="highlighter-rouge">ng-transclude</code> stays as is, since it simply takes the rest to be transcluded. We can now use our <code class="highlighter-rouge">&lt;ng-details&gt;</code> component like this:</p>
+<p>The original <code>ng-transclude</code> stays as is, since it simply takes the rest to be transcluded. We can now use our <code>&lt;ng-details&gt;</code> component like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-details&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-details&gt;</span>
   <span class="nt">&lt;span&gt;</span>Details<span class="nt">&lt;/span&gt;</span>
   <span class="nt">&lt;p&gt;</span>More content here<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/ng-details&gt;</span></code></pre></figure>
+<span class="nt">&lt;/ng-details&gt;</span></code></pre></div>
 
 <p>Isn’t that cool? Here’s the code in action:</p>
 
 <iframe src="http://embed.plnkr.co/R6s7EYUOJ1NlsDqpt0gP/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>We can even make transclusion slots optional by prefixing the element tag name with a <code class="highlighter-rouge">?</code> like this:</p>
+<p>We can even make transclusion slots optional by prefixing the element tag name with a <code>?</code> like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">transclude: {
+<div class="highlight"><pre><code class="language-html" data-lang="html">transclude: {
   'summarySlot': '?span'
-}</code></pre></figure>
+}</code></pre></div>
 
-<p>This is already very cool, but our <code class="highlighter-rouge">ng-details</code> directive still lacks one specific behaviour. If we don’t specify a <code class="highlighter-rouge">&lt;summary&gt;</code>, <code class="highlighter-rouge">&lt;details&gt;</code> defaults to <code class="highlighter-rouge">"Details"</code>. Our component however, doesn’t do this. We can provide a fallback summary by simply putting something into the DOM where other elements will be transcluded to:</p>
+<p>This is already very cool, but our <code>ng-details</code> directive still lacks one specific behaviour. If we don’t specify a <code>&lt;summary&gt;</code>, <code>&lt;details&gt;</code> defaults to <code>"Details"</code>. Our component however, doesn’t do this. We can provide a fallback summary by simply putting something into the DOM where other elements will be transcluded to:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"summary"</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">click</span><span class="o">=</span><span class="s2">"open = !open"</span><span class="o">&gt;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"summary"</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">click</span><span class="o">=</span><span class="s2">"open = !open"</span><span class="o">&gt;</span>
   <span class="p">{{</span> <span class="nx">open</span> <span class="p">?</span> <span class="s1">'&amp;blacktriangledown;'</span> <span class="p">:</span> <span class="s1">'&amp;blacktriangleright;'</span> <span class="p">}}</span> <span class="o">&lt;</span><span class="nx">span</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">transclude</span><span class="o">=</span><span class="s2">"summarySlot"</span><span class="o">&gt;</span><span class="nx">Details</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="sr">/div&gt;</span></code></pre></figure>
+</span><span class="o">&lt;</span><span class="sr">/div&gt;</span></code></pre></div>
 
-<p>Seen what happened? We just put <code class="highlighter-rouge">"Details"</code> as text into our span element. This text will be replace with the transcluded DOM, if it is applied.</p>
+<p>Seen what happened? We just put <code>"Details"</code> as text into our span element. This text will be replace with the transcluded DOM, if it is applied.</p>
 
 <p>What are you waiting for? Start using multiple transclusion in your directives and design beautful APIs for your consumers!</p>
 

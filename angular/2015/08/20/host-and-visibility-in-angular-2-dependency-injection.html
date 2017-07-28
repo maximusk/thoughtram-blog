@@ -115,50 +115,50 @@
 
 <p>Let’s start off by imagining the following scenario. We have three nested components that all do their own thing (because that’s what components do in Angular):</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;component-one&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;component-one&gt;</span>
   <span class="nt">&lt;component-two&gt;</span>
     <span class="nt">&lt;component-three&gt;&lt;/component-three&gt;</span>
   <span class="nt">&lt;/component-two&gt;</span>
-<span class="nt">&lt;/component-one&gt;</span></code></pre></figure>
+<span class="nt">&lt;/component-one&gt;</span></code></pre></div>
 
 <p>As we learned in our article on dependency injection in Angular, each component in Angular creates its own injector. Which means the code above can be translated to something like this:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh">injector <span class="o">(</span>&lt;component-one&gt;<span class="o">)</span>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">injector <span class="o">(</span>&lt;component-one&gt;<span class="o">)</span>
       ^
       |
 child injector <span class="o">(</span>&lt;component-two&gt;<span class="o">)</span>
       ^
       |
-grand child injector <span class="o">(</span>&lt;component-three&gt;<span class="o">)</span></code></pre></figure>
+grand child injector <span class="o">(</span>&lt;component-three&gt;<span class="o">)</span></code></pre></div>
 
-<p>The <code class="highlighter-rouge">^</code> symbol just signalises that a child injector is created from it’s parent. To come back to our nice and cozy JavaScript world, we could also translate it to this:</p>
+<p>The <code>^</code> symbol just signalises that a child injector is created from it’s parent. To come back to our nice and cozy JavaScript world, we could also translate it to this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">();</span>
 <span class="kd">var</span> <span class="nx">childInjector</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">grandChildInjector</span> <span class="o">=</span> <span class="nx">childInjector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">();</span></code></pre></figure>
+<span class="kd">var</span> <span class="nx">grandChildInjector</span> <span class="o">=</span> <span class="nx">childInjector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">();</span></code></pre></div>
 
 <p>Of course, this code is very simplified and as we can see, there are also no providers passed to any of the injectors. Usually, when injectors are created, there are providers passed to them so we can ask for specific dependencies in our code. Let’s add some actual providers, to see how the relationships between the injectors affect dependency instantiation.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ResolveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ResolveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Car</span> <span class="p">},</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Engine</span> <span class="p">}</span>
 <span class="p">]);</span>
 <span class="kd">var</span> <span class="nx">childInjector</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">();</span>
 <span class="kd">var</span> <span class="nx">grandChildInjector</span> <span class="o">=</span> <span class="nx">childInjector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">([</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Convertible</span> <span class="p">}</span>
-<span class="p">]);</span></code></pre></figure>
+<span class="p">]);</span></code></pre></div>
 
-<p>The injector tree allows us to define injector providers for a specific component and its children. With the code above, if we ask <code class="highlighter-rouge">grandChild</code> for a dependency of type <code class="highlighter-rouge">Car</code> we’ll get back an instance of type <code class="highlighter-rouge">Convertible</code>, because it defines it’s own provider for that type. However, if we ask for a dependency of type <code class="highlighter-rouge">Engine</code>, we simply get an instance of the class <code class="highlighter-rouge">Engine</code>, because <code class="highlighter-rouge">grandChild</code> will ask it’s parent injector (recursively) until an injector has providers defined for that type. If this is entirely new to you, all this has been covered in our last <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">article</a> on DI.</p>
+<p>The injector tree allows us to define injector providers for a specific component and its children. With the code above, if we ask <code>grandChild</code> for a dependency of type <code>Car</code> we’ll get back an instance of type <code>Convertible</code>, because it defines it’s own provider for that type. However, if we ask for a dependency of type <code>Engine</code>, we simply get an instance of the class <code>Engine</code>, because <code>grandChild</code> will ask it’s parent injector (recursively) until an injector has providers defined for that type. If this is entirely new to you, all this has been covered in our last <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">article</a> on DI.</p>
 
-<p>Okay, this sounds all very powerful but where does this host thing come into play? Let’s get back to the original code with our three nested components. <code class="highlighter-rouge">&lt;component-two&gt;</code> and <code class="highlighter-rouge">&lt;component-three&gt;</code> are both children of <code class="highlighter-rouge">&lt;component-one&gt;</code>. However, we don’t know yet what’s inside of our components themselves. In Angular, a component always has a view. A component’s view can be in a way <a href="/angular/2015/06/29/shadow-dom-strategies-in-angular2.html">encapsulated</a>, this is due to the fact that, since 2.x, Angular supports Shadow DOM.</p>
+<p>Okay, this sounds all very powerful but where does this host thing come into play? Let’s get back to the original code with our three nested components. <code>&lt;component-two&gt;</code> and <code>&lt;component-three&gt;</code> are both children of <code>&lt;component-one&gt;</code>. However, we don’t know yet what’s inside of our components themselves. In Angular, a component always has a view. A component’s view can be in a way <a href="/angular/2015/06/29/shadow-dom-strategies-in-angular2.html">encapsulated</a>, this is due to the fact that, since 2.x, Angular supports Shadow DOM.</p>
 
-<p>For example, here’s what the view of <code class="highlighter-rouge">&lt;component-one&gt;</code> could look like:</p>
+<p>For example, here’s what the view of <code>&lt;component-one&gt;</code> could look like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Component 1<span class="nt">&lt;/h1&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Component 1<span class="nt">&lt;/h1&gt;</span>
 
-<span class="nt">&lt;ng-content&gt;&lt;/ng-content&gt;</span></code></pre></figure>
+<span class="nt">&lt;ng-content&gt;&lt;/ng-content&gt;</span></code></pre></div>
 
-<p>As we can see, the view of a component is just yet another DOM tree. If we configure Angular accordingly, this DOM tree can be Shadow DOM. That’s also why we have an <code class="highlighter-rouge">&lt;ng-content&gt;</code> tag there. It’s Angular’s implementation of <strong>content insertion points</strong>, which is another Shadow DOM feature.</p>
+<p>As we can see, the view of a component is just yet another DOM tree. If we configure Angular accordingly, this DOM tree can be Shadow DOM. That’s also why we have an <code>&lt;ng-content&gt;</code> tag there. It’s Angular’s implementation of <strong>content insertion points</strong>, which is another Shadow DOM feature.</p>
 
 <p>Even though we don’t use Shadow DOM, a component still comes with it’s own view that is kind of hidden behind the component itself. This is what makes every component in Angular a <strong>host</strong> of a view. In fact, when speaking just about Shadow DOM, we always need a host element to create a shadow dom for it.</p>
 
@@ -166,17 +166,17 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
 
 <p>That’s a good question! We’ve now seen a couple of times that an injector is always looking up a dependency on it’s parent injector in case it doesn’t have providers for the requested type. That parent injector does pretty much the same until we finally get our dependency. When we think in components, that means that a component’s injector will lookup up a dependency even across boundaries.</p>
 
-<p>To make things a bit more clear, let’s say we have a component <code class="highlighter-rouge">&lt;video-player&gt;</code> which comes with the following view.</p>
+<p>To make things a bit more clear, let’s say we have a component <code>&lt;video-player&gt;</code> which comes with the following view.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;video-screen&gt;&lt;/video-screen&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;video-screen&gt;&lt;/video-screen&gt;</span>
 <span class="nt">&lt;video-controls&gt;</span>
   <span class="nt">&lt;play-button&gt;&lt;/play-button&gt;</span>
   <span class="nt">&lt;pause-button&gt;&lt;/pause-button&gt;</span>
-<span class="nt">&lt;/video-controls&gt;</span></code></pre></figure>
+<span class="nt">&lt;/video-controls&gt;</span></code></pre></div>
 
-<p>Our <code class="highlighter-rouge">&lt;video-player&gt;</code> component consists of a couple of other components. Let’s say that the injector of <code class="highlighter-rouge">&lt;video-player&gt;</code> comes with providers for a <code class="highlighter-rouge">PlayerService</code>:</p>
+<p>Our <code>&lt;video-player&gt;</code> component consists of a couple of other components. Let’s say that the injector of <code>&lt;video-player&gt;</code> comes with providers for a <code>PlayerService</code>:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'video-player'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">PlayerService</span> <span class="c1">// shorthand for { provide: PlayerService, useClass: PlayerService }</span>
@@ -184,60 +184,60 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">VideoPlayer</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p><code class="highlighter-rouge">PlayerService</code> is used by the component’s view components (<code class="highlighter-rouge">&lt;play-button&gt;</code>, <code class="highlighter-rouge">&lt;pause-button&gt;</code>), to play and pause a video respectively. In order to get an instance of <code class="highlighter-rouge">PlayerService</code>, we’d need to inject it like this:</p>
+<p><code>PlayerService</code> is used by the component’s view components (<code>&lt;play-button&gt;</code>, <code>&lt;pause-button&gt;</code>), to play and pause a video respectively. In order to get an instance of <code>PlayerService</code>, we’d need to inject it like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span> <span class="p">...</span> <span class="p">})</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span> <span class="p">...</span> <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">PlayButton</span> <span class="p">{</span>
   <span class="nx">constructor</span><span class="p">(</span><span class="nx">playerService</span><span class="err">:</span> <span class="nx">PlayerService</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Since we have a provider for <code class="highlighter-rouge">PlayerService</code> defined in <code class="highlighter-rouge">VideoPlayer</code>, its injector will return an instance accordingly and everything works as expected, even if <code class="highlighter-rouge">&lt;play-button&gt;</code> doesn’t know anything about that provider. However, in case <code class="highlighter-rouge">VideoPlayer</code> wouldn’t define that provider, the lookup will go on and on (even outside the <code class="highlighter-rouge">&lt;video-player&gt;</code> component) until either some other component has such a provider, or an error is thrown.</p>
+<p>Since we have a provider for <code>PlayerService</code> defined in <code>VideoPlayer</code>, its injector will return an instance accordingly and everything works as expected, even if <code>&lt;play-button&gt;</code> doesn’t know anything about that provider. However, in case <code>VideoPlayer</code> wouldn’t define that provider, the lookup will go on and on (even outside the <code>&lt;video-player&gt;</code> component) until either some other component has such a provider, or an error is thrown.</p>
 
-<p>This can be problematic. Just imagine someone uses our code with another <code class="highlighter-rouge">&lt;awesome-player&gt;</code> component instead, and it doesn’t have that provider. Our code could end up getting an instance of <code class="highlighter-rouge">PlayerService</code> that it actually shouldn’t get. What we need is a way to somehow make sure, that we always get an instance of <code class="highlighter-rouge">PlayerService</code> provided by the host video component (wether it’s <code class="highlighter-rouge">&lt;video-player&gt;</code>, <code class="highlighter-rouge">&lt;awesome-player&gt;</code> or anything else).</p>
+<p>This can be problematic. Just imagine someone uses our code with another <code>&lt;awesome-player&gt;</code> component instead, and it doesn’t have that provider. Our code could end up getting an instance of <code>PlayerService</code> that it actually shouldn’t get. What we need is a way to somehow make sure, that we always get an instance of <code>PlayerService</code> provided by the host video component (wether it’s <code>&lt;video-player&gt;</code>, <code>&lt;awesome-player&gt;</code> or anything else).</p>
 
 <h2 id="restricting-dependency-lookup">Restricting dependency lookup</h2>
 
-<p>Luckily, this is covered by Angular’s dependency injection system. If we need to ask for a dependency and want to make sure that the lookup ends with the current component’s host, we can use the <code class="highlighter-rouge">@Host</code> decorator. Here’s our <code class="highlighter-rouge">&lt;play-button&gt;</code> component rewritten with the lookup constraint:</p>
+<p>Luckily, this is covered by Angular’s dependency injection system. If we need to ask for a dependency and want to make sure that the lookup ends with the current component’s host, we can use the <code>@Host</code> decorator. Here’s our <code>&lt;play-button&gt;</code> component rewritten with the lookup constraint:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span> <span class="p">...</span> <span class="p">})</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span> <span class="p">...</span> <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">PlayButton</span> <span class="p">{</span>
   <span class="nx">constructor</span><span class="p">(</span><span class="err">@</span><span class="nx">Host</span><span class="p">()</span> <span class="nx">playerService</span><span class="err">:</span> <span class="nx">PlayerService</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>If you don’t know what it’s about with these decorators, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">annotations and decorators</a>. Now we ensured that <code class="highlighter-rouge">PlayerService</code> instance is always instatiated by our component’s host, which is currently our <code class="highlighter-rouge">VideoPlayer</code> component.</p>
+<p>If you don’t know what it’s about with these decorators, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">annotations and decorators</a>. Now we ensured that <code>PlayerService</code> instance is always instatiated by our component’s host, which is currently our <code>VideoPlayer</code> component.</p>
 
 <h2 id="dependency-visibility">Dependency Visibility</h2>
 
-<p>Okay cool, we now know what <code class="highlighter-rouge">@Host</code> is and why we need it. But we didn’t talk about the other thing that Angular’s DI introduces yet - dependency visibility. So what is this visibility we’re talking about here? Well, as we learned, we can use the <code class="highlighter-rouge">providers</code> property in a <code class="highlighter-rouge">@Component</code> decorator to define providers for its injector. However, it turns out that there’s another property <code class="highlighter-rouge">viewProviders</code> that basically allows us to do the same thing. What’s the difference between those two then?</p>
+<p>Okay cool, we now know what <code>@Host</code> is and why we need it. But we didn’t talk about the other thing that Angular’s DI introduces yet - dependency visibility. So what is this visibility we’re talking about here? Well, as we learned, we can use the <code>providers</code> property in a <code>@Component</code> decorator to define providers for its injector. However, it turns out that there’s another property <code>viewProviders</code> that basically allows us to do the same thing. What’s the difference between those two then?</p>
 
-<p><code class="highlighter-rouge">viewProviders</code> allows us to define injector providers that are only available for a component’s view. Let’s take a closer look at what that means by using our <code class="highlighter-rouge">&lt;video-player&gt;</code> component. Our <code class="highlighter-rouge">&lt;video-player&gt;</code> component has its own view with its own components. So usually, we would use that component just like this:</p>
+<p><code>viewProviders</code> allows us to define injector providers that are only available for a component’s view. Let’s take a closer look at what that means by using our <code>&lt;video-player&gt;</code> component. Our <code>&lt;video-player&gt;</code> component has its own view with its own components. So usually, we would use that component just like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;video-player&gt;&lt;video-player&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;video-player&gt;&lt;video-player&gt;</span></code></pre></div>
 
-<p>But let’s imagine, we change the API and <code class="highlighter-rouge">&lt;video-player&gt;</code> expects a child element, that implements a video component (whatever that looks like). So we go ahead an build a <code class="highlighter-rouge">&lt;custom-video&gt;</code> component that does exactly that and we use it as a child of <code class="highlighter-rouge">&lt;video-player&gt;</code> so it can do it’s job with it:</p>
+<p>But let’s imagine, we change the API and <code>&lt;video-player&gt;</code> expects a child element, that implements a video component (whatever that looks like). So we go ahead an build a <code>&lt;custom-video&gt;</code> component that does exactly that and we use it as a child of <code>&lt;video-player&gt;</code> so it can do it’s job with it:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;video-player&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;video-player&gt;</span>
   <span class="nt">&lt;custom-video&gt;&lt;/custom-video&gt;</span>
-<span class="nt">&lt;/video-player&gt;</span></code></pre></figure>
+<span class="nt">&lt;/video-player&gt;</span></code></pre></div>
 
-<p>Now <code class="highlighter-rouge">&lt;video-player&gt;</code> has a child element (with it’s own injector) that it needs to work. Note that this child is part of the Light DOM rather than the video player component’s Shadow DOM (emulation). Next, we realise that <code class="highlighter-rouge">&lt;custom-video&gt;</code> needs something of type <code class="highlighter-rouge">VideoService</code> in order to work correctly, so we inject it accordingly:</p>
+<p>Now <code>&lt;video-player&gt;</code> has a child element (with it’s own injector) that it needs to work. Note that this child is part of the Light DOM rather than the video player component’s Shadow DOM (emulation). Next, we realise that <code>&lt;custom-video&gt;</code> needs something of type <code>VideoService</code> in order to work correctly, so we inject it accordingly:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span> <span class="p">...</span> <span class="p">})</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span> <span class="p">...</span> <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">CustomVideo</span> <span class="p">{</span>
   <span class="nx">constructor</span><span class="p">(</span><span class="nx">videoService</span><span class="err">:</span> <span class="nx">VideoService</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We know that, if <code class="highlighter-rouge">&lt;custom-video&gt;</code> ask its injector for a dependency, the injector will look up the dependency in it’s injector tree if it doesn’t have a provider for that type, until it gets the requested instance. This is quite cool, but now imagine that <code class="highlighter-rouge">&lt;video-player&gt;</code> has its own provider for the type <code class="highlighter-rouge">VideoService</code>, because it needs a very specific instance for it’s view, in order to work:</p>
+<p>We know that, if <code>&lt;custom-video&gt;</code> ask its injector for a dependency, the injector will look up the dependency in it’s injector tree if it doesn’t have a provider for that type, until it gets the requested instance. This is quite cool, but now imagine that <code>&lt;video-player&gt;</code> has its own provider for the type <code>VideoService</code>, because it needs a very specific instance for it’s view, in order to work:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'video-player'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">PlayerService</span><span class="p">,</span>
@@ -246,13 +246,13 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">VideoPlayer</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>What now happens is, that <code class="highlighter-rouge">&lt;custom-video&gt;</code> would get an instance of <code class="highlighter-rouge">SpecificVideoService</code> but it actually needs an instance of <code class="highlighter-rouge">VideoService</code>. However, due to the lookup that happens in the injector tree, the provider defined in <code class="highlighter-rouge">&lt;video-player&gt;</code> is the next one that is available. How can we get around that? This is exactly where <code class="highlighter-rouge">viewProviders</code> come in. With <code class="highlighter-rouge">viewProviders</code> we can tell the DI system very specifically, which providers are available to which child injectors (Light DOM or Shadow DOM).</p>
+<p>What now happens is, that <code>&lt;custom-video&gt;</code> would get an instance of <code>SpecificVideoService</code> but it actually needs an instance of <code>VideoService</code>. However, due to the lookup that happens in the injector tree, the provider defined in <code>&lt;video-player&gt;</code> is the next one that is available. How can we get around that? This is exactly where <code>viewProviders</code> come in. With <code>viewProviders</code> we can tell the DI system very specifically, which providers are available to which child injectors (Light DOM or Shadow DOM).</p>
 
-<p>To make our code work as expected, all we have to do is to make the <code class="highlighter-rouge">VideoService</code> provider of <code class="highlighter-rouge">&lt;video-player&gt;</code> explicitly available only for its view:</p>
+<p>To make our code work as expected, all we have to do is to make the <code>VideoService</code> provider of <code>&lt;video-player&gt;</code> explicitly available only for its view:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'video-player'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">PlayerService</span>
@@ -263,15 +263,15 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">VideoPlayer</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Now, whenever a component of <code class="highlighter-rouge">&lt;video-player&gt;</code>’s view asks for something of type <code class="highlighter-rouge">VideoService</code>, it’ll get an instance of <code class="highlighter-rouge">SpecificVideoService</code> as expected. Other child components from the outside world that ask for the same type however, won’t see this provider and will continue with the lookup in the injector tree. Which means <code class="highlighter-rouge">&lt;custom-video&gt;</code> now gets an expected instance from another parent injector without even knowing that <code class="highlighter-rouge">&lt;video-player&gt;</code> actually introduces its own provider.</p>
+<p>Now, whenever a component of <code>&lt;video-player&gt;</code>’s view asks for something of type <code>VideoService</code>, it’ll get an instance of <code>SpecificVideoService</code> as expected. Other child components from the outside world that ask for the same type however, won’t see this provider and will continue with the lookup in the injector tree. Which means <code>&lt;custom-video&gt;</code> now gets an expected instance from another parent injector without even knowing that <code>&lt;video-player&gt;</code> actually introduces its own provider.</p>
 
 <p><strong>View Providers are also only available in components</strong>, not in directives. That’s simply because a directive doesn’t have its own view.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>Angular’s DI is very powerful and doesn’t only cover the common needs when it comes to a decent dependency injection system. It even implements specific use cases for injector trees that are used in conjunction with DOM trees, which could also be encapsulated. I hope this article made clear why we have <code class="highlighter-rouge">providers</code>, <code class="highlighter-rouge">viewProviders</code> and <code class="highlighter-rouge">@Host</code>.</p>
+<p>Angular’s DI is very powerful and doesn’t only cover the common needs when it comes to a decent dependency injection system. It even implements specific use cases for injector trees that are used in conjunction with DOM trees, which could also be encapsulated. I hope this article made clear why we have <code>providers</code>, <code>viewProviders</code> and <code>@Host</code>.</p>
 
 
           

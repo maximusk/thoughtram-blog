@@ -97,7 +97,7 @@
 <div class="thtrm-toc is-sticky">
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
 <ul id="markdown-toc">
-  <li><a href="#install-and-using-angular-hint" id="markdown-toc-install-and-using-angular-hint">Install and using <code class="highlighter-rouge">angular-hint</code></a></li>
+  <li><a href="#install-and-using-angular-hint" id="markdown-toc-install-and-using-angular-hint">Install and using <code>angular-hint</code></a></li>
   <li><a href="#module-hints" id="markdown-toc-module-hints">Module hints</a></li>
   <li><a href="#controller-hints" id="markdown-toc-controller-hints">Controller hints</a></li>
   <li><a href="#directive-hints" id="markdown-toc-directive-hints">Directive hints</a></li>
@@ -106,9 +106,9 @@
 
 </div>
 
-<p>As already mentioned, <code class="highlighter-rouge">angular-hint</code> helps us writing better Angular code and makes finding very common mistakes in our code base easier. For example, did it ever happen to you, that you developed your Angular app, you grabbed a module from somewhere, then you started using the directives that the module comes with, and no matter how much you followed the usage instructions, it simply didn’t work. And after one hour of debugging you found out that you forgot to add the module dependency to your application. Yikes!</p>
+<p>As already mentioned, <code>angular-hint</code> helps us writing better Angular code and makes finding very common mistakes in our code base easier. For example, did it ever happen to you, that you developed your Angular app, you grabbed a module from somewhere, then you started using the directives that the module comes with, and no matter how much you followed the usage instructions, it simply didn’t work. And after one hour of debugging you found out that you forgot to add the module dependency to your application. Yikes!</p>
 
-<p>But let me tell you something. With <code class="highlighter-rouge">angular-hint</code>, these times are over. And that’s just one use case where <code class="highlighter-rouge">angular-hint</code> helps out. In fact, <code class="highlighter-rouge">angular-hint</code> comes with a couple of other sub modules for particular use cases.</p>
+<p>But let me tell you something. With <code>angular-hint</code>, these times are over. And that’s just one use case where <code>angular-hint</code> helps out. In fact, <code>angular-hint</code> comes with a couple of other sub modules for particular use cases.</p>
 
 <p>These modules are:</p>
 
@@ -118,59 +118,59 @@
   <li><a href="http://github.com/angular/angular-hint-dom">angular-hint-dom</a> - Warns about use of DOM APIs in controllers</li>
   <li><a href="http://github.com/angular/angular-hint-events">angular-hint-events</a> - Identifies undefined variables in event expressions</li>
   <li><a href="http://github.com/angular/angular-hint-interpolation">angular-hint-interpolation</a> - Notifies of undefined parts of interpolations chains and suggests available variables</li>
-  <li><a href="http://github.com/angular/angular-hint-modules">angular-hint-modules</a> - Identifies missing module namespaces, undeclared modules, multiple uses of <code class="highlighter-rouge">ng-app</code> and more</li>
+  <li><a href="http://github.com/angular/angular-hint-modules">angular-hint-modules</a> - Identifies missing module namespaces, undeclared modules, multiple uses of <code>ng-app</code> and more</li>
 </ul>
 
-<p>Let’s start right away and see what the usage of <code class="highlighter-rouge">angular-hint</code> looks like.</p>
+<p>Let’s start right away and see what the usage of <code>angular-hint</code> looks like.</p>
 
-<h2 id="install-and-using-angular-hint">Install and using <code class="highlighter-rouge">angular-hint</code></h2>
+<h2 id="install-and-using-angular-hint">Install and using <code>angular-hint</code></h2>
 
-<p>Using <code class="highlighter-rouge">angular-hint</code> is super easy, since all we have to do is to install it via npm, embed the source in our application and use the <code class="highlighter-rouge">ng-hint</code> directive that takes care of the rest. Alright, so let’s install the module via npm:</p>
+<p>Using <code>angular-hint</code> is super easy, since all we have to do is to install it via npm, embed the source in our application and use the <code>ng-hint</code> directive that takes care of the rest. Alright, so let’s install the module via npm:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install angular-hint</code></pre></figure>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install angular-hint</code></pre></div>
 
-<p>The <code class="highlighter-rouge">angular-hint</code> module declares all the sub modules (<code class="highlighter-rouge">angular-hint-directives</code>, <code class="highlighter-rouge">angular-hint-controllers</code>, …) as dependency, so you don’t have to care about installing them manually. The command above does the job for you. Also, the package comes with a pre-compiled <code class="highlighter-rouge">hint.js</code> file that contains the source of all mentioned <code class="highlighter-rouge">angular-hint-*</code> modules, so you can use it right away.</p>
+<p>The <code>angular-hint</code> module declares all the sub modules (<code>angular-hint-directives</code>, <code>angular-hint-controllers</code>, …) as dependency, so you don’t have to care about installing them manually. The command above does the job for you. Also, the package comes with a pre-compiled <code>hint.js</code> file that contains the source of all mentioned <code>angular-hint-*</code> modules, so you can use it right away.</p>
 
 <p>Once it’s installed, we can embed the source in our application right after Angular itself like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"path/to/angular/angular.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"path/to/angular-hint/hint.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"path/to/angular/angular.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"path/to/angular-hint/hint.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></div>
 
-<p>Next, we apply the <code class="highlighter-rouge">ng-hint</code> directive in order to actually use the <code class="highlighter-rouge">angular-hint</code> module:</p>
+<p>Next, we apply the <code>ng-hint</code> directive in order to actually use the <code>angular-hint</code> module:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-hint</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/body&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-hint</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/body&gt;</span></code></pre></div>
 
 <p>That’s it. We’re done. It’s that easy.</p>
 
-<p>Applying the <code class="highlighter-rouge">ng-hint</code> directive to our document takes care of injecting all needed hint modules in your apps bootstrap phase. But how does <code class="highlighter-rouge">ng-hint</code> know, which hint modules we actually want to activate? By default, <code class="highlighter-rouge">ng-hint</code> injects all the mentioned hint modules. However, if we don’t want to get controller related hints, but are interested in DOM related hints, we can restrict the use of hint modules by using the <code class="highlighter-rouge">ng-hint-include</code> directive instead. The following code only injects <code class="highlighter-rouge">angular-hint-dom</code>:</p>
+<p>Applying the <code>ng-hint</code> directive to our document takes care of injecting all needed hint modules in your apps bootstrap phase. But how does <code>ng-hint</code> know, which hint modules we actually want to activate? By default, <code>ng-hint</code> injects all the mentioned hint modules. However, if we don’t want to get controller related hints, but are interested in DOM related hints, we can restrict the use of hint modules by using the <code>ng-hint-include</code> directive instead. The following code only injects <code>angular-hint-dom</code>:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-hint-include=</span><span class="s">"dom"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/body&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-hint-include=</span><span class="s">"dom"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/body&gt;</span></code></pre></div>
 
 <p>We can even define more than just one hint module if needed:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-hint-include=</span><span class="s">"dom directives"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/body&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">"myApp"</span> <span class="na">ng-hint-include=</span><span class="s">"dom directives"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/body&gt;</span></code></pre></div>
 
-<p>As you can see, the names used as value for <code class="highlighter-rouge">ng-hint-include</code> map to the suffixes of the actual hint module names. E.g. <code class="highlighter-rouge">dom</code> and <code class="highlighter-rouge">directives</code> map to <code class="highlighter-rouge">angular-hint-dom</code> and <code class="highlighter-rouge">angular-hint-directives</code> respectively.</p>
+<p>As you can see, the names used as value for <code>ng-hint-include</code> map to the suffixes of the actual hint module names. E.g. <code>dom</code> and <code>directives</code> map to <code>angular-hint-dom</code> and <code>angular-hint-directives</code> respectively.</p>
 
 <h2 id="module-hints">Module hints</h2>
 
-<p>Okay, so now that <code class="highlighter-rouge">angular-hint</code> is installed, let’s try to reproduce the “I forgot to add module dependency” scenario we were talking about. To do that, we declare an additional Angular module that act as our app dependency. For simplicity’s sake, we don’t add any ground breaking functionality here.</p>
+<p>Okay, so now that <code>angular-hint</code> is installed, let’s try to reproduce the “I forgot to add module dependency” scenario we were talking about. To do that, we declare an additional Angular module that act as our app dependency. For simplicity’s sake, we don’t add any ground breaking functionality here.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myAppDependency'</span><span class="p">,</span> <span class="p">[]);</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myAppDependency'</span><span class="p">,</span> <span class="p">[]);</span></code></pre></div>
 
 <p>Next we take a look at our actual app module definition. As you can see, we declare the module without any further dependencies a.k.a we simply forgot it.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]);</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]);</span></code></pre></div>
 
-<p>Now, instead of fiddling around for an hour to find out why <code class="highlighter-rouge">myAppDependency</code>’s directives aren’t picked up, <code class="highlighter-rouge">angular-hint</code> is telling us that we might missed something. Simply open your browsers console and you should see something like this:</p>
+<p>Now, instead of fiddling around for an hour to find out why <code>myAppDependency</code>’s directives aren’t picked up, <code>angular-hint</code> is telling us that we might missed something. Simply open your browsers console and you should see something like this:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh">Angular Hint: Modules
-  Module <span class="s2">"myAppDependency"</span> was created but never loaded.</code></pre></figure>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">Angular Hint: Modules
+  Module <span class="s2">"myAppDependency"</span> was created but never loaded.</code></pre></div>
 
-<p>This log occurs whenever an Angular module is present but not declared as dependency anywhere (You might see another message says that <code class="highlighter-rouge">ngHintModules</code> was also created but never loaded. This is a probably a bug and filed <a href="https://github.com/angular/angular-hint-modules/issues/17">here</a>).</p>
+<p>This log occurs whenever an Angular module is present but not declared as dependency anywhere (You might see another message says that <code>ngHintModules</code> was also created but never loaded. This is a probably a bug and filed <a href="https://github.com/angular/angular-hint-modules/issues/17">here</a>).</p>
 
 <p>There are a couple more things that this module tries to warn you about and you can read about them <a href="https://github.com/angular/angular-hint-modules">here</a>.</p>
 
@@ -178,19 +178,19 @@
 
 <p>If there’s one thing you should embrace when working on a bigger Angular app and especially when working in a bigger team, are best practices. The Angular team <a href="https://docs.google.com/document/d/1XXMvReO8-Awi1EZXAXS4PzDzdNvV6pGcuaF4Q9821Es/pub">published their style guide</a> for apps built with Angular internally at Google, that covers best practices and conventions.</p>
 
-<p>One of these best practices is, when naming controllers, to suffix them with <code class="highlighter-rouge">Controller</code> instead of using short names like <code class="highlighter-rouge">Ctrl</code>. <code class="highlighter-rouge">angular-hint</code> helps with that too. Let’s take a look what happens when we define a controller with a name that doesn’t have this suffix:</p>
+<p>One of these best practices is, when naming controllers, to suffix them with <code>Controller</code> instead of using short names like <code>Ctrl</code>. <code>angular-hint</code> helps with that too. Let’s take a look what happens when we define a controller with a name that doesn’t have this suffix:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]).</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppCtrl'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]).</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'AppCtrl'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Having a controller registered like this, <code class="highlighter-rouge">angular-hint</code> gives us the following warning:</p>
+<p>Having a controller registered like this, <code>angular-hint</code> gives us the following warning:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh">Angular Hint: Controllers
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">Angular Hint: Controllers
   The best practice is to name controllers ending with <span class="s1">'Controller'</span>.
-  Check the name of <span class="s1">'AppCtrl'</span></code></pre></figure>
+  Check the name of <span class="s1">'AppCtrl'</span></code></pre></div>
 
-<p>I think this makes pretty much clear what can be achieved with such a tool. Having a style guide with conventions and best practices that everybody agrees on, makes a projects structure easier to understand and debug. With <code class="highlighter-rouge">angular-hint</code> we actually have a tool to embrace and encourage these best practices and conventions and this is just the start!</p>
+<p>I think this makes pretty much clear what can be achieved with such a tool. Having a style guide with conventions and best practices that everybody agrees on, makes a projects structure easier to understand and debug. With <code>angular-hint</code> we actually have a tool to embrace and encourage these best practices and conventions and this is just the start!</p>
 
 <h2 id="directive-hints">Directive hints</h2>
 
@@ -198,25 +198,25 @@
 
 <p>Just take a look at this small snippet:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
   <span class="nt">&lt;li</span> <span class="na">ng-repaet=</span><span class="s">"i in [1,2,3,4]"</span><span class="nt">&gt;</span>
     <span class="c">&lt;!-- more dom goes here --&gt;</span>
   <span class="nt">&lt;/li&gt;</span>
-<span class="nt">&lt;/ul&gt;</span></code></pre></figure>
+<span class="nt">&lt;/ul&gt;</span></code></pre></div>
 
-<p>As you can see, there’s a typo in the directive name. We actually wanted to type <code class="highlighter-rouge">ng-repeat</code>, but we typed <code class="highlighter-rouge">ng-repaet</code>. I can easily remember the last time, when I was debugging for an hour because I just misspelled a directive name. Because literally <strong>nothing</strong> happens.</p>
+<p>As you can see, there’s a typo in the directive name. We actually wanted to type <code>ng-repeat</code>, but we typed <code>ng-repaet</code>. I can easily remember the last time, when I was debugging for an hour because I just misspelled a directive name. Because literally <strong>nothing</strong> happens.</p>
 
-<p>However, when <code class="highlighter-rouge">angular-hint</code> is activated, we get the following very useful warning:</p>
+<p>However, when <code>angular-hint</code> is activated, we get the following very useful warning:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh">Angular Hint: Directives
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">Angular Hint: Directives
   There was an AngularJS error <span class="k">in </span>LI element.
-  Found incorrect attribute <span class="s2">"ng-repaet"</span> try <span class="s2">"ng-repeat"</span></code></pre></figure>
+  Found incorrect attribute <span class="s2">"ng-repaet"</span> try <span class="s2">"ng-repeat"</span></code></pre></div>
 
-<p>How cool is that? Not only that <code class="highlighter-rouge">angular-hint</code> warns me about an incorrect directive name and on what kind of element it is applied, it also suggests me a directive that is actually registered and to use! And now think about how much time you can save with such a helper.</p>
+<p>How cool is that? Not only that <code>angular-hint</code> warns me about an incorrect directive name and on what kind of element it is applied, it also suggests me a directive that is actually registered and to use! And now think about how much time you can save with such a helper.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>Even if we took a look at just a few of all provided <code class="highlighter-rouge">angular-hint</code> modules and features, I’m pretty sure you get an idea how useful it is. Of course, it’s still in early development and has one or the other bug here and there, but the initial idea of having such a module that you can easily apply and tells you about all your possible mistakes, is just awesome.</p>
+<p>Even if we took a look at just a few of all provided <code>angular-hint</code> modules and features, I’m pretty sure you get an idea how useful it is. Of course, it’s still in early development and has one or the other bug here and there, but the initial idea of having such a module that you can easily apply and tells you about all your possible mistakes, is just awesome.</p>
 
 <p>And again, this is just the start. I can’t even think of all the possibilities we have when extending the hint modules with additional functionality and hints. I could also imagine that this module could help out migrating from 1.x to 2.x in the future once the APIs are stable.</p>
 

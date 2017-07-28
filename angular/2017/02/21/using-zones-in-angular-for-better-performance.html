@@ -94,7 +94,7 @@
           <p style="background-color: lightgoldenrodyellow; border: solid 2px #f9dead; padding: 1em; text-align: center; border-radius: 0.3em;">Contents are based on Angular version <strong>>= 2.x</strong> unless explicitly stated differently.</p>
           
 
-          <p>In our latest article, we talked about <a href="/angular/2017/02/02/making-your-angular-app-fast.html">how to make our Angular apps fast</a> by exploring Angular’s <code class="highlighter-rouge">ChangeDetectionStrategy</code> APIs as well as tricks on how to detach change detectors and many more. While we were covering many different options to improve the demo application’s performance, we certainly haven’t talked about <strong>all</strong> possible options.</p>
+          <p>In our latest article, we talked about <a href="/angular/2017/02/02/making-your-angular-app-fast.html">how to make our Angular apps fast</a> by exploring Angular’s <code>ChangeDetectionStrategy</code> APIs as well as tricks on how to detach change detectors and many more. While we were covering many different options to improve the demo application’s performance, we certainly haven’t talked about <strong>all</strong> possible options.</p>
 
 <p>That’s why <a href="https://twitter.com/galigan">Jordi Collell</a> pointed out that another option would be to take advantage of <a href="/angular/2016/02/01/zones-in-angular-2.html">Zone APIs</a>, to execute our code outside the Angular zone, which will prevent Angular from running unnecessary change detection tasks. He even put time and energy into creating a demo plunk that shows how to do exactly that.</p>
 
@@ -120,26 +120,26 @@
 
 <iframe src="https://embed.plnkr.co/UBI5Sc5eDMpkDDkJfeGX/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>And here’s Jordi’s <strong>optimized</strong> plunk, which uses Angular’s <code class="highlighter-rouge">NgZone</code> APIs:</p>
+<p>And here’s Jordi’s <strong>optimized</strong> plunk, which uses Angular’s <code>NgZone</code> APIs:</p>
 
 <iframe src="https://embed.plnkr.co/GIf9sPuuZRLKwYK7mTfr/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Even though the difference is rather subtle, the optimized version performs much better in terms of JavaScript execution per frame. We’ll take a look at some numbers later, but let’s quickly recap Zones and then dive into the code and discuss how Jordi used Angular’s <code class="highlighter-rouge">NgZone</code> APIs to achieve this performance first.</p>
+<p>Even though the difference is rather subtle, the optimized version performs much better in terms of JavaScript execution per frame. We’ll take a look at some numbers later, but let’s quickly recap Zones and then dive into the code and discuss how Jordi used Angular’s <code>NgZone</code> APIs to achieve this performance first.</p>
 
 <h2 id="the-idea-of-zones">The idea of Zones</h2>
 
-<p>Before we can use Zone APIs and specifically the ones from Angular’s <code class="highlighter-rouge">NgZone</code>, we need to get an understanding of what Zones actually are and how they are useful in the Angular world. We won’t go into too much detail here as we’ve already written two articles on this topic:</p>
+<p>Before we can use Zone APIs and specifically the ones from Angular’s <code>NgZone</code>, we need to get an understanding of what Zones actually are and how they are useful in the Angular world. We won’t go into too much detail here as we’ve already written two articles on this topic:</p>
 
 <ul>
   <li><strong><a href="/angular/2016/01/22/understanding-zones.html">Understanding Zones</a></strong> - Discusses the concept of Zones in general and how they can be used to e.g. profile asynchronous code execution</li>
-  <li><strong><a href="/angular/2016/02/01/zones-in-angular-2.html">Zones in Angular</a></strong> - Explores how the underlying Zone APIs are used in Angular to create a custom <code class="highlighter-rouge">NgZone</code>, which enables consumers and Angular itself to run code inside or outside Angular’s Zone</li>
+  <li><strong><a href="/angular/2016/02/01/zones-in-angular-2.html">Zones in Angular</a></strong> - Explores how the underlying Zone APIs are used in Angular to create a custom <code>NgZone</code>, which enables consumers and Angular itself to run code inside or outside Angular’s Zone</li>
 </ul>
 
-<p>If you haven’t read these articles yet, we definitely recommend you to do so as they give a very solid understanding of what Zones are and what they do. The bottom line is, however, Zones wrap asynchronous browser APIs, and notify a consumer when an asynchronous task has started or ended. Angular takes advantage of these APIs to get notified when any asynchronous task is done. This includes things like <code class="highlighter-rouge">XHR</code> calls, <code class="highlighter-rouge">setTimeout()</code> and pretty much all user events like <code class="highlighter-rouge">click</code>, <code class="highlighter-rouge">submit</code>, <code class="highlighter-rouge">mousedown</code>, … etc.</p>
+<p>If you haven’t read these articles yet, we definitely recommend you to do so as they give a very solid understanding of what Zones are and what they do. The bottom line is, however, Zones wrap asynchronous browser APIs, and notify a consumer when an asynchronous task has started or ended. Angular takes advantage of these APIs to get notified when any asynchronous task is done. This includes things like <code>XHR</code> calls, <code>setTimeout()</code> and pretty much all user events like <code>click</code>, <code>submit</code>, <code>mousedown</code>, … etc.</p>
 
-<p>Once notified, Angular knows that it has to perform change detection because any of the asynchronous operations might have changed the application state. This, for instance, is always the case when we use Angular’s <code class="highlighter-rouge">Http</code> service to fetch data from a remote server. The following snippet shows how such a call can change application state:</p>
+<p>Once notified, Angular knows that it has to perform change detection because any of the asynchronous operations might have changed the application state. This, for instance, is always the case when we use Angular’s <code>Http</code> service to fetch data from a remote server. The following snippet shows how such a call can change application state:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
 
   <span class="nl">data</span><span class="p">:</span> <span class="nx">any</span><span class="p">;</span> <span class="c1">// initial application state</span>
@@ -151,7 +151,7 @@
       <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span> <span class="c1">// application state has changed, change detection needs to run now</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>The nice thing about this is that we as developers don’t have to care about notifying Angular to perform change detection, because Zones will do it for us as Angular subscribes to them under the hood.</p>
 
@@ -159,9 +159,9 @@
 
 <h2 id="running-outside-angulars-zone">Running outside Angular’s Zone</h2>
 
-<p>We know that change detection is performed whenever an asynchronous event happened and an event handler was bound to that event. This is exactly the reason why our initial demo performs rather jankee. Let’s look at <code class="highlighter-rouge">AppComponent</code>’s template:</p>
+<p>We know that change detection is performed whenever an asynchronous event happened and an event handler was bound to that event. This is exactly the reason why our initial demo performs rather jankee. Let’s look at <code>AppComponent</code>’s template:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">svg</span> <span class="p">(</span><span class="nx">mousedown</span><span class="p">)</span><span class="o">=</span><span class="s2">"mouseDown($event)"</span>
@@ -176,17 +176,17 @@
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Three (3) event handlers are bound to the outer SVG element. When any of these events fire and their handlers have been executed then change detection is performed. In fact, this means that Angular will run change detection, even when we just move the mouse over the boxes without actually dragging a single box!</p>
 
-<p>This is where taking advantage of <code class="highlighter-rouge">NgZone</code> APIs comes in handy. <code class="highlighter-rouge">NgZone</code> enables us to explicitly run certain code <strong>outside</strong> Angular’s Zone, preventing Angular to run any change detection. So basically, handlers will still be executed, but since they won’t run inside Angular’s Zone, Angular won’t get notified that a task is done and therefore no change detection will be performed. We only want to run change detection once we release the box we are dragging.</p>
+<p>This is where taking advantage of <code>NgZone</code> APIs comes in handy. <code>NgZone</code> enables us to explicitly run certain code <strong>outside</strong> Angular’s Zone, preventing Angular to run any change detection. So basically, handlers will still be executed, but since they won’t run inside Angular’s Zone, Angular won’t get notified that a task is done and therefore no change detection will be performed. We only want to run change detection once we release the box we are dragging.</p>
 
-<p>Okay, how do we achieve this? In our article on <a href="/angular/2016/02/01/zones-in-angular-2.html#running-code-outside-angulars-zone">Zones in Angular</a>, we already discussed how to run code outside Angular’s Zone using <code class="highlighter-rouge">NgZone.runOutsideAngular()</code>. All we have to do is to make sure that the <code class="highlighter-rouge">mouseMove()</code> event handler is only attached and executed outside Angular’s zone. In addition to that, we know we want to attach that event handler only if a box is being selected for dragging. In other words, we need to change our <code class="highlighter-rouge">mouseDown()</code> event handler to imperatively add that event listener to the document.</p>
+<p>Okay, how do we achieve this? In our article on <a href="/angular/2016/02/01/zones-in-angular-2.html#running-code-outside-angulars-zone">Zones in Angular</a>, we already discussed how to run code outside Angular’s Zone using <code>NgZone.runOutsideAngular()</code>. All we have to do is to make sure that the <code>mouseMove()</code> event handler is only attached and executed outside Angular’s zone. In addition to that, we know we want to attach that event handler only if a box is being selected for dragging. In other words, we need to change our <code>mouseDown()</code> event handler to imperatively add that event listener to the document.</p>
 
 <p>Here’s what that looks like:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">NgZone</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">NgZone</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
@@ -209,25 +209,25 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">+</span> <span class="s1">'px'</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">clientY</span> <span class="o">+</span> <span class="s1">'px'</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We inject <code class="highlighter-rouge">NgZone</code> and call <code class="highlighter-rouge">runOutsideAngular()</code> inside our <code class="highlighter-rouge">mouseDown()</code> event handler, in which we attach an event handler for the <code class="highlighter-rouge">mousemove</code> event. This ensures that the <code class="highlighter-rouge">mousemove</code> event handler is really only attached to the document when a box is being selected. In addition, we save a reference to the underlying DOM element of the clicked box so we can update its <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> attributes in the <code class="highlighter-rouge">mouseMove()</code> method. We’re working with the DOM element instead of a box object with bindings for <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code>, because bindings won’t be change detected since we’re running the code outside Angular’s Zone. In other words, we <strong>do</strong> update the DOM, so we can see the box is moving, but we aren’t actually updating the box model (yet).</p>
+<p>We inject <code>NgZone</code> and call <code>runOutsideAngular()</code> inside our <code>mouseDown()</code> event handler, in which we attach an event handler for the <code>mousemove</code> event. This ensures that the <code>mousemove</code> event handler is really only attached to the document when a box is being selected. In addition, we save a reference to the underlying DOM element of the clicked box so we can update its <code>x</code> and <code>y</code> attributes in the <code>mouseMove()</code> method. We’re working with the DOM element instead of a box object with bindings for <code>x</code> and <code>y</code>, because bindings won’t be change detected since we’re running the code outside Angular’s Zone. In other words, we <strong>do</strong> update the DOM, so we can see the box is moving, but we aren’t actually updating the box model (yet).</p>
 
-<p>Also, notice that we removed the <code class="highlighter-rouge">mouseMove()</code> binding from our component’s template. We could remove the <code class="highlighter-rouge">mouseUp()</code> handler as well and attach it imperatively, just like we did with the <code class="highlighter-rouge">mouseMove()</code> handler. However, it won’t add any value performance-wise, so we decided to keep it in the template for simplicity’s sake:</p>
+<p>Also, notice that we removed the <code>mouseMove()</code> binding from our component’s template. We could remove the <code>mouseUp()</code> handler as well and attach it imperatively, just like we did with the <code>mouseMove()</code> handler. However, it won’t add any value performance-wise, so we decided to keep it in the template for simplicity’s sake:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">svg</span> <span class="p">(</span><span class="nx">mousedown</span><span class="p">)</span><span class="o">=</span><span class="s2">"mouseDown($event)"</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">svg</span> <span class="p">(</span><span class="nx">mousedown</span><span class="p">)</span><span class="o">=</span><span class="s2">"mouseDown($event)"</span>
       <span class="p">(</span><span class="nx">mouseup</span><span class="p">)</span><span class="o">=</span><span class="s2">"mouseUp($event)"</span><span class="o">&gt;</span>
 
   <span class="o">&lt;</span><span class="nx">svg</span><span class="err">:</span><span class="nx">g</span> <span class="nx">box</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let box of boxes"</span> <span class="p">[</span><span class="nx">box</span><span class="p">]</span><span class="o">=</span><span class="s2">"box"</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="sr">/svg:g</span><span class="err">&gt;
 </span>
-<span class="o">&lt;</span><span class="sr">/svg&gt;</span></code></pre></figure>
+<span class="o">&lt;</span><span class="sr">/svg&gt;</span></code></pre></div>
 
-<p>In the next step, we want to make sure that, whenever we release a box (<code class="highlighter-rouge">mouseUp</code>), we update the box model, plus, we want to perform change detection so that the model is in sync with the view again. The cool thing about <code class="highlighter-rouge">NgZone</code> is not only that it allows us to run code outside Angular’s Zone, it also comes with APIs to run code <strong>inside</strong> the Angular Zone, which ultimately will cause Angular to perform change detection again. All we have to do is to call <code class="highlighter-rouge">NgZone.run()</code> and give it the code that should be executed.</p>
+<p>In the next step, we want to make sure that, whenever we release a box (<code>mouseUp</code>), we update the box model, plus, we want to perform change detection so that the model is in sync with the view again. The cool thing about <code>NgZone</code> is not only that it allows us to run code outside Angular’s Zone, it also comes with APIs to run code <strong>inside</strong> the Angular Zone, which ultimately will cause Angular to perform change detection again. All we have to do is to call <code>NgZone.run()</code> and give it the code that should be executed.</p>
 
-<p>Here’s the our updated <code class="highlighter-rouge">mouseUp()</code> event handler:</p>
+<p>Here’s the our updated <code>mouseUp()</code> event handler:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">mouseUp</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
@@ -239,9 +239,9 @@
 
     <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">'mousemove'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">mouseMove</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Also notice that we’re removing the event listener for the <code class="highlighter-rouge">mousemove</code> event <strong>on every mouseUp</strong>. Otherwise, the event handler would still be executed on every mouse move. In other words, the box would keep moving even after the finger was lifted, essentially taking the <em>drop</em> part out of <em>drag and drop</em>. In addition to that, we would pile up event handlers, which could not only cause weird side effects but also blows up our runtime memory.</p>
+<p>Also notice that we’re removing the event listener for the <code>mousemove</code> event <strong>on every mouseUp</strong>. Otherwise, the event handler would still be executed on every mouse move. In other words, the box would keep moving even after the finger was lifted, essentially taking the <em>drop</em> part out of <em>drag and drop</em>. In addition to that, we would pile up event handlers, which could not only cause weird side effects but also blows up our runtime memory.</p>
 
 <h2 id="measuring-the-performance">Measuring the performance</h2>
 
@@ -257,9 +257,9 @@
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>Using Zones is a great way to escape Angular’s change detection, without detaching change detectors and making the application code too complex. In fact, it turns out that Zones APIs are super easy to use, especially <code class="highlighter-rouge">NgZone</code>’s APIs to run code outside or inside Angular. Based on the numbers, we can even say that this version is about as fast as the fastest solution we came up with in our previous article. Considering that the developer experience is much better when using Zones APIs, since they are easier to use than manually detaching and re-attaching change detector references, it’s definitely the most “beautiful” performance improvement we have so far.</p>
+<p>Using Zones is a great way to escape Angular’s change detection, without detaching change detectors and making the application code too complex. In fact, it turns out that Zones APIs are super easy to use, especially <code>NgZone</code>’s APIs to run code outside or inside Angular. Based on the numbers, we can even say that this version is about as fast as the fastest solution we came up with in our previous article. Considering that the developer experience is much better when using Zones APIs, since they are easier to use than manually detaching and re-attaching change detector references, it’s definitely the most “beautiful” performance improvement we have so far.</p>
 
-<p>However, we shouldn’t forget that this solution also comes with a couple (probably fixable) downsides. For example, we’re relying on DOM APIs and the global <code class="highlighter-rouge">window</code> object, which is something we should always try to avoid. If we wanted to use this code with on the server-side then direct access of the window variable would be problematic. We will discus these server-side specific issues in a future article. For the sake of this demo, this isn’t a big deal though.</p>
+<p>However, we shouldn’t forget that this solution also comes with a couple (probably fixable) downsides. For example, we’re relying on DOM APIs and the global <code>window</code> object, which is something we should always try to avoid. If we wanted to use this code with on the server-side then direct access of the window variable would be problematic. We will discus these server-side specific issues in a future article. For the sake of this demo, this isn’t a big deal though.</p>
 
 <p>Again, a huge shout-out goes to <a href="https://twitter.com/galigan">Jordi Collell</a> who not only made us adding this option, but also taking the time to actually implement a first version of this demo!</p>
 

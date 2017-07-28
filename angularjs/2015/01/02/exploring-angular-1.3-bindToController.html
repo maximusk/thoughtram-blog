@@ -92,28 +92,28 @@
 
           
 
-          <p>In version 1.2, Angular introduced a new <code class="highlighter-rouge">controllerAs</code> syntax that made scoping clearer and controllers smarter. In fact, it’s a best practice to use <code class="highlighter-rouge">controllerAs</code> throughout our Angular apps in order to prevent some common problems that developers run into fairly often.</p>
+          <p>In version 1.2, Angular introduced a new <code>controllerAs</code> syntax that made scoping clearer and controllers smarter. In fact, it’s a best practice to use <code>controllerAs</code> throughout our Angular apps in order to prevent some common problems that developers run into fairly often.</p>
 
-<p>Even if it’s nice that we are able to use that syntax in pretty much every case where a controller comes into play, it turned out that in version 1.2, there’s a little quirk when using it with directives that have an isolated scope. But before we get to the actual problem, let’s recap <code class="highlighter-rouge">controllerAs</code> in general first, to get an idea of what problems it solves and how to use it, so that we are all on the same page.</p>
+<p>Even if it’s nice that we are able to use that syntax in pretty much every case where a controller comes into play, it turned out that in version 1.2, there’s a little quirk when using it with directives that have an isolated scope. But before we get to the actual problem, let’s recap <code>controllerAs</code> in general first, to get an idea of what problems it solves and how to use it, so that we are all on the same page.</p>
 
 <div class="thtrm-toc is-sticky">
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
 <ul id="markdown-toc">
-  <li><a href="#controlleras-as-namespace" id="markdown-toc-controlleras-as-namespace"><code class="highlighter-rouge">controllerAs</code> as Namespace</a></li>
-  <li><a href="#the-problem-with-controlleras-in-directives" id="markdown-toc-the-problem-with-controlleras-in-directives">The problem with <code class="highlighter-rouge">controllerAs</code> in Directives</a></li>
-  <li><a href="#binding-to-controllers-with-bindtocontroller" id="markdown-toc-binding-to-controllers-with-bindtocontroller">Binding to controllers with <code class="highlighter-rouge">bindToController</code></a></li>
+  <li><a href="#controlleras-as-namespace" id="markdown-toc-controlleras-as-namespace"><code>controllerAs</code> as Namespace</a></li>
+  <li><a href="#the-problem-with-controlleras-in-directives" id="markdown-toc-the-problem-with-controlleras-in-directives">The problem with <code>controllerAs</code> in Directives</a></li>
+  <li><a href="#binding-to-controllers-with-bindtocontroller" id="markdown-toc-binding-to-controllers-with-bindtocontroller">Binding to controllers with <code>bindToController</code></a></li>
   <li><a href="#improvements-in-14" id="markdown-toc-improvements-in-14">Improvements in 1.4</a></li>
 </ul>
 
 </div>
 
-<h2 id="controlleras-as-namespace"><code class="highlighter-rouge">controllerAs</code> as Namespace</h2>
+<h2 id="controlleras-as-namespace"><code>controllerAs</code> as Namespace</h2>
 
 <p>Who of us did not run into the problem that, when having nested scopes created by nested controllers, scope properties that have the same name as properties on the parent scope, shadow that value of the parent scope property due to JavaScript’s prototypical inheritance model?</p>
 
 <p>Or, when speaking in code, having two controllers like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">ControllerOne</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">ControllerOne</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">'Pascal'</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -122,33 +122,33 @@
 <span class="p">}</span>
 
 <span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ControllerOne'</span><span class="p">,</span> <span class="nx">ControllerOne</span><span class="p">);</span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ControllerTwo'</span><span class="p">,</span> <span class="nx">ControllerTwo</span><span class="p">);</span></code></pre></figure>
+<span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ControllerTwo'</span><span class="p">,</span> <span class="nx">ControllerTwo</span><span class="p">);</span></code></pre></div>
 
 <p>And a DOM structure like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne"</span><span class="nt">&gt;</span>
   {{foo}}
   <span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerTwo"</span><span class="nt">&gt;</span>
     {{foo}}
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
-<p>The  <code class="highlighter-rouge"><span class="p">{</span><span class="err">{foo</span><span class="p">}</span><span class="err">}</span></code>  expression in <code class="highlighter-rouge">ControllerTwo</code> scope will shadow the  <code class="highlighter-rouge"><span class="p">{</span><span class="err">{foo</span><span class="p">}</span><span class="err">}</span></code>  expression in <code class="highlighter-rouge">ControllerOne</code> scope, which results in string <code class="highlighter-rouge">Christoph</code> being displayed in the inner scope and <code class="highlighter-rouge">Pascal</code> being displayed in the outer scope.</p>
+<p>The  <code>{{foo}}</code>  expression in <code>ControllerTwo</code> scope will shadow the  <code>{{foo}}</code>  expression in <code>ControllerOne</code> scope, which results in string <code>Christoph</code> being displayed in the inner scope and <code>Pascal</code> being displayed in the outer scope.</p>
 
-<p>We could always get around this problem by using a scope’s <code class="highlighter-rouge">$parent</code> property to reference its parent scope when accessing scope properties like this:</p>
+<p>We could always get around this problem by using a scope’s <code>$parent</code> property to reference its parent scope when accessing scope properties like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne"</span><span class="nt">&gt;</span>
   {{foo}}
   <span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerTwo"</span><span class="nt">&gt;</span>
     {{$parent.foo}}
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
-<p>However, it turns out that using <code class="highlighter-rouge">$parent</code> is actually a bad practice, since we start coupling our expression code to the underlying DOM structure, which makes our code less maintainable. Just imagine you have not only two nested scopes, but four or five. That would bring you into <code class="highlighter-rouge">$parent.$parent.$parent.$parent</code> hell, right?</p>
+<p>However, it turns out that using <code>$parent</code> is actually a bad practice, since we start coupling our expression code to the underlying DOM structure, which makes our code less maintainable. Just imagine you have not only two nested scopes, but four or five. That would bring you into <code>$parent.$parent.$parent.$parent</code> hell, right?</p>
 
 <p>That’s one of the reasons why you might have heard that we should <strong>always</strong> have a dot in our expressions that access scope properties. In other words, this could easily be fixed with doing the following:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">ControllerOne</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">ControllerOne</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">modelOne</span> <span class="o">=</span> <span class="p">{</span>
     <span class="na">foo</span><span class="p">:</span> <span class="s1">'Pascal'</span>
   <span class="p">};</span>
@@ -158,49 +158,49 @@
   <span class="nx">$scope</span><span class="p">.</span><span class="nx">modelTwo</span> <span class="o">=</span> <span class="p">{</span>
     <span class="na">foo</span><span class="p">:</span> <span class="s1">'Christoph'</span>
   <span class="p">};</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>And in our template, we update our expressions accordingly:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne"</span><span class="nt">&gt;</span>
   {{modelOne.foo}}
   <span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerTwo"</span><span class="nt">&gt;</span>
     {{modelOne.foo}}
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
-<p>And here comes <code class="highlighter-rouge">controllerAs</code> into play. This syntax allows us to introduce a new namespace bound to our controller without the need to put scope properties in an additional object literal. In fact, we don’t even need to request <code class="highlighter-rouge">$scope</code> in our controller anymore, since the scope is bound the controller’s <code class="highlighter-rouge">this</code> reference when using <code class="highlighter-rouge">controllerAs</code>.</p>
+<p>And here comes <code>controllerAs</code> into play. This syntax allows us to introduce a new namespace bound to our controller without the need to put scope properties in an additional object literal. In fact, we don’t even need to request <code>$scope</code> in our controller anymore, since the scope is bound the controller’s <code>this</code> reference when using <code>controllerAs</code>.</p>
 
-<p>Let’s see what that looks like in code. First we remove the <code class="highlighter-rouge">$scope</code> service and assign our values to <code class="highlighter-rouge">this</code>:</p>
+<p>Let’s see what that looks like in code. First we remove the <code>$scope</code> service and assign our values to <code>this</code>:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">ControllerOne</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">ControllerOne</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">'Pascal'</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">ControllerTwo</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">'Christoph'</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Next, we update <code class="highlighter-rouge">ngController</code> directive expression with the <code class="highlighter-rouge">controllerAs</code> syntax, and use the new namespaces in our scopes:</p>
+<p>Next, we update <code>ngController</code> directive expression with the <code>controllerAs</code> syntax, and use the new namespaces in our scopes:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne as ctrl1"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerOne as ctrl1"</span><span class="nt">&gt;</span>
   {{ctrl1.foo}}
   <span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ControllerTwo as ctrl2"</span><span class="nt">&gt;</span>
     {{ctrl2.foo}}
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
-<p>It gets even better. We are able to use that syntax whenever a controller is used. For example if we configure an application state with Angular’s <code class="highlighter-rouge">$routeProvider</code> we can use <code class="highlighter-rouge">controllerAs</code> there too, in order to make our template code more readable.</p>
+<p>It gets even better. We are able to use that syntax whenever a controller is used. For example if we configure an application state with Angular’s <code>$routeProvider</code> we can use <code>controllerAs</code> there too, in order to make our template code more readable.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$routeProvider</span><span class="p">.</span><span class="nx">when</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$routeProvider</span><span class="p">.</span><span class="nx">when</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'stateTemplate.html'</span><span class="p">,</span>
   <span class="na">controllerAs</span><span class="p">:</span> <span class="s1">'ctrl'</span><span class="p">,</span>
   <span class="na">controller</span><span class="p">:</span> <span class="s1">'StateController'</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>And as you probably know, directives can also have controllers and yes, we can use <code class="highlighter-rouge">controllerAs</code> there too.</p>
+<p>And as you probably know, directives can also have controllers and yes, we can use <code>controllerAs</code> there too.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'SomeController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'SomeController'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">foo</span> <span class="o">=</span> <span class="s1">'bar'</span><span class="p">;</span>
 <span class="p">});</span>
 
@@ -211,17 +211,17 @@
     <span class="na">controllerAs</span><span class="p">:</span> <span class="s1">'ctrl'</span><span class="p">,</span>
     <span class="na">template</span><span class="p">:</span> <span class="s1">'{{ctrl.foo}}'</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Great. Now we know what the <code class="highlighter-rouge">controllerAs</code> syntax it is all about, but we haven’t talked about the little drawback that it comes with in 1.2. Let’s move on with that one.</p>
+<p>Great. Now we know what the <code>controllerAs</code> syntax it is all about, but we haven’t talked about the little drawback that it comes with in 1.2. Let’s move on with that one.</p>
 
-<h2 id="the-problem-with-controlleras-in-directives">The problem with <code class="highlighter-rouge">controllerAs</code> in Directives</h2>
+<h2 id="the-problem-with-controlleras-in-directives">The problem with <code>controllerAs</code> in Directives</h2>
 
-<p>We said that, when using <code class="highlighter-rouge">controllerAs</code>, the controllers’ scope is bound to the controllers’ <code class="highlighter-rouge">this</code> object, so in other words - <code class="highlighter-rouge">this</code> represents our scope. But how does that work when building a directive with isolated scope?</p>
+<p>We said that, when using <code>controllerAs</code>, the controllers’ scope is bound to the controllers’ <code>this</code> object, so in other words - <code>this</code> represents our scope. But how does that work when building a directive with isolated scope?</p>
 
 <p>We know we can create an isolated scope by adding an object literal to our directive definition object that defines how each scope property is bound to our directive. To refresh our memory, here’s what we can do:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">scope</span><span class="p">:</span> <span class="p">{</span>
       <span class="na">oneWay</span><span class="p">:</span> <span class="s1">'@'</span><span class="p">,</span>
@@ -229,35 +229,35 @@
       <span class="na">expr</span><span class="p">:</span> <span class="s1">'&amp;'</span>
     <span class="p">}</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
 <p>This is a directive with an isolated scope that defines how its scope properties are bound. Alright, let’s say we have directive with an isolated scope, a controller and a template that uses the controller properties accordingly:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">scope</span><span class="p">:</span> <span class="p">{},</span>
     <span class="na">controller</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'Pascal'</span>
     <span class="p">},</span>
-    <span class="na">controllerAs</span><span class="p">:</span> <span class="s1">'ctrl'</span><span class="p">,</span>
-    <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;div&gt;{{ctrl.name}}&lt;/div&gt;'</span>
+    <span class="nx">controllerAs</span><span class="err">:</span> <span class="s1">'ctrl'</span><span class="p">,</span>
+    <span class="nx">template</span><span class="err">:</span> <span class="s1">'&lt;div&gt;{{ctrl.name}}&lt;/div&gt;'</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Easy. That works and we knew that already. Now to the tricky part: what if <code class="highlighter-rouge">name</code> should be two-way bound?</p>
+<p>Easy. That works and we knew that already. Now to the tricky part: what if <code>name</code> should be two-way bound?</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">scope</span><span class="p">:</span> <span class="p">{</span>
       <span class="na">name</span><span class="p">:</span> <span class="s1">'='</span>
     <span class="p">},</span>
     <span class="c1">// ...</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Changes to isolated scope properties from the outside world are not reflected back to the controllers’ <code class="highlighter-rouge">this</code> object. What we need to do to make this work in 1.2, is to use the <code class="highlighter-rouge">$scope</code> service to re-assign our scope values explicitly, whenever a change happens on a particular property. And of course, we mustn’t forget to bind our watch callback to the controllers’ <code class="highlighter-rouge">this</code>:</p>
+<p>Changes to isolated scope properties from the outside world are not reflected back to the controllers’ <code>this</code> object. What we need to do to make this work in 1.2, is to use the <code>$scope</code> service to re-assign our scope values explicitly, whenever a change happens on a particular property. And of course, we mustn’t forget to bind our watch callback to the controllers’ <code>this</code>:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">scope</span><span class="p">:</span> <span class="p">{</span>
       <span class="na">name</span><span class="p">:</span> <span class="s1">'='</span>
@@ -271,21 +271,21 @@
     <span class="p">},</span>
     <span class="c1">// ...</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>Here we go… the <code class="highlighter-rouge">$scope</code> service we initially got rid off is now back. If you now think this is crazy, especially when considering that this is just one scope property and in a real world directive you usually have more than one, then my friend, I agree with you.</p>
+<p>Here we go… the <code>$scope</code> service we initially got rid off is now back. If you now think this is crazy, especially when considering that this is just one scope property and in a real world directive you usually have more than one, then my friend, I agree with you.</p>
 
 <p>Luckily, this is no longer a problem in Angular 1.3!</p>
 
-<h2 id="binding-to-controllers-with-bindtocontroller">Binding to controllers with <code class="highlighter-rouge">bindToController</code></h2>
+<h2 id="binding-to-controllers-with-bindtocontroller">Binding to controllers with <code>bindToController</code></h2>
 
-<p>Angular 1.3 introduces a new property to the directive definition object called <code class="highlighter-rouge">bindToController</code>, which does exactly what it says. When set to <code class="highlighter-rouge">true</code> in a directive with isolated scope that uses <code class="highlighter-rouge">controllerAs</code>, the component’s properties are bound to the controller rather than to the scope.</p>
+<p>Angular 1.3 introduces a new property to the directive definition object called <code>bindToController</code>, which does exactly what it says. When set to <code>true</code> in a directive with isolated scope that uses <code>controllerAs</code>, the component’s properties are bound to the controller rather than to the scope.</p>
 
-<p>That means, Angular makes sure that, when the controller is instantiated, the initial values of the isolated scope bindings are available on <code class="highlighter-rouge">this</code>, and future changes are also automatically available.</p>
+<p>That means, Angular makes sure that, when the controller is instantiated, the initial values of the isolated scope bindings are available on <code>this</code>, and future changes are also automatically available.</p>
 
-<p>Let’s apply <code class="highlighter-rouge">bindToController</code> to our directive and see how the code becomes cleaner.</p>
+<p>Let’s apply <code>bindToController</code> to our directive and see how the code becomes cleaner.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">scope</span><span class="p">:</span> <span class="p">{</span>
       <span class="na">name</span><span class="p">:</span> <span class="s1">'='</span>
@@ -297,17 +297,17 @@
     <span class="na">bindToController</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;div&gt;{{ctrl.name}}&lt;/div&gt;'</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>As we can see, we don’t need <code class="highlighter-rouge">$scope</code> anymore (yay!) and there’s also no <code class="highlighter-rouge">link</code> nor <code class="highlighter-rouge">compile</code> function in this directive definition. At the same time we keep taking advantage of <code class="highlighter-rouge">controllerAs</code>.</p>
+<p>As we can see, we don’t need <code>$scope</code> anymore (yay!) and there’s also no <code>link</code> nor <code>compile</code> function in this directive definition. At the same time we keep taking advantage of <code>controllerAs</code>.</p>
 
 <h2 id="improvements-in-14">Improvements in 1.4</h2>
 
-<p>In version <code class="highlighter-rouge">1.4</code>, <code class="highlighter-rouge">bindToController</code> gets even more powerful. When having an isolated scope with properties to be bound to a controller, we always define those properties on the scope definition and <code class="highlighter-rouge">bindToController</code> is set to <code class="highlighter-rouge">true</code>. In <code class="highlighter-rouge">1.4</code> however, we can move all our property binding definitions to <code class="highlighter-rouge">bindToController</code> and make it an object literal.</p>
+<p>In version <code>1.4</code>, <code>bindToController</code> gets even more powerful. When having an isolated scope with properties to be bound to a controller, we always define those properties on the scope definition and <code>bindToController</code> is set to <code>true</code>. In <code>1.4</code> however, we can move all our property binding definitions to <code>bindToController</code> and make it an object literal.</p>
 
-<p>Here’s an example with a component directive that uses <code class="highlighter-rouge">bindToController</code>. Instead of defining the scope properties on <code class="highlighter-rouge">scope</code>, we declaratively define what properties are bound to the component’s controller:</p>
+<p>Here’s an example with a component directive that uses <code>bindToController</code>. Instead of defining the scope properties on <code>scope</code>, we declaratively define what properties are bound to the component’s controller:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">scope</span><span class="p">:</span> <span class="p">{},</span>
     <span class="na">bindToController</span><span class="p">:</span> <span class="p">{</span>
@@ -321,11 +321,11 @@
     <span class="na">controllerAs</span><span class="p">:</span> <span class="s1">'ctrl'</span><span class="p">,</span>
     <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;div&gt;{{ctrl.name}}&lt;/div&gt;'</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>In addition to that, <code class="highlighter-rouge">bindToController</code> is no longer exclusive to isolated scope directives! Whenever we build a directive that introduces a new scope, we can take advantage of <code class="highlighter-rouge">bindToController</code>. So the following code also works:</p>
+<p>In addition to that, <code>bindToController</code> is no longer exclusive to isolated scope directives! Whenever we build a directive that introduces a new scope, we can take advantage of <code>bindToController</code>. So the following code also works:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'someDirective'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">scope</span><span class="p">:</span> <span class="kc">true</span>
     <span class="na">bindToController</span><span class="p">:</span> <span class="p">{</span>
@@ -335,7 +335,7 @@
     <span class="p">},</span>
     <span class="p">...</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
 
 

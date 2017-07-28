@@ -108,9 +108,9 @@
 
 </p>
 
-<p>As a recap, we built a simple Wikipedia search demo consisting of a <code class="highlighter-rouge">WikipediaService</code> to query a JSONP API.</p>
+<p>As a recap, we built a simple Wikipedia search demo consisting of a <code>WikipediaService</code> to query a JSONP API.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">URLSearchParams</span><span class="p">,</span> <span class="nx">Jsonp</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
@@ -127,11 +127,11 @@
                 <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
                 <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()[</span><span class="mi">1</span><span class="p">]);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We also built an <code class="highlighter-rouge">App</code> component that uses this service and applies some Rx gymnastics to tame the user input, prevent duplicate requests and deal with out-of-order responses.</p>
+<p>We also built an <code>App</code> component that uses this service and applies some Rx gymnastics to tame the user input, prevent duplicate requests and deal with out-of-order responses.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
@@ -145,10 +145,10 @@
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">App</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
-  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="err">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
@@ -156,7 +156,7 @@
                  <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
                  <span class="p">.</span><span class="nx">switchMap</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Thinking ahead we can refactor our code even further and let our API design leverage from the power of Observables.</p>
 
@@ -168,15 +168,15 @@
 
 <p>Well, with Observables you can. You get the power of first class objects but without the limitations of singularity.</p>
 
-<p>In fact, in a modern .NET language such as F#, which embraces Observables all the way down, every <code class="highlighter-rouge">IEvent&lt;T&gt;</code> inherits from <code class="highlighter-rouge">IObservable&lt;T&gt;</code>. Angular also went down this path and made <code class="highlighter-rouge">EventEmiter&lt;T&gt;</code> implement <code class="highlighter-rouge">Observable&lt;T&gt;</code>.</p>
+<p>In fact, in a modern .NET language such as F#, which embraces Observables all the way down, every <code>IEvent&lt;T&gt;</code> inherits from <code>IObservable&lt;T&gt;</code>. Angular also went down this path and made <code>EventEmiter&lt;T&gt;</code> implement <code>Observable&lt;T&gt;</code>.</p>
 
 <h2 id="smart-service-dumb-component">Smart service, dumb component</h2>
 
-<p>With that in mind: wouldn’t it be actually nice if we could save the component from dealing with all these edge cases? What if we just make the debounce duration configureable but let the rest of the complexity be handled by our <code class="highlighter-rouge">WikipediaService</code>?</p>
+<p>With that in mind: wouldn’t it be actually nice if we could save the component from dealing with all these edge cases? What if we just make the debounce duration configureable but let the rest of the complexity be handled by our <code>WikipediaService</code>?</p>
 
-<p>To let code speak we can transform our <code class="highlighter-rouge">WikipediaService</code> into this.</p>
+<p>To let code speak we can transform our <code>WikipediaService</code> into this.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">WikipediaService</span> <span class="p">{</span>
   <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jsonp</span><span class="err">:</span> <span class="nx">Jsonp</span><span class="p">)</span> <span class="p">{}</span>
 
@@ -195,13 +195,13 @@
                 <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
                 <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()[</span><span class="mi">1</span><span class="p">]);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Notice that the service still exposes the previous api as <code class="highlighter-rouge">rawSearch</code> and builds a more clever <code class="highlighter-rouge">search</code> API on top of it.</p>
+<p>Notice that the service still exposes the previous api as <code>rawSearch</code> and builds a more clever <code>search</code> API on top of it.</p>
 
-<p>This dramatically simplifies our <code class="highlighter-rouge">App</code> component.</p>
+<p>This dramatically simplifies our <code>App</code> component.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
     <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
@@ -215,13 +215,13 @@
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
 
-  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="err">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>See what happened? We just wire together event streams like lego blocks!</p>
 

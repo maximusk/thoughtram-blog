@@ -104,27 +104,27 @@
 
 <h2 id="component-inline-styles">Component inline styles</h2>
 
-<p>The easiest way to add styles to a component is taking advantage of the <code class="highlighter-rouge">@Component</code> decorators that allow us to define component inline styles. All we need to do is to add a <code class="highlighter-rouge">styles</code> property to the decorator and define the styles. To see what that looks like, here’s a snippet of our zippy component that we’ve built a while ago.</p>
+<p>The easiest way to add styles to a component is taking advantage of the <code>@Component</code> decorators that allow us to define component inline styles. All we need to do is to add a <code>styles</code> property to the decorator and define the styles. To see what that looks like, here’s a snippet of our zippy component that we’ve built a while ago.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
   <span class="na">styles</span><span class="p">:</span> <span class="p">[</span><span class="err">`</span>
     <span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
-      <span class="na">background</span><span class="p">:</span> <span class="nx">green</span><span class="p">;</span>
+      <span class="nl">background</span><span class="p">:</span> <span class="nx">green</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="err">`</span><span class="p">]</span>
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="na">title</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="err">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 
 <p>This is pretty straight forward. You might wonder though, why the value of that property is a list and not just a (multi-line) string. Well, I wonder too. That’s why I asked the <a href="https://github.com/angular/angular/issues/2730">question</a> right away.</p>
 
 <p>Okay, so defining styles on the component is pretty clear, but where did those end up in the DOM? If we run this code in our browser, we see that there’s something very interesting happening. It turns out that Angular takes the defined styles, and writes them into the head of the HTML document. Here’s what that looks like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;style&gt;</span>
@@ -136,21 +136,21 @@
   <span class="nt">&lt;body&gt;</span>
   ...
   <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
 
 <p>What’s going on there? The reason why Angular takes our styles and puts them up there, is because of the <strong>View Encapsulation</strong> that we are using. Since Angular 2.x, it comes with three different view encapsulation types in order to support both, browsers that don’t support Shadow DOM, and also the ones that do support it. The view encapsulations <s>will be explored in another article</s> are covered in <a href="/angular/2015/06/29/shadow-dom-strategies-in-angular2.html">this article</a>, but we have to touch on this though in order to understand why this is happening.</p>
 
-<p>Angular currently uses the <code class="highlighter-rouge">Emulated View Encapsulation</code> by default. Which basically means, there’s no usage of any Shadow DOM at all. One of the nice features of Shadow DOM is style encapsulation. It allows us to scope styles to a specific component without affecting the outer world.</p>
+<p>Angular currently uses the <code>Emulated View Encapsulation</code> by default. Which basically means, there’s no usage of any Shadow DOM at all. One of the nice features of Shadow DOM is style encapsulation. It allows us to scope styles to a specific component without affecting the outer world.</p>
 
-<p>To take advantage of style encapsulation, styles have to be put into the <code class="highlighter-rouge">shadowRoot</code> of a component. Due to the Shadow DOM strategy that is used, there is no <code class="highlighter-rouge">shadowRoot</code> to put our styles into. That’s why Angular writes them into the head. But as mentioned, there’s another article that explains all three view encapsulations.</p>
+<p>To take advantage of style encapsulation, styles have to be put into the <code>shadowRoot</code> of a component. Due to the Shadow DOM strategy that is used, there is no <code>shadowRoot</code> to put our styles into. That’s why Angular writes them into the head. But as mentioned, there’s another article that explains all three view encapsulations.</p>
 
 <p>Let’s take a look at another way of adding styles to our component.</p>
 
 <h2 id="styles-urls">Styles urls</h2>
 
-<p>In an ideal world, we don’t have to mix our styles with our application code. That’s why we have the <code class="highlighter-rouge">&lt;link&gt;</code> tag, that allows us to fetch and embed a stylesheet from a server. Angular components allow us to define <code class="highlighter-rouge">styleUrls</code>, so that styles don’t have to be written into the component. Pretty straight forward, here’s an example:</p>
+<p>In an ideal world, we don’t have to mix our styles with our application code. That’s why we have the <code>&lt;link&gt;</code> tag, that allows us to fetch and embed a stylesheet from a server. Angular components allow us to define <code>styleUrls</code>, so that styles don’t have to be written into the component. Pretty straight forward, here’s an example:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
@@ -158,11 +158,11 @@
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
   <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="err">:</span> <span class="nx">string</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Where do <strong>those</strong> end up in the DOM? Well, for the same reason as explained earlier, they are written into the head of the document. But not only that, when Angular fetches the style resources, it takes the text response, inlines and appends them after all component inline styles. So if we would have a configuration like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
@@ -171,17 +171,17 @@
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
   <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="err">:</span> <span class="nx">string</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>And the <code class="highlighter-rouge">my-zippy.component.css</code> content would look like this:</p>
+<p>And the <code>my-zippy.component.css</code> content would look like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
   <span class="nl">background</span><span class="p">:</span> <span class="nx">blue</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>We will end up with a document head that looks something like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;style&gt;</span>
@@ -197,7 +197,7 @@
   <span class="nt">&lt;body&gt;</span>
   ...
   <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
 
 <p>This also brings us to the next conclusion that styles defined in style urls will always be appended and therefore override styles defined in the component, unless the inline styles don’t have a higher specificity.</p>
 
@@ -209,7 +209,7 @@
 
 <p>Translating the styles used above to template inline styles would look something like this (in case of our zippy component):</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
   <span class="nc">.zippy</span> <span class="p">{</span>
     <span class="nl">background</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span>
   <span class="p">}</span>
@@ -221,7 +221,7 @@
   <span class="nt">&lt;div</span> <span class="err">[</span><span class="na">hidden</span><span class="err">]="!</span><span class="na">visible</span><span class="err">"</span> <span class="na">class=</span><span class="s">"zippy__content"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
 <p>Guess what, also those will be appended in the head of our document, after the ones defined in the component or as style urls. Template inline styles always have the highest priority, which sounds pretty straight forward to me.</p>
 

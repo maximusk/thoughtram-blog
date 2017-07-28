@@ -125,13 +125,13 @@
 
 <h2 id="defining-guards">Defining Guards</h2>
 
-<p>Guards can be implemented in different ways, but after all it really boils down to a function that returns either <code class="highlighter-rouge">Observable&lt;boolean&gt;</code>, <code class="highlighter-rouge">Promise&lt;boolean&gt;</code> or <code class="highlighter-rouge">boolean</code>. In addition, guards are registered using providers, so they can be injected by Angular when needed.</p>
+<p>Guards can be implemented in different ways, but after all it really boils down to a function that returns either <code>Observable&lt;boolean&gt;</code>, <code>Promise&lt;boolean&gt;</code> or <code>boolean</code>. In addition, guards are registered using providers, so they can be injected by Angular when needed.</p>
 
 <h3 id="as-functions">As Functions</h3>
 
 <p>To register a guard we need to define a token and the guard function. Here’s what a super simple guard implementation could look like:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="na">provide</span><span class="p">:</span> <span class="s1">'CanAlwaysActivateGuard'</span><span class="p">,</span>
@@ -141,29 +141,29 @@
   <span class="p">],</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
 
-<p>As we can see, it’s really just a provider with some made up token that resolves to a guard function that returns <code class="highlighter-rouge">true</code> (if <code class="highlighter-rouge">provider</code> doesn’t mean anything to you, go and check out our article on <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">Dependency Injection in Angular</a>). Since it’s always returning <code class="highlighter-rouge">true</code>, this guard is not protecting anything, as it will always activate the route that uses it. However, this is really just to demonstrate a guard implementation. We also notice that we’re using a string token, which works fine but what we really want is an <a href="/angular/2016/05/23/opaque-tokens-in-angular-2.html"><code class="highlighter-rouge">OpaqueToken</code></a> to not run into name collisions.</p>
+<p>As we can see, it’s really just a provider with some made up token that resolves to a guard function that returns <code>true</code> (if <code>provider</code> doesn’t mean anything to you, go and check out our article on <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">Dependency Injection in Angular</a>). Since it’s always returning <code>true</code>, this guard is not protecting anything, as it will always activate the route that uses it. However, this is really just to demonstrate a guard implementation. We also notice that we’re using a string token, which works fine but what we really want is an <a href="/angular/2016/05/23/opaque-tokens-in-angular-2.html"><code>OpaqueToken</code></a> to not run into name collisions.</p>
 
-<p>Once a guard is registered with a token, we can use it in our route configuration. The following route configuration has the <code class="highlighter-rouge">CanAlwaysActivateGuard</code> attached, which gets executed when routing to that specific route.</p>
+<p>Once a guard is registered with a token, we can use it in our route configuration. The following route configuration has the <code>CanAlwaysActivateGuard</code> attached, which gets executed when routing to that specific route.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">AppRoutes</span><span class="err">:</span><span class="nx">RouterConfig</span> <span class="o">=</span> <span class="p">[</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">AppRoutes</span><span class="err">:</span><span class="nx">RouterConfig</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">{</span> 
     <span class="na">path</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
     <span class="na">component</span><span class="p">:</span> <span class="nx">SomeComponent</span><span class="p">,</span>
     <span class="na">canActivate</span><span class="p">:</span> <span class="p">[</span><span class="s1">'CanAlwaysActivateGuard'</span><span class="p">]</span>
   <span class="p">}</span>
-<span class="p">];</span></code></pre></figure>
+<span class="p">];</span></code></pre></div>
 
 <p>As we can see, all we need to do is to define a list of guard tokens that should be called. This also implies that we can have multiple guards protecting a single route. Guards are executed in the order they are defined on the route.</p>
 
 <h3 id="as-classes">As Classes</h3>
 
-<p>Sometimes, a guard needs dependency injection capabilities. In these cases, it makes sense to define a guard as a class, because dependencies can then be simply injected. Let’s say we want to protect a route and have the user authenticate first. We might want to inject an <code class="highlighter-rouge">AuthService</code> to determine if the user is authenticated or not. A class guard would be a perfect fit.</p>
+<p>Sometimes, a guard needs dependency injection capabilities. In these cases, it makes sense to define a guard as a class, because dependencies can then be simply injected. Let’s say we want to protect a route and have the user authenticate first. We might want to inject an <code>AuthService</code> to determine if the user is authenticated or not. A class guard would be a perfect fit.</p>
 
-<p>When creating a guard class, we implement either the <code class="highlighter-rouge">CanActivate</code>, <code class="highlighter-rouge">CanDeactivate</code>, or <code class="highlighter-rouge">CanActivateChild</code> interface, which requires us to have a method <code class="highlighter-rouge">canActivate()</code>, <code class="highlighter-rouge">canActivateChild()</code>, or <code class="highlighter-rouge">canDeactivate()</code> respectively. Those methods are pretty much the equivalent of a guard function in the previous scenario. The following snippet shows a simple <code class="highlighter-rouge">CanActivate</code> guard implementation using classes.</p>
+<p>When creating a guard class, we implement either the <code>CanActivate</code>, <code>CanDeactivate</code>, or <code>CanActivateChild</code> interface, which requires us to have a method <code>canActivate()</code>, <code>canActivateChild()</code>, or <code>canDeactivate()</code> respectively. Those methods are pretty much the equivalent of a guard function in the previous scenario. The following snippet shows a simple <code>CanActivate</code> guard implementation using classes.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">CanActivate</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">AuthService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./auth.service'</span><span class="p">;</span>
 
@@ -175,39 +175,39 @@
   <span class="nx">canActivate</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">authService</span><span class="p">.</span><span class="nx">isLoggedIn</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Pretty straight forward. An <a href="/angular/2015/09/17/resolve-service-dependencies-in-angular-2.html">injectable class</a> with a <code class="highlighter-rouge">canActivate()</code> method that now has access to injected dependencies. Angular will call that method for us when a guard is implemented as a class. Just like the previous guard, this one needs to be registered as a provider:</p>
+<p>Pretty straight forward. An <a href="/angular/2015/09/17/resolve-service-dependencies-in-angular-2.html">injectable class</a> with a <code>canActivate()</code> method that now has access to injected dependencies. Angular will call that method for us when a guard is implemented as a class. Just like the previous guard, this one needs to be registered as a provider:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">AuthService</span><span class="p">,</span>
     <span class="nx">CanActivateViaAuthGuard</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
 
 <p>And can then be used on a route:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> 
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> 
   <span class="nl">path</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
   <span class="nx">component</span><span class="err">:</span> <span class="nx">SomeComponent</span><span class="p">,</span>
   <span class="nx">canActivate</span><span class="err">:</span> <span class="p">[</span>
     <span class="s1">'CanAlwaysActivateGuard'</span><span class="p">,</span>
     <span class="nx">CanActivateViaAuthGuard</span>
   <span class="p">]</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <h2 id="deactivating-routes">Deactivating Routes</h2>
 
-<p>We’ve now seen how <code class="highlighter-rouge">CanActivate</code> can work in different scenarios, but as mentioned earlier, we have a few more guard interfaces we can take advantage of. <code class="highlighter-rouge">CanDeactivate</code> gives us a chance to decide if we really want to navigate <strong>away</strong> from a route. This can be very useful, if for example we want to prevent our users from losing unsaved changes when filling out a form and accidently clicking on a button to cancel the process.</p>
+<p>We’ve now seen how <code>CanActivate</code> can work in different scenarios, but as mentioned earlier, we have a few more guard interfaces we can take advantage of. <code>CanDeactivate</code> gives us a chance to decide if we really want to navigate <strong>away</strong> from a route. This can be very useful, if for example we want to prevent our users from losing unsaved changes when filling out a form and accidently clicking on a button to cancel the process.</p>
 
-<p>The <code class="highlighter-rouge">CanDeactivate</code> guard also has access to the instance of the active component. With this we can take the user experience even to a higher level. Instead of asking an (unwanted) user confirmation every time, we can do this conditionally by checking if change were made. In the sample below the <code class="highlighter-rouge">CanDeactivateComponent</code> implements a methods <code class="highlighter-rouge">hasChanges()</code>. This returns a boolean value indicating if the components has detected any changes. This can be done by checking the dirty state of the form, keeping track of the previous model and compare it with the current one, … What ever fits your needs.</p>
+<p>The <code>CanDeactivate</code> guard also has access to the instance of the active component. With this we can take the user experience even to a higher level. Instead of asking an (unwanted) user confirmation every time, we can do this conditionally by checking if change were made. In the sample below the <code>CanDeactivateComponent</code> implements a methods <code>hasChanges()</code>. This returns a boolean value indicating if the components has detected any changes. This can be done by checking the dirty state of the form, keeping track of the previous model and compare it with the current one, … What ever fits your needs.</p>
 
-<p>Implementing a <code class="highlighter-rouge">CanDeactivate</code> guard is very similar to implementing a <code class="highlighter-rouge">CanActivate</code> guard. All we have to do is to create again, either a function, or a class that implements the <code class="highlighter-rouge">CanDeactivate</code> interface.  We can implement a super simple safety net for our users like this:</p>
+<p>Implementing a <code>CanDeactivate</code> guard is very similar to implementing a <code>CanActivate</code> guard. All we have to do is to create again, either a function, or a class that implements the <code>CanDeactivate</code> interface.  We can implement a super simple safety net for our users like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">CanDeactivate</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">CanDeactivate</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">CanDeactivateComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./app/can-deactivate'</span><span class="p">;</span>
 
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">ConfirmDeactivateGuard</span> <span class="kr">implements</span> <span class="nx">CanDeactivate</span><span class="o">&lt;</span><span class="nx">CanDeactivateComponent</span><span class="o">&gt;</span> <span class="p">{</span>
@@ -218,18 +218,18 @@
     <span class="p">}</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Even though, this is a very trivial implementation, there’s one thing that we didn’t see in the previous example. <code class="highlighter-rouge">CanDeactivate&lt;T&gt;</code> uses a generic, so we need to specify what component type we want to deactivate. Honestly, we’re not sure if this is a bug or not. But other than that, it’s very clear what’s going on here. We implement a method <code class="highlighter-rouge">canDeactivate()</code>, that is called by Angular’s router internally if needed. Last but not least, also this guard needs to be registered accordingly:</p>
+<p>Even though, this is a very trivial implementation, there’s one thing that we didn’t see in the previous example. <code>CanDeactivate&lt;T&gt;</code> uses a generic, so we need to specify what component type we want to deactivate. Honestly, we’re not sure if this is a bug or not. But other than that, it’s very clear what’s going on here. We implement a method <code>canDeactivate()</code>, that is called by Angular’s router internally if needed. Last but not least, also this guard needs to be registered accordingly:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...</span>
     <span class="nx">ConfirmDeactivateGuard</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
 
 <h2 id="conclusion">Conclusion</h2>
 

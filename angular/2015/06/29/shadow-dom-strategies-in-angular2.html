@@ -112,7 +112,7 @@
 
 <p>In one sentence, Shadow DOM is part of the Web Components standard and enables DOM tree and style encapsulation. DOM tree and style encapsulation? What does that even mean? Well, it basically means that Shadow DOM allows us to hide DOM logic behind other elements. Addition to that, it enables us to apply <strong>scoped styles</strong> to elements without them bleeding out to the outer world.</p>
 
-<p>Why is that great? We can finally build components that expose a single (custom) element with hidden DOM logic under the hood, and styles that only apply to that element - a web component. Just think of an <code class="highlighter-rouge">&lt;input type="date"&gt;</code> element. Isn’t it nice that we can just use a single tag and the browser renders a whole date picker for us? Guess with what you can achieve that…</p>
+<p>Why is that great? We can finally build components that expose a single (custom) element with hidden DOM logic under the hood, and styles that only apply to that element - a web component. Just think of an <code>&lt;input type="date"&gt;</code> element. Isn’t it nice that we can just use a single tag and the browser renders a whole date picker for us? Guess with what you can achieve that…</p>
 
 <h2 id="shadow-dom-in-angular">Shadow DOM in Angular</h2>
 
@@ -120,7 +120,7 @@
 
 <p>As we know, in Angular we build components. A component is a controller class with a template and styles that belong to it. Those components can be shared across applications if they are general enough. That means, Angular already embraces the idea of building applications in components and making them reusable. However, components in Angular are not web components per se but they take advantage of them as mentioned earlier.</p>
 
-<p>Whenever we create a component, Angular puts it’s template into a <code class="highlighter-rouge">shadowRoot</code>, which is the Shadow DOM of that particular component. Doing that, we get DOM tree and style encapsulation for free, right? But what if we don’t have Shadow DOM in the browser? Does that mean we can’t use Angular in those environments? <strong>We can.</strong> In fact, Angular doesn’t use native Shadow DOM by default, it uses an emulation. To be technically correct, it also doesn’t create a <code class="highlighter-rouge">shadowRoot</code> for our components in case no native Shadow DOM is used.</p>
+<p>Whenever we create a component, Angular puts it’s template into a <code>shadowRoot</code>, which is the Shadow DOM of that particular component. Doing that, we get DOM tree and style encapsulation for free, right? But what if we don’t have Shadow DOM in the browser? Does that mean we can’t use Angular in those environments? <strong>We can.</strong> In fact, Angular doesn’t use native Shadow DOM by default, it uses an emulation. To be technically correct, it also doesn’t create a <code>shadowRoot</code> for our components in case no native Shadow DOM is used.</p>
 
 <p>The main reason for that is that most browsers simply don’t support Shadow DOM yet, but we should still be able to use the framework. Even better, we can easily tell Angular to use the native Shadow DOM if we want. So how is that implemented and what do we need to do?</p>
 
@@ -138,9 +138,9 @@
 
 <p><strong>ViewEncapsulation.None</strong></p>
 
-<p>Angular doesn’t use Shadow DOM at all. Styles applied to our component are written to the document head. We talked about that in a more detail in <a href="/angular/2015/06/25/styling-angular-2-components.html">styling Angular components</a>, but to make a quick recap, having a zippy component with styles like this (note that we set the <code class="highlighter-rouge">encapsulation</code> property in our <code class="highlighter-rouge">@Component</code> decorator):</p>
+<p>Angular doesn’t use Shadow DOM at all. Styles applied to our component are written to the document head. We talked about that in a more detail in <a href="/angular/2015/06/25/styling-angular-2-components.html">styling Angular components</a>, but to make a quick recap, having a zippy component with styles like this (note that we set the <code>encapsulation</code> property in our <code>@Component</code> decorator):</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">ViewEncapsulation</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span><span class="nx">ViewEncapsulation</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
@@ -148,29 +148,29 @@
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
   <span class="na">styles</span><span class="p">:</span> <span class="p">[</span><span class="err">`</span>
     <span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
-      <span class="na">background</span><span class="p">:</span> <span class="nx">green</span><span class="p">;</span>
+      <span class="nl">background</span><span class="p">:</span> <span class="nx">green</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="err">`</span><span class="p">],</span>
   <span class="na">encapsulation</span><span class="p">:</span> <span class="nx">ViewEncapsulation</span><span class="p">.</span><span class="nx">None</span>
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="na">title</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="err">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 
 <p>And a template like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">toggle</span><span class="err">()"</span> <span class="na">class=</span><span class="s">"zippy__title"</span><span class="nt">&gt;</span>
      
   <span class="nt">&lt;/div&gt;</span>
   <span class="nt">&lt;div</span> <span class="err">[</span><span class="na">hidden</span><span class="err">]="!</span><span class="na">visible</span><span class="err">"</span> <span class="na">class=</span><span class="s">"zippy__content"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;ng-content&gt;&lt;/ng-content&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
 <p>Will make Angular creating a DOM like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;style&gt;</span>
@@ -193,25 +193,25 @@
       <span class="nt">&lt;/div&gt;</span>
     <span class="nt">&lt;/my-zippy&gt;</span>
   <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
 
-<p>Again, this is due to the fact that there’s no Shadow DOM. This also means that all the styles apply to the entire document. Or in other words, a component could overwrite styles from another component because its styles are applied to the document head later. That’s why this is the <strong>unscoped</strong> strategy. If there was Shadow DOM, Angular could just write all the styles into the <code class="highlighter-rouge">shadowRoot</code> which will enable style encapsulation.</p>
+<p>Again, this is due to the fact that there’s no Shadow DOM. This also means that all the styles apply to the entire document. Or in other words, a component could overwrite styles from another component because its styles are applied to the document head later. That’s why this is the <strong>unscoped</strong> strategy. If there was Shadow DOM, Angular could just write all the styles into the <code>shadowRoot</code> which will enable style encapsulation.</p>
 
-<p>Also note that the <code class="highlighter-rouge">&lt;ng-content&gt;</code> tag has been replaced with <code class="highlighter-rouge">&lt;script&gt;</code> tags that basically act as markers to emulate <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/#toc-distributed-nodes">content insertion points</a>.</p>
+<p>Also note that the <code>&lt;ng-content&gt;</code> tag has been replaced with <code>&lt;script&gt;</code> tags that basically act as markers to emulate <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/#toc-distributed-nodes">content insertion points</a>.</p>
 
 <p><strong>ViewEncapsulation.Emulated</strong></p>
 
-<p>This view encapsulation is used by default. <code class="highlighter-rouge">ViewEncapsulation.Emulated</code> emulates style encapsulation, even if no Shadow DOM is available. This is a very powerful feature in case you want to use a third-party component that comes with styles that might affect your application. What happens to our components, and especially to the styles, when this view encapsulation is used? Well, let’s first check if the styles are still written to the document head. Here’s what the head looks like with the exact same component but different strategy:</p>
+<p>This view encapsulation is used by default. <code>ViewEncapsulation.Emulated</code> emulates style encapsulation, even if no Shadow DOM is available. This is a very powerful feature in case you want to use a third-party component that comes with styles that might affect your application. What happens to our components, and especially to the styles, when this view encapsulation is used? Well, let’s first check if the styles are still written to the document head. Here’s what the head looks like with the exact same component but different strategy:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;head&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;head&gt;</span>
   <span class="nt">&lt;style&gt;</span><span class="nc">.zippy</span><span class="o">[</span><span class="nt">_ngcontent-1</span><span class="o">]</span> <span class="p">{</span>
   <span class="nl">background</span><span class="p">:</span> <span class="no">green</span><span class="p">;</span>
   <span class="p">}</span><span class="nt">&lt;/style&gt;</span>
-<span class="nt">&lt;/head&gt;</span></code></pre></figure>
+<span class="nt">&lt;/head&gt;</span></code></pre></div>
 
-<p>Looks like styles are still written to the document head. But wait, what’s that? Instead of the simple <code class="highlighter-rouge">.zippy</code> selector that we used, Angular creates a <code class="highlighter-rouge">.zippy[_ngcontent-1]</code> selector. So it seems like Angular rewrote our component’s styles. Let’s see what the component’s template looks like:</p>
+<p>Looks like styles are still written to the document head. But wait, what’s that? Instead of the simple <code>.zippy</code> selector that we used, Angular creates a <code>.zippy[_ngcontent-1]</code> selector. So it seems like Angular rewrote our component’s styles. Let’s see what the component’s template looks like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-zippy</span> <span class="na">title=</span><span class="s">"Details"</span> <span class="na">_ngcontent-0</span> <span class="na">_nghost-1</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-zippy</span> <span class="na">title=</span><span class="s">"Details"</span> <span class="na">_ngcontent-0</span> <span class="na">_nghost-1</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy"</span> <span class="na">_ngcontent-1</span><span class="nt">&gt;</span>
     <span class="nt">&lt;div</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">toggle</span><span class="err">()"</span> <span class="na">class=</span><span class="s">"zippy__title"</span> <span class="na">_ngcontent-1</span><span class="nt">&gt;</span>
       ▾ Details
@@ -222,15 +222,15 @@
       <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"ng/contentEnd"</span><span class="nt">&gt;&lt;/script&gt;</span>
     <span class="nt">&lt;/div&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/my-zippy&gt;</span></code></pre></figure>
+<span class="nt">&lt;/my-zippy&gt;</span></code></pre></div>
 
-<p>Ha! Angular added some attributes to our component’s template as well! We see the <code class="highlighter-rouge">_ngcontent-1</code> attribute which is also used in our rewritten CSS, but we also have <code class="highlighter-rouge">_ngcontent-0</code> and <code class="highlighter-rouge">_nghost-1</code>. So what the hell is going on there?</p>
+<p>Ha! Angular added some attributes to our component’s template as well! We see the <code>_ngcontent-1</code> attribute which is also used in our rewritten CSS, but we also have <code>_ngcontent-0</code> and <code>_nghost-1</code>. So what the hell is going on there?</p>
 
-<p>Actually it’s quite simple. We want scoped styles without Shadow DOM right? And that’s exactly what happens. Since there’s no Shadow DOM, Angular has to write the styles to the head of the document. Okay that’s nothing new, we know that from the unscoped strategy. But in order to enable scoped styles, Angular has to make sure that the component’s style selectors only match this particlar component and nothing else on the page. That’s why it extends the CSS selectors, so they have a higher specificity and don’t collide with other selectors defined before at the same. And of course, to make those selectors actually match, the elements in the template need to be extended as well. That’s why we see all those <code class="highlighter-rouge">_ngcontent-*</code> and <code class="highlighter-rouge">_nghost-*</code> attributes.</p>
+<p>Actually it’s quite simple. We want scoped styles without Shadow DOM right? And that’s exactly what happens. Since there’s no Shadow DOM, Angular has to write the styles to the head of the document. Okay that’s nothing new, we know that from the unscoped strategy. But in order to enable scoped styles, Angular has to make sure that the component’s style selectors only match this particlar component and nothing else on the page. That’s why it extends the CSS selectors, so they have a higher specificity and don’t collide with other selectors defined before at the same. And of course, to make those selectors actually match, the elements in the template need to be extended as well. That’s why we see all those <code>_ngcontent-*</code> and <code>_nghost-*</code> attributes.</p>
 
-<p>Okay cool, now we know how Angular emulates scoped styles, but still, why are those attributes called <code class="highlighter-rouge">_ngcontent-*</code> and <code class="highlighter-rouge">_nghost-*</code> and what does the number in the attributes mean? If we take a closer look at the generated template, we can actually see a pattern. The number in the attribute matches the Shadow DOM, or content insertion point, level.</p>
+<p>Okay cool, now we know how Angular emulates scoped styles, but still, why are those attributes called <code>_ngcontent-*</code> and <code>_nghost-*</code> and what does the number in the attributes mean? If we take a closer look at the generated template, we can actually see a pattern. The number in the attribute matches the Shadow DOM, or content insertion point, level.</p>
 
-<p>The app that we bootstrap is a component that already uses Shadow DOM (emulation) and therefore has a content insertion point. That means, our root component is already a host element. However, it doesn’t get any additional attribute, because Angular is not in charge of rewriting it. We’ve written it (maybe) as <code class="highlighter-rouge">&lt;app&gt;&lt;/app&gt;</code> into our <code class="highlighter-rouge">index.html</code> and that’s it. Our zippy component is also a host element, which is why it get’s the <code class="highlighter-rouge">_nghost-1</code> attribute. Why not <code class="highlighter-rouge">_nghost-0</code>? Well, that’s the one our root component would get. At the same time, the zippy component also gets a <code class="highlighter-rouge">_ngcontent-0</code> attribute. That’s because it is part of the very first content insertion point level in the application, which is the one of our root component. We can confirm that pattern by taking a look at what’s inside the zippy element. Every direct child element inside the zippy element is part of the next content insertion point level, which is why they get the <code class="highlighter-rouge">_ngcontent-1</code> attribute. And so on and so forth.</p>
+<p>The app that we bootstrap is a component that already uses Shadow DOM (emulation) and therefore has a content insertion point. That means, our root component is already a host element. However, it doesn’t get any additional attribute, because Angular is not in charge of rewriting it. We’ve written it (maybe) as <code>&lt;app&gt;&lt;/app&gt;</code> into our <code>index.html</code> and that’s it. Our zippy component is also a host element, which is why it get’s the <code>_nghost-1</code> attribute. Why not <code>_nghost-0</code>? Well, that’s the one our root component would get. At the same time, the zippy component also gets a <code>_ngcontent-0</code> attribute. That’s because it is part of the very first content insertion point level in the application, which is the one of our root component. We can confirm that pattern by taking a look at what’s inside the zippy element. Every direct child element inside the zippy element is part of the next content insertion point level, which is why they get the <code>_ngcontent-1</code> attribute. And so on and so forth.</p>
 
 <p>Not sure what <strong>you</strong> think, but in my opinion, this is a very smart approach.</p>
 
@@ -238,21 +238,21 @@
 
 <p>Last but not least, we have the native Shadow DOM view encapsulation. This one is super simple to understand since it basically just makes Angular using native Shadow DOM. We can activate it the same way we did with the other types. Here’s what that looks like:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
   <span class="na">styles</span><span class="p">:</span> <span class="p">[</span><span class="err">`</span>
     <span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
-      <span class="na">background</span><span class="p">:</span> <span class="nx">green</span><span class="p">;</span>
+      <span class="nl">background</span><span class="p">:</span> <span class="nx">green</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="err">`</span><span class="p">],</span>
   <span class="na">encapsulation</span><span class="p">:</span> <span class="nx">ViewEncapsulation</span><span class="p">.</span><span class="nx">Native</span>
 <span class="p">})</span>
-<span class="p">...</span></code></pre></figure>
+<span class="p">...</span></code></pre></div>
 
 <p>Okay that was easy. If we run our code in the browser, we see that no styles are written to the document head anymore. However, styles do now end up in the component’s template inside the shadow root. Here’s what that looks like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-zippy</span> <span class="na">title=</span><span class="s">"Details"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-zippy</span> <span class="na">title=</span><span class="s">"Details"</span><span class="nt">&gt;</span>
   #shadow-root
   | <span class="nt">&lt;style&gt;</span>
   <span class="o">|</span>   <span class="nc">.zippy</span> <span class="p">{</span>
@@ -268,7 +268,7 @@
   |   <span class="nt">&lt;/div&gt;</span>
   | <span class="nt">&lt;/div&gt;</span>
   "This is some content"
-<span class="nt">&lt;/my-zippy&gt;</span></code></pre></figure>
+<span class="nt">&lt;/my-zippy&gt;</span></code></pre></div>
 
 <p>In order to get an output like this, we need to tell our browser dev tools to display Shadow DOM when inspecting element. No weird attributes anymore. Instead we get a nice shadow root and we can see very nicely how the styles are written into it.</p>
 
