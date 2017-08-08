@@ -133,20 +133,20 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
 
 <p>The <code>^</code> symbol just signalises that a child injector is created from it’s parent. To come back to our nice and cozy JavaScript world, we could also translate it to this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">childInjector</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">grandChildInjector</span> <span class="o">=</span> <span class="nx">childInjector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">();</span></code></pre></div>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">childInjector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">([],</span> <span class="nx">injector</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">grandChildInjector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">([],</span> <span class="nx">childInjector</span><span class="p">);</span></code></pre></div>
 
 <p>Of course, this code is very simplified and as we can see, there are also no providers passed to any of the injectors. Usually, when injectors are created, there are providers passed to them so we can ask for specific dependencies in our code. Let’s add some actual providers, to see how the relationships between the injectors affect dependency instantiation.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ResolveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
-  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Car</span> <span class="p">},</span>
-  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Engine</span> <span class="p">}</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">([</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[</span><span class="nx">Engine</span><span class="p">]</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
 <span class="p">]);</span>
-<span class="kd">var</span> <span class="nx">childInjector</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">grandChildInjector</span> <span class="o">=</span> <span class="nx">childInjector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">([</span>
-  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Convertible</span> <span class="p">}</span>
-<span class="p">]);</span></code></pre></div>
+<span class="kd">var</span> <span class="nx">childInjector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">([],</span> <span class="nx">injector</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">grandChildInjector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">([</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Convertible</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
+<span class="p">],</span> <span class="nx">childInjector</span><span class="p">);</span></code></pre></div>
 
 <p>The injector tree allows us to define injector providers for a specific component and its children. With the code above, if we ask <code>grandChild</code> for a dependency of type <code>Car</code> we’ll get back an instance of type <code>Convertible</code>, because it defines it’s own provider for that type. However, if we ask for a dependency of type <code>Engine</code>, we simply get an instance of the class <code>Engine</code>, because <code>grandChild</code> will ask it’s parent injector (recursively) until an injector has providers defined for that type. If this is entirely new to you, all this has been covered in our last <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">article</a> on DI.</p>
 
@@ -179,7 +179,7 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
 <div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'video-player'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
-    <span class="nx">PlayerService</span> <span class="c1">// shorthand for { provide: PlayerService, useClass: PlayerService }</span>
+    <span class="nx">PlayerService</span> <span class="c1">// shorthand for { provide: PlayerService, deps: [] }</span>
   <span class="p">]</span>
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">VideoPlayer</span> <span class="p">{</span>
@@ -210,7 +210,7 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
   <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 
-<p>If you don’t know what it’s about with these decorators, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">annotations and decorators</a>. Now we ensured that <code>PlayerService</code> instance is always instatiated by our component’s host, which is currently our <code>VideoPlayer</code> component.</p>
+<p>If you don’t know what it’s about with these decorators, you might want to read our article on <a href="/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">annotations and decorators</a>. Now we ensured that <code>PlayerService</code> instance is always instatiated by our component’s host, which is currently our <code>VideoPlayer</code> component.</p>
 
 <h2 id="dependency-visibility">Dependency Visibility</h2>
 
@@ -241,7 +241,7 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'video-player'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">PlayerService</span><span class="p">,</span>
-    <span class="p">{</span> <span class="na">provide</span> <span class="p">:</span> <span class="nx">VideoService</span><span class="p">,</span> <span class="na">useClass</span> <span class="p">:</span> <span class="nx">SpecificVideoService</span> <span class="p">}</span>
+    <span class="p">{</span> <span class="na">provide</span> <span class="p">:</span> <span class="nx">VideoService</span><span class="p">,</span> <span class="na">useClass</span> <span class="p">:</span> <span class="nx">SpecificVideoService</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">VideoPlayer</span> <span class="p">{</span>
@@ -258,7 +258,7 @@ grand child injector <span class="o">(</span>&lt;component-three&gt;<span class=
     <span class="nx">PlayerService</span>
   <span class="p">],</span>
   <span class="na">viewProviders</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">VideoService</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">SpecificVideoService</span> <span class="p">}</span>
+    <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">VideoService</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">SpecificVideoService</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
 <span class="kr">class</span> <span class="nx">VideoPlayer</span> <span class="p">{</span>

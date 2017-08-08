@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Dependency Injection in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on May 18, 2015, last updated on Dec 16, 2016<br>21 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on May 18, 2015, last updated on Dec 16, 2016<br>23 minute read</span>
 
           </div>
         </hgroup>
@@ -135,10 +135,14 @@
   </li>
   <li><a href="#dependency-injection-as-a-pattern" id="markdown-toc-dependency-injection-as-a-pattern">Dependency Injection as a pattern</a></li>
   <li><a href="#dependency-injection-as-a-framework" id="markdown-toc-dependency-injection-as-a-framework">Dependency Injection as a framework</a></li>
-  <li><a href="#dependency-injection-in-angular" id="markdown-toc-dependency-injection-in-angular">Dependency Injection in Angular</a></li>
+  <li><a href="#dependency-injection-in-angular" id="markdown-toc-dependency-injection-in-angular">Dependency Injection in Angular</a>    <ul>
+      <li><a href="#attention" id="markdown-toc-attention">Attention</a></li>
+    </ul>
+  </li>
   <li><a href="#other-provider-configurations" id="markdown-toc-other-provider-configurations">Other provider configurations</a></li>
   <li><a href="#optional-dependencies" id="markdown-toc-optional-dependencies">Optional Dependencies</a></li>
   <li><a href="#transient-dependencies-and-child-injectors" id="markdown-toc-transient-dependencies-and-child-injectors">Transient Dependencies and Child Injectors</a></li>
+  <li><a href="#new-staticinjector-apis" id="markdown-toc-new-staticinjector-apis">New StaticInjector APIs</a></li>
   <li><a href="#how-is-it-used-in-angular-then" id="markdown-toc-how-is-it-used-in-angular-then">How is it used in Angular then?</a></li>
   <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
 </ul>
@@ -243,6 +247,16 @@
 
 <h2 id="dependency-injection-in-angular">Dependency Injection in Angular</h2>
 
+<div class="thtrm-tldr">
+
+  <h3 id="attention">Attention</h3>
+
+  <p><br />
+The <code>ReflectiveInjector</code> APIs discussed in this article are deprecated as of <a href="https://github.com/angular/angular/commit/fcadbf4bf6d00ea5b250a8069e05b3e4bd000a29">this commit</a>.</p>
+
+  <p>To learn about the newer <code>StaticInjector</code> API, head over to <a href="#new-staticinjector-apis">this section</a>. However, concepts are still exactly the same, so it’s worthwhile to keep on reading.</p>
+</div>
+
 <p>Before we take a look at actual code, let’s first understand the concept behind the new DI in Angular. The following graphic illustrates required components in the new DI system:</p>
 
 <p><img alt="DI in Angular" src="/images/di-in-angular2-5.svg" style="margin-top: 3em;" /></p>
@@ -270,7 +284,7 @@
 
 <p>We import <code>ReflectiveInjector</code> from Angular which is an injector implementation that exposes some static APIs to create injectors. <code>resolveAndCreate()</code> is basically a factory function that creates an injector and takes a list of providers. We’ll explore how those classes are supposed to be providers in a second, but for now we focus on <code>injector.get()</code>. See how we ask for an instance of <code>Car</code> in the last line? How does our injector know, which dependencies need to be created in order to instantiate a car? A look at our <code>Car</code> class will explain…</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'angular2/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="kr">class</span> <span class="nx">Car</span> <span class="p">{</span>
   <span class="nx">constructor</span><span class="p">(</span>
@@ -282,7 +296,7 @@
   <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 
-<p>We import something called <code>Inject</code> from the framework and apply it as decorator to our constructor parameters. If you don’t know what decorators are, you might want to read our articles on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between decorators and annotations</a> and how to <a href="http://blog.thoughtram.io/angular/2015/05/09/writing-angular-2-code-in-es5.html">write Angular code in ES5</a>.</p>
+<p>We import something called <code>Inject</code> from the framework and apply it as decorator to our constructor parameters. If you don’t know what decorators are, you might want to read our articles on <a href="/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between decorators and annotations</a> and how to <a href="/angular/2015/05/09/writing-angular-2-code-in-es5.html">write Angular code in ES5</a>.</p>
 
 <p>The <code>Inject</code> decorator attaches meta data to our <code>Car</code> class, that is then consumed by the DI system afterwards. So basically what we’re doing here, is that we tell the DI that the first constructor parameter should be an instance of type <code>Engine</code>, the second of type <code>Tires</code> and the third of type <code>Doors</code>. We can rewrite this code to TypeScript, which feels a bit more natural:</p>
 
@@ -410,6 +424,30 @@
 
 <p>We can even configure the <strong>visibility</strong> of dependencies, and also until where a child injector should look things up. However, this will be covered in another <a href="/angular/2015/08/20/host-and-visibility-in-angular-2-dependency-injection.html">article</a>.</p>
 
+<h2 id="new-staticinjector-apis">New StaticInjector APIs</h2>
+
+<p>Since version 5.0.0, <code>ReflectiveInjector</code> has been deprecated in favour of <code>StaticInjector</code> to not depend on reflection to get hold of dependencies. We don’t really have to worry about this if we aren’t dealing with creating injectors manually (because Angular does it for us). However, if we are, for whatever reason, relying on lower level injector APIs, here’s what’s different:</p>
+
+<ul>
+  <li>Creating injectors is done via <code>Injector.create()</code></li>
+  <li>Dependencies tokens have to be listed explicitly using <code>deps</code> property</li>
+</ul>
+
+<p><code>StaticInjector</code> doesn’t really need to resolve tokens anymore as everything is supposed to be static and passed right to the configuration. That’s why there’s not <code>resolveAndCreate()</code>, but a <code>create()</code> method. Also, instead of importing <code>ReflectiveInjector</code>, we’re importing <code>Injector</code>.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injector</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+
+<span class="kd">let</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">([</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[</span><span class="nx">Engine</span><span class="p">,</span> <span class="nx">Tires</span><span class="p">,</span> <span class="nx">Doors</span><span class="p">]</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Tires</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Doors</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
+<span class="p">]);</span>
+
+<span class="kd">let</span> <span class="nx">car</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">Car</span><span class="p">);</span></code></pre></div>
+
+<p>Notice in the following section we discuss how DI is used within Angular. There we don’t have to specificy <code>deps</code> explicitly as long as we’re defining providers in <code>@Component()</code> or <code>@NgModule()</code>.</p>
+
 <h2 id="how-is-it-used-in-angular-then">How is it used in Angular then?</h2>
 
 <p>Now that we’ve learned how the DI in Angular works, you might wonder how it is used in the framework itself. Do we have to create injectors manually when we build Angular components? Luckily, the Angular team spent a lot of energy and time to find a nice API that hides all the injector machinery when building components in Angular.</p>
@@ -469,7 +507,7 @@
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span><span class="na">provide</span><span class="p">:</span> <span class="nx">NameService</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="s1">'Thomas'</span> <span class="p">}</span>
+    <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">NameService</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="s1">'Thomas'</span> <span class="p">}</span>
   <span class="p">],</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;Hello {{name}}!&lt;/h1&gt;'</span>
 <span class="p">})</span>
