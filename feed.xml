@@ -7,6 +7,444 @@
     <atom:link href="http://blog.thoughtram.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Taming snakes with reactive streams</title>
+        <description>&lt;p&gt;The web moves quickly and we all know it. Today, Reactive Programming is one of the hottest topics in web development and with frameworks like Angular or React, it has become much more popular especially in the modern JavaScript world. There’s been a massive move in the community from imperative programming paradigms to functional reactive paradigms. Yet, many developers struggle with it and are often overwhelmed by its complexity (large API), fundamental shift in mindset (from imperative to declarative) and the multitude of concepts.&lt;/p&gt;
+
+&lt;p&gt;While this is not always the easiest thing to do, once we get the hang of it we’ll ask ourselves &lt;strong&gt;how did we live without it?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This article is not meant to be an introduction to reactive programming and if you are completely new to it, we recommend the following resources:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://egghead.io/courses/introduction-to-reactive-programming&quot;&gt;Introduction to Reactive Programming&lt;/a&gt; by &lt;a href=&quot;https://twitter.com/andrestaltz&quot;&gt;André Staltz&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=3LKMwkuK0ZE&quot;&gt;RxJS 5 Thinking Reactively&lt;/a&gt; by &lt;a href=&quot;https://twitter.com/BenLesh&quot;&gt;Ben Lesh&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://chrisnoring.gitbooks.io/rxjs-5-ultimate/content/&quot;&gt;RxJS 5 Ultimate&lt;/a&gt; by &lt;a href=&quot;https://twitter.com/chris_noring&quot;&gt;Chris Noring&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.learnrxjs.io/&quot;&gt;Learn RxJS&lt;/a&gt; by &lt;a href=&quot;https://twitter.com/btroncone&quot;&gt;Brian Troncone&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gist.github.com/btroncone/d6cf141d6f2c00dc6b35&quot;&gt;RxJS 5 Operators By Example&lt;/a&gt; by &lt;a href=&quot;https://twitter.com/btroncone&quot;&gt;Brian Troncone&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The goal of this post is to learn how to think reactively by building a classic video game that we all know and love - Snake. That’s right, a video game! They are fun but complex systems that keep a lot of external state, e.g. scores, timers, or player coordinates. For our version, we’ll make heavy use of Observables and use several different operators to completely avoid external state. At some point it might be tempting to store state outside of the Observable pipeline but remember, we want to embrace reactive programming and don’t rely on a single external variable that keeps state.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: We’ll solely use &lt;strong&gt;HTML5&lt;/strong&gt; and &lt;strong&gt;JavaScript&lt;/strong&gt; together with &lt;a href=&quot;http://reactivex.io/rxjs/&quot;&gt;RxJS&lt;/a&gt; to transform a programmatic-event-loop into a reactive-event-driven app.&lt;/p&gt;
+
+&lt;p&gt;The code is available on &lt;a href=&quot;https://github.com/thoughtram/reactive-snake&quot;&gt;Github&lt;/a&gt; and a live demo can be found &lt;a href=&quot;https://stackblitz.com/edit/reactive-snake?file=main.ts&quot;&gt;here&lt;/a&gt;. I encourage you to clone the project, fiddle with it and implement cool new game features. If you do, ping me on &lt;a href=&quot;https://twitter.com/elmd_&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;thtrm-toc is-sticky&quot;&gt;
+  &lt;h3 class=&quot;no_toc&quot; id=&quot;table-of-contents&quot;&gt;TABLE OF CONTENTS&lt;/h3&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-game&quot; id=&quot;markdown-toc-the-game&quot;&gt;The game&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#setting-up-the-stage&quot; id=&quot;markdown-toc-setting-up-the-stage&quot;&gt;Setting up the stage&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#identifying-the-source-streams&quot; id=&quot;markdown-toc-identifying-the-source-streams&quot;&gt;Identifying the source streams&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#steering-the-snake&quot; id=&quot;markdown-toc-steering-the-snake&quot;&gt;Steering the snake&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#the-direction-stream&quot; id=&quot;markdown-toc-the-direction-stream&quot;&gt;The direction$ stream&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#keeping-track-of-the-length&quot; id=&quot;markdown-toc-keeping-track-of-the-length&quot;&gt;Keeping track of the length&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#behaviorsubject-to-the-rescue&quot; id=&quot;markdown-toc-behaviorsubject-to-the-rescue&quot;&gt;BehaviorSubject to the rescue&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#implementing-score&quot; id=&quot;markdown-toc-implementing-score&quot;&gt;Implementing score$&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#taming-the-snake&quot; id=&quot;markdown-toc-taming-the-snake&quot;&gt;Taming the snake$&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#generating-apples&quot; id=&quot;markdown-toc-generating-apples&quot;&gt;Generating apples&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#broadcasting-events&quot; id=&quot;markdown-toc-broadcasting-events&quot;&gt;Broadcasting events&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#putting-everything-together&quot; id=&quot;markdown-toc-putting-everything-together&quot;&gt;Putting everything together&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#maintaining-performance&quot; id=&quot;markdown-toc-maintaining-performance&quot;&gt;Maintaining performance&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#rendering-the-scene&quot; id=&quot;markdown-toc-rendering-the-scene&quot;&gt;Rendering the scene&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#future-work&quot; id=&quot;markdown-toc-future-work&quot;&gt;Future work&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#special-thanks&quot; id=&quot;markdown-toc-special-thanks&quot;&gt;Special Thanks&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&quot;the-game&quot;&gt;The game&lt;/h2&gt;
+
+&lt;p&gt;As mentioned earlier, we are going to re-create Snake, a classic video game from the late 1970s. But instead of simply copying the game, we add a little bit of variation to it. Here’s how the game works.&lt;/p&gt;
+
+&lt;p&gt;As a player you control a line that resembles a hungry snake. The goal is to eat as many apples as you can to grow as long as possible. The apples can be found at random positions on the screen. Each time the snake eats an apple, its tail grows longer. Walls will not stop you! But listen up, you must try to avoid hitting your own trail at all costs. If you don’t, the game is over. How long can you survive?&lt;/p&gt;
+
+&lt;p&gt;Here’s a preview of what we are going to build:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/snake_preview.gif&quot; alt=&quot;button state machine&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For this specific implementation the snake is represented as a line of blue squares where its head is painted in black. Can you tell how the fruits look? Exactly, red squares. Everything is a square and that’s not because they look so beautiful but they are very simple geometric shapes and easy to draw. The graphics are not very shiny but hey, it’s about making the shift from imperative programming to reactive programming and not about game art.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-up-the-stage&quot;&gt;Setting up the stage&lt;/h2&gt;
+
+&lt;p&gt;Before we can start with the game’s functionality, we need set up a &lt;code&gt;&amp;lt;canvas&amp;gt;&lt;/code&gt; element that gives us powerful drawing APIs from within JavaScript. We’ll use the canvas to draw our graphics including the playing area, the snake, the apples and basically everything we need for our game. In other words, the game will be rendered entirely on the &lt;code&gt;&amp;lt;canvas&amp;gt;&lt;/code&gt; element.&lt;/p&gt;
+
+&lt;p&gt;If this is completely new to you, check out &lt;a href=&quot;https://egghead.io/courses/learn-html5-graphics-and-animation&quot;&gt;this&lt;/a&gt; course on egghead by Keith Peters.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;index.html&lt;/code&gt; is quite simple because most of the &lt;em&gt;magic&lt;/em&gt; happens with JavaScript.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;head&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;meta&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;charset=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;utf-8&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;title&amp;gt;&lt;/span&gt;Reactive Snake&lt;span class=&quot;nt&quot;&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/head&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;body&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/main.bundle.js&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/body&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/html&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The script that we add to the body is essentially the output of the build process and contains all of our code. However, you may be wondering why there is no such &lt;code&gt;&amp;lt;canvas&amp;gt;&lt;/code&gt; element inside the &lt;code&gt;&amp;lt;body&amp;gt;&lt;/code&gt;. It’s because we’ll create that element using JavaScript. In addition, we add a few constants that define how many &lt;code&gt;rows&lt;/code&gt; and &lt;code&gt;columns&lt;/code&gt; we have as well as the &lt;code&gt;width&lt;/code&gt; and &lt;code&gt;height&lt;/code&gt; of the canvas.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;COLS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ROWS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;GAP_SIZE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CELL_SIZE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CANVAS_WIDTH&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;COLS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CELL_SIZE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;GAP_SIZE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CANVAS_HEIGHT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ROWS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CELL_SIZE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;GAP_SIZE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;createCanvasElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;canvas&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;width&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CANVAS_WIDTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;height&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CANVAS_HEIGHT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With that in place we can call this function, create a &lt;code&gt;&amp;lt;canvas&amp;gt;&lt;/code&gt; element on the fly and append it to the &lt;code&gt;&amp;lt;body&amp;gt;&lt;/code&gt; of our page:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;createCanvasElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getContext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;2d&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;appendChild&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that we are also getting a reference to the &lt;code&gt;CanvasRenderingContext2D&lt;/code&gt; by calling &lt;code&gt;getContext(&#39;2d&#39;)&lt;/code&gt; on the &lt;code&gt;&amp;lt;canvas&amp;gt;&lt;/code&gt; element. This 2D rendering context for the canvas allows us to draw for example rectangles, text, lines, paths and much more.&lt;/p&gt;
+
+&lt;p&gt;We’re good to go! Let’s start working on the core mechanics of the game.&lt;/p&gt;
+
+&lt;h2 id=&quot;identifying-the-source-streams&quot;&gt;Identifying the source streams&lt;/h2&gt;
+
+&lt;p&gt;From the preview and the game description we know that we need the following features:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Navigate the snake using the arrow keys&lt;/li&gt;
+  &lt;li&gt;Keep track of the player’s score&lt;/li&gt;
+  &lt;li&gt;Keep track of the snake (includes eating and moving)&lt;/li&gt;
+  &lt;li&gt;Keep track of the apples on the field (includes generating new apples)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In reactive programming it’s all about programming with data streams, streams of input data. Conceptually, when a reactive program is executed, it sets up an observable pipeline that acts upon changes, e.g. a user has interacted with the application by pressing a key on the keyboard or simply a tick of an interval. So it’s all about figuring out &lt;strong&gt;what can change&lt;/strong&gt;. Those &lt;em&gt;changes&lt;/em&gt; often define the &lt;strong&gt;source streams&lt;/strong&gt;. The key is to come up with the source streams and then compose them together to calculate whatever you need, e.g. the game state.&lt;/p&gt;
+
+&lt;p&gt;Let’s try to find our source streams by looking at the featurs above.&lt;/p&gt;
+
+&lt;p&gt;First of all, user input is definitely something that will change over time. The player navigates the hungry snake using the arrow keys. That means our first source stream is &lt;code&gt;keydown$&lt;/code&gt; which will emit values whenever a key is pressed down.&lt;/p&gt;
+
+&lt;p&gt;Next we need to keep track of the player’s score. The score basically depends on how many apples the snake has eaten. We could say that the score depends on the length of the snake because whenever the snake grows we want to increase the score by &lt;code&gt;1&lt;/code&gt;. Therefore, our next source stream is &lt;code&gt;snakeLength$&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Again, it is important to figure out the &lt;strong&gt;main&lt;/strong&gt; sources from which we can compute whatever you need, e.g. the score. In most cases, the source streams are combined and refined into more concrete streams of data. We’ll see this in action in a minute. For now, let’s continue with identifying our main source streams.&lt;/p&gt;
+
+&lt;p&gt;So far, we got the user input and the score in place. What’s left are the more &lt;strong&gt;game-facing&lt;/strong&gt; or &lt;strong&gt;interactive&lt;/strong&gt; streams, such as the snake or the apples.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with the snake. The core mechanic of the snake is simple; it moves over time and the more apples it eats the bigger it grows. But what exactly is the &lt;strong&gt;source&lt;/strong&gt; of the snake? For now, we can forget about the fact that it eats and grows because what matters is that it primarily depends on a &lt;strong&gt;time factor&lt;/strong&gt; as it moves &lt;strong&gt;over time&lt;/strong&gt;, e.g. &lt;code&gt;5&lt;/code&gt; pixels every &lt;code&gt;200ms&lt;/code&gt;. So our source stream is an interval that produces a value after each period and we call this &lt;code&gt;ticks$&lt;/code&gt;. This stream also determines the speed of our snake.&lt;/p&gt;
+
+&lt;p&gt;Last but not least the apples. With everyting else in place, the apples are farily easy. This stream basically depends on the snake. Everytime the snake moves we check whether the head collides with an apple or not. If it does, we remove that apple and generate a new one at a random position on the field. That said, we don’t need to introduce a new source stream for the apples.&lt;/p&gt;
+
+&lt;p&gt;Great, that’s it for the source streams. Here’s a brief overview of the all source streams we need for our game:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;keydown$&lt;/code&gt;: keydown events (KeyboardEvent)&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;snakeLength$&lt;/code&gt;: represents the length of the snake (Number)&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;ticks$&lt;/code&gt;: interval that represents the pace of the snake (Number)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These source streams build the basis for our game from which we can calculate all other values we need including the score, snake and apples.&lt;/p&gt;
+
+&lt;p&gt;In the next sections we’ll look closely at how to implement each of these source streams and compose them to generate the data we need.&lt;/p&gt;
+
+&lt;h2 id=&quot;steering-the-snake&quot;&gt;Steering the snake&lt;/h2&gt;
+
+&lt;p&gt;Let’s dive right into code and implement the steering mechanism for our snake. As mentioned in the previous section the steering depends on keyboard inputs. Turns out it’s deceptively simple and the first step is to create an observable sequence from keyboard events. For this we can leverage the &lt;code&gt;fromEvent()&lt;/code&gt; operator:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;keydown$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fromEvent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;keydown&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is our very first source stream and it will emit a &lt;code&gt;KeyboardEvent&lt;/code&gt; everytime the user presses down a key. Note that literally every &lt;code&gt;keydown&lt;/code&gt; event is emitted. Therefore, we also get events for keys that we are not really interested in and that’s basically everything else but the arrow keys. But before we tackle this specific issue, we define a constant map of directions:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Point2D&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Directions&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Point2D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DIRECTIONS&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Directions&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;37&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Left Arrow&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;39&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Right Arrow&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;38&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Up Arrow&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// Down Arrow&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;By looking at the &lt;code&gt;KeyboardEvent&lt;/code&gt; object it appears that every key has a unique &lt;code&gt;keyCode&lt;/code&gt;. In order to get the codes for the arrow keys we can use &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode&quot;&gt;this&lt;/a&gt; table.&lt;/p&gt;
+
+&lt;p&gt;Each direction is of type &lt;code&gt;Point2D&lt;/code&gt; which is simply an object with an &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; property. The value for for each property can either be &lt;code&gt;1&lt;/code&gt;, &lt;code&gt;-1&lt;/code&gt; or &lt;code&gt;0&lt;/code&gt;, indicating where the snake should be heading. Later, we’ll use the direction to derive the new grid position for the snake’s head and tail.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-direction-stream&quot;&gt;The direction$ stream&lt;/h3&gt;
+
+&lt;p&gt;So, we already have a stream for &lt;code&gt;keydown&lt;/code&gt; events and everytime the player presses down a key we need to &lt;strong&gt;map&lt;/strong&gt; the value, which will be a &lt;code&gt;KeyboardEvent&lt;/code&gt;, to one of the direction vectors above. For that we can use the &lt;code&gt;map()&lt;/code&gt; operator to project each keyboard event to a direction vector.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;direction$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;keydown$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;KeyboardEvent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DIRECTIONS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;keyCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As mentioned earlier, we’ll receive &lt;strong&gt;every&lt;/strong&gt; keydown event because we are not filtering out the ones that we are not interested in, such as the character keys. However, one could argue that we are already filtering out events by looking them up in the directions map. For every &lt;code&gt;keyCode&lt;/code&gt; that is not defined in that map it will return &lt;code&gt;undefined&lt;/code&gt;. Nevertheless, that’s not really filtering out values on the stream which is why we can use the &lt;code&gt;filter()&lt;/code&gt; operator to only pipe through desired values.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;direction$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;keydown$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;KeyboardEvent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DIRECTIONS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;keyCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Ok, that was easy. The code above is perfectly fine and works as expected. However, there’s still some room for improvement. Can you think of something?&lt;/p&gt;
+
+&lt;p&gt;Well, one thing is that we want to prevent the snake from going into the opposite direction, e.g. from right to left or up and down. It doesn’t really make sense to allow such behavior because the number one rule is to avoid hitting your own trail, remember?&lt;/p&gt;
+
+&lt;p&gt;The solution is fairly easy. We cache the previous direction and when a new event is emitted we check if the new direction is not equal to the opposite of the last one. Here’s a function that calculates the &lt;code&gt;next&lt;/code&gt; direction:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;nextDirection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;previous&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;isOpposite&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;previous&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Point2D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Point2D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;previous&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;previous&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isOpposite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;previous&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;previous&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is the first time we are tempted to store state outside of the Observable pipeline because we somehow need to keep track of the previous direction right? An easy solution is to simply keep the previous direction in an external state variable. But wait! We wanted to avoid this, right?&lt;/p&gt;
+
+&lt;p&gt;To avoid external state, we need a way to sort of aggregate infinite Observables. RxJS has a very convenient operator we can use to solve our problem - &lt;code&gt;scan()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;scan()&lt;/code&gt; operator is very similar to &lt;code&gt;Array.reduce()&lt;/code&gt; but instead of only returning the last value, it emits each intermediate result. With &lt;code&gt;scan()&lt;/code&gt; we can basically accumulate values and reduce a stream of incoming events to a single value infinitely. This way we can keep track of the previous direction without relying on external state.&lt;/p&gt;
+
+&lt;p&gt;Let’s apply this and take a look at our final &lt;code&gt;direction$&lt;/code&gt; stream:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;direction$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;keydown$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;KeyboardEvent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DIRECTIONS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;keyCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;nextDirection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;startWith&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;INITIAL_DIRECTION&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;distinctUntilChanged&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Notice that we are using &lt;code&gt;startWith()&lt;/code&gt; to emit an inital value before beginning to emit values from the source Observable (&lt;code&gt;keydown$&lt;/code&gt;). Without this operator our Observable would start emitting only when the player presses a key.&lt;/p&gt;
+
+&lt;p&gt;The second improvement is to &lt;em&gt;only&lt;/em&gt; emit values when the emitted direction is different from the previous one. In other words, we only want &lt;strong&gt;distinct&lt;/strong&gt; values. You might have noticed &lt;code&gt;distinctUntilChanged()&lt;/code&gt; in the snippet above. This operator does the dirty work for us and suppresses duplicate items. Note that &lt;code&gt;distinctUntilChanged()&lt;/code&gt; only filters out identical values unless a different one is emitted in between.&lt;/p&gt;
+
+&lt;p&gt;The following figure visualizes our &lt;code&gt;direction$&lt;/code&gt; stream and how it works. Values painted in blue represent initial values, yellow means the value was changed on the Observable pipeline and values emitted on the &lt;strong&gt;result&lt;/strong&gt; stream are colored orange.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/snake_direction.png&quot; width=&quot;70%&quot; alt=&quot;direction stream&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;keeping-track-of-the-length&quot;&gt;Keeping track of the length&lt;/h2&gt;
+
+&lt;p&gt;Before we implement the snake itself, let’s come up with an idea to keep track of its length. Why do we need the length in the first place? Well, we use that information to model the score. It’s right that in an imperative world we’d simply check if there was a collision whenever the snake moves and if that’s the case we increase the score. So there is actually no need to keep track of the length. However, it would introduce yet another external state variable which we want to avoid at all costs.&lt;/p&gt;
+
+&lt;p&gt;In a reactive world it’s a bit different. One naive approach could be to use the &lt;code&gt;snake$&lt;/code&gt; stream and every time it emits a value we know that the snake has grown in length. While it really depends on the implementation of &lt;code&gt;snake$&lt;/code&gt;, this is not how we’ll implement it. From the beginning we know that it depends on &lt;code&gt;ticks$&lt;/code&gt; as it moves a certain distance over time. As such, &lt;code&gt;snake$&lt;/code&gt; will accumulate an array of body segments and because it’s based on &lt;code&gt;ticks$&lt;/code&gt; it will generate a value every &lt;code&gt;x&lt;/code&gt; milliseconds. That said, even if the snake does not collide with anything, &lt;code&gt;snake$&lt;/code&gt; will still produce distinct values. That’s because the snake is constantly moving on the field and therefore the array will always be different.&lt;/p&gt;
+
+&lt;p&gt;This can be a bit tricky to grasp because there are some peer dependencies between the different streams. For example &lt;code&gt;apples$&lt;/code&gt; will depend on &lt;code&gt;snake$&lt;/code&gt;. The reason for this is that, everytime the snake moves we need the array of body segments to check if any of these pieces collides with an apple. While the &lt;code&gt;apples$&lt;/code&gt; stream itself will accumulate an array of apples, we need a mechanism to model collisions that, at the same time, avoids circular dependencies.&lt;/p&gt;
+
+&lt;h3 id=&quot;behaviorsubject-to-the-rescue&quot;&gt;BehaviorSubject to the rescue&lt;/h3&gt;
+
+&lt;p&gt;The solution to this is that we’ll implement a &lt;em&gt;broadcasting&lt;/em&gt; mechanism using a &lt;code&gt;BehaviorSubject&lt;/code&gt;. RxJS offers different types of Subjects with different functionalities. As such, the &lt;code&gt;Subject&lt;/code&gt; class provides the base for creating more specialized Subjects. In a nutshell, a Subject is a type that implements both &lt;code&gt;Observer&lt;/code&gt; and &lt;code&gt;Observable&lt;/code&gt; types. Observables define the data flow and produce the data while Observers can subscribe to Observables and receive the data.&lt;/p&gt;
+
+&lt;p&gt;A &lt;code&gt;BehaviorSubject&lt;/code&gt; is a more specialized Subject that represents a value that changes over time. Now, when an Observer subscribes to a &lt;code&gt;BehaviorSubject&lt;/code&gt;, it will receive the last emitted value and then all subsequent values. Its uniqueness lies in the fact that it requires a &lt;strong&gt;starting value&lt;/strong&gt;, so that all Observers will at least receive one value on subscription.&lt;/p&gt;
+
+&lt;p&gt;Let’s go ahead and create a new &lt;code&gt;BehaviorSubject&lt;/code&gt; with an initial value of &lt;code&gt;SNAKE_LENGTH&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// SNAKE_LENGTH specifies the inital length of our snake&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;length$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;BehaviorSubject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;SNAKE_LENGTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From here it’s only a small step to implement &lt;code&gt;snakeLength$&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snakeLength$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;length$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snakeLength&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snakeLength&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;share&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;In the code above we can see that &lt;code&gt;snakeLength$&lt;/code&gt; is based on &lt;code&gt;length$&lt;/code&gt; which is our &lt;code&gt;BehaviorSubject&lt;/code&gt;. This means that whenever we feed a new value to the Subject using &lt;code&gt;next()&lt;/code&gt;, it will be emitted on &lt;code&gt;snakeLength$&lt;/code&gt;. In addition, we use &lt;code&gt;scan()&lt;/code&gt; to accumulate the length over time. Cool, but you may be wondering what that &lt;code&gt;share()&lt;/code&gt; is all about, right?&lt;/p&gt;
+
+&lt;p&gt;As already mentioned, &lt;code&gt;snakeLength$&lt;/code&gt; will later be used as an input for &lt;code&gt;snake$&lt;/code&gt; but at the same time acts as a source stream for the player’s score. As a result, we would end up &lt;strong&gt;recreating&lt;/strong&gt; that source stream with the second subscriptions to the same Observable. This happens because &lt;code&gt;length$&lt;/code&gt; is a &lt;strong&gt;cold&lt;/strong&gt; Observable.&lt;/p&gt;
+
+&lt;p&gt;If you are completely new to hot and cold Observables, we have written an article on &lt;a href=&quot;/angular/2016/06/16/cold-vs-hot-observables.html&quot;&gt;Cold vs Hot Observables&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The point is that, we use &lt;code&gt;share()&lt;/code&gt; to allow multiple subscriptions to an Observable that would otherwise recreate its source with every subscription. This operator automatically creates a Subject between the original source and all future subscribers. As soon as the number of subscribers goes from zero to one it will connect the Subject to the underlying source Observable and broadcast all its notifications. All future subscribers will be connected to that in-between Subject, so that effectively there’s just one subscription to the underlying cold Observable. This is called &lt;strong&gt;multicasting&lt;/strong&gt; and will make you stand out on dinner parties.&lt;/p&gt;
+
+&lt;p&gt;Awesome! Now that we have a mechanism that we can use to broadcast values to multiple subscribers, we can go ahead and implement &lt;code&gt;score$&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;implementing-score&quot;&gt;Implementing score$&lt;/h3&gt;
+
+&lt;p&gt;The player’s score is as simple as it can get. Equipped with &lt;code&gt;snakeLength$&lt;/code&gt; we can now create the &lt;code&gt;score$&lt;/code&gt; stream that simply accumulates the player’s score using &lt;code&gt;scan()&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;score$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snakeLength$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;startWith&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;score&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;POINTS_PER_APPLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We basically use &lt;code&gt;snakeLength$&lt;/code&gt; or rather &lt;code&gt;length$&lt;/code&gt; to notify subscribers that there’s been a collision and if there was, we just increase the score by &lt;code&gt;POINTS_PER_APPLE&lt;/code&gt;, a constant amount of points per apple. Note that &lt;code&gt;startWith(0)&lt;/code&gt; must be added before &lt;code&gt;scan()&lt;/code&gt; to avoid specifying a &lt;em&gt;seed&lt;/em&gt; (initial accumulator value).&lt;/p&gt;
+
+&lt;p&gt;Let’s look at a more visual representation of what we just implemented:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/snake_length_and_score.png&quot; width=&quot;70%&quot; alt=&quot;snake length and score&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;By looking at the figure above you may be wondering why the initial value of the &lt;code&gt;BehaviorSubject&lt;/code&gt; only shows up on &lt;code&gt;snakeLength$&lt;/code&gt; and is missing on &lt;code&gt;score$&lt;/code&gt;. That’s because the first subscriber will cause &lt;code&gt;share()&lt;/code&gt; to subscribe to the underlying data source and because the underlying data source immediately emits a value, the value has already passed by the time that the subsequent subscriptions has happened.&lt;/p&gt;
+
+&lt;p&gt;Sweet. With that in place, let’s implement the stream for our snake. Isn’t this exciting?&lt;/p&gt;
+
+&lt;h2 id=&quot;taming-the-snake&quot;&gt;Taming the snake$&lt;/h2&gt;
+
+&lt;p&gt;So far, we have learned a bunch of operators and we can use them to implement our &lt;code&gt;snake$&lt;/code&gt; stream. As discussed in the beginning of this post, we need some sort of &lt;em&gt;ticker&lt;/em&gt; that keeps our hungry snake moving. Turns out there’s a handy operator for that called &lt;code&gt;interval(x)&lt;/code&gt; which emits a value every &lt;code&gt;x&lt;/code&gt; milliseconds. We’ll call each value &lt;em&gt;tick&lt;/em&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ticks$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;SPEED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From here it’s only a small stretch to the final &lt;code&gt;snake$&lt;/code&gt; stream. For every &lt;em&gt;tick&lt;/em&gt;, depending on whether the snake has eaten an apple, we want to either move it foward or add new segment. Therefore, we can use the all so familiar &lt;code&gt;scan()&lt;/code&gt; operator to accumulate an array of body segments. But, as you may have guessed, we’re facing a problem. Where’s the &lt;code&gt;direction$&lt;/code&gt; or &lt;code&gt;snakeLength$&lt;/code&gt; stream coming into play?&lt;/p&gt;
+
+&lt;p&gt;Absolutely legitimate question to ask. The direction nor the snake’s length is easily accessible from within our &lt;code&gt;snake$&lt;/code&gt; stream unless we kept those information in a variable outside of the Observable pipeline. But again, we would be breaking our rule of not modifying external state.&lt;/p&gt;
+
+&lt;p&gt;Luckily, RxJS offers yet another very convenient operator called &lt;code&gt;withLatestFrom()&lt;/code&gt;. It’s an operator used to combine streams and that’s exactly what we’re looking for. This operator is applied to a &lt;em&gt;primary&lt;/em&gt; source that controls when data is emitted on the result stream. In other words, you can think of &lt;code&gt;withLatestFrom()&lt;/code&gt; as a way to &lt;strong&gt;throttle&lt;/strong&gt; the output of a secondary stream.&lt;/p&gt;
+
+&lt;p&gt;With the above, we have the tools we need to finally implement the hungry &lt;code&gt;snake$&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snake$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ticks$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;withLatestFrom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;direction$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snakeLength$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snakeLength&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snakeLength&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;move&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;generateSnake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;share&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Our &lt;em&gt;primary&lt;/em&gt; source is &lt;code&gt;ticks$&lt;/code&gt; and whenever a new value comes down the pipe, we take the latest
+values from both &lt;code&gt;direction$&lt;/code&gt; and &lt;code&gt;snakeLength$&lt;/code&gt;. Note that even if the &lt;em&gt;secondary&lt;/em&gt; streams frequently emit values, for example if the player is smashing his head on the keyboard, we’d only be proccessing the data for each &lt;em&gt;tick&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;In addition, we are passing a &lt;strong&gt;selector&lt;/strong&gt; function to &lt;code&gt;withLatestFrom&lt;/code&gt; which is invoked when the &lt;em&gt;primary&lt;/em&gt; stream produces a value. This function is optional and if omitted, a list with all elements is yielded.&lt;/p&gt;
+
+&lt;p&gt;We’ll leave out the explanation for the &lt;code&gt;move()&lt;/code&gt; function as the primary goal of this post is to facilitate the fundamental shift in mindset. Nonetheless, you can find the source code for this on &lt;a href=&quot;https://github.com/d3lm/reactive-snake/blob/master/src/utils.ts#L25-L45&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here’s a figure that visually demonstrates the code above:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/snake_stream.png&quot; width=&quot;110%&quot; alt=&quot;snake stream&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;See how we &lt;em&gt;throttle&lt;/em&gt; &lt;code&gt;direction$&lt;/code&gt;? The point is that &lt;code&gt;withLatestFrom()&lt;/code&gt; is very practical when you want to &lt;strong&gt;combine&lt;/strong&gt; multiple streams and you are not interested in producing values on the Observable pipeline when &lt;strong&gt;either&lt;/strong&gt; of the streams emit data.&lt;/p&gt;
+
+&lt;h2 id=&quot;generating-apples&quot;&gt;Generating apples&lt;/h2&gt;
+
+&lt;p&gt;You may notice that implementing our core building blocks for the game becomes easier as we learn more and more operators. If you made it so far then the rest is going to be easy peasy.&lt;/p&gt;
+
+&lt;p&gt;So far we have implemented a couple of streams such as &lt;code&gt;direction$&lt;/code&gt;, &lt;code&gt;snakeLength$&lt;/code&gt;, &lt;code&gt;score$&lt;/code&gt; and &lt;code&gt;snake$&lt;/code&gt;. If we combine them together we could already navigate that beast of snake around. But what is this game if there’s nothing to devour. Quite boring.&lt;/p&gt;
+
+&lt;p&gt;Let’s generate some apples to satisfy our snake’s appetite. First, let’s clarify what the state we need to preserve. Well, it could either be a single object or an array of objects. For our implementation we go with an array of apples. You hear the bells ringing?&lt;/p&gt;
+
+&lt;p&gt;Right, we can use &lt;code&gt;scan()&lt;/code&gt; again to accumulate an array of apples. We start with an initial value and every time the snake moves, we check if there was a collision. If that’s the case, we generate a new apple and return a &lt;strong&gt;new&lt;/strong&gt; array. This way we can leverage &lt;code&gt;distinctUntilChanged()&lt;/code&gt; to filter out identical values.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apples$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snake$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;eat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;generateApples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;distinctUntilChanged&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;share&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Cool! This means that whenever &lt;code&gt;apples$&lt;/code&gt; produces a new value we can assume that our snake has devoured one of those tasty fruits. What’s left is to increase to score and also notify other streams about this event, such as &lt;code&gt;snake$&lt;/code&gt; that takes the latest value from &lt;code&gt;snakeLength$&lt;/code&gt; to figure out whether to add a new body segment.&lt;/p&gt;
+
+&lt;h3 id=&quot;broadcasting-events&quot;&gt;Broadcasting events&lt;/h3&gt;
+
+&lt;p&gt;Earlier we have implemented this &lt;strong&gt;broadcasting&lt;/strong&gt; mechanism, remember? Let’s use that to trigger the desired actions. Here’s our code for &lt;code&gt;eat()&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;eat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Point2D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;checkCollision&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;splice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// length$.next(POINTS_PER_APPLE);&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[...&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getRandomPosition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;snake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;A simple solution is to call &lt;code&gt;length$.next(POINTS_PER_APPLE)&lt;/code&gt; right inside that &lt;code&gt;if&lt;/code&gt; block. But then we’re facing a problem because we couldn’t extract this &lt;em&gt;utility&lt;/em&gt; method into its own module (ES2015 module). In ES2015 modules are stored in files and there’s exactly one module per file. The goal is to organize our code in a way that is easy to maintain and to reason about.&lt;/p&gt;
+
+&lt;p&gt;A more &lt;em&gt;sophisticated&lt;/em&gt; solution is to introduce yet another stream called &lt;code&gt;applesEaten$&lt;/code&gt;. This stream is based on &lt;code&gt;apples$&lt;/code&gt; and every time a new value is emitted on the stream, we’d like to perform some kind of &lt;strong&gt;action&lt;/strong&gt;, calling &lt;code&gt;length$.next()&lt;/code&gt;. To do so we can use the &lt;code&gt;do()&lt;/code&gt; operator which will execute some piece of code for each &lt;em&gt;event&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Sounds feasible. But, we somehow need to &lt;strong&gt;skip&lt;/strong&gt; the first (initial) value emitted by &lt;code&gt;apples$&lt;/code&gt;. Otherwise we end up increasing the score right away which doesn’t make much sense as the game has just started. Turns out RxJS has an operator for that, namely &lt;code&gt;skip()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The fact that &lt;code&gt;applesEaten$&lt;/code&gt; only acts as a &lt;em&gt;publisher&lt;/em&gt; to notify other streams, there’s not going to be an Observer subscribing to this stream. Therefore, we have to &lt;strong&gt;manually&lt;/strong&gt; subscribe.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;appleEaten$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apples$&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;skip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;length$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;POINTS_PER_APPLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;subscribe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;putting-everything-together&quot;&gt;Putting everything together&lt;/h2&gt;
+
+&lt;p&gt;At this point, we have implemented all core buildings blocks of our game and we are good to go to finally combine everything into one result stream - &lt;code&gt;scene$&lt;/code&gt;. For that we’ll use &lt;code&gt;combineLatest&lt;/code&gt;. It’s quite similar to &lt;code&gt;withLatestFrom&lt;/code&gt; but different in detail. First, let’s look at the code:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;scene$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;combineLatest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;snake$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apples$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;score$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;snake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;score&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;snake&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;score&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}));&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Instead of throttling secondary streams, we are interested in an event whenever &lt;strong&gt;any&lt;/strong&gt; of the &lt;em&gt;input&lt;/em&gt; Observables produces a new value. The last argument is again a selector function and we are simply taking all the values and returning an object that represents our &lt;strong&gt;game state&lt;/strong&gt;. The game state contains everything that needs to be rendered onto the canvas.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/snake_scene.png&quot; width=&quot;110%&quot; alt=&quot;scene&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;maintaining-performance&quot;&gt;Maintaining performance&lt;/h3&gt;
+
+&lt;p&gt;Not only in games but but also for web applications we aim for performance. Performance can mean a lot but in terms of our game, we’d like to redraw the whole scene 60 times per second.&lt;/p&gt;
+
+&lt;p&gt;We can do that by introducing another stream similar to &lt;code&gt;ticks$&lt;/code&gt; but for rendering. Basically it’s another interval:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Interval expects the period to be in milliseconds which is why we devide FPS by 1000&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;FPS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The problem is that JavaScript is single-threaded. The worst case is that we prevent the browser from doing anything so that it locks up. In other words, the browser may not be able to process all these updates quickly enough. The reason for this is that the browser is trying to render a frame and then it’s immediately asked to render the next one. As a result, it drops the current one to keep up the speed. That’s when animations start to look choppy.&lt;/p&gt;
+
+&lt;p&gt;Luckily, we can use &lt;code&gt;requestAnimationFrame&lt;/code&gt; allowing the browser to line up work and perform it at the most appropriate time. But how do we use it for our Observable pipeline? The good news is that many operators including &lt;code&gt;interval()&lt;/code&gt; take a &lt;code&gt;Scheduler&lt;/code&gt; as its last argument. In a nutshell, a &lt;code&gt;Scheduler&lt;/code&gt; is a mechanism to &lt;strong&gt;schedule&lt;/strong&gt; some task to be performed in the future.&lt;/p&gt;
+
+&lt;p&gt;While RxJS offers a variety of Schedulers, the one that we’re interested in is called &lt;code&gt;animationFrame&lt;/code&gt;. This Scheduler performs a task when &lt;code&gt;window.requestAnimationFrame&lt;/code&gt; would fire.&lt;/p&gt;
+
+&lt;p&gt;Perfect! Let’s apply this to our interval and we’ll call the resulting Observable &lt;code&gt;game$&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Note the last parameter&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;game$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;FPS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;animationFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This interval will now produce values roughly every 16ms maintaining 60 FPS.&lt;/p&gt;
+
+&lt;h3 id=&quot;rendering-the-scene&quot;&gt;Rendering the scene&lt;/h3&gt;
+
+&lt;p&gt;What’s left is to combine our &lt;code&gt;game$&lt;/code&gt; with the &lt;code&gt;scene$&lt;/code&gt;. Can you guess what operator we use for that? Remember, both streams emit at different intervals and the goal now is to render our scene onto the canvas, 60 times per second. We’ll use &lt;code&gt;game$&lt;/code&gt; as our &lt;strong&gt;primary&lt;/strong&gt; stream and every time it emits a value we combine it with the &lt;strong&gt;latest&lt;/strong&gt; value from &lt;code&gt;scene$&lt;/code&gt;. Sounds familiar? Yes, we can use &lt;code&gt;withLatestFrom&lt;/code&gt; again.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Note the last parameter&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;game$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;FPS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;animationFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;withLatestFrom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scene$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;scene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;scene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;takeWhile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scene&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isGameOver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;subscribe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;renderScene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;scene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;complete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;renderGameOver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You may have spotted &lt;code&gt;takeWhile()&lt;/code&gt; in the code above. It’s another very useful operator that we can call on an exisiting Observable. It will return values from &lt;code&gt;game$&lt;/code&gt; &lt;strong&gt;until&lt;/strong&gt; &lt;code&gt;isGameOver()&lt;/code&gt; returns &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;That’s it! We have just implemented snake, fully reactively and without relying on any external state using nothing but Observables and operators provided by RxJS.&lt;/p&gt;
+
+&lt;p&gt;Here’s a live demo for you to play with:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://stackblitz.com/edit/reactive-snake?file=main.ts&quot; target=&quot;_blank&quot; style=&quot;border-bottom: 0;&quot;&gt;
+  &lt;img src=&quot;/images/snake_live_demo.png&quot; width=&quot;80%&quot; alt=&quot;live demo&quot; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;future-work&quot;&gt;Future work&lt;/h2&gt;
+
+&lt;p&gt;The game is very basic and in a follow-up post we’ll extend it with various features, one of which is restarting the whole game. In addition we’ll look at how we could implement &lt;strong&gt;pause&lt;/strong&gt; and &lt;strong&gt;resume&lt;/strong&gt; as well as different &lt;strong&gt;levels&lt;/strong&gt; of difficulty.&lt;/p&gt;
+
+&lt;p&gt;Stay tuned!&lt;/p&gt;
+
+&lt;h2 id=&quot;special-thanks&quot;&gt;Special Thanks&lt;/h2&gt;
+
+&lt;p&gt;Special thanks to the people that reviewed this post and helped me to make it better.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/MrJamesHenry&quot;&gt;James Henry&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/brechtbilliet&quot;&gt;Brecht Billiet&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Thu, 24 Aug 2017 02:00:00 +0200</pubDate>
+        <link>http://blog.thoughtram.io/rxjs/2017/08/24/taming-snakes-with-reactive-streams.html</link>
+        <guid isPermaLink="true">http://blog.thoughtram.io/rxjs/2017/08/24/taming-snakes-with-reactive-streams.html</guid>
+      </item>
+    
+      <item>
         <title>Company offsite in Spain 2017</title>
         <description>&lt;p&gt;At thoughtram we are pretty much a fully distributed team. While some of us live in the same city, the bulk of the team is spread across the entire planet. With such a setting, spending some time together in a pleasant environment naturally comes as a welcoming change from the daily routine. This is why we sat out to bring the entire team with their partners to Spain for two weeks of fun, learning and getting some work done. Unfortunately, Thomas was unable to attend the offsite in Spain. He was needed in the USA to take care of his wife who was having knee surgery.&lt;/p&gt;
 
@@ -1576,182 +2014,6 @@ Our root component maintains an array &lt;code&gt;seqs&lt;/code&gt; and pushes n
         <pubDate>Mon, 27 Feb 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/angular/2017/02/27/three-things-you-didnt-know-about-the-async-pipe.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/angular/2017/02/27/three-things-you-didnt-know-about-the-async-pipe.html</guid>
-      </item>
-    
-      <item>
-        <title>Using Zones in Angular for better performance</title>
-        <description>&lt;p&gt;In our latest article, we talked about &lt;a href=&quot;/angular/2017/02/02/making-your-angular-app-fast.html&quot;&gt;how to make our Angular apps fast&lt;/a&gt; by exploring Angular’s &lt;code&gt;ChangeDetectionStrategy&lt;/code&gt; APIs as well as tricks on how to detach change detectors and many more. While we were covering many different options to improve the demo application’s performance, we certainly haven’t talked about &lt;strong&gt;all&lt;/strong&gt; possible options.&lt;/p&gt;
-
-&lt;p&gt;That’s why &lt;a href=&quot;https://twitter.com/galigan&quot;&gt;Jordi Collell&lt;/a&gt; pointed out that another option would be to take advantage of &lt;a href=&quot;/angular/2016/02/01/zones-in-angular-2.html&quot;&gt;Zone APIs&lt;/a&gt;, to execute our code outside the Angular zone, which will prevent Angular from running unnecessary change detection tasks. He even put time and energy into creating a demo plunk that shows how to do exactly that.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;We want to say thank you for his contribution&lt;/strong&gt; and think that the solution he came up with deserves its own article. So in this article we’re going to explore his plunk and explain how Jordi used Zones to make our demo application perform at almost 60 fps.&lt;/p&gt;
-
-&lt;div class=&quot;thtrm-toc is-sticky&quot;&gt;
-  &lt;h3 class=&quot;no_toc&quot; id=&quot;table-of-contents&quot;&gt;TABLE OF CONTENTS&lt;/h3&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#seeing-it-in-action&quot; id=&quot;markdown-toc-seeing-it-in-action&quot;&gt;Seeing it in action&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#the-idea-of-zones&quot; id=&quot;markdown-toc-the-idea-of-zones&quot;&gt;The idea of Zones&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#running-outside-angulars-zone&quot; id=&quot;markdown-toc-running-outside-angulars-zone&quot;&gt;Running outside Angular’s Zone&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#measuring-the-performance&quot; id=&quot;markdown-toc-measuring-the-performance&quot;&gt;Measuring the performance&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#conclusion&quot; id=&quot;markdown-toc-conclusion&quot;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;/div&gt;
-
-&lt;h2 id=&quot;seeing-it-in-action&quot;&gt;Seeing it in action&lt;/h2&gt;
-
-&lt;p&gt;Before we jump right into the code, let’s first take a look at the demo plunk with the running application. As a quick recap: The idea was to render 10.000 draggable SVG boxes. Rendering 10.000 boxes is not a super sophisticated task, however, the challenge lies in making the dragging experience as smooth as possible. In other words, we aim for 60 fps (frames per second), which can be indeed challenging, considering that Angular re-renders all 10.000 boxes by default when an event has fired (that we bound to).&lt;/p&gt;
-
-&lt;p&gt;Here’s the demo with the &lt;strong&gt;unoptimized&lt;/strong&gt; version:&lt;/p&gt;
-
-&lt;iframe src=&quot;https://embed.plnkr.co/UBI5Sc5eDMpkDDkJfeGX/?deferRun&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
-
-&lt;p&gt;And here’s Jordi’s &lt;strong&gt;optimized&lt;/strong&gt; plunk, which uses Angular’s &lt;code&gt;NgZone&lt;/code&gt; APIs:&lt;/p&gt;
-
-&lt;iframe src=&quot;https://embed.plnkr.co/GIf9sPuuZRLKwYK7mTfr/?deferRun&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
-
-&lt;p&gt;Even though the difference is rather subtle, the optimized version performs much better in terms of JavaScript execution per frame. We’ll take a look at some numbers later, but let’s quickly recap Zones and then dive into the code and discuss how Jordi used Angular’s &lt;code&gt;NgZone&lt;/code&gt; APIs to achieve this performance first.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-idea-of-zones&quot;&gt;The idea of Zones&lt;/h2&gt;
-
-&lt;p&gt;Before we can use Zone APIs and specifically the ones from Angular’s &lt;code&gt;NgZone&lt;/code&gt;, we need to get an understanding of what Zones actually are and how they are useful in the Angular world. We won’t go into too much detail here as we’ve already written two articles on this topic:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;/angular/2016/01/22/understanding-zones.html&quot;&gt;Understanding Zones&lt;/a&gt;&lt;/strong&gt; - Discusses the concept of Zones in general and how they can be used to e.g. profile asynchronous code execution&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;/angular/2016/02/01/zones-in-angular-2.html&quot;&gt;Zones in Angular&lt;/a&gt;&lt;/strong&gt; - Explores how the underlying Zone APIs are used in Angular to create a custom &lt;code&gt;NgZone&lt;/code&gt;, which enables consumers and Angular itself to run code inside or outside Angular’s Zone&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;If you haven’t read these articles yet, we definitely recommend you to do so as they give a very solid understanding of what Zones are and what they do. The bottom line is, however, Zones wrap asynchronous browser APIs, and notify a consumer when an asynchronous task has started or ended. Angular takes advantage of these APIs to get notified when any asynchronous task is done. This includes things like &lt;code&gt;XHR&lt;/code&gt; calls, &lt;code&gt;setTimeout()&lt;/code&gt; and pretty much all user events like &lt;code&gt;click&lt;/code&gt;, &lt;code&gt;submit&lt;/code&gt;, &lt;code&gt;mousedown&lt;/code&gt;, … etc.&lt;/p&gt;
-
-&lt;p&gt;Once notified, Angular knows that it has to perform change detection because any of the asynchronous operations might have changed the application state. This, for instance, is always the case when we use Angular’s &lt;code&gt;Http&lt;/code&gt; service to fetch data from a remote server. The following snippet shows how such a call can change application state:&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...)&lt;/span&gt;
-&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AppComponent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-
-  &lt;span class=&quot;nl&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// initial application state&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dataService&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DataService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dataService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fetchDataFromRemoteService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;subscribe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// application state has changed, change detection needs to run now&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;The nice thing about this is that we as developers don’t have to care about notifying Angular to perform change detection, because Zones will do it for us as Angular subscribes to them under the hood.&lt;/p&gt;
-
-&lt;p&gt;Okay, now that we touched on that, let’s take a look at how they can be used to make our demo app fast.&lt;/p&gt;
-
-&lt;h2 id=&quot;running-outside-angulars-zone&quot;&gt;Running outside Angular’s Zone&lt;/h2&gt;
-
-&lt;p&gt;We know that change detection is performed whenever an asynchronous event happened and an event handler was bound to that event. This is exactly the reason why our initial demo performs rather jankee. Let’s look at &lt;code&gt;AppComponent&lt;/code&gt;’s template:&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;svg&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mousedown&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;mouseDown($event)&quot;&lt;/span&gt;
-         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mouseup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;mouseUp($event)&quot;&lt;/span&gt;
-         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mousemove&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;mouseMove($event)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-
-      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;svg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ngFor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;let box of boxes&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;box&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;box&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/svg:g&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/svg&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AppComponent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;Three (3) event handlers are bound to the outer SVG element. When any of these events fire and their handlers have been executed then change detection is performed. In fact, this means that Angular will run change detection, even when we just move the mouse over the boxes without actually dragging a single box!&lt;/p&gt;
-
-&lt;p&gt;This is where taking advantage of &lt;code&gt;NgZone&lt;/code&gt; APIs comes in handy. &lt;code&gt;NgZone&lt;/code&gt; enables us to explicitly run certain code &lt;strong&gt;outside&lt;/strong&gt; Angular’s Zone, preventing Angular to run any change detection. So basically, handlers will still be executed, but since they won’t run inside Angular’s Zone, Angular won’t get notified that a task is done and therefore no change detection will be performed. We only want to run change detection once we release the box we are dragging.&lt;/p&gt;
-
-&lt;p&gt;Okay, how do we achieve this? In our article on &lt;a href=&quot;/angular/2016/02/01/zones-in-angular-2.html#running-code-outside-angulars-zone&quot;&gt;Zones in Angular&lt;/a&gt;, we already discussed how to run code outside Angular’s Zone using &lt;code&gt;NgZone.runOutsideAngular()&lt;/code&gt;. All we have to do is to make sure that the &lt;code&gt;mouseMove()&lt;/code&gt; event handler is only attached and executed outside Angular’s zone. In addition to that, we know we want to attach that event handler only if a box is being selected for dragging. In other words, we need to change our &lt;code&gt;mouseDown()&lt;/code&gt; event handler to imperatively add that event listener to the document.&lt;/p&gt;
-
-&lt;p&gt;Here’s what that looks like:&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;NgZone&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;@angular/core&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...)&lt;/span&gt;
-&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AppComponent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-  &lt;span class=&quot;nl&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HTMLElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;zone&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;NgZone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;mouseDown&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;zone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;runOutsideAngular&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;nb&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;addEventListener&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;mousemove&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mouseMove&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;mouseMove&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;preventDefault&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;setAttribute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;x&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;clientX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;clientX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;px&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;setAttribute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;y&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;clientX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;clientY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;px&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;We inject &lt;code&gt;NgZone&lt;/code&gt; and call &lt;code&gt;runOutsideAngular()&lt;/code&gt; inside our &lt;code&gt;mouseDown()&lt;/code&gt; event handler, in which we attach an event handler for the &lt;code&gt;mousemove&lt;/code&gt; event. This ensures that the &lt;code&gt;mousemove&lt;/code&gt; event handler is really only attached to the document when a box is being selected. In addition, we save a reference to the underlying DOM element of the clicked box so we can update its &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; attributes in the &lt;code&gt;mouseMove()&lt;/code&gt; method. We’re working with the DOM element instead of a box object with bindings for &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt;, because bindings won’t be change detected since we’re running the code outside Angular’s Zone. In other words, we &lt;strong&gt;do&lt;/strong&gt; update the DOM, so we can see the box is moving, but we aren’t actually updating the box model (yet).&lt;/p&gt;
-
-&lt;p&gt;Also, notice that we removed the &lt;code&gt;mouseMove()&lt;/code&gt; binding from our component’s template. We could remove the &lt;code&gt;mouseUp()&lt;/code&gt; handler as well and attach it imperatively, just like we did with the &lt;code&gt;mouseMove()&lt;/code&gt; handler. However, it won’t add any value performance-wise, so we decided to keep it in the template for simplicity’s sake:&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;svg&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mousedown&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;mouseDown($event)&quot;&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mouseup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;mouseUp($event)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-
-  &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;svg&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;box&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ngFor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;let box of boxes&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;box&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;box&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/svg:g&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
-&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/svg&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;In the next step, we want to make sure that, whenever we release a box (&lt;code&gt;mouseUp&lt;/code&gt;), we update the box model, plus, we want to perform change detection so that the model is in sync with the view again. The cool thing about &lt;code&gt;NgZone&lt;/code&gt; is not only that it allows us to run code outside Angular’s Zone, it also comes with APIs to run code &lt;strong&gt;inside&lt;/strong&gt; the Angular Zone, which ultimately will cause Angular to perform change detection again. All we have to do is to call &lt;code&gt;NgZone.run()&lt;/code&gt; and give it the code that should be executed.&lt;/p&gt;
-
-&lt;p&gt;Here’s the our updated &lt;code&gt;mouseUp()&lt;/code&gt; event handler:&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...)&lt;/span&gt;
-&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AppComponent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;mouseUp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// Run this code inside Angular&#39;s Zone and perform change detection&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;zone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;updateBox&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;clientX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;offsetX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;clientY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;offsetY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-
-    &lt;span class=&quot;nb&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;removeEventListener&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&#39;mousemove&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mouseMove&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;Also notice that we’re removing the event listener for the &lt;code&gt;mousemove&lt;/code&gt; event &lt;strong&gt;on every mouseUp&lt;/strong&gt;. Otherwise, the event handler would still be executed on every mouse move. In other words, the box would keep moving even after the finger was lifted, essentially taking the &lt;em&gt;drop&lt;/em&gt; part out of &lt;em&gt;drag and drop&lt;/em&gt;. In addition to that, we would pile up event handlers, which could not only cause weird side effects but also blows up our runtime memory.&lt;/p&gt;
-
-&lt;h2 id=&quot;measuring-the-performance&quot;&gt;Measuring the performance&lt;/h2&gt;
-
-&lt;p&gt;Alright, now that we know how Jordi implemented this version of our demo application, let’s take a look at some numbers! The following numbers have been recorded using the exact same techniques on the exact same machine as in our &lt;a href=&quot;/angular/2017/02/02/making-your-angular-app-fast.html&quot;&gt;previous article on performance&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/images/dnd-perf-profile-5.png&quot; title=&quot;Screenshot of the third profile&quot;&gt;&lt;img src=&quot;/images/dnd-perf-profile-5.png&quot; alt=&quot;Screenshot of a timeline profile&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;1st Profile, Event (mousemove): &lt;strong&gt;~0.45ms, ~0.50ms (fastest, slowest)&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;2nd Profile, Event (mousemove): &lt;strong&gt;~0.39ms, ~0.52ms (fastest, slowest)&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;3rd Profile, Event (mousemove): &lt;strong&gt;~0.38ms, ~0.45ms (fastest, slowest)&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;Using Zones is a great way to escape Angular’s change detection, without detaching change detectors and making the application code too complex. In fact, it turns out that Zones APIs are super easy to use, especially &lt;code&gt;NgZone&lt;/code&gt;’s APIs to run code outside or inside Angular. Based on the numbers, we can even say that this version is about as fast as the fastest solution we came up with in our previous article. Considering that the developer experience is much better when using Zones APIs, since they are easier to use than manually detaching and re-attaching change detector references, it’s definitely the most “beautiful” performance improvement we have so far.&lt;/p&gt;
-
-&lt;p&gt;However, we shouldn’t forget that this solution also comes with a couple (probably fixable) downsides. For example, we’re relying on DOM APIs and the global &lt;code&gt;window&lt;/code&gt; object, which is something we should always try to avoid. If we wanted to use this code with on the server-side then direct access of the window variable would be problematic. We will discus these server-side specific issues in a future article. For the sake of this demo, this isn’t a big deal though.&lt;/p&gt;
-
-&lt;p&gt;Again, a huge shout-out goes to &lt;a href=&quot;https://twitter.com/galigan&quot;&gt;Jordi Collell&lt;/a&gt; who not only made us adding this option, but also taking the time to actually implement a first version of this demo!&lt;/p&gt;
-</description>
-        <pubDate>Tue, 21 Feb 2017 01:00:00 +0100</pubDate>
-        <link>http://blog.thoughtram.io/angular/2017/02/21/using-zones-in-angular-for-better-performance.html</link>
-        <guid isPermaLink="true">http://blog.thoughtram.io/angular/2017/02/21/using-zones-in-angular-for-better-performance.html</guid>
       </item>
     
   </channel>
