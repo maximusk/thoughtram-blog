@@ -1,0 +1,831 @@
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In this article we'll look at two differet approaches, namely imperative and declarative animations.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="thoughtram">
+    <title>A web animations deep dive with Angular by thoughtram</title>
+    <meta name="google-site-verification" content="o9eGPEgIETEqYGombq7NiQuBIB_qa6gz1yAL7PxKyK0">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4D8799">
+    <link rel="icon" sizes="192x192" href="/images/touch/chrome-touch-icon-192x192.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="thoughtram">
+    <link rel="apple-touch-icon" href="/images/touch/apple-touch-icon.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="/images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#4D8799">
+
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="A web animations deep dive with Angular">
+    <meta property="og:description" content="Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In this article we'll look at two differet approaches, namely imperative and declarative animations.">
+    <meta property="og:url" content="http://blog.thoughtram.io/angular/2017/07/25/a-web-animations-deep-dive-with-angular.html">
+    <meta property="og:site_name" content="Articles by thoughtram">
+    <meta property="og:image" content="http://blog.thoughtram.io/images/banner/angular-animations.jpg">
+    <meta property="og:publisher" content="http://www.facebook.com/thoughtram">
+
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:title" content="A web animations deep dive with Angular">
+    <meta property="twitter:site" content="thoughtram Blog">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css" type="text/css">
+  </head>
+  <body class="sub-site">
+    <!-- Add your site or app content here -->
+
+    <!--[if lt IE 10]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <header class="thtrm-header" role="banner">
+      <div class="thtrm-header-bar">
+        <div class="thtrm-constraint">
+          <a href="http://thoughtram.io" class="thtrm-header-logo-link" title="thoughtram.io Start Page"><h1 class="thtrm-header-logo">thoughtram</h1></a>
+          <div class="thtrm-header-menu-wrapper">
+            <span role="button" tabindex="0" class="thtrm-header-menu-label">Menu</span>
+            <ul class="thtrm-header-menu">
+              <li><a title="Training" class="thtrm-header-menu-item" href="http://thoughtram.io/training.html">Training</a></li>
+              <li><a title="Code Review" class="thtrm-header-menu-item" href="http://thoughtram.io/code-review.html">Code Review</a></li>
+              <li><a title="Casts" class="thtrm-header-menu-item " href="http://casts.thoughtram.io">Casts</a></li>
+              <li><a title="Blog" class="thtrm-header-menu-item" href="/">Blog</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main role="main" class="thtrm-main">
+    <div class="thtrm-banner" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%), url('/images/banner/angular-animations.jpg');">
+        <hgroup class="thtrm-banner-container">
+          <div class="thtrm-constraint thtrm-constraint--slim">
+            <h2 class="thtrm-banner-text">A web animations deep dive with Angular</h2>
+            <span>by <a href="http://twitter.com/" title="Dominic Elm on Twitter">Dominic Elm</a> on Jul 25, 2017<br>31 minute read</span>
+
+          </div>
+        </hgroup>
+      </div>
+      <div class="thtrm-constraint thtrm-constraint--slim">
+
+        <div class="thtrm-article">
+          <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Berlin</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://amc-berlin.eventbrite.com?aff=blogAd" title="Angular Master Class in Berlin" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+</section>
+
+
+          
+          <p style="background-color: lightgoldenrodyellow; border: solid 2px #f9dead; padding: 1em; text-align: center; border-radius: 0.3em;">Contents are based on Angular version <strong>>= 2.x</strong> unless explicitly stated differently.</p>
+          
+
+          <p>Motion is an important aspect when building modern web applications. In fact, it’s important for all kinds of software products that involve user interfaces and interactions. Good user interfaces with well-designed animations help users understand the flow between two states. Imagine we are on a simple website that only has one button. We click that button and without any motion a box appears. Isn’t that boring? Also, we as a user might think that the box appeared because of our action. However, it could have been the result of something else like an http call in the background. In addition, animations can be used to make the user interface more snappy and responsive. They also explain changes in the arrangement of elements on the screen as some user actions may change the UI.</p>
+
+<p>This could easily drift off into a whole new discussion about user experience and why motion matters. The bottom line is that motion not only makes a site more usable but also more fun. They tell stories, add a perceptible time dimension and improve the overall user experience of applications.</p>
+
+<p>In this article we’ll briefly look at different ways to approach motion in modern web applications, specifically imperative and declarative animations. We’ll cover the basics of CSS and JavaScript animations before diving diving into a sophisticated animation in the context of an Angular application.</p>
+
+<p>Let’s start with a deeper breath of how animations in the web generally work.</p>
+
+<div class="thtrm-toc is-sticky">
+  <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
+<ul id="markdown-toc">
+  <li><a href="#understanding-state-transitions" id="markdown-toc-understanding-state-transitions">Understanding state transitions</a></li>
+  <li><a href="#what-can-we-use-to-animate-our-ui" id="markdown-toc-what-can-we-use-to-animate-our-ui">What can we use to animate our UI?</a></li>
+  <li><a href="#case-study-an-animated-modal-based-user-profile" id="markdown-toc-case-study-an-animated-modal-based-user-profile">Case study: An animated modal-based user profile</a>    <ul>
+      <li><a href="#imperative-implementation-using-greensock" id="markdown-toc-imperative-implementation-using-greensock">Imperative implementation using GreenSock</a></li>
+      <li><a href="#declarative-implementation-using-angular-animations" id="markdown-toc-declarative-implementation-using-angular-animations">Declarative implementation using Angular Animations</a>        <ul>
+          <li><a href="#applying-animations-using-hostbinding" id="markdown-toc-applying-animations-using-hostbinding">Applying animations using @HostBinding()</a></li>
+          <li><a href="#understanding-child-animations" id="markdown-toc-understanding-child-animations">Understanding child animations</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#special-thanks" id="markdown-toc-special-thanks">Special Thanks</a></li>
+</ul>
+
+</div>
+
+<h2 id="understanding-state-transitions">Understanding state transitions</h2>
+
+<p>With animations we aim to guide users between views so they feel comfortable using the site, draw attention to some parts of application, increase spacial awareness, indicate if data is being loaded, and probably the most important point - <strong>smoothly transition users between states</strong>. All this could be achieved by using CSS (declarative) or JavaScript (mostly imperative) to animate certain elements within your page.</p>
+
+<p>What’s a transition you may ask. Very good question! The <a href="https://en.oxforddictionaries.com/definition/transition">Oxford Dictionary</a> defines a transition as follows:</p>
+
+<blockquote>
+  <p>The process or a period of changing from one state or condition to another.</p>
+</blockquote>
+
+<p>Applied to animations, a transition is the visualization of some state changing over time. A <strong>state</strong> could be a person sitting at the airport waiting for his plane to be boarded. It’s a condition something or someone is in at a specific point in time. A button on website could have 4 different states - <code class="highlighter-rouge">idle</code>, <code class="highlighter-rouge">hover</code>, <code class="highlighter-rouge">focus</code> and <code class="highlighter-rouge">pressed</code>, where the latter is a combination of <code class="highlighter-rouge">focus</code> and <code class="highlighter-rouge">active</code>. We could use a finite state machine or simply state transition system to visualize how it works:</p>
+
+<p><img src="/images/button_state_machine.gif" alt="button state machine" /></p>
+
+<p>The point is, a “system” or some element on the page can have multiple states. Instead of simply going from state A to B, we’d like to interpolate the values in between. Later in this post we’ll see how to use Angular’s animation system to implement a rich profile animation. For this it is necessary to understand the concept of states and state machines as it is kind of implemented as one. With <code class="highlighter-rouge">transitions</code> we can listen for state changes and act accordingly.</p>
+
+<h2 id="what-can-we-use-to-animate-our-ui">What can we use to animate our UI?</h2>
+
+<p>Nowadays, with modern browsers in mind, we have many technologies at hand to animate our UI including CSS3 or JavaScript. The power of CSS animations (transitions or keyframes) is that they allow animating most HTML elements without using JavaScript. CSS animations are also quite fast and allow hardware acceleration. However, there are some limitations to this approach. For instance, you can’t animate an element along a certain path, use physics-based motion or animate the scroll position with CSS alone. While CSS animations are pretty good for simple transitions between states (e.g. hover-effects), JavaScript-based animations provide far more flexibility.</p>
+
+<p>As a matter of fact, we can take advantage of the same hardware acceleration in JavaSript too. It’s as easy as setting a CSS property with a 3D characteristic, such as <code class="highlighter-rouge">translate3d()</code> or <code class="highlighter-rouge">matrix3d()</code>. This will push the particular element onto another layer which is then processed by the GPU. The GPU itself is highly optimized for moving pixels making it much for effective for animations compared to the CPU. For more information, check out this great article by Paul Lewis and Paul Irish on <a href="https://www.html5rocks.com/en/tutorials/speed/high-performance-animations/">high performance animations</a>.</p>
+
+<p>CSS animations do not require any 3rd party libraries. However, there are some tools that make your life much easier, for example libraries that provide pre-defined keyframe animations like <a href="https://github.com/daneden/animate.css">Animate.css</a>.</p>
+
+<p>Looking at JavaScript, we can either use vanilla JavaScript or jQuery to animate our UI. Maintaining vanilla JavaScript animations and manually setting up elements on the stage could be quite a hassle. That’s one reason why many of us switched to jQuery at some point. jQuery makes it easy to query an element on the page. Then, in order to add motion, all we do is to call <code class="highlighter-rouge">.animate()</code> and specify the properties (e.g. opacity or transform) we’d like to animate. Here is how we’d move a <code class="highlighter-rouge">div</code> to the right by <code class="highlighter-rouge">200px</code> animating its <code class="highlighter-rouge">left</code> property:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$</span><span class="p">(</span><span class="s2">"button"</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s2">"div"</span><span class="p">).</span><span class="nx">animate</span><span class="p">({</span>
+    <span class="na">left</span><span class="p">:</span> <span class="s1">'200px'</span>
+  <span class="p">},</span> <span class="s1">'slow'</span><span class="p">);</span>
+<span class="p">});</span></code></pre></figure>
+
+<p>While this works, it’s better to stick with either the <code class="highlighter-rouge">transform</code> or <code class="highlighter-rouge">opacity</code> property as those are the only things a browser can animate cheaply. Note that we use the string <code class="highlighter-rouge">slow</code> to specify the duration of the animation. It is an equivalent for supplying a duration of <code class="highlighter-rouge">600</code> milliseconds.</p>
+
+<p>Turns out there is another cool kid on the block called <a href="https://greensock.com/">GreenSock</a>, a high-performance HTML5 animation library for the modern web. It allows us to define simple animations as well as complex timeline compositions, drag and drop features or even smoothly morph any SVG shape into any other shape. According to GreenSock, GSAP performs 20 times faster than jQuery. If you’d like to see this in action, there is a <a href="https://greensock.com/js/speed.html">speed comparison</a> to stress test the performance of various common JavaScript libraries including jQuery, GSAP or Web Animations.</p>
+
+<p>Let’s create the same animation as before, but this time using GSAP. More specifically we’ll use <a href="https://greensock.com/tweenlite">TweenLite</a>, a lightweight animation tool that serves as the foundation of GSAP.</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">button</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'button'</span><span class="p">);</span>
+
+<span class="nx">button</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">TweenLite</span><span class="p">.</span><span class="nx">to</span><span class="p">(</span><span class="s1">'div'</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">left</span><span class="p">:</span> <span class="mi">200</span>
+  <span class="p">});</span>
+<span class="p">});</span></code></pre></figure>
+
+<blockquote>
+  <p>Note that the code above requires a plugin called <a href="https://greensock.com/CSSPlugin">CSSPlugin</a>. This plugin allows us to animate almost any CSS property.</p>
+</blockquote>
+
+<p>When working with frontend frameworks like Angular it could be a whole new story as some of them handle animations differently.</p>
+
+<p>That doesn’t mean it’s not using some of the core concepts under the hood. They often come with their own animation system. Take Angular’s animation system for example, that is built on top of the Web Animations API (WAAPI). It’s fairly new and currently being implemented in Chrome and Firefox. It’s goal is to unite CSS, JS and SVG. More specifically, it aims to provide the power of CSS performance, add the benefits and flexibility of JS and SVG as well as leave the fundamental work to the browser without the need for additional dependencies.</p>
+
+<p>If you want to learn more about the Web Animation API, check out <a href="http://danielcwilson.com/blog/2015/07/animations-intro/">this</a> series of posts which goes a lot more into detail while covering advanced features like running multiple animations in parallel or in sequence, animating elements along a motion path or controlling animations using the <code class="highlighter-rouge">AnimationPlayer</code>.</p>
+
+<p>Here is a snippet showing the WAAPI in action:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">button</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'button'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'div'</span><span class="p">);</span>
+<span class="nx">wrapper</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">'relative'</span><span class="p">;</span>
+
+<span class="nx">button</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">animate</span><span class="p">([</span>
+    <span class="p">{</span> <span class="na">left</span><span class="p">:</span> <span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">elem</span><span class="p">).</span><span class="nx">left</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">left</span><span class="p">:</span> <span class="s1">'200px'</span> <span class="p">}</span>
+  <span class="p">],</span> <span class="p">{</span> <span class="na">duration</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span> <span class="cm">/* and more like easing, delay etc. */</span> <span class="p">});</span>
+<span class="p">});</span></code></pre></figure>
+
+<p>Remember, the WAAPI is still a work in progress and things like additive animations are not fully supported yet. That’s why we use <code class="highlighter-rouge">getComputedStyle()</code> to calculate the very first <code class="highlighter-rouge">KeyframeEffect</code>. A <code class="highlighter-rouge">KeyframeEffect</code> is used to specify the values for the properties we’d like to animate. Each effect represents one keyframe and the values are basically interpolated over time. In other words, the array is a collection of keyframes. Here is an equivalent CSS keyframe animation:</p>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="k">@keyframes</span> <span class="n">moveToRight</span> <span class="p">{</span>
+  <span class="nt">from</span> <span class="p">{</span>
+    <span class="nl">left</span><span class="p">:</span> <span class="m">0px</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nt">to</span> <span class="p">{</span>
+    <span class="nl">left</span><span class="p">:</span> <span class="m">200px</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nt">div</span> <span class="p">{</span>
+  <span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>
+  <span class="nl">animation</span><span class="p">:</span> <span class="n">moveToRight</span> <span class="m">600ms</span> <span class="n">forwards</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Similar to the WAAPI, we also need to set the initial value when animating the <code class="highlighter-rouge">left</code> property. This is not needed if we were translating the element on the X-axis to another location via its <code class="highlighter-rouge">transform</code> property. With CSS keyframe animations we normally define when the change will happen with either percentage values or the keywords <code class="highlighter-rouge">from</code> and <code class="highlighter-rouge">to</code>, which are the same as <code class="highlighter-rouge">0%</code> and <code class="highlighter-rouge">100%</code>.</p>
+
+<p>We do this with the WAAPI by defining an <code class="highlighter-rouge">offset</code> for each set of property values (keyframe). Keyframes without any offset will have offsets computed, e.g. the first keyframe has an offset of <code class="highlighter-rouge">0</code>, the last will be <code class="highlighter-rouge">1</code>.</p>
+
+<p>So far, we have seen a little bit of CSS and JavaScript animations and how to leverage them to animate parts of our application. In the next section we’ll look at at a specific case study implementing a real-world user profile animation. The goal is to implement the exact same animation both imperatively and declaratively using GSAP and Angular’s built-in animation system. Yes, there’s going to be a lot of Angular!</p>
+
+<h2 id="case-study-an-animated-modal-based-user-profile">Case study: An animated modal-based user profile</h2>
+
+<p>Enough about theory! Let’s build a simple modal-based user profile and apply animations to improve the user experience and draw focused-attention to the dialog.</p>
+
+<p>Here’s a preview of what we are going to build:</p>
+
+<p><img src="/images/animation_preview.gif" alt="animation preview" /></p>
+
+<p>Our application is going to be very simple and mainly consists of two components:</p>
+
+<ul>
+  <li>DashboardComponent</li>
+  <li>ProfileDetailsComponent</li>
+</ul>
+
+<p>The <code class="highlighter-rouge">DashboardComponent</code> is the entry point (root component) of our application. It contains almost no logic and merely represents a wrapper composing the <code class="highlighter-rouge">ProfileDetailsComponent</code>.</p>
+
+<p>Inside the <code class="highlighter-rouge">DashboardComponent</code> we initialize the data for the user profile and toggle the visibility of the dialog. An <code class="highlighter-rouge">ngIf</code> will then show and hide the template. This is important for our animation because we use it as a trigger.</p>
+
+<p>Here is the template of the <code class="highlighter-rouge">DashboardComponent</code>:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div&gt;</span>
+  <span class="nt">&lt;header&gt;</span>
+    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"title"</span><span class="nt">&gt;</span>Dashboard<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"image-container"</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">toggleProfileDetails</span><span class="err">()"</span> <span class="na">data-tooltip=</span><span class="s">"Profile"</span> <span class="nt">&gt;</span>
+      <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"profile-button"</span> <span class="na">src=</span><span class="s">"..."</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/header&gt;</span>
+
+  <span class="nt">&lt;profile-details</span> <span class="err">[</span><span class="na">user</span><span class="err">]="</span><span class="na">user</span><span class="err">"</span> <span class="err">*</span><span class="na">ngIf=</span><span class="s">"showProfileDetails"</span><span class="nt">&gt;&lt;/profile-details&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+
+<p>So far so good. Let’s look at the template of <code class="highlighter-rouge">ProfileDetailsComponent</code>:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"wrapper"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;header&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"profile-image-wrapper"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"profile-image-border"</span><span class="nt">&gt;&lt;/div&gt;</span>
+      <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"profile-image"</span> <span class="na">src=</span><span class="s">"..."</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"profile-header-content"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"username"</span><span class="nt">&gt;</span>{{ user.name }}<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"username-title"</span><span class="nt">&gt;</span>{{ user.title }}<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/header&gt;</span>
+  <span class="nt">&lt;main&gt;</span>
+    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"stats"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"stats-item"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"stats-icon icon-eye"</span><span class="nt">&gt;&lt;/span&gt;</span>
+        <span class="nt">&lt;span&gt;</span>{{ user.views }}<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/li&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"stats-item"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"stats-icon icon-location"</span><span class="nt">&gt;&lt;/span&gt;</span>
+        <span class="nt">&lt;span&gt;</span>{{ user.location }}<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/li&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"stats-item"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"stats-icon icon-heart"</span><span class="nt">&gt;&lt;/span&gt;</span>
+        <span class="nt">&lt;span&gt;</span>{{ user.hearts }}<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;/ul&gt;</span>
+  <span class="nt">&lt;/main&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+
+<p>To achieve the desired animation we need to set some initial CSS properties to enable 3D-space for the children elements inside <code class="highlighter-rouge">ProfileDetailsComponent</code>. We do that by setting the <code class="highlighter-rouge">perspective</code> on the <code class="highlighter-rouge">host</code> element. CSS host selectors are a great way to apply styles without introducing an additional wrapper element.</p>
+
+<p>Nonetheless, for our animation we still need a wrapper element because the <code class="highlighter-rouge">perspective</code> property doesn’t affect how the host element is rendered; it simply enables 3D-space for children elements.</p>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="nd">:host</span> <span class="p">{</span>
+  <span class="nl">perspective</span><span class="p">:</span> <span class="m">500px</span><span class="p">;</span>
+  <span class="err">...</span>
+<span class="p">}</span>
+
+<span class="nc">.wrapper</span> <span class="p">{</span>
+  <span class="nl">transform-origin</span><span class="p">:</span> <span class="nb">top</span> <span class="nb">center</span><span class="p">;</span>
+  <span class="err">...</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Again, the perspective only affects <strong>children</strong> elements and only those that are transformed in a three-dimensional space, e.g. rotation about X-axis or translation along Z-axis. The value for the perspective determines the strength of the 3D-effect. In other words, it describes the distance between the object and the viewer. Therefore, if the value is very small the effect will be quite impressive as we are extremely close to the object. On the other hand, if the value is high the distance between the object and the viewer will be large and therefore the animation looks rather subtle. That said, we need to set the <code class="highlighter-rouge">perspective</code> property in order to achieve 3D-effects.</p>
+
+<p>In addition, we have to specify a point of origin for our upcoming transformation. By default the point of origin is exactly the center of any element. The rest is just simple styling for the dialog.</p>
+
+<p>Alright. Now that we got this in place, let’s implement our animation imperatively using GreenSocks’s timeline feature.</p>
+
+<h3 id="imperative-implementation-using-greensock">Imperative implementation using GreenSock</h3>
+
+<p>In order to achieve this animation with GSAP we need to use its timeline feature. Make sure to either use <a href="https://greensock.com/tweenmax">TweenMax</a> or add <a href="https://greensock.com/timelinelite">TimelineLite</a> separately to your project.</p>
+
+<p>A timeline is basically a container where we place tweens over the course of time. Tweening is the process of generating intermediate frames between two states. With GSAP’s timeline we can easily build sequences of animations and animate an element <code class="highlighter-rouge">.to()</code> or <code class="highlighter-rouge">.from()</code> a certain state. In addition, we get a lot of control over our animations. As such, we can stop, pause, resume, or even reverse them. Here is a simple example:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">timeline</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TimelineLite</span><span class="p">();</span>
+
+  <span class="kd">var</span> <span class="nx">h1</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'first'</span><span class="p">);</span>
+
+  <span class="nx">timeline</span>
+    <span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'start'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">h1</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="p">{</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">ease</span><span class="p">:</span> <span class="nx">Power2</span><span class="p">.</span><span class="nx">easeIn</span> <span class="p">},</span> <span class="s1">'start'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">h1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="na">ease</span><span class="p">:</span> <span class="nx">Bounce</span><span class="p">.</span><span class="nx">easeOut</span> <span class="p">},</span> <span class="s1">'start'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">to</span><span class="p">(</span><span class="s1">'#second'</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="p">{</span> <span class="na">backgroundColor</span><span class="p">:</span> <span class="s1">'#ffeb3b'</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">to</span><span class="p">(</span><span class="s1">'#third'</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="na">repeat</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">yoyo</span><span class="p">:</span> <span class="kc">true</span> <span class="p">},</span> <span class="s1">'-=0.3'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+
+  <span class="kd">var</span> <span class="nx">button</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">'button'</span><span class="p">);</span>
+
+  <span class="nx">button</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">timeline</span><span class="p">.</span><span class="nx">restart</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Check out the demo and try it out!</p>
+
+<iframe src="https://embed.plnkr.co/KOg0LSVLU1JIH8QAVu49/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<p>With <code class="highlighter-rouge">TimelineLite</code> we have complete control over where tweens are placed on the timeline and they can overlap as much as we want. Notice how we use <code class="highlighter-rouge">.add()</code> to add a label to the timeline. We can use labels to start multiple animations at the same time. For instance, we use this mechanism to run two animations in parallel. The <code class="highlighter-rouge">h1</code> will fade and translate in at the same time. Both animations could easily be combined in a single animation, but they have different easing functions. It solely demonstrates how to use labels.</p>
+
+<p>Let’s see how we can do that in our Angular application. First off, we get all the elements using Angular’s built-in <code class="highlighter-rouge">@ViewChild()</code> and <code class="highlighter-rouge">@ViewChildren()</code> decorators. We leverage those to query specific elements within the view of a component.</p>
+
+<p><code class="highlighter-rouge">@ViewChild()</code> returns an <code class="highlighter-rouge">ElementRef</code>, whereas <code class="highlighter-rouge">@ViewChildren()</code> returns a <code class="highlighter-rouge">QueryList</code>. Essentially it’s an object that stores a list of elements and implements the <code class="highlighter-rouge">iterable</code> interface. This makes it possible to be used in combination with <code class="highlighter-rouge">ngFor</code>. The cool thing is that it’s based on Observables. This means we can subscribe to changes and get notified whenever an element is added, removed, or moved.</p>
+
+<p>For more information check out Minko’s <a href="http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders/">blog post</a> about the difference between <strong>view children</strong> and <strong>content children</strong> in Angular.</p>
+
+<p>Here’s how we use it in our Angular application to grab the elements we need:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">ViewChild</span><span class="p">(</span><span class="s1">'wrapper'</span><span class="p">)</span> <span class="nx">wrapper</span><span class="err">:</span> <span class="nx">ElementRef</span><span class="p">;</span>
+<span class="err">@</span><span class="nx">ViewChild</span><span class="p">(</span><span class="s1">'main'</span><span class="p">)</span> <span class="nx">main</span><span class="err">:</span> <span class="nx">ElementRef</span><span class="p">;</span>
+<span class="p">...</span></code></pre></figure>
+
+<p>The decorator takes either a type or a template reference variable. In most cases, such template reference variable is a reference to a DOM element inside a component’s template. The following snippet shows how we’d get a reference to the <code class="highlighter-rouge">wrapper</code> element:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"wrapper"</span> <span class="err">#</span><span class="na">wrapper</span><span class="nt">&gt;</span>
+...
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+
+<p>See the <code class="highlighter-rouge">#wrapper</code>? That’s how we declare a local template reference for that specific element. We do this for all the elements we need for the animation. With that in place, we can instantiate our timeline.</p>
+
+<p>Usually we use <code class="highlighter-rouge">ngOnInit</code> to implement our initialization logic. However, this is a little bit too early in a component’s lifecycle because we have to wait for the component to be fully initialized in order to use the DOM elements we collected. There’s a lifecycle hook called <code class="highlighter-rouge">ngAfterViewInit</code> which is the perfect moment in a component’s initialization process in which we have everything we need to set up the timeline.</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">ngAfterViewInit</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">timeline</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TimelineLite</span><span class="p">();</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Cool! But before we can construct the timeline for our profile animation there’s one thing left to do. We need to apply an initial transformation to the <code class="highlighter-rouge">wrapper</code> element via CSS in order to achieve the fancy 3D-effect:</p>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.wrapper</span> <span class="p">{</span>
+  <span class="nl">transform</span><span class="p">:</span> <span class="n">rotateX</span><span class="p">(</span><span class="m">-90deg</span><span class="p">)</span> <span class="n">translateY</span><span class="p">(</span><span class="m">150px</span><span class="p">)</span> <span class="n">translateZ</span><span class="p">(</span><span class="m">50px</span><span class="p">);</span>
+  <span class="err">...</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>We can now apply the concepts we learned to build the timeline:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">timeline</span>
+  <span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'start'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">,</span> <span class="p">.</span><span class="mi">15</span><span class="p">,</span> <span class="p">{</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span> <span class="p">},</span> <span class="s1">'start'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">to</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">,</span> <span class="p">.</span><span class="mi">3</span><span class="p">,</span> <span class="p">{</span> <span class="na">rotationX</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">z</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="na">ease</span><span class="p">:</span> <span class="nx">Power3</span><span class="p">.</span><span class="nx">easeIn</span><span class="p">},</span> <span class="s1">'start'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'image'</span><span class="p">,</span> <span class="s1">'-=0.1'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'main'</span><span class="p">,</span> <span class="s1">'-=0.15'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'icons'</span><span class="p">,</span> <span class="s1">'-=0.1'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'text'</span><span class="p">,</span> <span class="s1">'-=0.05'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">profileImageBorder</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">,</span> <span class="p">.</span><span class="mi">3</span><span class="p">,</span> <span class="p">{</span> <span class="na">scale</span><span class="p">:</span> <span class="mi">0</span> <span class="p">},</span> <span class="s1">'image'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">profileImage</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">,</span> <span class="p">.</span><span class="mi">3</span><span class="p">,</span> <span class="p">{</span> <span class="na">scale</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">delay</span><span class="p">:</span> <span class="p">.</span><span class="mi">05</span> <span class="p">},</span> <span class="s1">'image'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">main</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">,</span> <span class="p">.</span><span class="mi">4</span><span class="p">,</span> <span class="p">{</span> <span class="na">y</span><span class="p">:</span> <span class="s1">'100%'</span> <span class="p">},</span> <span class="s1">'main'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">staggerFrom</span><span class="p">([</span><span class="k">this</span><span class="p">.</span><span class="nx">username</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">],</span> <span class="p">.</span><span class="mi">3</span><span class="p">,</span> <span class="p">{</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">left</span><span class="p">:</span> <span class="mi">50</span> <span class="p">},</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">'image'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">staggerFrom</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">statsIcons</span><span class="p">,</span> <span class="p">.</span><span class="mi">3</span><span class="p">,</span> <span class="p">{</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">top</span><span class="p">:</span> <span class="mi">10</span> <span class="p">},</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">'icons'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">staggerFrom</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">statsTexts</span><span class="p">,</span> <span class="p">.</span><span class="mi">3</span><span class="p">,</span> <span class="p">{</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span> <span class="p">},</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">play</span><span class="p">();</span></code></pre></figure>
+
+<p>Woah! This looks pretty overwhelming at first glance. But all we have to do is to orchestrate our animation using GreenSock’s timeline API. With the help of labels we can run multiple animations in parallel and precisely control the timing of certain animations.</p>
+
+<p>One thing we haven’t talked about so far is <code class="highlighter-rouge">.staggerFrom()</code>. A stagger is an animation that contains a delay between each successive animation.</p>
+
+<p>The whole animation can be illustrated as follows:</p>
+
+<p><img src="/images/animation_timeline.png" width="80%" alt="animation timeline" /></p>
+
+<p>Here’s the full-fledge solution. Take a look and fiddle with it.</p>
+
+<iframe style="height: 600px" src="https://embed.plnkr.co/RMtC6RqBAzrFmmOiJu4i?show=preview&amp;deferRun&amp;sidebar" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<h3 id="declarative-implementation-using-angular-animations">Declarative implementation using Angular Animations</h3>
+
+<p>In the previous section we have seen how to implement the profile animation with GreenSock in an imperative way. There are some drawbacks to that solution. First, it’s quite some boilerplate and work to collect all the elements and manually set up the timeline. That said, an animation platform like GSAP requires the DOM to be ready. A framework can make much more assumptions about the instructions (animation data) and the environment (app and browser) before animating things. Second, it can be very beneficial if there’s a framework backing the animation engine, like with Angular. GSAP and other animation libraries cannot easily handle DOM insertions or removals because they do not own the DOM transactions. Angular on the other hand has full control over the DOM.</p>
+
+<p>If you are completely new to animations with Angular, check out <a href="/2016-09-16-angular-2-animation-important-concepts.md">this</a> post by Thomas Burleson. It covers the fundamentals and shows an example of a more complex fade animation.</p>
+
+<p>Alright, let’s refactor our profile animation using the latest animation features introduced with Angular 4.2. To get started, we first have to import the <code class="highlighter-rouge">BrowserAnimationsModule</code> from <code class="highlighter-rouge">@angular/platform-browser/animations</code> and add it to the <code class="highlighter-rouge">imports</code> of our application:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+  <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
+    <span class="nx">BrowserAnimationsModule</span>
+    <span class="p">...</span>
+  <span class="p">],</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">DashboardModule</span> <span class="p">{}</span></code></pre></figure>
+
+<p>Remember, animations in Angular are based on the WAAPI and work in browsers that support it including Chrome and Firefox. However, currently Internet Explorer and Safari do not. In this case a <a href="https://github.com/web-animations/web-animations-js">polyfill</a> is required to achieve similar results. Once animations are properly imported and enabled, we can go ahead and start defining the profile animation.</p>
+
+<p>To quickly recap, animations are declared with the animations metadata property within the <code class="highlighter-rouge">@Component()</code> decorator. Each animation is defined by a <code class="highlighter-rouge">trigger</code> which takes a name and a list of <code class="highlighter-rouge">state</code> and <code class="highlighter-rouge">transition</code> entries. Angular’s animation engine works basically like a state machine. That’s right. This should sound familiar. We have seen it in the beginning of this post, remember? The first argument of <code class="highlighter-rouge">transition</code> allows you to specify a direction from one state to another, also known as <strong>state-change-expression</strong>. Here are some common values:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">* =&gt; *</code> captures a state change between any states</li>
+  <li><code class="highlighter-rouge">void =&gt; *</code> captures the entering of elements</li>
+  <li><code class="highlighter-rouge">* =&gt; void</code> captures the leaving of elements</li>
+</ul>
+
+<p>The last two are so common that they have their own aliases:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">:enter</code> for <code class="highlighter-rouge">void =&gt; *</code></li>
+  <li><code class="highlighter-rouge">:leave</code> for <code class="highlighter-rouge">* =&gt; void</code></li>
+</ul>
+
+<p>Angular 4.2 introduces several new animation features and extends Angular’s animation DSL. Here’s a quick overview of what’s new:</p>
+
+<ul>
+  <li><strong>query()</strong> can be used to find one or more elements within the element that’s being animated</li>
+  <li><strong>stagger()</strong> animates a bunch of elements with a delay in between each animation</li>
+  <li><strong>group()</strong> specifies a list of animations that are run in parallel</li>
+  <li><strong>sequence()</strong> specifies a list of animations that are run one at a time</li>
+  <li><strong>animation()</strong> can be used to create reusable animations with input parameters</li>
+  <li><strong>useAnimation()</strong> invokes reusable animations created with <code class="highlighter-rouge">animation()</code></li>
+  <li><strong>animateChild()</strong> will invoke child animations which are normally blocked</li>
+</ul>
+
+<p>Neat! Let’s use that to re-implement our profile animation with Angular’s animation DSL. In order to demonstrate most of the above animation helpers, especially <code class="highlighter-rouge">animateChild()</code>, we need to refactor our application a bit.</p>
+
+<p>First of all, we create a new component called <code class="highlighter-rouge">ProfileStatsComponent</code> which now contains the <code class="highlighter-rouge">ul</code> that was previously part of the <code class="highlighter-rouge">DashboardComponent</code>. The template of the <code class="highlighter-rouge">DashboardComponent</code> now looks like this:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"wrapper"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;header&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"profile-image-wrapper"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"profile-image-border"</span><span class="nt">&gt;&lt;/div&gt;</span>
+      <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">"profile-image"</span> <span class="na">src=</span><span class="s">"https://api.adorable.io/avatars/90/me@you.com.png"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"profile-header-content"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"username"</span><span class="nt">&gt;</span>{{ user.name }}<span class="nt">&lt;/span&gt;</span>
+        <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"username-title"</span><span class="nt">&gt;</span>{{ user.title }}<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/header&gt;</span>
+  <span class="nt">&lt;main&gt;</span>
+    <span class="nt">&lt;profile-stats</span> <span class="err">[</span><span class="na">user</span><span class="err">]="</span><span class="na">user</span><span class="err">"</span><span class="nt">&gt;&lt;/profile-stats&gt;</span>
+  <span class="nt">&lt;/main&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+
+<p>The dashboard now composes the <code class="highlighter-rouge">ProfileStatsComponent</code> which will later define its own animation. For now, let’s focus on the profile animation and talk about child animations in a minute.</p>
+
+<p>Here’s how we define our <code class="highlighter-rouge">profileAnimation</code>:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+  <span class="nx">trigger</span><span class="p">(</span><span class="s1">'profileAnimation'</span><span class="p">,</span> <span class="p">[</span>
+    <span class="nx">transition</span><span class="p">(</span><span class="s1">':enter'</span><span class="p">,</span> <span class="nx">group</span><span class="p">([</span>
+      <span class="p">...</span>
+    <span class="p">]))</span>
+  <span class="p">])</span>
+<span class="p">]</span></code></pre></figure>
+
+<p>Within our <code class="highlighter-rouge">profileAnimation</code> we define one <code class="highlighter-rouge">transition</code> and on <code class="highlighter-rouge">:enter</code> (when the dialog enters the DOM) we run several animations in parallel. Next, we use <code class="highlighter-rouge">query()</code> to grab the DOM elements we need for our animation and set some initial styles using the <code class="highlighter-rouge">styles</code> helper:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+  <span class="nx">trigger</span><span class="p">(</span><span class="s1">'profileAnimation'</span><span class="p">,</span> <span class="p">[</span>
+    <span class="nx">transition</span><span class="p">(</span><span class="s1">':enter'</span><span class="p">,</span> <span class="nx">group</span><span class="p">([</span>
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.wrapper'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">transform</span><span class="p">:</span> <span class="s1">'rotateX(-90deg) translateY(150px) translateZ(50px)'</span> <span class="p">})),</span>
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.profile-image-border, .profile-image'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">transform</span><span class="p">:</span> <span class="s1">'scale(0)'</span> <span class="p">})),</span>
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.username, .username-title'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">transform</span><span class="p">:</span> <span class="s1">'translateX(50px)'</span> <span class="p">})),</span>
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'main'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">transform</span><span class="p">:</span> <span class="s1">'translateY(100%)'</span> <span class="p">}))</span>
+    <span class="p">]))</span>
+  <span class="p">])</span>
+<span class="p">]</span></code></pre></figure>
+
+<p>Remember how we collected the DOM elements using <code class="highlighter-rouge">@ViewChild()</code> and <code class="highlighter-rouge">@ViewChildren()</code>? We don’t need to do that anymore. Plus, we can get rid of all the local template references because that is now handled by <code class="highlighter-rouge">query()</code>. Quite powerful, huh?</p>
+
+<p>Before we implement the profile animation, let’s create a reusable <strong>fade</strong> animation that we can use elsewhere in different places with full input parameter support:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">fadeAnimation</span> <span class="o">=</span> <span class="nx">animation</span><span class="p">([</span>
+  <span class="nx">animate</span><span class="p">(</span><span class="s1">'{{ duration }}'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="s1">'{{ to }}'</span> <span class="p">}))</span>
+<span class="p">],</span> <span class="p">{</span> <span class="na">params</span><span class="p">:</span> <span class="p">{</span> <span class="na">duration</span><span class="p">:</span> <span class="s1">'1s'</span><span class="p">,</span> <span class="na">to</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}});</span></code></pre></figure>
+
+<p>The <code class="highlighter-rouge">fadeAnimation</code> can now be imported into our application, adjusted via input parameter and invoked using <code class="highlighter-rouge">useAnimation()</code>. The values we specified for the input parameters are default values.</p>
+
+<p>Once we have that in place, let’s add the missing pieces to our animation:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+  <span class="nx">trigger</span><span class="p">(</span><span class="s1">'profileAnimation'</span><span class="p">,</span> <span class="p">[</span>
+    <span class="nx">transition</span><span class="p">(</span><span class="s1">':enter'</span><span class="p">,</span> <span class="nx">group</span><span class="p">([</span>
+      <span class="c1">// Initial Styles</span>
+      <span class="p">...</span>
+
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.wrapper'</span><span class="p">,</span> <span class="nx">group</span><span class="p">([</span>
+        <span class="nx">useAnimation</span><span class="p">(</span><span class="nx">fadeAnimation</span><span class="p">,</span> <span class="p">{</span>
+          <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">duration</span><span class="p">:</span> <span class="s1">'150ms'</span><span class="p">,</span>
+            <span class="na">to</span><span class="p">:</span> <span class="mi">1</span>
+          <span class="p">}</span>
+        <span class="p">}),</span>
+        <span class="nx">animate</span><span class="p">(</span><span class="s1">'300ms cubic-bezier(0.68, 0, 0.68, 0.19)'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">transform</span><span class="p">:</span> <span class="s1">'matrix(1, 0, 0, 1, 0, 0)'</span> <span class="p">}))</span>
+      <span class="p">])),</span>
+
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.profile-image-border'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="nx">animate</span><span class="p">(</span><span class="s1">'200ms 250ms ease-out'</span><span class="p">,</span> <span class="nx">style</span><span class="p">(</span><span class="s1">'*'</span><span class="p">))</span>
+      <span class="p">]),</span>
+
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.profile-image'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="nx">animate</span><span class="p">(</span><span class="s1">'200ms 300ms ease-out'</span><span class="p">,</span> <span class="nx">style</span><span class="p">(</span><span class="s1">'*'</span><span class="p">))</span>
+      <span class="p">]),</span>
+
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.username, .username-title'</span><span class="p">,</span> <span class="nx">stagger</span><span class="p">(</span><span class="s1">'100ms'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="nx">animate</span><span class="p">(</span><span class="s1">'200ms 250ms ease-out'</span><span class="p">,</span> <span class="nx">style</span><span class="p">(</span><span class="s1">'*'</span><span class="p">))</span>
+      <span class="p">])),</span>
+
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'main'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="nx">animate</span><span class="p">(</span><span class="s1">'200ms 250ms ease-out'</span><span class="p">,</span> <span class="nx">style</span><span class="p">(</span><span class="s1">'*'</span><span class="p">))</span>
+      <span class="p">])</span>
+
+      <span class="p">...</span>
+    <span class="p">]))</span>
+  <span class="p">])</span>
+<span class="p">]</span></code></pre></figure>
+
+<p>In the code above, we query a bunch of elements and use several animation helpers to achieve the desired effect. All animations will run in parallel because they are defined within a <code class="highlighter-rouge">group()</code>. Also, there are no “labels” or a similar feature to what GreenSock provides with <code class="highlighter-rouge">.add()</code>. Turns out, Angular has no timeline support yet and we need to fiddle with delays in order to orchestrate the animation.</p>
+
+<p>If we take a closer look we can see that there’s actually more to it. For instance for the <code class="highlighter-rouge">wrapper</code>, we run two animations in parallel one of which is the reusable animation we defined earlier. We can invoke a reusable animation with the <code class="highlighter-rouge">useAnimation()</code> method. While <code class="highlighter-rouge">AnimationOptions</code> are optional, we specify them to override the default input paramters.</p>
+
+<p>Furthermore, we can spot this special style property of <code class="highlighter-rouge">style('*')</code>. This will basically remove all of the special styling we have added (e.g. initial styles) and reset the state of the element. It’s an equivalent of setting each value to <code class="highlighter-rouge">*</code>. This means that Angular will figure out the values at runtime. On top of that use the <code class="highlighter-rouge">stagger()</code> animation helper method to animate multiple elements with a time gap in between each animated element.</p>
+
+<h4 id="applying-animations-using-hostbinding">Applying animations using @HostBinding()</h4>
+
+<p>Ok, but how do we use the animation? For that we can either attach the <strong>trigger</strong> to the element within the component’s template or use a <code class="highlighter-rouge">@HostBinding()</code>. In our case, we use the <code class="highlighter-rouge">@HostBinding()</code> because we want to attach the trigger to the host element:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">ProfileStatsComponent</span> <span class="p">{</span>
+  <span class="p">...</span>
+
+  <span class="err">@</span><span class="nx">HostBinding</span><span class="p">(</span><span class="s1">'@profileAnimation'</span><span class="p">)</span>
+  <span class="kr">public</span> <span class="nx">animateProfile</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></figure>
+
+<h4 id="understanding-child-animations">Understanding child animations</h4>
+
+<p>In a real-world scenario you most likely end up having multiple components and animations on different levels, e.g. parent or child animations. Turns out that parent animations will always get priority and any child animation will be blocked. That’s a shame. But don’t bury your head in the sand yet because Angular got you covered! We can query inner elements and use <code class="highlighter-rouge">animateChild()</code> to allow child animations to run. The cool thing is we can do that at any point in the animation sequence within a defined <code class="highlighter-rouge">transition</code>.</p>
+
+<p>In our example, we created a component called <code class="highlighter-rouge">ProfileStatsComponent</code>. Let’s see this in action and start off by creating a child animation for this component using everything we know by now:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+  <span class="nx">trigger</span><span class="p">(</span><span class="s1">'statsAnimation'</span><span class="p">,</span> <span class="p">[</span>
+    <span class="nx">transition</span><span class="p">(</span><span class="s1">'* =&gt; *'</span><span class="p">,</span> <span class="nx">group</span><span class="p">([</span>
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.stats-icon'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">transform</span><span class="p">:</span> <span class="s1">'scale(0.8) translateY(10px)'</span> <span class="p">})),</span>
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.stats-text'</span><span class="p">,</span> <span class="nx">style</span><span class="p">({</span> <span class="na">opacity</span><span class="p">:</span> <span class="mi">0</span> <span class="p">})),</span>
+
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.stats-icon'</span><span class="p">,</span> <span class="nx">stagger</span><span class="p">(</span><span class="s1">'100ms'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="nx">animate</span><span class="p">(</span><span class="s1">'200ms 250ms ease-out'</span><span class="p">,</span> <span class="nx">style</span><span class="p">(</span><span class="s1">'*'</span><span class="p">))</span>
+      <span class="p">])),</span>
+
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'.stats-text'</span><span class="p">,</span> <span class="nx">stagger</span><span class="p">(</span><span class="s1">'100ms'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="nx">animate</span><span class="p">(</span><span class="s1">'200ms 250ms ease-out'</span><span class="p">,</span> <span class="nx">style</span><span class="p">(</span><span class="s1">'*'</span><span class="p">))</span>
+      <span class="p">])),</span>
+    <span class="p">])</span>
+  <span class="p">])</span>
+<span class="p">]</span></code></pre></figure>
+
+<p>Easy, right? Now we can go ahead and use the <code class="highlighter-rouge">animateChild()</code> helper as mentioned earlier in our <code class="highlighter-rouge">profileAnimation</code>:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animations</span><span class="err">:</span> <span class="p">[</span>
+  <span class="nx">trigger</span><span class="p">(</span><span class="s1">'profileAnimation'</span><span class="p">,</span> <span class="p">[</span>
+    <span class="nx">transition</span><span class="p">(</span><span class="s1">':enter'</span><span class="p">,</span> <span class="nx">group</span><span class="p">([</span>
+      <span class="c1">// Initial Styles</span>
+      <span class="p">...</span>
+
+      <span class="c1">// Animation</span>
+      <span class="p">...</span>
+      <span class="nx">query</span><span class="p">(</span><span class="s1">'profile-stats'</span><span class="p">,</span> <span class="nx">animateChild</span><span class="p">())</span>
+    <span class="p">]))</span>
+  <span class="p">])</span>
+<span class="p">]</span></code></pre></figure>
+
+<p>That’s it. We fully re-implemented the profile animation using Angular’s built-in animation system. It’s very intuitive, easy to use and declarative.</p>
+
+<p>Here’s the demo. Try it out and fiddle with it!</p>
+
+<iframe style="height: 600px" src="https://embed.plnkr.co/kfJTtXT1V2AR01sFNfzw?show=preview&amp;deferRun&amp;sidebar" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<p>If you want to find out more about the new animation features in Angular 4.2+, check out <a href="https://www.yearofmoo.com/2017/06/new-wave-of-animation-features.html#using-animation-and-useanimation">this</a> excellent post by Matias Niemela.</p>
+
+<h2 id="special-thanks">Special Thanks</h2>
+
+<p>Kudos to <a href="https://twitter.com/yearofmoo">Matias Niemelä</a> for the amazing work on the Angular Animation system!</p>
+
+
+          
+
+
+
+
+        </div>
+
+        <div class="thtrm-subscriber">
+  <h3>Get updates on new articles and trainings.</h3>
+  <p>Join over 1400 other developers who get our content first.</p>
+  <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
+    <label for="mce-EMAIL"></label>
+    <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
+    <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
+    <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
+  </form>
+</div>
+
+
+
+        <div class="thtrm-social-links">
+            <!-- Sharingbutton Facebook -->
+            <a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=http%3A%2F%2Fblog.thoughtram.io/angular/2017/07/25/a-web-animations-deep-dive-with-angular.html" target="_blank" aria-label="Share on Facebook">
+              <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M18.768,7.465H14.5V5.56c0-0.896,0.594-1.105,1.012-1.105s2.988,0,2.988,0V0.513L14.171,0.5C10.244,0.5,9.5,3.438,9.5,5.32 v2.145h-3v4h3c0,5.212,0,12,0,12h5c0,0,0-6.85,0-12h3.851L18.768,7.465z"/>
+                    </g>
+                </svg>
+                </div>Share on Facebook</div>
+            </a>
+
+            <!-- Sharingbutton Twitter -->
+            <a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?text=A%20web%20animations%20deep%20dive%20with%20Angular&amp;url=http://blog.thoughtram.io/angular/2017/07/25/a-web-animations-deep-dive-with-angular.html" target="_blank" aria-label="Share on Twitter">
+              <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M23.444,4.834c-0.814,0.363-1.5,0.375-2.228,0.016c0.938-0.562,0.981-0.957,1.32-2.019c-0.878,0.521-1.851,0.9-2.886,1.104 C18.823,3.053,17.642,2.5,16.335,2.5c-2.51,0-4.544,2.036-4.544,4.544c0,0.356,0.04,0.703,0.117,1.036 C8.132,7.891,4.783,6.082,2.542,3.332C2.151,4.003,1.927,4.784,1.927,5.617c0,1.577,0.803,2.967,2.021,3.782 C3.203,9.375,2.503,9.171,1.891,8.831C1.89,8.85,1.89,8.868,1.89,8.888c0,2.202,1.566,4.038,3.646,4.456 c-0.666,0.181-1.368,0.209-2.053,0.079c0.579,1.804,2.257,3.118,4.245,3.155C5.783,18.102,3.372,18.737,1,18.459 C3.012,19.748,5.399,20.5,7.966,20.5c8.358,0,12.928-6.924,12.928-12.929c0-0.198-0.003-0.393-0.012-0.588 C21.769,6.343,22.835,5.746,23.444,4.834z"/>
+                    </g>
+                </svg>
+                </div>Share on Twitter</div>
+            </a>
+
+            <!-- Sharingbutton Google+ -->
+            <a class="resp-sharing-button__link" href="https://plus.google.com/share?url=http%3A%2F%2Fblog.thoughtram.io/angular/2017/07/25/a-web-animations-deep-dive-with-angular.html" target="_blank" aria-label="Share on Google+">
+              <div class="resp-sharing-button resp-sharing-button--google resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M11.366,12.928c-0.729-0.516-1.393-1.273-1.404-1.505c0-0.425,0.038-0.627,0.988-1.368 c1.229-0.962,1.906-2.228,1.906-3.564c0-1.212-0.37-2.289-1.001-3.044h0.488c0.102,0,0.2-0.033,0.282-0.091l1.364-0.989 c0.169-0.121,0.24-0.338,0.176-0.536C14.102,1.635,13.918,1.5,13.709,1.5H7.608c-0.667,0-1.345,0.118-2.011,0.347 c-2.225,0.766-3.778,2.66-3.778,4.605c0,2.755,2.134,4.845,4.987,4.91c-0.056,0.22-0.084,0.434-0.084,0.645 c0,0.425,0.108,0.827,0.33,1.216c-0.026,0-0.051,0-0.079,0c-2.72,0-5.175,1.334-6.107,3.32C0.623,17.06,0.5,17.582,0.5,18.098 c0,0.501,0.129,0.984,0.382,1.438c0.585,1.046,1.843,1.861,3.544,2.289c0.877,0.223,1.82,0.335,2.8,0.335 c0.88,0,1.718-0.114,2.494-0.338c2.419-0.702,3.981-2.482,3.981-4.538C13.701,15.312,13.068,14.132,11.366,12.928z M3.66,17.443 c0-1.435,1.823-2.693,3.899-2.693h0.057c0.451,0.005,0.892,0.072,1.309,0.2c0.142,0.098,0.28,0.192,0.412,0.282 c0.962,0.656,1.597,1.088,1.774,1.783c0.041,0.175,0.063,0.35,0.063,0.519c0,1.787-1.333,2.693-3.961,2.693 C5.221,20.225,3.66,19.002,3.66,17.443z M5.551,3.89c0.324-0.371,0.75-0.566,1.227-0.566l0.055,0 c1.349,0.041,2.639,1.543,2.876,3.349c0.133,1.013-0.092,1.964-0.601,2.544C8.782,9.589,8.363,9.783,7.866,9.783H7.865H7.844 c-1.321-0.04-2.639-1.6-2.875-3.405C4.836,5.37,5.049,4.462,5.551,3.89z"/>
+                        <polygon points="23.5,9.5 20.5,9.5 20.5,6.5 18.5,6.5 18.5,9.5 15.5,9.5 15.5,11.5 18.5,11.5 18.5,14.5 20.5,14.5 20.5,11.5  23.5,11.5   "/>
+                    </g>
+                </svg>
+                </div>Share on Google+</div>
+            </a>
+        </div>
+
+        <h3 class="thtrm-section-headline thtrm-section-headline--with-margin">Author</h3>
+        <div class="thtrm-article-author">
+          <span class="thtrm-article-author-avatar"><img src="/images/author_dominic.jpg" alt="Picture of Dominic Elm"></span>
+          <div class="thtrm-article-author-matter">
+            <h4 class="thtrm-article-author-name">Dominic Elm</h4>
+            <p class="thtrm-article-author-text">Dominic is a graduate in computer science and is passionate about many web technologies including Angular, Firebase, and ReactiveX. He has always been enthusiastic about teaching. In fact, Dominic devoted his thesis on the topic of enterprise gamification making the the process of sharing and learning within companies fun and enjoyable for everyone.</p>
+            <p>
+              <a class="thtrm-article-author-cta thtrm-article-author-cta-twitter" href="https://twitter.com/elmd_" title="Dominic Elm on Twitter">Twitter</a>
+              <a class="thtrm-article-author-cta" href="https://github.com/d3lm" title="Dominic Elm on GitHub">GitHub</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="thtrm-constraint">
+
+        
+        <h4 class="thtrm-section-headline thtrm-section-headline--with-big-margin thtrm-section-headline--centered">Related Posts</h4>
+        <ul class="thtrm-three-column-list thtrm-three-column-list--with-padding">
+        
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/22/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom themes with Angular Material</h3>
+                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/07/angular-master-class-redux-and-ngrx.html" title="Angular Master Class - Redux and ngrx">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/ngrx_slide_logo.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Angular Master Class - Redux and ngrx</h3>
+                <p>Today we're super excited to announce that we finished working on our new Angular Master Class courseware. Read on for...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/02/26/three-things-you-didnt-know-about-the-async-pipe.html" title="Three things you didn't know about the AsyncPipe">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/three-things-about-the-async-pipe.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Three things you didn't know about the AsyncPipe</h3>
+                <p>This article explains three lesser known features of the AsyncPipe that help us to write better async code.</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/02/20/using-zones-in-angular-for-better-performance.html" title="Using Zones in Angular for better performance">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/using-zones-in-angular-for-better-performance.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Using Zones in Angular for better performance</h3>
+                <p>In this article we'll take a look at how to use Zone APIs to improve our app's performance!</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/02/01/making-your-angular-app-fast.html" title="Making your Angular apps fast">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/angular-performance-tips.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Making your Angular apps fast</h3>
+                <p>In this article we discuss tips and tricks to make Angular blazingly fast!</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2016/12/26/angular-2-advance-testing-with-custom-matchers.html" title="Testing Angular Directives with Custom Matchers">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/testing-directives-with-custom-matchers2.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Testing Angular Directives with Custom Matchers</h3>
+                <p>Deliver terse, DRY, self-documenting unit tests with Angular using custom Jasmine Matchers and  Helper functions.</p>
+              </div>
+            </a>
+          </li>
+        
+        
+        </ul>
+        
+
+      
+
+      </div>
+    </main>
+    <footer role="contentinfo" class="thtrm-footer thtrm-footer--slim">
+  <div class="thtrm-footer-text">
+    <img class="thtrm-footer-logo" alt="thoughtram brain" src="/images/thoughtram-brain-white.png">
+    <p>This website was created in collaboration with <a href="http://twitter.com/timche_" title="Tim Cheung on Twitter"><strong>Tim Cheung</strong></a> and <a href="http://twitter.com/tim_hartmann_" title="Tim Hartmann on Twitter"><strong>Tim Hartmann</strong></a>.</p>
+    <p ><a href="http://thoughtram.io/code-of-conduct.html" title="Code of Conduct">Code of Conduct</a> &bullet; <a href="http://thoughtram.io/imprint.html" title="Legal Notice">Legal notice</a></p>
+    <p class="thtrm-footer-bottom">&copy; 2014-2017 thoughtram GmbH</p>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51360648-2', 'auto');
+ga('send', 'pageview');
+
+var form = document.getElementById('search-form');
+var eventCta = document.getElementById('event-cta');
+
+if (eventCta) {
+
+  eventCta.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    setTimeout(clickLink, 1000);
+
+    function clickLink() {
+      window.location.replace(eventCta.getAttribute('href'));
+    }
+
+    ga('send', 'event', {
+      eventCategory: 'Event Link',
+      eventAction: 'click',
+      eventLabel: eventCta.getAttribute('title'),
+      hitCallback: clickLink
+    });
+  });
+}
+
+if (form) {
+
+  var searchTerm = document.getElementById('search-term');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var formSubmitted = false;
+
+    setTimeout(submitForm, 1000);
+
+    function submitForm() {
+      if (!formSubmitted) {
+        formSubmitted = true;
+        form.submit();
+      }
+    }
+
+    ga('send', 'event', {
+      eventCategory: 'Search Form',
+      eventAction: 'submit',
+      eventLabel: searchTerm.value,
+      hitCallback: submitForm
+    });
+  });
+}
+</script>
+
+
+
+    <script src="/scripts/linkjuice/dist/linkjuice.js"></script>
+    <script src="/scripts/main.js"></script>
+  </body>
+</html>

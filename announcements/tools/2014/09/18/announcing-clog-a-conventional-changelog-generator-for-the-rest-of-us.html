@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">clog - A conventional changelog generator for the rest of us</h2>
-            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Sep 18, 2014<br>4 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Sep 18, 2014<br>5 minute read</span>
 
           </div>
         </hgroup>
@@ -96,18 +96,18 @@
 
 <p>Let’s take a look at such a commit message.</p>
 
-<div class="highlight"><pre><code class="language-sh" data-lang="sh">feat<span class="o">(</span>ngInclude<span class="o">)</span>: add template url parameter to events
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">feat<span class="o">(</span>ngInclude<span class="o">)</span>: add template url parameter to events
 
 The <span class="sb">`</span>src<span class="sb">`</span> <span class="o">(</span>i.e. the url of the template to load<span class="o">)</span> is now provided to the
 <span class="sb">`</span><span class="nv">$includeContentRequested</span><span class="sb">`</span>, <span class="sb">`</span><span class="nv">$includeContentLoaded</span><span class="sb">`</span> and <span class="sb">`</span><span class="nv">$includeContentError</span><span class="sb">`</span>
 events.
 
 Closes <span class="c">#8453</span>
-Closes <span class="c">#8454</span></code></pre></div>
+Closes <span class="c">#8454</span></code></pre></figure>
 
 <p>If you look closely, you might notice a pattern behind this commit message. Let’s annotate it to make things more clear.</p>
 
-<div class="highlight"><pre><code class="language-sh" data-lang="sh">component        commit title
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">                      component        commit title
         commit <span class="nb">type</span>       /                /      
                 <span class="se">\ </span>       |                |
                  feat<span class="o">(</span>ngInclude<span class="o">)</span>: add template url parameter to events
@@ -117,9 +117,9 @@ Closes <span class="c">#8454</span></code></pre></div>
                  events.
 
  referenced  -&gt;  Closes #8453
- issues          Closes #8454</span></code></pre></div>
+ issues          Closes #8454</span></code></pre></figure>
 
-<p>Notice how this commit message preserves valuable meta data among the plain message. Namely the <code>commit type</code> that can either be <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code> or <code>chore</code> to indicate the <em>type</em> of the change. What follows is the name of the <em>component</em> that was changed, wrapped in parenthesis. It also contains a short title and an optional body that must have a preceding blank line.</p>
+<p>Notice how this commit message preserves valuable meta data among the plain message. Namely the <code class="highlighter-rouge">commit type</code> that can either be <code class="highlighter-rouge">feat</code>, <code class="highlighter-rouge">fix</code>, <code class="highlighter-rouge">docs</code>, <code class="highlighter-rouge">style</code>, <code class="highlighter-rouge">refactor</code>, <code class="highlighter-rouge">test</code> or <code class="highlighter-rouge">chore</code> to indicate the <em>type</em> of the change. What follows is the name of the <em>component</em> that was changed, wrapped in parenthesis. It also contains a short title and an optional body that must have a preceding blank line.</p>
 
 <p>References to related issues may follow after another blank line.</p>
 
@@ -131,23 +131,23 @@ Closes <span class="c">#8454</span></code></pre></div>
 
 <h2 id="hello-clog">Hello clog!</h2>
 
-<p>We want changelog generation to be usable for everyone with the most minimal footprint possible. We wanted something that is aligned with the UNIX philosophy of having a small command line tool just like <code>cp</code> or <code>ls</code>. So what should we do? Write a command line tool in C? Well, almost! We’ve written a command line tool called <a href="https://github.com/thoughtram/clog"><code>clog</code></a> in <a href="http://www.rust-lang.org/">Rust</a>. Rust is a new language by Mozilla that enables you to write low level code in a high level language. Clog is more or less a straight port of the Node.js based <a href="https://github.com/ajoslin/conventional-changelog">generator</a> by <a href="https://twitter.com/andrewtjoslin">Andy Joslin</a>.</p>
+<p>We want changelog generation to be usable for everyone with the most minimal footprint possible. We wanted something that is aligned with the UNIX philosophy of having a small command line tool just like <code class="highlighter-rouge">cp</code> or <code class="highlighter-rouge">ls</code>. So what should we do? Write a command line tool in C? Well, almost! We’ve written a command line tool called <a href="https://github.com/thoughtram/clog"><code class="highlighter-rouge">clog</code></a> in <a href="http://www.rust-lang.org/">Rust</a>. Rust is a new language by Mozilla that enables you to write low level code in a high level language. Clog is more or less a straight port of the Node.js based <a href="https://github.com/ajoslin/conventional-changelog">generator</a> by <a href="https://twitter.com/andrewtjoslin">Andy Joslin</a>.</p>
 
-<p>clogs usage is quite simple. It follows the POSIX standard. Just invoke it with <code>clog --help</code> and you’ll get this output.</p>
+<p>clogs usage is quite simple. It follows the POSIX standard. Just invoke it with <code class="highlighter-rouge">clog --help</code> and you’ll get this output.</p>
 
-<div class="highlight"><pre><code class="language-sh" data-lang="sh">Usage:
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">Usage:
   clog <span class="o">[</span>--repository<span class="o">=</span>&lt;link&gt; --setversion<span class="o">=</span>&lt;version&gt; --subtitle<span class="o">=</span>&lt;subtitle&gt; 
-        --from<span class="o">=</span>&lt;from&gt; --to<span class="o">=</span>&lt;to&gt; --from-latest-tag]</code></pre></div>
+        --from<span class="o">=</span>&lt;from&gt; --to<span class="o">=</span>&lt;to&gt; --from-latest-tag]</code></pre></figure>
 
-<p>You can invoke <code>clog</code> without any parameter to generate a nice changelog for the entire history of your project. Provide the <code>--repository</code> parameter to set the URL of the github repository to make the changelog include links to the commits on github.</p>
+<p>You can invoke <code class="highlighter-rouge">clog</code> without any parameter to generate a nice changelog for the entire history of your project. Provide the <code class="highlighter-rouge">--repository</code> parameter to set the URL of the github repository to make the changelog include links to the commits on github.</p>
 
-<p>Usually you don’t want to regenerate the entire changelog but instead prepend only the changelog for every commit that happend between now and the previous version. In order to do that you can just run clog with the <code>--from-latest-tag</code> parameter. If you know that you want to generate the changelog for a specific range of commits you can just provide the <code>--from</code> and <code>--to</code> parameters (e.g. <code>--from=c667e1e</code> <code>--to=c7a1f1c</code>).</p>
+<p>Usually you don’t want to regenerate the entire changelog but instead prepend only the changelog for every commit that happend between now and the previous version. In order to do that you can just run clog with the <code class="highlighter-rouge">--from-latest-tag</code> parameter. If you know that you want to generate the changelog for a specific range of commits you can just provide the <code class="highlighter-rouge">--from</code> and <code class="highlighter-rouge">--to</code> parameters (e.g. <code class="highlighter-rouge">--from=c667e1e</code> <code class="highlighter-rouge">--to=c7a1f1c</code>).</p>
 
-<p>In order to also include a nice header you can provide a version and a subtitle as well (e.g. <code>--setversion=0.11.0</code> <code>--subtitle=lame-duck</code>).</p>
+<p>In order to also include a nice header you can provide a version and a subtitle as well (e.g. <code class="highlighter-rouge">--setversion=0.11.0</code> <code class="highlighter-rouge">--subtitle=lame-duck</code>).</p>
 
 <p>Putting it all together, here is how clog generated clogs latest changelog, it’s clogception!</p>
 
-<p><code>clog --repository=https://github.com/thoughtram/clog --from-latest-tag --setversion=0.2.0</code></p>
+<p><code class="highlighter-rouge">clog --repository=https://github.com/thoughtram/clog --from-latest-tag --setversion=0.2.0</code></p>
 
 <p>clog is a work in progress and there are some things missing (like exposing a C interface). That said, it’s ready to be used if you don’t mind the <a href="https://github.com/thoughtram/clog/issues">missing features</a>.</p>
 
@@ -239,7 +239,7 @@ Closes <span class="c">#8454</span></code></pre></div>
         
           
           <li>
-            <a class="thtrm-article-card" href="/rust/2015/07/29/a-web-app-with-nickel-from-first-line-to-heroku-deployment.html" title="A web app with Nickel: From first line to Heroku deployment">
+            <a class="thtrm-article-card" href="/rust/2015/07/28/a-web-app-with-nickel-from-first-line-to-heroku-deployment.html" title="A web app with Nickel: From first line to Heroku deployment">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/fallback.jpeg);"></div>
               <div class="thtrm-article-card-content ">
                 <h3>A web app with Nickel: From first line to Heroku deployment</h3>
@@ -250,7 +250,7 @@ Closes <span class="c">#8454</span></code></pre></div>
         
           
           <li>
-            <a class="thtrm-article-card" href="/rust/2015/06/17/anouncing-hanovers-second-rust-meetup.html" title="Anouncing Hanover's second Rust meetup">
+            <a class="thtrm-article-card" href="/rust/2015/06/16/anouncing-hanovers-second-rust-meetup.html" title="Anouncing Hanover's second Rust meetup">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/fallback.jpeg);"></div>
               <div class="thtrm-article-card-content ">
                 <h3>Anouncing Hanover's second Rust meetup</h3>
@@ -261,7 +261,7 @@ Closes <span class="c">#8454</span></code></pre></div>
         
           
           <li>
-            <a class="thtrm-article-card" href="/rust/2015/05/11/rusts-ownership-model-for-javascript-developers.html" title="Rust's Ownership model for JavaScript developers">
+            <a class="thtrm-article-card" href="/rust/2015/05/10/rusts-ownership-model-for-javascript-developers.html" title="Rust's Ownership model for JavaScript developers">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/fallback.jpeg);"></div>
               <div class="thtrm-article-card-content ">
                 <h3>Rust's Ownership model for JavaScript developers</h3>
@@ -283,7 +283,7 @@ Closes <span class="c">#8454</span></code></pre></div>
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2017/06/23/announcing-angular-master-class-in-berlin.html" title="Announcing Angular Master Class in Berlin">
+            <a class="thtrm-article-card" href="/announcements/2017/06/22/announcing-angular-master-class-in-berlin.html" title="Announcing Angular Master Class in Berlin">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/announcing_amc_berlin.jpg);"></div>
               <div class="thtrm-article-card-content ">
                 <h3>Announcing Angular Master Class in Berlin</h3>
@@ -294,7 +294,7 @@ Closes <span class="c">#8454</span></code></pre></div>
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2017/06/23/announcing-angular-master-class-in-houston.html" title="Announcing Angular Master Class in Houston">
+            <a class="thtrm-article-card" href="/announcements/2017/06/22/announcing-angular-master-class-in-houston.html" title="Announcing Angular Master Class in Houston">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/announcing_amc_houston.jpg);"></div>
               <div class="thtrm-article-card-content ">
                 <h3>Announcing Angular Master Class in Houston</h3>
