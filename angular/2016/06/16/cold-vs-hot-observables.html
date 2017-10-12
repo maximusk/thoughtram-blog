@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Cold vs Hot Observables</h2>
-            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Jun 16, 2016, last updated on Dec 18, 2016<br>17 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Jun 16, 2016, last updated on Dec 18, 2016<br>18 minute read</span>
 
           </div>
         </hgroup>
@@ -84,9 +84,9 @@
         <div class="thtrm-article">
           <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
   <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class in Berlin</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-berlin.eventbrite.com?aff=blogAd" title="Angular Master Class in Berlin" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+  <h3 class="thtrm-section-headline">Need a private training?</h3>
+  <p class="thtrm-section-text">Get customized training for your corporation</p>
+  <a href="mailto:hello@thoughtram.io" title="Request Training Quote" id="event-cta" class="thtrm-layout-divider-cta">Request quote <strong>&rarr;</strong></a>
 </section>
 
 
@@ -303,8 +303,8 @@
   <span class="p">...</span>
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
-  <span class="nx">constructor</span> <span class="p">(</span><span class="nx">http</span><span class="err">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
+  <span class="na">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nx">constructor</span> <span class="p">(</span><span class="na">http</span><span class="p">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
                         <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">);</span>
   <span class="p">}</span>
@@ -360,9 +360,9 @@
   <span class="p">...</span>
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="na">contacts</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nl">contacts2</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;&gt;</span><span class="p">;</span>
-  <span class="nx">constructor</span> <span class="p">(</span><span class="nx">http</span><span class="err">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">constructor</span> <span class="p">(</span><span class="na">http</span><span class="p">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
                         <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">)</span>
                         <span class="p">.</span><span class="nx">publish</span><span class="p">()</span>
@@ -389,6 +389,16 @@
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'contacts.json'</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">items</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></div>
+
+<p><strong>Note: When using multiple async pipes on streams with default values, the <code>.share()</code> operator might cause problems:</strong></p>
+
+<p>The <code>share()</code> will publish the first value of the stream on the first subscription. The first async pipe will trigger that subscription and get that initial value. The second async pipe however will subscribe after that value has already been emitted and therefore miss that value.</p>
+
+<p>The solution for this problem is the <code>.shareReplay(1)</code> operator, which will keep track of the previous value of the stream. That way all the async pipes will get the last value. Just like the <code>share()</code> operator is a shortcut for <code>publish().refCount()</code>, the <code>shareReplay(1)</code> operator is a shortcut for <code>publishReplay(1).refCount()</code>. We can see the difference between <code>share()</code> and <code>shareReplay(1)</code> in <a href="http://plnkr.co/edit/q9xfvjzHauRBsA8o4nob?p=preview">the following plunk</a>.
+We should always pass <code>1</code> as the parameter value to the shareReplay function. Otherwise RxJS will keep track of all the values of that observable, when we only need the last one.</p>
+
+<p>It’s important to note that this problem will only occur when using streams with initial values. 
+The share operator would not pose problems with regular http requests for instance.</p>
 
 <p>Whew! We came a long way. We hope this gives you a clearer picture of what the term hot vs cold actually means when it comes to Observables.</p>
 
@@ -487,17 +497,6 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/rxjs/2017/08/24/taming-snakes-with-reactive-streams.html" title="Taming snakes with reactive streams">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/reactive_snake.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Taming snakes with reactive streams</h3>
-                <p>Reactive Programming is revolutionary but it's not always straightforward and requires a fundamental shift in mindset. In this post, we'll...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/rx/2016/08/01/exploring-rx-operators-flatmap.html" title="Exploring Rx Operators: flatMap">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rx-flatmap.jpeg);"></div>
               <div class="thtrm-article-card-content ">
@@ -547,6 +546,17 @@
               <div class="thtrm-article-card-content ">
                 <h3>Taking advantage of Observables in Angular 2 - Part 2</h3>
                 <p>This is a follow up article that demonstrates how Observables can influence our API design.</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html" title="Taking advantage of Observables in Angular">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/taking-advantage-of-observables.png);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Taking advantage of Observables in Angular</h3>
+                <p>Since version 2.x Angular favors Observables over Promises when it comes to async. In this article we explore some practical...</p>
               </div>
             </a>
           </li>

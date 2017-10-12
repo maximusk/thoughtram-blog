@@ -84,9 +84,9 @@
         <div class="thtrm-article">
           <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
   <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class in Berlin</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-berlin.eventbrite.com?aff=blogAd" title="Angular Master Class in Berlin" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+  <h3 class="thtrm-section-headline">Need a private training?</h3>
+  <p class="thtrm-section-text">Get customized training for your corporation</p>
+  <a href="mailto:hello@thoughtram.io" title="Request Training Quote" id="event-cta" class="thtrm-layout-divider-cta">Request quote <strong>&rarr;</strong></a>
 </section>
 
 
@@ -192,9 +192,9 @@ after the request that carries the results for <em>car</em>. This may happen bec
 </span>  <span class="err">`</span>
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">items</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="na">items</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="err">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">)</span>
@@ -314,10 +314,10 @@ The good news is, now that <code>search</code> returns an <code>Observable&lt;Ar
 <span class="p">})</span>
 <span class="kr">export</span> <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
 
-  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="err">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
                  <span class="p">.</span><span class="nx">debounceTime</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
                  <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
@@ -435,17 +435,6 @@ The good news is, now that <code>search</code> returns an <code>Observable&lt;Ar
         
           
           <li>
-            <a class="thtrm-article-card" href="/rxjs/2017/08/24/taming-snakes-with-reactive-streams.html" title="Taming snakes with reactive streams">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/reactive_snake.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Taming snakes with reactive streams</h3>
-                <p>Reactive Programming is revolutionary but it's not always straightforward and requires a fundamental shift in mindset. In this post, we'll...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/rx/2016/08/01/exploring-rx-operators-flatmap.html" title="Exploring Rx Operators: flatMap">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rx-flatmap.jpeg);"></div>
               <div class="thtrm-article-card-content ">
@@ -495,6 +484,17 @@ The good news is, now that <code>search</code> returns an <code>Observable&lt;Ar
               <div class="thtrm-article-card-content ">
                 <h3>Angular Master Class - Redux and ngrx</h3>
                 <p>Today we're super excited to announce that we finished working on our new Angular Master Class courseware. Read on for...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/02/27/three-things-you-didnt-know-about-the-async-pipe.html" title="Three things you didn't know about the AsyncPipe">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/three-things-about-the-async-pipe.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Three things you didn't know about the AsyncPipe</h3>
+                <p>This article explains three lesser known features of the AsyncPipe that help us to write better async code.</p>
               </div>
             </a>
           </li>
