@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Two-way data binding was one of the main selling points of Angular. Since version 2.x, we can build directives that implement two-way data binding. This article explains how!">
+    <meta name="description" content="Two-way data binding was one of the main selling points of AngularJS. Since Angular, we can build directives that implement two-way data binding. This article explains how!">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="thoughtram">
     <title>Two-way Data Binding in Angular by thoughtram</title>
@@ -32,7 +32,7 @@
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="article">
     <meta property="og:title" content="Two-way Data Binding in Angular">
-    <meta property="og:description" content="Two-way data binding was one of the main selling points of Angular. Since version 2.x, we can build directives that implement two-way data binding. This article explains how!">
+    <meta property="og:description" content="Two-way data binding was one of the main selling points of AngularJS. Since Angular, we can build directives that implement two-way data binding. This article explains how!">
     <meta property="og:url" content="http://blog.thoughtram.io/angular/2016/10/13/two-way-data-binding-in-angular-2.html">
     <meta property="og:site_name" content="Articles by thoughtram">
     <meta property="og:image" content="http://blog.thoughtram.io/images/banner/two-way-data-binding-in-angular-2.jpg">
@@ -94,7 +94,7 @@
           <p style="background-color: lightgoldenrodyellow; border: solid 2px #f9dead; padding: 1em; text-align: center; border-radius: 0.3em;">Contents are based on Angular version <strong>>= 2.x</strong> unless explicitly stated differently.</p>
           
 
-          <p>If there was one feature in Angular that made us go “Wow”, then it was probably its two-way data binding system. Changes in the application state have been automagically reflected into the view and vise-versa. In fact, we could build our own directives with two-way data bound scope properties, by setting a configuration value.</p>
+          <p>If there was one feature in AngularJS that made us go “Wow”, then it was probably its two-way data binding system. Changes in the application state have been automagically reflected into the view and vise-versa. In fact, we could build our own directives with two-way data bound scope properties, by setting a configuration value.</p>
 
 <p><strong>Angular &gt;= 2.x doesn’t come with such a (built-in) two-way data binding anymore.</strong> However, this doesn’t mean we can’t create directives that support two-way data binding. In this article we’re going to explore how two-way data binding in Angular &gt;= 2.x is implemented and how we can implement it in our own directives.</p>
 
@@ -111,7 +111,7 @@
 
 <h2 id="two-way-data-binding-in-a-nutshell">Two-way data binding in a nutshell</h2>
 
-<p>There’s one directive in Angular &gt;= 2.x that implements two-way data binding: <strong>ngModel</strong>. On the surface, it looks and behaves as magical as we’re used to (from Angular 1). But how does it really work? It’s not that hard really. In fact, it turns out that two-way data binding really just boils down to event binding and property binding.</p>
+<p>There’s one directive in Angular &gt;= 2.x that implements two-way data binding: <strong>ngModel</strong>. On the surface, it looks and behaves as magical as we’re used to (from AngularJS). But how does it really work? It’s not that hard really. In fact, it turns out that two-way data binding really just boils down to event binding and property binding.</p>
 
 <p>In order to understand what that means, let’s take a look at this code snippet here:</p>
 
@@ -119,7 +119,7 @@
 
 <span class="nt">&lt;p&gt;</span>Hello {{username}}!<span class="nt">&lt;/p&gt;</span></code></pre></div>
 
-<p>Right, this is that one demo that blew our minds back in 2009, implemented in Angular 2.x. When typing into the input, the input’s value is written into the <code>username</code> model and then reflected back into the view, resulting in a nice greeting.</p>
+<p>Right, this is that one demo that blew our minds back in 2009, implemented in Angular &gt;= 2.x. When typing into the input, the input’s value is written into the <code>username</code> model and then reflected back into the view, resulting in a nice greeting.</p>
 
 <p>How does this all work? Well, as mentioned earlier, since version 2.x, two-way data binding in Angular really just boils down to property binding and event binding. There is no such thing as two-way data binding. Without the <code>ngModel</code> directive, we could easily implement two-way data binding just like this:</p>
 
@@ -166,7 +166,7 @@
   <li>Make sure the event binding takes care of property extraction (if needed)</li>
 </ul>
 
-<p>As you can see, there’s a bit more work involved to make two-way data binding work compared to Angular 1. However, we should also always consider if a custom two-way data binding implementation is really needed, or if we can just take advantage of <code>ngModel</code>. This, for example is the case when building <a href="/angular/2016/07/27/custom-form-controls-in-angular-2.html">custom form controls</a>.</p>
+<p>As you can see, there’s a bit more work involved to make two-way data binding work compared to AngularJS. However, we should also always consider if a custom two-way data binding implementation is really needed, or if we can just take advantage of <code>ngModel</code>. This, for example is the case when building <a href="/angular/2016/07/27/custom-form-controls-in-angular-2.html">custom form controls</a>.</p>
 
 <p>Let’s say we create a custom counter component and ignore of a second that this would rather be a custom form control.</p>
 

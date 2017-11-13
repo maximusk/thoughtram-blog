@@ -508,7 +508,7 @@ export class AppComponent {}</code></pre></div>
 <p>In fact, we can take it one level further and create a meta theme mix-in that executes all theme mix-ins for our custom components, the same way Angular Material does it with <code>angular-material-theme</code>. To do that we create a new mix-in <code>custom-theme</code>, which would look like this:</p>
 
 <div class="highlight"><pre><code class="language-scss" data-lang="scss"><span class="k">@mixin</span> <span class="nf">custom-theme</span><span class="p">(</span><span class="nv">$theme</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">@include</span> <span class="nd">ml-file-tree-theme</span><span class="p">(</span><span class="n">theme</span><span class="p">);</span>
+  <span class="k">@include</span> <span class="nd">ml-file-tree-theme</span><span class="p">(</span><span class="nv">$theme</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="k">@include</span> <span class="nd">custom-theme</span><span class="p">(</span><span class="nv">$custom-theme</span><span class="p">);</span></code></pre></div>

@@ -202,22 +202,22 @@ class AppComponent {
 
 <span class="p">}</span>
 
-<span class="kd">function</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">alert</span><span class="p">(</span><span class="nx">defaultMove</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">let</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
-<span class="kd">let</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
 <span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
 
 <p>This alerts <code>moving</code> just fine because what happens behind the scenes is that the JavaScript interpreter restructures the code to this.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
 
-<span class="kd">function</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">alert</span><span class="p">(</span><span class="nx">defaultMove</span><span class="p">);</span>
   <span class="p">}</span>
@@ -238,26 +238,26 @@ class AppComponent {
 
 <span class="p">}</span>
 
-<span class="kd">let</span> <span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">alert</span><span class="p">(</span><span class="nx">defaultMove</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">let</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
-<span class="kd">let</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
 <span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
 
 <p>Again, this will be hoisted but now it becomes this.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
 
 <span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
-<span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">alert</span><span class="p">(</span><span class="nx">defaultMove</span><span class="p">);</span>
   <span class="p">}</span>
@@ -270,31 +270,31 @@ class AppComponent {
 
 <p>At the point where <code>class Dog extends Animal</code> is interpreted <code>Animal</code> is actually undefined and we get an error. We can easily fix that by moving the <code>Animal</code> expression before the declaration of <code>Dog</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">alert</span><span class="p">(</span><span class="nx">defaultMove</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span><span class="p">{</span>
+<span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
-<span class="kd">let</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
-<span class="kd">let</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
 <span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
 
 <p>This works just fine again. Now think about what <em>would</em> actually happen if the JavaScript interpreter hoisted <code>Dog</code> just like a regular ES5 constructor function? We would end up with this code:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
 
 <span class="c1">// Dog is now hoisted above `Animal = function Anim...`</span>
 <span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span><span class="p">{</span>
 
 <span class="p">}</span>
 
-<span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">alert</span><span class="p">(</span><span class="nx">defaultMove</span><span class="p">);</span>
   <span class="p">}</span>
