@@ -118,7 +118,7 @@
 
 &lt;p&gt;Let’s reward ourselves first and take a look at what we’ve already created:&lt;/p&gt;
 
-&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://matdialog-demo.stackblitz.io/&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://stackblitz.com/edit/matdialog-demo?embed=1&amp;amp;file=main.ts&amp;amp;view=preview&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h2 id=&quot;configuring-dialogs&quot;&gt;Configuring dialogs&lt;/h2&gt;
 
@@ -166,7 +166,7 @@
 
 &lt;p&gt;Okay, this already looks much better. Next we take care of accessing data returned by a dialog.&lt;/p&gt;
 
-&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://matdialog-directives-demo.stackblitz.io/&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://stackblitz.com/edit/matdialog-directives-demo?embed=1&amp;amp;file=main.ts&amp;amp;view=preview&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h2 id=&quot;returning-data-from-dialogs&quot;&gt;Returning data from dialogs&lt;/h2&gt;
 
@@ -330,7 +330,7 @@
 
 &lt;p&gt;Again, this is a trivial file tree implementation. In a real-world app we probably want to take care of having nested directories as well, which changes the level of complexity dramatically here. However, since this article is really all about how easy it is to create dialogs using Angular Material, we stick with what we have.&lt;/p&gt;
 
-&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://matdialog-sharing-data-demo.stackblitz.io/&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://stackblitz.com/edit/matdialog-sharing-data-demo?embed=1&amp;amp;file=main.ts&amp;amp;view=preview&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h2 id=&quot;where-to-go-from-here&quot;&gt;Where to go from here&lt;/h2&gt;
 
