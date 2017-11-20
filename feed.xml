@@ -340,7 +340,7 @@
 
 &lt;p&gt;&lt;strong&gt;In our next article we’ll explore how to create custom overlays and overlay services using the Angular Component Development Kit!&lt;/strong&gt;&lt;/p&gt;
 </description>
-        <pubDate>Mon, 13 Nov 2017 01:00:00 +0100</pubDate>
+        <pubDate>Mon, 13 Nov 2017 00:00:00 +0000</pubDate>
         <link>http://blog.thoughtram.io/angular/2017/11/13/easy-dialogs-with-angular-material.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/angular/2017/11/13/easy-dialogs-with-angular-material.html</guid>
       </item>
@@ -773,7 +773,7 @@ values from both &lt;code&gt;direction$&lt;/code&gt; and &lt;code&gt;snakeLength
 
 &lt;p&gt;Special thanks to &lt;a href=&quot;https://twitter.com/MrJamesHenry&quot;&gt;James Henry&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/brechtbilliet&quot;&gt;Brecht Billiet&lt;/a&gt; for their help with the code.&lt;/p&gt;
 </description>
-        <pubDate>Thu, 24 Aug 2017 02:00:00 +0200</pubDate>
+        <pubDate>Thu, 24 Aug 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/rxjs/2017/08/24/taming-snakes-with-reactive-streams.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/rxjs/2017/08/24/taming-snakes-with-reactive-streams.html</guid>
       </item>
@@ -827,7 +827,7 @@ We loved the rooftop terrace a lot, every morning we’ve had breakfast there, f
 &lt;p&gt;We were happy to spend this time together, to get to know each other a bit better, to explore the area and to work on current topics and collaborate on them - all in all: to share some special memories! It was a great mixture of fun and of course, good food, hard work and great solutions, doing sports like jogging and trying to follow these pretty hard talks about machine learning topics. Definitely a must for the next year - hopefully with all team members! :)&lt;/p&gt;
 
 </description>
-        <pubDate>Thu, 17 Aug 2017 02:00:00 +0200</pubDate>
+        <pubDate>Thu, 17 Aug 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/company/2017/08/17/company-offsite-2017.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/company/2017/08/17/company-offsite-2017.html</guid>
       </item>
@@ -1341,7 +1341,7 @@ We loved the rooftop terrace a lot, every morning we’ve had breakfast there, f
 
 &lt;p&gt;Kudos to &lt;a href=&quot;https://twitter.com/yearofmoo&quot;&gt;Matias Niemelä&lt;/a&gt; for the amazing work on the Angular Animation system!&lt;/p&gt;
 </description>
-        <pubDate>Wed, 26 Jul 2017 02:00:00 +0200</pubDate>
+        <pubDate>Wed, 26 Jul 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/angular/2017/07/26/a-web-animations-deep-dive-with-angular.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/angular/2017/07/26/a-web-animations-deep-dive-with-angular.html</guid>
       </item>
@@ -1408,7 +1408,7 @@ please contact us for rates, details, and scheduling: &lt;a href=&quot;mailto:he
 
 &lt;p&gt;See you in Houston!&lt;/p&gt;
 </description>
-        <pubDate>Fri, 23 Jun 2017 02:00:00 +0200</pubDate>
+        <pubDate>Fri, 23 Jun 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-houston.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-houston.html</guid>
       </item>
@@ -1453,7 +1453,7 @@ please contact us for rates, details, and scheduling: &lt;a href=&quot;mailto:he
 &lt;p&gt;See you in Berlin!&lt;/p&gt;
 
 </description>
-        <pubDate>Fri, 23 Jun 2017 02:00:00 +0200</pubDate>
+        <pubDate>Fri, 23 Jun 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-berlin.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-berlin.html</guid>
       </item>
@@ -1514,7 +1514,7 @@ please contact us for rates, details, and scheduling: &lt;a href=&quot;mailto:he
 &lt;p&gt;See you in Denmark!&lt;/p&gt;
 
 </description>
-        <pubDate>Tue, 30 May 2017 02:00:00 +0200</pubDate>
+        <pubDate>Tue, 30 May 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/announcements/2017/05/30/angular-master-class-community-meetup.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2017/05/30/angular-master-class-community-meetup.html</guid>
       </item>
@@ -1964,7 +1964,7 @@ export class AppComponent {}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Angular Material’s theming capabilities are very powerful and as of right now, it seems to be the only UI component library that gets it fairly right. Color palettes can be easily changed and reused and custom components can be enabled to consume a configured theme to match the look and feel of the entire application.&lt;/p&gt;
 </description>
-        <pubDate>Tue, 23 May 2017 02:00:00 +0200</pubDate>
+        <pubDate>Tue, 23 May 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/angular/2017/05/23/custom-themes-with-angular-material.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/angular/2017/05/23/custom-themes-with-angular-material.html</guid>
       </item>
@@ -2022,7 +2022,7 @@ export class AppComponent {}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Make sure to follow us on &lt;a href=&quot;http://twitter.com/thoughtram&quot;&gt;Twitter&lt;/a&gt; and &lt;a href=&quot;http://facebook.com/thoughtram&quot;&gt;Facebook&lt;/a&gt; or subscribe to our blog, to get notified when we announce it in the next couple of weeks!&lt;/p&gt;
 </description>
-        <pubDate>Mon, 08 May 2017 02:00:00 +0200</pubDate>
+        <pubDate>Mon, 08 May 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/angular/2017/05/08/angular-master-class-redux-and-ngrx.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/angular/2017/05/08/angular-master-class-redux-and-ngrx.html</guid>
       </item>
@@ -2067,7 +2067,7 @@ export class AppComponent {}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;See you in Denmark!&lt;/p&gt;
 
 </description>
-        <pubDate>Fri, 05 May 2017 02:00:00 +0200</pubDate>
+        <pubDate>Fri, 05 May 2017 01:00:00 +0100</pubDate>
         <link>http://blog.thoughtram.io/announcements/2017/05/05/announcing-angular-master-class-in-denmark.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2017/05/05/announcing-angular-master-class-in-denmark.html</guid>
       </item>
