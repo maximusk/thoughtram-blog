@@ -135,7 +135,7 @@
 
 <p><img src="/images/custom_overlays_architecture.png" width="100%" alt="application architecture" /></p>
 
-<p>As we can see, we have two components, one service and a class that represents a remote control to an opened overlay. The <code>AppComponent</code> is the root (or entry point) of our application. This component contains a toolbar and the list of files that we can preview. In addition, it has access to a <code>FilePreviewOverlayService</code> which provides us with the core logic for opnening an overlay. At the same time it’s an abstraction for some “heavy” lifting that should be implemneted in a resuable manner. Don’t be scared, it’s not going to be super heavy and we’ll break it down into comprehensible chunks. Last but not least, there’s a <code>FilePreviewOverlayRef</code> which, as mentioned, is a <em>handle</em> used to control (e.g. close) a particular overlay.</p>
+<p>As we can see, we have two components, one service and a class that represents a remote control to an opened overlay. The <code>AppComponent</code> is the root (or entry point) of our application. This component contains a toolbar and the list of files that we can preview. In addition, it has access to a <code>FilePreviewOverlayService</code> which provides us with the core logic for opening an overlay. At the same time it’s an abstraction for some “heavy” lifting that should be implemented in a resuable manner. Don’t be scared, it’s not going to be super heavy and we’ll break it down into comprehensible chunks. Last but not least, there’s a <code>FilePreviewOverlayRef</code> which, as mentioned, is a <em>handle</em> used to control (e.g. close) a particular overlay.</p>
 
 <p>For the overlay we choose to render a component, so we can attach some logic and also add animations to our overlay to engage our users and make them happy. We call this component <code>FilePreviewOverlayComponent</code>.</p>
 
@@ -151,7 +151,7 @@
 
 <p>From the <code>MatDialog</code> we know that when we open an overlay we must specify a component type that is then created dynamically at runtime. This means it is not created by using the component tags inside an HTML template. Also, we know that whenever a component is created at runtime, we <strong>must add it to our application module’s <code>entryComponents</code></strong>.</p>
 
-<p>Let’s do that and add the <code>FilePreviewOverlayComponent</code> to the arry of <code>entryComponents</code>. In addition, we need to add the <code>OverlayModule</code> to the <code>imports</code> list of the root <code>AppModule</code>:</p>
+<p>Let’s do that and add the <code>FilePreviewOverlayComponent</code> to the array of <code>entryComponents</code>. In addition, we need to add the <code>OverlayModule</code> to the <code>imports</code> list of the root <code>AppModule</code>:</p>
 
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">OverlayModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/cdk/overlay'</span><span class="p">;</span>
 <span class="p">...</span>
@@ -520,7 +520,19 @@
   <span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 
-<p>Finally with a little bit of styling we come much closer to what we were trying to achieve. We can now define data that will be passed to the overlay component and render an image onto the screen:</p>
+<p>We can now define data that will be passed to the overlay component and render an image onto the screen. Here’s an example of how we can pass in data:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({...})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span>  <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="nx">showPreview</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">previewDialog</span><span class="p">.</span><span class="nx">open</span><span class="p">({</span>
+      <span class="na">image</span><span class="p">:</span> <span class="nx">file</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Finally with a little bit of styling we come much closer to what we’re trying to achieve.</p>
 
 <iframe style="height: 500px" src="https://stackblitz.com/edit/custom-overlay-step-5?embed=1&amp;file=app/file-preview-overlay.service.ts&amp;ctl=1" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
@@ -528,7 +540,7 @@
 
 <p>This is it. Although creating custom overlays is something that’s more or less tricky to do, this task becomes rather easy with UI libraries like Angular Material that provide us with a common set of tools to build awesome and high-quality Angular components. More specifically, by extracting common behaviors and patterns into a so called Component Dev Kit, it becomes extremely easy to build a custom overlay.</p>
 
-<p>Where to go from here? As mentioned in the beginning, this was only part one and we haven’t fully re-built the Google Drive-like file preview yet. In the next post we will build on top of this and implement keyboard support, image preloading and add animations in order to make our overlay more engaging.</p>
+<p>Where to go from here? As mentioned in the beginning, this was only part one and we haven’t fully re-built the Google Drive-like file preview yet. In the <a href="/angular/2017/11/27/custom-overlays-with-angulars-cdk-part-two.html">next post</a> we will build on top of this and implement keyboard support, image preloading and add animations in order to make our overlay more engaging.</p>
 
 
           
