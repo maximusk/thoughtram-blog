@@ -1665,6 +1665,10 @@ green     #859900  operators, other keywords
 
 .thtrm-ad {
   background-color: #62a7be; }
+  .thtrm-ad--plain a {
+    border: 0; }
+  .thtrm-ad--border img {
+    border: 5px solid #f2f2f2; }
   .thtrm-ad-transparent {
     background: transparent; }
     .thtrm-ad-transparent.thtrm-section--is-promo img {
@@ -1675,7 +1679,7 @@ green     #859900  operators, other keywords
     .thtrm-ad-transparent .thtrm-section-text {
       color: #444; }
   .thtrm-ad.thtrm-section--is-promo {
-    padding: 1.5em; }
+    padding: 1.5em 0; }
     .thtrm-ad.thtrm-section--is-promo .thtrm-layout-divider-cta {
       border: 2px solid #fff; }
   .thtrm-ad .thtrm-section-headline {
