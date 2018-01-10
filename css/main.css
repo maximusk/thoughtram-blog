@@ -511,20 +511,20 @@ ul {
     .thtrm-instructor {
       height: 450px; } }
   .thtrm-instructor--christoph {
-    background-image: url("/images/author-christoph-bw.jpg");
-    background-color: #90BAC7; }
+    background-image: url("/images/author-christoph.jpg");
+    /* background-color: #90BAC7; */ }
   .thtrm-instructor--thomas {
     background-image: url("/images/thomas_high_res.png");
     background-color: #90BAC7; }
   .thtrm-instructor--dominic {
     background-image: url("/images/author_dominic.jpg");
-    background-color: #90BAC7; }
+    /* background-color: #90BAC7; */ }
   .thtrm-instructor--almero {
     background-image: url("/images/user-story-almero.jpg");
     background-color: #90BAC7; }
   .thtrm-instructor--pascal {
-    background-image: url("/images/author-pascal-bw.jpg");
-    background-color: #90BAC7; }
+    background-image: url("/images/author-pascal.jpg");
+    /* background-color: #90BAC7; */ }
   .thtrm-instructor.thtrm-instructor--has-overlay:hover .thtrm-instructor-overlay {
     transform: translateX(0%); }
   .thtrm-instructor.thtrm-instructor--has-overlay:hover .thtrm-instructor-overlay-trigger {
