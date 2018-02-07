@@ -7,6 +7,63 @@
     <atom:link href="http://blog.thoughtram.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Announcing Angular Master Class at Shopware</title>
+        <description>&lt;p&gt;A few months have passed since our last Angular Master Class in Berlin, but now it’s finally time again: In &lt;strong&gt;June 2018&lt;/strong&gt; we are organizing a new Angular Master Class in Germany.&lt;/p&gt;
+
+&lt;p&gt;We are thrilled to have found in &lt;strong&gt;Shopware&lt;/strong&gt; the ideal partner and a first-class venue for an unforgettable event. Shopware is a leading e-commere company with a passionate, skilled and fun team to work with.&lt;/p&gt;
+
+&lt;p&gt;The facilities of Shopware in Schöppingen are modern, spacious and fancy and will be more than ideal for our Angular Master Class.&lt;/p&gt;
+
+&lt;p&gt;The event will take place from &lt;strong&gt;20th to 22nd June 2018&lt;/strong&gt; at Shopware in Schöppingen.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/shopware_classroom.jpg&quot; alt=&quot;AMC Shopware Event Location&quot; /&gt;
+&lt;span style=&quot;font-size: 12px&quot;&gt;Picture by Rainer Lonsing&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;We will have three (3) days of fun and learning the ins and outs of Angular including things like&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Components and Modules&lt;/li&gt;
+  &lt;li&gt;Fetching data using Http&lt;/li&gt;
+  &lt;li&gt;Advanced Dependency Injection&lt;/li&gt;
+  &lt;li&gt;Basic Forms&lt;/li&gt;
+  &lt;li&gt;Observables deep-dive&lt;/li&gt;
+  &lt;li&gt;Architectural patterns&lt;/li&gt;
+  &lt;li&gt;Component communication&lt;/li&gt;
+  &lt;li&gt;ContentChildren and ViewChildren&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;ngrx&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;…and much more!&lt;/p&gt;
+
+&lt;p&gt;During the day we will deepen our Angular knowledge together and at the end of the day we can have a nice time playing volleyball, table soccer and enjoy some delicious food.&lt;/p&gt;
+
+&lt;p&gt;This will be so much fun!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/shopware_volleyball.jpg&quot; style=&quot;width:50%; float:left&quot; alt=&quot;AMC Shopware Volleyball court&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/amc_denmark_audience.jpg&quot; style=&quot;width:50%&quot; alt=&quot;AMC Denmark audience&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&quot;font-size: 12px&quot;&gt;Left picture by Rainer Lonsing&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Who wouldn’t want to join in? So better be quick and get your ticket soon.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Tickets on sale now&lt;/strong&gt;&lt;/p&gt;
+
+&lt;iframe src=&quot;//eventbrite.de/tickets-external?eid=42705611634&amp;amp;ref=etckt&quot; frameborder=&quot;0&quot; vspace=&quot;0&quot; hspace=&quot;0&quot; marginheight=&quot;5&quot; marginwidth=&quot;5&quot; scrolling=&quot;auto&quot; allowtransparency=&quot;true&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;The early bird round of tickets is on sale now. You can &lt;strong&gt;save up to 125,00 €&lt;/strong&gt; so you’ll better be fast. Seats are &lt;strong&gt;very&lt;/strong&gt; limited with only &lt;strong&gt;5&lt;/strong&gt; early bird tickets available!&lt;/p&gt;
+
+&lt;p&gt;You can find more information on our &lt;a href=&quot;https://amc-shopware.eventbrite.com&quot;&gt;official event page&lt;/a&gt;, or grab your public training ticket right here!&lt;/p&gt;
+
+&lt;p&gt;See you in Berlin!&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 07 Feb 2018 01:00:00 +0100</pubDate>
+        <link>http://blog.thoughtram.io/announcements/2018/02/07/announcing-angular-master-class-at-shopware.html</link>
+        <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2018/02/07/announcing-angular-master-class-at-shopware.html</guid>
+      </item>
+    
+      <item>
         <title>Machine Learning Jump Start - Online Course</title>
         <description>&lt;p&gt;About one and a half years ago we first started &lt;a href=&quot;/machine-learning/2016/09/23/beginning-ml-with-keras-and-tensorflow.html&quot;&gt;dipping our toes into the brave new world of Machine Learning&lt;/a&gt;. The concept of a machine figuring out how to solve problems on its own is fascinating and sticked with us. If you’ve been following along, you’ve probably noticed that, next to thoughtram, we started our second mission to help innovate the Machine Learning space and &lt;a href=&quot;https://blog.machinelabs.ai/2017/05/11/introducing-machinelabs/&quot;&gt;founded a new company MachineLabs, Inc&lt;/a&gt;.&lt;/p&gt;
 
@@ -1419,10 +1476,10 @@
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
 &lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DIRECTIONS&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Directions&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;37&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Left Arrow&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;39&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Right Arrow&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;38&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Up Arrow&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// Down Arrow&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;37&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Left Arrow&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;39&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Right Arrow&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;38&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Up Arrow&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// Down Arrow&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;By looking at the &lt;code&gt;KeyboardEvent&lt;/code&gt; object it appears that every key has a unique &lt;code&gt;keyCode&lt;/code&gt;. In order to get the codes for the arrow keys we can use &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode&quot;&gt;this&lt;/a&gt; table.&lt;/p&gt;
@@ -2364,67 +2421,6 @@ please contact us for rates, details, and scheduling: &lt;a href=&quot;mailto:he
         <pubDate>Fri, 23 Jun 2017 02:00:00 +0200</pubDate>
         <link>http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-berlin.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-berlin.html</guid>
-      </item>
-    
-      <item>
-        <title>Join our free meetup in Denmark</title>
-        <description>&lt;p&gt;Just a couple of weeks ago, we &lt;a href=&quot;/announcements/2017/05/05/announcing-angular-master-class-in-denmark.html&quot;&gt;announced to bring our Angular Master Class to Denmark&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;This will be a very special class for us as we are debuting our &lt;a href=&quot;/angular/2017/05/08/angular-master-class-redux-and-ngrx.html&quot;&gt;brand new courseware&lt;/a&gt; on &lt;strong&gt;Redux and ngrx&lt;/strong&gt; for the first time in a public training.&lt;/p&gt;
-
-&lt;p&gt;If you haven’t had a chance to grab one of the early bird tickets, you can still get one of the &lt;a href=&quot;https://amc-denmark.eventbrite.com/?aff=blogCommunityEvent&quot;&gt;regular tickets&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;join-our-free-community-event-in-the-evening&quot;&gt;Join our free community event in the evening&lt;/h3&gt;
-
-&lt;p&gt;As mentioned in the initial announcement, we’ll run a &lt;strong&gt;free&lt;/strong&gt; event in the evening of &lt;strong&gt;June 21st at 5:30 PM&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;The event takes place at the Auditorium at Foss. If you attend the training, you can simply follow us over to the Auditorium right after we finished the second day of the course.&lt;/p&gt;
-
-&lt;p&gt;For everyone joining the community event only, you’ll find the Auditorium at the following address.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Foss Allé 1&lt;/strong&gt;
-&lt;br /&gt;&lt;strong&gt;3400 Hillerød&lt;/strong&gt;&lt;/p&gt;
-
-&lt;iframe src=&quot;https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2235.7894374862017!2d12.2805231!3d55.9183513!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465240f172de53d7%3A0x115fc1c713c8e974!2zRm9zcyBBbGzDqSAxLCAzNDAwIEhpbGxlcsO4ZCwgRMOkbmVtYXJr!5e0!3m2!1sde!2sde!4v1496143726961&quot; frameborder=&quot;0&quot; style=&quot;border:0&quot;&gt;&lt;/iframe&gt;
-
-&lt;p&gt;&lt;strong&gt;If you are not attending the &lt;em&gt;&lt;a href=&quot;amc-denmark.eventbrite.com&quot;&gt;Angular Master Class&lt;/a&gt;&lt;/em&gt; training but plan to attend the meetup, please make sure to reserve a seat at our &lt;a href=&quot;https://www.meetup.com/de-DE/AngularJS-Copenhagen/events/240739296/?eventId=240739296&amp;amp;chapter_analytics_code=UA-68620812-1&quot;&gt;meetup page&lt;/a&gt; to ease coordination&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;whats-the-theme&quot;&gt;What’s the theme?&lt;/h3&gt;
-
-&lt;p&gt;The event will be focussed on short talks (5 - 20 min) with no strict guideline regarding topics. Anything from &lt;a href=&quot;https://angular.io&quot;&gt;Angular&lt;/a&gt;, &lt;a href=&quot;https://developers.google.com/web/progressive-web-apps/&quot;&gt;Progressive Web Apps&lt;/a&gt; to &lt;a href=&quot;https://en.wikipedia.org/wiki/Blockchain&quot;&gt;Blockchains&lt;/a&gt; and &lt;a href=&quot;https://en.wikipedia.org/wiki/Machine_Learning&quot;&gt;Machine Learning&lt;/a&gt; is appreciated.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Psst…first time speakers, this is your perfect chance&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;announced-talks&quot;&gt;Announced Talks&lt;/h3&gt;
-
-&lt;p&gt;As of today, we can plan for the following short talks.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Shahrzad (Sherry) Azimi : A migration story (AngularJS -&amp;gt; Angular)&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Shmuela Jacobs - Angular is on Fire(base)!&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Anders Aastrup Søborg : Why we replace a feature rich PC application, with an angular application&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Dominic Elm - Animations in Angular 4.2&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Christoph Burgdorf - Machine Learning for everyone&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Please ping us with your talk idea and we’ll add it to the list&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;See you in Denmark!&lt;/p&gt;
-
-</description>
-        <pubDate>Tue, 30 May 2017 02:00:00 +0200</pubDate>
-        <link>http://blog.thoughtram.io/announcements/2017/05/30/angular-master-class-community-meetup.html</link>
-        <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2017/05/30/angular-master-class-community-meetup.html</guid>
       </item>
     
   </channel>
