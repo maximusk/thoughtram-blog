@@ -1,0 +1,897 @@
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="This is part one in a series of articles on Reinforcement Learning that aim to explore this exciting Machine Learning subfield from a beginners perspective.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="thoughtram">
+    <title>A simple guide to Reinforcement Learning by thoughtram</title>
+    <meta name="google-site-verification" content="o9eGPEgIETEqYGombq7NiQuBIB_qa6gz1yAL7PxKyK0">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4D8799">
+    <link rel="icon" sizes="192x192" href="/images/touch/chrome-touch-icon-192x192.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="thoughtram">
+    <link rel="apple-touch-icon" href="/images/touch/apple-touch-icon.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="/images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#4D8799">
+
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="A simple guide to Reinforcement Learning">
+    <meta property="og:description" content="This is part one in a series of articles on Reinforcement Learning that aim to explore this exciting Machine Learning subfield from a beginners perspective.">
+    <meta property="og:url" content="http://blog.thoughtram.io/machine-learning/2018/02/28/a-simple-guide-to-reinforcement-learning.html">
+    <meta property="og:site_name" content="Articles by thoughtram">
+    <meta property="og:image" content="http://blog.thoughtram.io/images/banner/a-simple-guide-to-reinforcement-learning.jpg">
+    <meta property="og:publisher" content="http://www.facebook.com/thoughtram">
+
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:title" content="A simple guide to Reinforcement Learning">
+    <meta property="twitter:site" content="thoughtram Blog">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css" type="text/css">
+  </head>
+  <body class="sub-site">
+    <!-- Add your site or app content here -->
+
+    <!--[if lt IE 10]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <header class="thtrm-header" role="banner">
+      <div class="thtrm-header-bar">
+        <div class="thtrm-constraint">
+          <a href="http://thoughtram.io" class="thtrm-header-logo-link" title="thoughtram.io Start Page"><h1 class="thtrm-header-logo">thoughtram</h1></a>
+          <div class="thtrm-header-menu-wrapper">
+            <span role="button" tabindex="0" class="thtrm-header-menu-label">Menu</span>
+            <ul class="thtrm-header-menu">
+              <li><a title="Training" class="thtrm-header-menu-item" href="http://thoughtram.io/training.html">Training</a></li>
+              <li><a title="Code Review" class="thtrm-header-menu-item" href="http://thoughtram.io/code-review.html">Code Review</a></li>
+              <li><a title="Casts" class="thtrm-header-menu-item " href="http://casts.thoughtram.io">Casts</a></li>
+              <li><a title="Blog" class="thtrm-header-menu-item" href="/">Blog</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main role="main" class="thtrm-main">
+    <div class="thtrm-banner" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%), url('/images/banner/a-simple-guide-to-reinforcement-learning.jpg');">
+        <hgroup class="thtrm-banner-container">
+          <div class="thtrm-constraint thtrm-constraint--slim">
+            <h2 class="thtrm-banner-text">A simple guide to Reinforcement Learning</h2>
+            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Feb 28, 2018<br>35 minute read</span>
+
+          </div>
+        </hgroup>
+      </div>
+      <div class="thtrm-constraint thtrm-constraint--slim">
+
+        <div class="thtrm-article">
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+</section>
+
+
+
+          <p>This is the first post in a series of articles on <strong>Reinforcement Learning</strong> which is a subfield of <strong>Machine Learning</strong> on that we have <a href="/machine-learning/2016/09/23/beginning-ml-with-keras-and-tensorflow.html">blogged</a> <a href="/machine-learning/2016/11/02/understanding-XOR-with-keras-and-tensorlow.html">about</a> <a href="/announcements/machine-learning/2017/12/20/machine-learning-jump-start-online-course.html">before</a>.</p>
+
+<p>Machine Learning is all about having a piece of software learn to solve tasks that it was not explicitly programmed for. Instead, it learns by observing data with the goal to find patterns that it can generalize into certain rules. In other words, instead of having to explicitly define rules using traditional programming constructs such as conditions, loops or function calls, we’ll let a machine figure out those rules in an automatic iterative process.</p>
+
+<p>Most forms of Machine learning still relies on human input though. In particular, humans are needed to select and provide lots of data for the machine to learn from. In contrast, Reinforcement Learning takes the idea another step forward. Instead of providing datasets, we let the machine take actions in the environment that we want it to master and give it feedback on its actions in the form of rewards or punishment. In other words, the machine has no clue about the task it is trying to solve. It basically starts acting randomly at first, but develops a policy to solve the task over time. Doesn’t that sound exciting?</p>
+
+<div class="thtrm-info">
+<h3>A word of warning</h3>
+
+<p>This post aims to provide an easy entry for beginners who are new to Reinforcement Learning or even Machine Learning in general. We may oversimplify or sacrifice performance in certain areas to achieve this goal. We'll also choose a simpler vocabulary over a more scientific one whenever possible.</p>
+</div>
+
+<p>In this article we want to learn the basics of Reinforcement Learning using a simple <strong>Q-Table</strong> approach. Don’t worry if that doesn’t ring a bell yet. We’ll learn what all of this means as we go.</p>
+
+<p>We’ll be taking things further in follow-up articles in which we’ll do <strong>Deep Reinforcement Learning</strong> using a <strong>neural net</strong> instead of the Q-Table. Step by step we’ll learn about the <strong>explore-exploit dilemma</strong>, <strong>replay memory</strong> and many other exciting things. But let’s start simple!</p>
+
+<div class="thtrm-toc is-sticky">
+  <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
+<ul id="markdown-toc">
+  <li><a href="#defining-a-simple-game" id="markdown-toc-defining-a-simple-game">Defining a simple game</a></li>
+  <li><a href="#a-q-table-to-the-rescue" id="markdown-toc-a-q-table-to-the-rescue">A Q-Table to the rescue</a></li>
+  <li><a href="#creating-the-environment-the-game" id="markdown-toc-creating-the-environment-the-game">Creating the environment, the game</a></li>
+  <li><a href="#building-the-agent" id="markdown-toc-building-the-agent">Building the agent</a>    <ul>
+      <li><a href="#collecting-the-precious-bits" id="markdown-toc-collecting-the-precious-bits">Collecting the precious bits</a></li>
+      <li><a href="#the-reward-function" id="markdown-toc-the-reward-function">The reward function</a></li>
+      <li><a href="#updating-the-q-table" id="markdown-toc-updating-the-q-table">Updating the Q-Table</a></li>
+    </ul>
+  </li>
+  <li><a href="#playing-with-the-trained-agent" id="markdown-toc-playing-with-the-trained-agent">Playing with the trained agent</a></li>
+  <li><a href="#wrapping-up" id="markdown-toc-wrapping-up">Wrapping up</a></li>
+</ul>
+
+</div>
+
+<h2 id="defining-a-simple-game">Defining a simple game</h2>
+
+<p>As our main goal is to learn Reinforcement Learning, let’s keep the actual task that we want our machine to learn as simple as possible. In fact let’s just make up a simple math game ourselves! We’ll call it “Catch 5” and these are the rules:</p>
+
+<ol>
+  <li>
+    <p>Every game starts by revealing a random number between 1 and 12 with the exception of the number 5 that will never be the starting point.</p>
+  </li>
+  <li>
+    <p>From that given starting point, it is our goal to get to number 5 by simple addition/subtraction. However, we can only choose from the following six actions: <strong>Add 3</strong>, <strong>Add 2</strong>, <strong>Add 1</strong>, <strong>Subtract 1</strong>, <strong>Subtract 2</strong> and <strong>Subtract 3</strong></p>
+  </li>
+  <li>
+    <p>We can only play a maximum of three turns. If we don’t get to 5 within three turns, we have lost the game. Since the starting number is between 1 and 12, it is always possible to win the game if we don’t screw up the basic math :)</p>
+  </li>
+</ol>
+
+<p>Before we move on, let’s get familiar with the game itself. We’ve created a browser based version that you can play with right here:</p>
+
+<iframe src="https://stackblitz.com/edit/angular-u1rnbn?embed=1&amp;file=game/game.ts&amp;hideExplorer=1?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<p>Our game may turn out like this and we win in two turns.</p>
+
+<blockquote>
+  <p><strong>Game</strong>: Starting number is <strong>9</strong>. Catch 5!</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Player</strong>: playing <strong>-3</strong></p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Game</strong>: You played <strong>-3</strong>, now at <strong>6</strong>. Catch 5!</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Player</strong>: playing <strong>-1</strong></p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Game</strong>: Caught 5! You won in <strong>2</strong> turns.</p>
+</blockquote>
+
+<p>However, keep in mind that our machine has no idea about the rules of the game at first and basically just “sees” six buttons without any description on how to play. It doesn’t even know it’s playing a game, so it may act like the following and lose.</p>
+
+<blockquote>
+  <p><strong>Game</strong>: Starting number is <strong>9</strong>. Catch 5!</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Player</strong>: playing  <strong>+3</strong></p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Game</strong>: You played <strong>+3</strong>, now at <strong>12</strong>. Catch 5!</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Player</strong>: playing <strong>-1</strong></p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Game</strong>: You played <strong>-1</strong>, now at <strong>11</strong>. Catch 5!</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Player</strong>: playing <strong>-3</strong></p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Game</strong>: You played <strong>-3</strong> with your last move. Now at <strong>8</strong>. <strong>You lost</strong>!</p>
+</blockquote>
+
+<p>We didn’t manage to get to number 5 within three turns, which means we have lost the game. But how is our machine going to find out how to win the game if we don’t explicitly teach it how to play?</p>
+
+<h2 id="a-q-table-to-the-rescue">A Q-Table to the rescue</h2>
+
+<p>As we can see our game isn’t that complex and we may wonder what’s the point of such a silly toy task. It turns out that a simple task like this makes it very easy for us to explore the topic and enables us to visualize the states and their possible actions in simple graphics.</p>
+
+<p>Notice that the <strong>5</strong> is a special state here as it is the final winning state from which no further action can be done.</p>
+
+<div style="text-align:center">
+  <img src="/images/catch_5_game_states.png" alt="Catch 5 game states" />
+</div>
+
+<p><em>Let’s ignore the fact that our defined rules would allow to also reach numbers above 12 or below 1. Even if we allow these states to happen, they don’t change the principles of what we are about to learn.</em></p>
+
+<p>Our main takeway for now should be, that we can think of our game as a defined space of states where we can take six possible actions from every single state.</p>
+
+<p>The thing that we want our machine to learn is <strong>a mapping</strong> from every <strong>possible state</strong> to its <strong>best possible action</strong>. Let’s assume the best strategy to win this game would be to always move with the biggest possible step towards the number 5. We could visualize the entire state space and their best actions as seen in the following animation.</p>
+
+<div style="text-align:center">
+  <img src="/images/catch_5_state_flow.gif" alt="Catch 5 game states" />
+</div>
+
+<p>For instance, starting at <strong>12</strong>, the best move we could do is to play <strong>-3</strong> which takes us to <strong>9</strong>, from where we play <strong>-3</strong> again, which takes us to <strong>6</strong>, from where we play <strong>-1</strong> and win the game in three turns.</p>
+
+<p>Obviously, our strategy isn’t the only one to win the game. Given a starting point of <strong>9</strong> for instance, we could play <strong>-3</strong> followed by <strong>-1</strong> or we could play <strong>-2</strong> followed by <strong>-2</strong> or even <strong>-1</strong> followed by <strong>-3</strong>. Each of these pairs of actions would make us win the game in two turns. That is perfectly fine, in fact, we don’t know yet what kind of policy our machine will develop to figure out how to win this game.</p>
+
+<p>The most important learning up to this point should be that our machine can develop a mapping of states to rated actions. Such a mapping is called a <strong>Q-Table</strong>.</p>
+
+<p>For instance, looking at state <strong>9</strong> we can easily imagine that the machine develops a strong sympathy towards playing <strong>-3</strong> indicated in red with the other possible actions having a less strong indication of being the best action.</p>
+
+<div style="text-align:center">
+  <img src="/images/catch5_heatmap.png" alt="Catch 5 game states" />
+</div>
+
+<p>The complete <strong>Q-Table</strong> contains all possible states and their rated possible actions. Once the machine has developed such a mapping, it can simply lookup the current state in the table and perform the action with the highest rating. It repeats this process for each turn until it wins the game.</p>
+
+<p>Obviously, this approach does only work if the entire state space is small enough to be represented as such a simple table. But let’s not get ahead of ourselves.</p>
+
+<p>Ok, so we know we want our machine to develop such a <strong>Q-Table</strong>. But how does that work?</p>
+
+<h2 id="creating-the-environment-the-game">Creating the environment, the game</h2>
+
+<p>As we’ve spoiled in the beginning, Reinforcement Learning is about machines acting in an environment and receiving positive or negative rewards to eventually learn a policy to solve a task.</p>
+
+<p>Let’s begin by creating the environment - the game - that our machine will be playing.</p>
+
+<p>The game is already implemented in the demo above. Notice that the interactive demo is written in TypeScript and runs on <a href="https://stackblitz.com">stackblitz.com</a>. For the rest of the article and the follow-up articles, we’ll be using Python since it has a great ecosystem for Machine Learning. For demos we’ll be using <a href="https://machinelabs.ai">machinelabs.ai</a> which is the perfect platform for these kind of tasks.</p>
+
+<p>Rest assured, the code is equally simple no matter whether we’ll be using TypeScript or Python!</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">Game</span><span class="p">():</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_number</span> <span class="o">==</span> <span class="mi">5</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">turns</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">def</span> <span class="nf">has_lost</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">turns</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_number</span> <span class="o">!=</span> <span class="mi">5</span>
+
+  <span class="k">def</span> <span class="nf">has_won</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">turns</span> <span class="o">&lt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_number</span> <span class="o">==</span> <span class="mi">5</span>
+
+  <span class="k">def</span> <span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_lost</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_won</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turns</span> <span class="o">&gt;=</span><span class="mi">3</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="nb">Exception</span><span class="p">(</span><span class="s">'Max number of turns reached. Call reset.'</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">turns</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_number</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_won</span><span class="p">()</span></code></pre></div>
+
+<p>There are really only two basic requirements that we have for the API of the game:</p>
+
+<ul>
+  <li>
+    <p><strong>A <code>play</code> method</strong> that takes an action and applies it to the current state. This is the most important API as it will control the game and move us from one state to another.</p>
+  </li>
+  <li>
+    <p><strong><code>has_won()</code>/<code>has_lost()</code> methods</strong> to figure out if we have won or lost the game. These APIs are important to gather feedback to learn from.</p>
+  </li>
+</ul>
+
+<p>We’ve also added some other APIs for convenience but the listed APIs are really the only crucial ones for our mission.</p>
+
+<h2 id="building-the-agent">Building the agent</h2>
+
+<p>There are multiple actors in Reinforcement Learning. We’ve already build a simple game, which serves as the environment, that we want our machine to act in.</p>
+
+<p>In order to play the game we need an <em>agent</em> that will perform actions in the game with the intention to figure out how to win the game over time.</p>
+
+<p>We’ll start with something really simple and implement two methods, namely <code>play</code> and <code>play_and_train</code>. The <code>play</code> method basically lets the agent play the game for a given number of times in a mode where we can follow the visual output.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># creating random actions</span>
+<span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+<span class="c"># mapping actions (0, 1, 2, 3, 4, 5) to answers (3, 2, 1, -1 , -2, -3)</span>
+<span class="k">def</span> <span class="nf">action_to_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">actionMap</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_times</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">nb_game</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_times</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+      <span class="k">print</span><span class="p">(</span><span class="s">'Starting game #{nb_game}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_game</span><span class="o">=</span><span class="n">nb_game</span><span class="p">))</span>
+      <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">is_active</span><span class="p">()):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'Current number is {current_number}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_number</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">current_number</span><span class="p">))</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action</span><span class="p">()</span>
+        <span class="n">human_readable_answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_to_answer</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        
+        <span class="k">print</span><span class="p">(</span><span class="s">'Playing {answer}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">human_readable_answer</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">human_readable_answer</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_won</span><span class="p">()):</span>
+          <span class="k">print</span><span class="p">(</span><span class="s">'You won!'</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_lost</span><span class="p">()):</span>
+          <span class="k">print</span><span class="p">(</span><span class="s">'You lost'</span><span class="p">)</span>
+
+      <span class="k">print</span><span class="p">(</span><span class="s">'##############################################'</span><span class="p">)</span></code></pre></div>
+
+<p>As you can see, there’s no rocket sience behind it. A simple loop for the number of times we want our agent to play and an inner loop for the game itself to make turns as long as the game isn’t either won or lost.</p>
+
+<p>Also notice that we are mapping the human readable answers (<code>+3, +2..-2, -3</code>) to zero based values (<code>0, 1..4, 5</code>) so that we can easily address them as indexes in an array to make our life much easier.</p>
+
+<p>Since our agent is just making random moves, we should’t expect super powers either. Here’s some output from it playing randomly. It even won game #4 by accident. Hooray! For this simple game though we’d really want our agent to win 100% of the games!</p>
+
+<div class="highlight"><pre><code class="language-shell" data-lang="shell">Starting game <span class="c">#1</span>
+Current number is 7
+Playing 1
+Current number is 8
+Playing 2
+Current number is 10
+Playing 3
+You lost
+<span class="c">##############################################</span>
+Starting game <span class="c">#2</span>
+Current number is 10
+Playing 1
+Current number is 11
+Playing 1
+Current number is 12
+Playing -2
+You lost
+<span class="c">##############################################</span>
+Starting game <span class="c">#3</span>
+Current number is 1
+Playing 3
+Current number is 4
+Playing -2
+Current number is 2
+Playing -2
+You lost
+<span class="c">##############################################</span>
+Starting game <span class="c">#4</span>
+Current number is 7
+Playing -2
+You won!
+<span class="c">##############################################</span></code></pre></div>
+
+<p>Ok, great, feel free to checkout this embedded demo to familiarize yourself with the code at this point.</p>
+
+<iframe src="https://machinelabs.ai/embedded/catch-5/1519735417824-BJzFfAGdG?tab=console&amp;file=main.py?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<p>We’ll keep the <code>play</code> method to have an API that we can call that gives us visual feedback when the agent plays the game.</p>
+
+<p>As we mentioned we’ll also implement a <code>play_and_train</code> method which will play in a <em>headless</em> mode, meaning we won’t be able to follow along the moves. Instead, we’ll get live metrics to follow along how the actual training is working out. For instance, we’d like to count the number of won or lost games.</p>
+
+<p>Let’s take a look how <code>play_and_train</code> is implemented.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">play_and_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="n">stats</span> <span class="o">=</span> <span class="n">TrainStats</span><span class="p">()</span>
+
+  <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">nb_epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">is_active</span><span class="p">()):</span>
+
+      <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">current_number</span>
+
+      <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action</span><span class="p">()</span>
+      <span class="n">human_readable_answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_to_answer</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">human_readable_answer</span><span class="p">)</span>
+
+      <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reward</span><span class="p">()</span>
+      <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">current_number</span>
+      <span class="n">final</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">final</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_won</span><span class="p">()):</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">nb_wins</span> <span class="o">+=</span> <span class="mi">1</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_lost</span><span class="p">()):</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">nb_losses</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">stats</span><span class="o">.</span><span class="n">p_wins</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">epoch</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">nb_wins</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">p_loss</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">epoch</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">nb_losses</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">print_every_n_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">print_epoch_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span></code></pre></div>
+
+<p>It’s really not that much different. Instead of printing out each and every move, we’ll collect <code>stats</code> to print out at a given frequency. Also notice that we slightly changed the wording: From now on, we’ll be calling the number of times that our agent plays the game <strong>epochs</strong> which is the general term for a complete training cycle.</p>
+
+<h3 id="collecting-the-precious-bits">Collecting the precious bits</h3>
+
+<p>The eagle-eyed reader may have spotted that there are in fact some subtle changes that are quite important. We collect five important variables that we are passing to a new <code>train</code> method on our agent.</p>
+
+<p>Let’s take a closer look at what these things are:</p>
+
+<ol>
+  <li>
+    <p>The <code>state</code> is just the current number of the game <strong>before</strong> we take our action. For instance, this may be the number <code>9</code>.</p>
+  </li>
+  <li>
+    <p>The <code>action</code> is simply the move that our agent performed on the <code>state</code>. For instance, playing <code>-2</code> is an action in our game. Notice however that we internally represent these actions with the numbers <code>0</code> to <code>5</code> and just map them to their human readable values (3..-3) when we invoke <code>play</code> on the game.</p>
+  </li>
+  <li>
+    <p>The <code>next_state</code> is the current number of the game <strong>after</strong> we took our action. If the <code>state</code> was <code>9</code> and the action was <code>-2</code> the <code>next_state</code> will be <code>7</code>.</p>
+  </li>
+  <li>
+    <p>The <code>final</code> variable is <code>True</code> when the game is either won or lost and <code>False</code> when the game is still active.</p>
+  </li>
+  <li>
+    <p>The most important variable that we haven’t yet talked about is the <code>reward</code>. At the end of the day, this is what enables our agent to learn at all. We’ll get the reward by calling <code>self.get_reward()</code> and we’ll take a look at the implementation in the next section.</p>
+  </li>
+</ol>
+
+<h3 id="the-reward-function">The reward function</h3>
+
+<p>As mentioned, the reward function is one of the most important things to design in a Reinforcement Learning system. It will heavily influence the policy that our agent will learn.</p>
+
+<p>It’s out of the scope of this article to discuss this in detail. Fortunately designing the rewards should be pretty straight forward and easy to follow for our simple task.</p>
+
+<p>Remember that this is the function we call <em>after</em> our agent performed an action.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_won</span><span class="p">():</span>
+    <span class="k">return</span> <span class="mi">1</span>
+  <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_lost</span><span class="p">():</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mf">0.1</span></code></pre></div>
+
+<p>As we can see, we return a positive reward of <code>1</code> when our agent won the game, a negative reward of <code>-1</code> when it lost the game and a negative reward of <code>-0.1</code> for every action that didn’t <em>directly</em> lead to winning or losing the game. In other words, every action is penalized with a slightly negative reward of <code>-0.1</code>. This makes sense if we keep in mind that it is our goal to win the game in a maximum of three turns. So even if we consider that we have to make at least one turn per game, turns can be considered costly overall which is essentially what we price in here.</p>
+
+<h3 id="updating-the-q-table">Updating the Q-Table</h3>
+
+<p>Ok, so let’s see how we can build up this <strong>Q-Table</strong> that we talked about before. Remember we are calling <code>self.train(state, action, reward, next_state, final)</code> and by now we should have a clear understanding what each parameter represents.</p>
+
+<p>Before we move on, let’s create a new instance member on our agent called <code>qtable</code>. We’ll initialize it as an empty hash map. Remember that we said the Q-Table basically maps states to rated actions. Naturally these things can well be represented as hash maps.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span> <span class="o">=</span> <span class="p">{}</span></code></pre></div>
+
+<p>We will also create a new method <code>ensure_qtable_entry</code> which takes care of creating entries in our qtable in case they don’t exist yet.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">ensure_qtable_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span></code></pre></div>
+
+<p>Notice that the key is the <code>state</code> itself and the value is a numpy array with six entries initialized to <code>0</code>, each representing one of our six possible actions. If the term <em>numpy array</em> is new to you, just think of an array with a <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html">super powerful API</a>.</p>
+
+<p>With that in place, let’s unveil what happens inside  the <code>train</code> method.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">final</span><span class="p">):</span>
+
+  <span class="bp">self</span><span class="o">.</span><span class="n">ensure_qtable_entry</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">ensure_qtable_entry</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">final</span><span class="p">:</span>
+    <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">next_state_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span>
+    <span class="n">next_state_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">next_state_actions</span><span class="p">)</span>
+
+    <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">next_state_max</span>
+
+  <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">q_value</span></code></pre></div>
+
+<p>The first two lines are just to ensure we have entries in the <code>qtable</code> for the values at <code>state</code> and <code>next_state</code> as we are about to work with them.</p>
+
+<p>The real hot sauce is in the very last line of the method. Here we can clearly see that we are mutating the rating of the action that we took on the state. This makes perfect sense because, again, we want to build up a map of rated actions for each state so that the agent can lookup the best possible action for each state when it plays the game. We call this value the <code>q_value</code>.</p>
+
+<p>This brings us to the question, how do we calculate the <code>q_value</code>? This is in fact a difficult question to answer because if we think back about our rewards we remember that only the final winning or losing state gives pretty clear rewards of <code>+1</code> or <code>-1</code>. All the other moves that don’t immediately cause the game to be won or lost, such as playing <code>-3</code> on a <code>9</code>, just yield us a negative reward of <code>-0.1</code>.</p>
+
+<p>We somehow have to find a way to consider that when we calculate the <code>q_value</code>. Remember that we want <code>-3</code> to become an action with a high q-value for state <code>9</code>. On the other hand we don’t want <code>-3</code> to get a strong q-value for state <code>6</code> as clearly playing <code>-1</code> would be better and make us win the game from here.</p>
+
+<p>In other words, what we need is a formular that not only takes the <strong>immediate reward</strong> into account but also the rewards that are <em>yet to follow</em> if we choose the given action from here. We call that the <strong>discounted future reward</strong>.</p>
+
+<p>The formular for that is hiding in this innocently looking <code>if</code> / <code>else</code> block.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">if</span> <span class="n">final</span><span class="p">:</span>
+  <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">next_state_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span>
+  <span class="n">next_state_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">next_state_actions</span><span class="p">)</span>
+
+  <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">next_state_max</span></code></pre></div>
+
+<p>It says that if we reached a final state (won or lost) the <code>q_value</code> should simply be the <code>reward</code>. This makes a lot of sense because there is no future reward to expect from subsequent actions simply because there are no further actions possible from here.</p>
+
+<p>If, however, we aren’t in a final state we do the following:</p>
+
+<ol>
+  <li>
+    <p>We get the the highest q-value for the <code>next_state</code>. Remember the <code>next_state</code> is the state that we shifted to as we applied the <code>action</code> to the <code>state</code>. In other words, if the state was <code>9</code> and the action was <code>-3</code> the <code>next_state</code> is <code>6</code>. We don’t care which action of the <code>next_state</code> has the highest q-value, we simply want get the value to use it in our formular.</p>
+  </li>
+  <li>
+    <p>We calculate the new <code>q_value</code> for the <code>action</code> of the <code>state</code> as the <code>reward</code> plus the highest q-value of the <code>next_state</code> multiplied by some mysterious <code>discount_factor</code>. Let’s ignore the <code>discount_factor</code> for a moment and just think of it as being set to <code>1</code>. Replacing our variables with concrete numbers this may boild down to <code>q_value = -0.1 + 1 * 1</code>.</p>
+  </li>
+</ol>
+
+<p>By now, you may be wondering: “But how does that achieve the learning? There’s no guarantee that the q-value for the <code>next_state</code> makes any sense?!”</p>
+
+<p>You’re kinda right, the q-values won’t be perfect from the beginning. In fact, they may start out completely wrong. What this formular achieves though is that the values <strong>approximate</strong> and get more and more accurate with every iteration.</p>
+
+<p>Getting back to the <code>discount_factor</code>, this thing is less scary than we may think. The <code>discount_factor</code> should be set between <code>0</code> and <code>1</code> and will influence how much we care about future rewards. A <code>discount_factor</code> of <code>0</code> means that we eleminate the righthand side of our formular entirely and don’t price in any future rewards. On the other hand, a <code>discount_factor</code> of <code>1</code> means that we strongly care about future rewards. A value of <code>0.9</code> is usually a good start but since our task is completely deterministic we can also set it to <code>1</code>.</p>
+
+<p>The nice thing about using such a terrible simple toy task is that we can make this process perfectly visible. We can simply print out the Q-Table at different stages of the learning.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">)</span></code></pre></div>
+
+<p>This is what the Q-Table looks like after our agent played the game 10 times.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">{</span>
+    <span class="c"># actions go from +3, +2, + 1, -1, -2, -3</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">]),</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.673289</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="c"># it is in favor of playing -2 from here. Stupid machine!</span>
+    <span class="mi">6</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">]),</span>
+    <span class="mi">7</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">9</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">10</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">]),</span>
+    <span class="mi">11</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">12</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">13</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">14</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Each line represents a state with the right-hand side being the array of q-values for each action starting at <code>3</code> and ending at <code>-3</code>. Notice how the machine “thinks” playing a <code>-2</code> on a six would be the best move. We need to give it some more training cycles!</p>
+
+<p>And after 100 games the Q-Table looks like this. By now, the agent has figured out how to play <strong>perfectly</strong>. Also notice that the entire Q-Table grow a bit as it figured out how to get to exotic states such as <code>20</code> or <code>-7</code>.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">{</span>
+    <span class="c"># actions go from +3, +2, + 1, -1, -2, -3</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">]),</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">]),</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.89</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">]),</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="c"># it figured out to play -1 from here</span>
+    <span class="mi">6</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">]),</span>
+    <span class="mi">7</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">]),</span>
+    <span class="mi">8</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">9</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.673289</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">]),</span>
+    <span class="mi">10</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.673289</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">]),</span>
+    <span class="mi">11</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.199</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.56655611</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">]),</span>
+    <span class="mi">12</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.09</span><span class="p">,</span> <span class="mf">0.673289</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">13</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.09</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">]),</span>
+    <span class="mi">14</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">15</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">16</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">17</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="mi">18</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">19</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="mi">20</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">8</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">7</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">5</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">4</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
+    <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.89</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">])</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Notice that the Q-Table righfully favors playing <code>-1</code> on a <code>6</code> now. All the other moves seem to make sense as well.</p>
+
+<h2 id="playing-with-the-trained-agent">Playing with the trained agent</h2>
+
+<p>It’s really cool and handy that we are able to validate the learning simply by looking at the Q-Table. But of course we don’t want to stop here. We want to truly measure wether our agent wins every single game.</p>
+
+<p>Notice that our agent explored the game <em>entirely</em> by making random moves so far. This is only possible because the entire state space of our task is very small. For real world tasks this strategy wouldn’t take us very far and we have to refine the approach, but that’s a story for another post.</p>
+
+<p>Still, to measure the performance of our agent, we have to be able to control wether it chooses actions randomly or based on Q-Table lookups.</p>
+
+<p>A simple condition would do the trick but we can do a litle better and introduce a <code>randomness_rate</code> to make fine grained adjustments so that, for instance, 70 % percent of the actions are choosen randomly and 30 % based on Q-Table lookups. This will already pave the way for other optimizations that we’ll be applying in a future post.</p>
+
+<p>We just have to apply a tiny refactoring to our <code>get_action</code> method to pass in the <code>state</code> and then return an action randomly or based on a Q-Table lookup depending on the <code>randomness_rate</code>.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_go_random</span><span class="p">()</span> <span class="ow">and</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_action</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_action</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">should_go_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">randomness_rate</span>
+
+<span class="k">def</span> <span class="nf">get_random_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">predict_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">])</span></code></pre></div>
+
+<p>A <code>randomness_rate</code> of <code>0</code> means that all actions should be based on Q-Table lookups (unless the Q-Table is lacking the entry) whereas a value of <code>1</code> means that all actions should be choosen randomly. We can choose any value in between 0 and 1 such as <code>0.3</code> so that 30 % of the actions are picked randomly.</p>
+
+<p>With that in place we can first perform 100 epochs of training and then have the trained agent play 1000 games.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">config</span> <span class="o">=</span> <span class="n">AgentConfig</span><span class="p">()</span>
+<span class="n">config</span><span class="o">.</span><span class="n">nb_epoch</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">play_and_train</span><span class="p">()</span>
+
+<span class="c">#play 1000 games on the trained agent</span>
+<span class="n">config</span><span class="o">.</span><span class="n">nb_epoch</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">randomness_rate</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">play_and_train</span><span class="p">()</span></code></pre></div>
+
+<p>We can see that it really wins every single game out of 1000.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Epoch</span><span class="p">:</span> <span class="mi">1000</span> <span class="n">Wins</span><span class="p">:</span> <span class="mi">1000</span> <span class="p">(</span><span class="mf">100.00</span><span class="o">%</span><span class="p">)</span> <span class="n">Losses</span><span class="p">:</span> <span class="mi">0</span> <span class="p">(</span><span class="mf">0.00</span><span class="o">%</span><span class="p">)</span></code></pre></div>
+
+<p>We can also see that it’s not always going for the straight path that we would expect it to take.</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Starting</span> <span class="n">game</span> <span class="c">#2</span>
+
+<span class="n">Current</span> <span class="n">number</span> <span class="ow">is</span> <span class="mi">10</span>
+<span class="n">Playing</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">Current</span> <span class="n">number</span> <span class="ow">is</span> <span class="mi">9</span>
+<span class="n">Playing</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">Current</span> <span class="n">number</span> <span class="ow">is</span> <span class="mi">8</span>
+<span class="n">Playing</span> <span class="o">-</span><span class="mi">3</span>
+<span class="n">You</span> <span class="n">won</span><span class="err">!</span>
+<span class="c">##############################################</span></code></pre></div>
+
+<p>However this is just becaue it was trained on 100 randomly played games. We could increase the number of games the agent performs for the training or fine tune our training strategy to fix that!</p>
+
+<p>You can check out the final code of the agent playing perfectly in this embedded lab.</p>
+
+<iframe src="https://machinelabs.ai/embedded/catch-5/1519742329241-H1-K6kQ_z?tab=console&amp;file=main.py?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<p>Play with the code, fork it and try solving other challenges!</p>
+
+<h2 id="wrapping-up">Wrapping up</h2>
+
+<p>Phew! This was quite a long post. Congrats if you made it this far. We hope you had fun exploring the exciting field of Reinforement Learning. As mentioned in the beginning, this is part one in a series of articles on Reinforcement Learning. Stay tuned!</p>
+
+
+          
+
+
+
+
+        </div>
+
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+</section>
+
+        <div class="thtrm-subscriber">
+  <h3>Get updates on new articles and trainings.</h3>
+  <p>Join over 1400 other developers who get our content first.</p>
+  <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
+    <label for="mce-EMAIL"></label>
+    <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
+    <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
+    <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
+  </form>
+</div>
+
+
+
+        <div class="thtrm-social-links">
+            <!-- Sharingbutton Facebook -->
+            <a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=http%3A%2F%2Fblog.thoughtram.io/machine-learning/2018/02/28/a-simple-guide-to-reinforcement-learning.html" target="_blank" aria-label="Share on Facebook">
+              <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M18.768,7.465H14.5V5.56c0-0.896,0.594-1.105,1.012-1.105s2.988,0,2.988,0V0.513L14.171,0.5C10.244,0.5,9.5,3.438,9.5,5.32 v2.145h-3v4h3c0,5.212,0,12,0,12h5c0,0,0-6.85,0-12h3.851L18.768,7.465z"/>
+                    </g>
+                </svg>
+                </div>Share on Facebook</div>
+            </a>
+
+            <!-- Sharingbutton Twitter -->
+            <a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?text=A%20simple%20guide%20to%20Reinforcement%20Learning&amp;url=http://blog.thoughtram.io/machine-learning/2018/02/28/a-simple-guide-to-reinforcement-learning.html" target="_blank" aria-label="Share on Twitter">
+              <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M23.444,4.834c-0.814,0.363-1.5,0.375-2.228,0.016c0.938-0.562,0.981-0.957,1.32-2.019c-0.878,0.521-1.851,0.9-2.886,1.104 C18.823,3.053,17.642,2.5,16.335,2.5c-2.51,0-4.544,2.036-4.544,4.544c0,0.356,0.04,0.703,0.117,1.036 C8.132,7.891,4.783,6.082,2.542,3.332C2.151,4.003,1.927,4.784,1.927,5.617c0,1.577,0.803,2.967,2.021,3.782 C3.203,9.375,2.503,9.171,1.891,8.831C1.89,8.85,1.89,8.868,1.89,8.888c0,2.202,1.566,4.038,3.646,4.456 c-0.666,0.181-1.368,0.209-2.053,0.079c0.579,1.804,2.257,3.118,4.245,3.155C5.783,18.102,3.372,18.737,1,18.459 C3.012,19.748,5.399,20.5,7.966,20.5c8.358,0,12.928-6.924,12.928-12.929c0-0.198-0.003-0.393-0.012-0.588 C21.769,6.343,22.835,5.746,23.444,4.834z"/>
+                    </g>
+                </svg>
+                </div>Share on Twitter</div>
+            </a>
+
+            <!-- Sharingbutton Google+ -->
+            <a class="resp-sharing-button__link" href="https://plus.google.com/share?url=http%3A%2F%2Fblog.thoughtram.io/machine-learning/2018/02/28/a-simple-guide-to-reinforcement-learning.html" target="_blank" aria-label="Share on Google+">
+              <div class="resp-sharing-button resp-sharing-button--google resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M11.366,12.928c-0.729-0.516-1.393-1.273-1.404-1.505c0-0.425,0.038-0.627,0.988-1.368 c1.229-0.962,1.906-2.228,1.906-3.564c0-1.212-0.37-2.289-1.001-3.044h0.488c0.102,0,0.2-0.033,0.282-0.091l1.364-0.989 c0.169-0.121,0.24-0.338,0.176-0.536C14.102,1.635,13.918,1.5,13.709,1.5H7.608c-0.667,0-1.345,0.118-2.011,0.347 c-2.225,0.766-3.778,2.66-3.778,4.605c0,2.755,2.134,4.845,4.987,4.91c-0.056,0.22-0.084,0.434-0.084,0.645 c0,0.425,0.108,0.827,0.33,1.216c-0.026,0-0.051,0-0.079,0c-2.72,0-5.175,1.334-6.107,3.32C0.623,17.06,0.5,17.582,0.5,18.098 c0,0.501,0.129,0.984,0.382,1.438c0.585,1.046,1.843,1.861,3.544,2.289c0.877,0.223,1.82,0.335,2.8,0.335 c0.88,0,1.718-0.114,2.494-0.338c2.419-0.702,3.981-2.482,3.981-4.538C13.701,15.312,13.068,14.132,11.366,12.928z M3.66,17.443 c0-1.435,1.823-2.693,3.899-2.693h0.057c0.451,0.005,0.892,0.072,1.309,0.2c0.142,0.098,0.28,0.192,0.412,0.282 c0.962,0.656,1.597,1.088,1.774,1.783c0.041,0.175,0.063,0.35,0.063,0.519c0,1.787-1.333,2.693-3.961,2.693 C5.221,20.225,3.66,19.002,3.66,17.443z M5.551,3.89c0.324-0.371,0.75-0.566,1.227-0.566l0.055,0 c1.349,0.041,2.639,1.543,2.876,3.349c0.133,1.013-0.092,1.964-0.601,2.544C8.782,9.589,8.363,9.783,7.866,9.783H7.865H7.844 c-1.321-0.04-2.639-1.6-2.875-3.405C4.836,5.37,5.049,4.462,5.551,3.89z"/>
+                        <polygon points="23.5,9.5 20.5,9.5 20.5,6.5 18.5,6.5 18.5,9.5 15.5,9.5 15.5,11.5 18.5,11.5 18.5,14.5 20.5,14.5 20.5,11.5  23.5,11.5   "/>
+                    </g>
+                </svg>
+                </div>Share on Google+</div>
+            </a>
+        </div>
+
+        <h3 class="thtrm-section-headline thtrm-section-headline--with-margin">Author</h3>
+        <div class="thtrm-article-author">
+          <span class="thtrm-article-author-avatar"><img src="/images/author-christoph.jpg" alt="Picture of Christoph Burgdorf"></span>
+          <div class="thtrm-article-author-matter">
+            <h4 class="thtrm-article-author-name">Christoph Burgdorf</h4>
+            <p class="thtrm-article-author-text">Christoph began programming at the age of 10. He is the creator of the Nickel.rs web framework and a contributor of the AngularJS project. Christoph is also part of the Angular Docs Authoring team.</p>
+            <p>
+              <a class="thtrm-article-author-cta thtrm-article-author-cta-twitter" href="http://twitter.com/cburgdorf" title="Christoph Burgdorf on Twitter">Twitter</a>
+              <a class="thtrm-article-author-cta" href="http://github.com/cburgdorf" title="Christoph Burgdorf on GitHub">GitHub</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="thtrm-constraint">
+
+        
+        <h4 class="thtrm-section-headline thtrm-section-headline--with-big-margin thtrm-section-headline--centered">Related Posts</h4>
+        <ul class="thtrm-three-column-list thtrm-three-column-list--with-padding">
+        
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/announcements/machine-learning/2017/12/20/machine-learning-jump-start-online-course.html" title="Machine Learning Jump Start - Online Course">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/machine-learning-jump-start.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Machine Learning Jump Start - Online Course</h3>
+                <p>We started diving into Machine Learning almost 1,5 years ago. Since then, we've started a new company MachineLabs, Inc to...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/machine-learning/2016/11/02/understanding-XOR-with-keras-and-tensorlow.html" title="Understanding XOR with Keras and TensorFlow">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/understanding-xor-with-keras-and-tensorflow.jpeg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Understanding XOR with Keras and TensorFlow</h3>
+                <p>In this article we'll take a closer look at a simple model for a neural net to solve an XOR...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/machine-learning/2016/09/23/beginning-ml-with-keras-and-tensorflow.html" title="Beginning Machine Learning with Keras and TensorFlow">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/intro_in_ml.jpeg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Beginning Machine Learning with Keras and TensorFlow</h3>
+                <p>With all the latest accomplishments in the field of artificial intelligence it's really hard not to get excited about AI....</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/announcements/2018/02/07/announcing-angular-master-class-at-shopware.html" title="Announcing Angular Master Class at Shopware">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/amc-shopware.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Announcing Angular Master Class at Shopware</h3>
+                <p>It's that time again. Want to level up your Angular skills? Join us for a unique public training experience with...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/11/27/custom-overlays-with-angulars-cdk-part-two.html" title="Custom Overlays with Angular's CDK - Part 2">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom_overlays_2.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom Overlays with Angular's CDK - Part 2</h3>
+                <p>In this follow-up post we demonstrate how to use Angular's CDK to build a custom overlay that looks and feels...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/11/20/custom-overlays-with-angulars-cdk.html" title="Custom Overlays with Angular's CDK">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom_overlays.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom Overlays with Angular's CDK</h3>
+                <p>The Angular Material CDK provides us with tools to build awesome and high-quality Angular components without adopting the Material Design...</p>
+              </div>
+            </a>
+          </li>
+        
+        
+        </ul>
+        
+
+      
+
+      </div>
+    </main>
+    <footer role="contentinfo" class="thtrm-footer thtrm-footer--slim">
+  <div class="thtrm-footer-text">
+    <img class="thtrm-footer-logo" alt="thoughtram brain" src="/images/thoughtram-brain-white.png">
+    <p>This website was created in collaboration with <a href="http://twitter.com/timche_" title="Tim Cheung on Twitter"><strong>Tim Cheung</strong></a> and <a href="http://twitter.com/tim_hartmann_" title="Tim Hartmann on Twitter"><strong>Tim Hartmann</strong></a>.</p>
+    <p ><a href="http://thoughtram.io/code-of-conduct.html" title="Code of Conduct">Code of Conduct</a> &bullet; <a href="http://thoughtram.io/imprint.html" title="Legal Notice">Legal notice</a></p>
+    <p class="thtrm-footer-bottom">&copy; 2014-2017 thoughtram GmbH</p>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51360648-2', 'auto');
+ga('send', 'pageview');
+
+var form = document.getElementById('search-form');
+var eventCta = document.getElementById('event-cta');
+
+if (eventCta) {
+
+  eventCta.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    setTimeout(clickLink, 1000);
+
+    function clickLink() {
+      window.location.replace(eventCta.getAttribute('href'));
+    }
+
+    ga('send', 'event', {
+      eventCategory: 'Event Link',
+      eventAction: 'click',
+      eventLabel: eventCta.getAttribute('title'),
+      hitCallback: clickLink
+    });
+  });
+}
+
+if (form) {
+
+  var searchTerm = document.getElementById('search-term');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var formSubmitted = false;
+
+    setTimeout(submitForm, 1000);
+
+    function submitForm() {
+      if (!formSubmitted) {
+        formSubmitted = true;
+        form.submit();
+      }
+    }
+
+    ga('send', 'event', {
+      eventCategory: 'Search Form',
+      eventAction: 'submit',
+      eventLabel: searchTerm.value,
+      hitCallback: submitForm
+    });
+  });
+}
+</script>
+
+
+
+    <script src="/scripts/linkjuice/dist/linkjuice.js"></script>
+    <script src="/scripts/main.js"></script>
+  </body>
+</html>
