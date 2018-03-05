@@ -7,6 +7,658 @@
     <atom:link href="http://blog.thoughtram.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Advanced caching with RxJS</title>
+        <description>&lt;p&gt;When building web applications, performance should always be a top priority. There are many things we can do to speed up our Angular applications like tree-shaking, AoT (ahead-of-time compilation), lazy loading modules or caching. To get an overview of practices that will help you boost the performance of your Angular applications, we highly recommend you to check out the &lt;a href=&quot;https://github.com/mgechev/angular-performance-checklist#lazy-loading-of-resources&quot;&gt;Angular Performance Checklist&lt;/a&gt; by &lt;a href=&quot;https://twitter.com/mgechev&quot;&gt;Minko Gechev&lt;/a&gt;. In this post we focus on &lt;strong&gt;caching&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;In fact, caching is one of the most efficient ways to improve the experience of our site, especially when our users are on bandwidth restricted devices or slow networks.&lt;/p&gt;
+
+&lt;p&gt;There are several ways to cache data or assets. Static assets are most commenly cached with the standard browser cache or Service Workers. While Service Workers can also cache API requests, they are typically more useful for caching resources like images, HTML, JS or CSS files. To cache application &lt;em&gt;data&lt;/em&gt; we usually use custom mechanisms.&lt;/p&gt;
+
+&lt;p&gt;No matter what mechanism we use, a cache generally &lt;strong&gt;improves the responsiveness&lt;/strong&gt; of our application, &lt;strong&gt;decreases network costs&lt;/strong&gt; and has the advantage that &lt;strong&gt;content becomes available during network interruptions&lt;/strong&gt;. In other words, when the content is cached closer to the consumer, say on the client side, requests don’t cause additional network activity and cached data can be retrieved much faster because we save on an entire network round trip.&lt;/p&gt;
+
+&lt;p&gt;In this post we’ll develop an advanced caching mechanism with RxJS and the tools provided by Angular.&lt;/p&gt;
+
+&lt;div class=&quot;thtrm-toc is-sticky&quot;&gt;
+  &lt;h3 class=&quot;no_toc&quot; id=&quot;table-of-contents&quot;&gt;TABLE OF CONTENTS&lt;/h3&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#motivation&quot; id=&quot;markdown-toc-motivation&quot;&gt;Motivation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-requirements&quot; id=&quot;markdown-toc-the-requirements&quot;&gt;The Requirements&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#implementing-a-basic-cache&quot; id=&quot;markdown-toc-implementing-a-basic-cache&quot;&gt;Implementing a basic cache&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#automatic-updates&quot; id=&quot;markdown-toc-automatic-updates&quot;&gt;Automatic updates&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#sending-update-notifications&quot; id=&quot;markdown-toc-sending-update-notifications&quot;&gt;Sending update notifications&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#fetching-new-data-on-demand&quot; id=&quot;markdown-toc-fetching-new-data-on-demand&quot;&gt;Fetching new data on demand&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#outlook&quot; id=&quot;markdown-toc-outlook&quot;&gt;Outlook&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#special-thanks&quot; id=&quot;markdown-toc-special-thanks&quot;&gt;Special Thanks&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
+
+&lt;p&gt;Every now and then there’s this question popping up how to cache data in an Angular application that makes excessive use of Observables. Most people have a good understanding on how to cache data with Promises but feel overwhelmed when it comes to functional reactive programming, due to its complexity (large API), fundamental shift in mindset (from imperative to declarative) and the multitude of concepts. Hence, it can be hard to actually translate an existing caching mechanism based on Promises to Observables, especially if you want that mechanism to be a little bit more advanced.&lt;/p&gt;
+
+&lt;p&gt;In an Angular application, we typically perform HTTP requests through the &lt;code&gt;HttpClient&lt;/code&gt; that comes with the &lt;code&gt;HttpClientModule&lt;/code&gt;. All of its APIs are Observabled-based meaning that methods like &lt;code&gt;get&lt;/code&gt;, &lt;code&gt;post&lt;/code&gt;, &lt;code&gt;put&lt;/code&gt; or &lt;code&gt;delete&lt;/code&gt; return an Observable. Because Observables are lazy by nature the request is only made when we call &lt;code&gt;subscribe&lt;/code&gt;. However, calling &lt;code&gt;subscribe&lt;/code&gt; multiple times on the same Observable will cause the source Observable to be re-created over and over again and, hence, perform a request on each subscription. We call this &lt;strong&gt;cold&lt;/strong&gt; Observables.&lt;/p&gt;
+
+&lt;p&gt;If you are completely new to this, we have written an article on &lt;a href=&quot;/angular/2016/06/16/cold-vs-hot-observables.html&quot;&gt;Cold vs Hot Observables&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;This behavior can make it tricky to implement a caching mechanism with Observables. Simple approaches often require a fair amount of boilerplate and we probably end up bypassing RxJS, which works, but is not the recommended way if we want to harness the power of Observables. Literally speaking, we don’t wanna drive a Ferrari with a scooter engine, right?&lt;/p&gt;
+
+&lt;h2 id=&quot;the-requirements&quot;&gt;The Requirements&lt;/h2&gt;
+
+&lt;p&gt;Before we dive into code, let’s start to define the requirements for our advanced caching mechanism.&lt;/p&gt;
+
+&lt;p&gt;We want to build an application called &lt;strong&gt;World of Jokes&lt;/strong&gt;. It’s a simple app that randomly shows jokes for a given category. To keep it simple and focused, there’s only one category.&lt;/p&gt;
+
+&lt;p&gt;This app has three components: &lt;code&gt;AppComponent&lt;/code&gt;, &lt;code&gt;DashboardComponent&lt;/code&gt; and &lt;code&gt;JokeListComponent&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;AppComponent&lt;/code&gt; is our entry point and renders a toolbar as well as a &lt;code&gt;&amp;lt;router-outlet&amp;gt;&lt;/code&gt; that is filled based on the current router state.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;DashboardComponent&lt;/code&gt; simply shows a list of categories. From here, we can navigate to the &lt;code&gt;JokeListComponent&lt;/code&gt; which then renders a list of jokes onto the screen.&lt;/p&gt;
+
+&lt;p&gt;The jokes themselves are fetched from a server using Angular’s &lt;code&gt;HttpClient&lt;/code&gt; service. To keep the component’s responsibility focused and separate the concerns, we want to create a &lt;code&gt;JokeService&lt;/code&gt; that takes care of requesting the data. The component can then simply inject the service and access the data through its public APIs.&lt;/p&gt;
+
+&lt;p&gt;All of the above is just our application’s architecture and there’s no caching involved yet.&lt;/p&gt;
+
+&lt;p&gt;When navigating from the dashboard to the list view, we prefer to request the data from a cache rather than requesting it from the server every time. The underlying data of this cache would update itself every 10 seconds.&lt;/p&gt;
+
+&lt;p&gt;Of course, polling for new data every 10 seconds isn’t a solid strategy for a production app where we would rather use a more sophisticated approach to update the cache (e.g. web socket push updates). But we’ll try to keep things simple here to focus on the caching aspect.&lt;/p&gt;
+
+&lt;p&gt;In any case we’d receive some sort of update notification. For our application we want the data in the UI (&lt;code&gt;JokeListComponent&lt;/code&gt;) to not automatically update when the cache updates but rather waits for the user to enforce the UI update. Why? Imagine a user may be reading one of the jokes and then all of a sudden it’s gone because the data is updated automatically. That would be super annoying and a bad user experience. Therefore, our users receive notifications whenever new data is available.&lt;/p&gt;
+
+&lt;p&gt;To make it even more fun, we want the user to be able to force the cache to update. This is different from solely updating the UI because forcing an update means to freshly request the data from the server, update the cache and then also update the UI accordingly.&lt;/p&gt;
+
+&lt;p&gt;Let’s summarize what we want to build:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Our app has two components where navigating from component A to B should prefer requesting B’s data from a cache rather than requesting it from the server every time&lt;/li&gt;
+  &lt;li&gt;Cache is updated every 10 seconds&lt;/li&gt;
+  &lt;li&gt;Data in the UI is not automatically updated and requires the user to enforce an update&lt;/li&gt;
+  &lt;li&gt;User can force an update that will cause a request to actually update the cache and the UI&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here’s a preview of what we are going to build:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/cache_app_preview.gif&quot; alt=&quot;app preview&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;implementing-a-basic-cache&quot;&gt;Implementing a basic cache&lt;/h2&gt;
+
+&lt;p&gt;Let’s start simple and work our way up to the final and fully-fledged solution.&lt;/p&gt;
+
+&lt;p&gt;The first step is to create a new service.&lt;/p&gt;
+
+&lt;p&gt;Next, we’ll add two interfaces, one that describes the shape of a &lt;code&gt;Joke&lt;/code&gt; and the other is used to &lt;strong&gt;strongly type&lt;/strong&gt; the response of our HTTP request. This makes TypeScript happy but most importantly more convenient and obvious to work with.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Joke&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;joke&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;categories&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeResponse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Joke&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now let’s implement the &lt;code&gt;JokeService&lt;/code&gt;. We don’t want to reveal the implementation detail of whether the data was served from cache or freshly requested from the server, hence we simply expose a property &lt;code&gt;jokes&lt;/code&gt; returning an Observable that captures a list of jokes.&lt;/p&gt;
+
+&lt;p&gt;In order to perform HTTP requests, we need to make sure to inject the &lt;code&gt;HttpClient&lt;/code&gt; service in the &lt;strong&gt;constructor&lt;/strong&gt; of our service.&lt;/p&gt;
+
+&lt;p&gt;Here’s the shell for the &lt;code&gt;JokeService&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Injectable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;@angular/core&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HttpClient&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;@angular/common/http&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Injectable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeService&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HttpClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, we implement a &lt;em&gt;private&lt;/em&gt; method &lt;code&gt;requestJokes()&lt;/code&gt; which uses the &lt;code&gt;HttpClient&lt;/code&gt; to perform a &lt;em&gt;GET&lt;/em&gt; request to retrieve a list of jokes.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Injectable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeService&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HttpClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;requestJokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;JokeResponse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;API_ENDPOINT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With that in place, we have everything we need to implement the &lt;code&gt;jokes&lt;/code&gt; getter method.&lt;/p&gt;
+
+&lt;p&gt;One naive approach would be to simply return &lt;code&gt;this.requestJokes()&lt;/code&gt;, but that doesn’t do the trick. We know from the beginning that all methods exposed by the &lt;code&gt;HttpClient&lt;/code&gt;, for instance &lt;code&gt;get&lt;/code&gt;, return &lt;strong&gt;cold&lt;/strong&gt; Observables. This means that the whole data stream is re-emitted for each subscriber causing an overhead of HTTP requests. After all, the idea behind a cache is to speed up the load time of our application and limit the amount of network requests to a minimum.&lt;/p&gt;
+
+&lt;p&gt;Instead we want to make our stream &lt;strong&gt;hot&lt;/strong&gt;. Not only that, but every new subscriber should receive the latest cached value. It turns out that there’s a very convenient operator called &lt;code&gt;shareReplay&lt;/code&gt;. This operator returns an Observable that shares a &lt;strong&gt;single&lt;/strong&gt; subscription to the underlying source, which is the Observable returned from &lt;code&gt;this.requestJokes()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In addition, &lt;code&gt;shareReplay&lt;/code&gt; accepts an optional parameter &lt;code&gt;bufferSize&lt;/code&gt; that is really handy in our case. The &lt;code&gt;bufferSize&lt;/code&gt; determines the maximum element count of the replay buffer, that is the number of elements that are cached and replayed for every subscriber. For our scenario we only want to replay the most recent value and, hence, set the &lt;code&gt;bufferSize&lt;/code&gt; to one (1).&lt;/p&gt;
+
+&lt;p&gt;Let’s look at the code and use what we have just learned:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Observable&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shareReplay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;API_ENDPOINT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;https://api.icndb.com/jokes/random/5?limitTo=[nerdy]&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CACHE_SIZE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Injectable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeService&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Joke&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HttpClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;requestJokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;shareReplay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CACHE_SIZE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;requestJokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;JokeResponse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;API_ENDPOINT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Ok, we already talked about most of what we see above. But wait, what’s about the private &lt;code&gt;cache$&lt;/code&gt; property and &lt;code&gt;if&lt;/code&gt; statement inside the getter? The answer to this is quite simple. If we returned &lt;code&gt;this.requestJokes().pipe(shareReplay(CACHE_SIZE))&lt;/code&gt; directly then every subscriber creates a &lt;strong&gt;new&lt;/strong&gt; cache instance. However, we want to share a single instance across all subscribers. Therefore, we keep the instance in a private property &lt;code&gt;cache$&lt;/code&gt; and initialize it as soon as the getter was called the first time. All subsequent consumers will receive the shared instance without re-creating the cache every time.&lt;/p&gt;
+
+&lt;p&gt;Let’s look at a more visual representation of what we’ve just implemented:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/cache_sequence_diagram.png&quot; width=&quot;100%&quot; alt=&quot;sequence diagram for our simple cache mechanism&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Above we can see a &lt;strong&gt;sequence diagram&lt;/strong&gt; that depicts the objects involved in our scenario, that is requesting a list of jokes, and the sequences of messages exchanged between the objects. Let’s break it down to understand what’s going on here.&lt;/p&gt;
+
+&lt;p&gt;We start out on the dashboard from where we navigate to the list component.&lt;/p&gt;
+
+&lt;p&gt;After the component was initialized and Angular calls the &lt;code&gt;ngOnInit&lt;/code&gt; life cycle hook, we request the list of jokes by calling the getter function &lt;code&gt;jokes&lt;/code&gt; exposed by the &lt;code&gt;JokeService&lt;/code&gt;. Since this is the first time we ask for the data, the cache itself is empty and not yet initialized, meaning &lt;code&gt;JokeService.cache$&lt;/code&gt; is &lt;code&gt;undefined&lt;/code&gt;. Internally we call &lt;code&gt;requestJokes()&lt;/code&gt;. This will give us an Observable that emits the data from the server. At the same time we apply the &lt;code&gt;shareReplay&lt;/code&gt; operator to get the desired behavior.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;shareReplay&lt;/code&gt; operator automatically creates a &lt;code&gt;ReplaySubject&lt;/code&gt; between the original source and all future subscribers. As soon as the number of subscribers goes from zero to one it will connect the Subject to the underlying source Observable and broadcast all its values. All future subscribers will be connected to that in-between Subject, so that effectively there’s just one subscription to the underlying cold Observable. This is called &lt;strong&gt;multicasting&lt;/strong&gt; and defines the foundation for our simple cache.&lt;/p&gt;
+
+&lt;p&gt;Once the data comes back from the server it will be cached.&lt;/p&gt;
+
+&lt;p&gt;Note that the &lt;code&gt;Cache&lt;/code&gt; is a standalone object in the sequence diagram and is supposed to illustrate the &lt;code&gt;ReplaySubject&lt;/code&gt; that is created in between the consumer (subscribers) and the underlying source (HTTP request).&lt;/p&gt;
+
+&lt;p&gt;The next time we request the data for the list component, our cache will replay the most recent value and send that to the consumer. There’s no additional HTTP call involved.&lt;/p&gt;
+
+&lt;p&gt;Simple, right?&lt;/p&gt;
+
+&lt;p&gt;To rip this really apart, let’s take this one step further and look at how the cache works on an Observable level. For this we use a &lt;strong&gt;marble diagram&lt;/strong&gt; to visualize how the stream actually works:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/cache_share_replay.png&quot; width=&quot;100%&quot; alt=&quot;marble diagram for our cache&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The marble diagram makes it really clear that there’s only &lt;strong&gt;one subscription&lt;/strong&gt; to the underlying Observable and all consumers simply subscribe to the shared Observable, that is the &lt;code&gt;ReplaySubject&lt;/code&gt;. We can also see that only the first subscriber triggers the HTTP call and all others get the latest value replayed.&lt;/p&gt;
+
+&lt;p&gt;Finally, let’s look at the &lt;code&gt;JokeListComponent&lt;/code&gt; and how we can display the data. The first step is to inject the &lt;code&gt;JokeService&lt;/code&gt;. After that, inside &lt;code&gt;ngOnInit&lt;/code&gt; we initialize a property &lt;code&gt;jokes$&lt;/code&gt; with the value returned by the getter function that is exposed by our service. This will return an Observable of type &lt;code&gt;Array&amp;lt;Joke&amp;gt;&lt;/code&gt; and this is exactly what we want.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;jokes$&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Joke&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;jokeService&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokes$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokeService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that we are not imperatively subscribing to &lt;code&gt;jokes$&lt;/code&gt;. Instead we use the &lt;code&gt;async&lt;/code&gt; pipe in the template because it turns out that this pipe is full of little wonders. Curious? Check out this article that unravels &lt;a href=&quot;/angular/2017/02/27/three-things-you-didnt-know-about-the-async-pipe.html&quot;&gt;three things you didn’t know about the AsyncPipe&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;mat-card&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ngFor=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;let joke of jokes$ | async&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;...&lt;span class=&quot;nt&quot;&gt;&amp;lt;/mat-card&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Cool! Here’s our simple cache in action. To verify if the request is only made once, open up Chrome’s DevTools, click on the &lt;em&gt;Network&lt;/em&gt; tab and then select &lt;em&gt;XHR&lt;/em&gt;. Start out on the dashboard, go to the list view and then navigate back and forth.&lt;/p&gt;
+
+&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://stackblitz.com/edit/advanced-caching-with-rxjs-step-1?ctl=1&amp;amp;embed=1&amp;amp;file=app/joke.service.ts&amp;amp;view=preview&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h2 id=&quot;automatic-updates&quot;&gt;Automatic updates&lt;/h2&gt;
+
+&lt;p&gt;So far we have built a simple caching mechanism in a few lines of code. In fact, most of the heavy lifting is done by the &lt;code&gt;shareReplay&lt;/code&gt; operator which takes care of caching and replaying the most recent value(s).&lt;/p&gt;
+
+&lt;p&gt;This works perfectly fine but the data is never actually updated in the background. What if the data is likely to change every few minutes? We certainly don’t want to force the user to reload the entire page just to get the latest data from the server.&lt;/p&gt;
+
+&lt;p&gt;Wouldn’t it be cool if our cache is updated every 10 seconds in the background? Totally! As a user we don’t have to reload the page and if the data has changed the UI will update accordingly. Again, in a real-world application we would most probably not even use polling but instead have the server &lt;strong&gt;push&lt;/strong&gt; notifications. For our little demo app a &lt;em&gt;refresh interval&lt;/em&gt; of 10 seconds is just fine.&lt;/p&gt;
+
+&lt;p&gt;The implementation is fairly easy. In a nutshell, we want to create an Observable that emits a sequence of values spaced by a given time interval, or simply said, we want to produce a value every &lt;em&gt;X&lt;/em&gt; milliseconds. For that we have several options.&lt;/p&gt;
+
+&lt;p&gt;The first option is to use &lt;code&gt;interval&lt;/code&gt;. This operator takes an optional parameter &lt;code&gt;period&lt;/code&gt; that defines the time between each emission. Consider the following example:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;interval&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/observable/interval&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;subscribe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here we set up an Observable that emits an infinite sequence of integers where each value is emitted every 10 seconds. That also means that the first value is somewhat delayed by the given interval. To better demonstrate the behavior, let’s take a look at the marble diagram for &lt;code&gt;interval&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/interval_operator.png&quot; width=&quot;100%&quot; alt=&quot;interval operator&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Yep, as expected. The first value is “delayed” and this is not what we want. Why? Because if we come from the dashboard and navigate to the list component to read some funny jokes, we’d have to wait for 10 seconds before the data is requested from the server and rendered onto the screen.&lt;/p&gt;
+
+&lt;p&gt;We could fix this by introducing another operator called &lt;code&gt;startWith(value)&lt;/code&gt; which would emit the given &lt;code&gt;value&lt;/code&gt; first, as an initial value. But we can do better!&lt;/p&gt;
+
+&lt;p&gt;What if I told you that there’s an operator that emits a sequence of values after a given duration (initial delay) and then after each period (regular interval)? Meet &lt;code&gt;timer&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Visualization time!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/timer_operator.png&quot; width=&quot;100%&quot; alt=&quot;timer operator&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Cool, but does that really solve our problem? Yep it does. If we set the initial delay to &lt;strong&gt;zero (0)&lt;/strong&gt; and set the period to &lt;strong&gt;10 seconds&lt;/strong&gt;, we end up with the same behavior as if we used &lt;code&gt;interval(10000).pipe(startWith(0))&lt;/code&gt; but only with a single operator.&lt;/p&gt;
+
+&lt;p&gt;Let’s take that and plug it into our exisiting caching mechanism.&lt;/p&gt;
+
+&lt;p&gt;We have to set up a &lt;strong&gt;timer&lt;/strong&gt; and for every &lt;em&gt;tick&lt;/em&gt; we want to make an HTTP request to fetch new data from the server. That is, for every tick we need to &lt;strong&gt;switchMap&lt;/strong&gt; to an Observable that, on subscription, fetches a new list of jokes. Using &lt;code&gt;switchMap&lt;/code&gt; has the positive side effect that we avoid race conditions. That’s due to the nature of this operator because it will unsubscribe from the previously projected Observable and only emit values from the most recently projected Observable.&lt;/p&gt;
+
+&lt;p&gt;The rest of our cache remains untouched, meaning that our stream is still multicasted and all subscribers share one underlying source.&lt;/p&gt;
+
+&lt;p&gt;Again, the nature of &lt;code&gt;shareReplay&lt;/code&gt; will broadcast new values to exisiting subscribers and replay the most recent value to new subscribers.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/timer_cache.png&quot; width=&quot;100%&quot; alt=&quot;timer based cache&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As we can see in the marble diagram, the timer emits a value every 10 seconds. For every value we switch to an inner Observable that fetches our data. Because we are using &lt;code&gt;switchMap&lt;/code&gt;, we avoid race conditions and therefore the consumer only receives the value &lt;code&gt;1&lt;/code&gt; and &lt;code&gt;3&lt;/code&gt;. The value from the second inner Observable is “skipped” because we are already unsubscribed when the value arrives.&lt;/p&gt;
+
+&lt;p&gt;Let’s apply our learnings and update the &lt;code&gt;JokeService&lt;/code&gt; accordingly.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/observable/timer&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;switchMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shareReplay&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;REFRESH_INTERVAL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Injectable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeService&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Joke&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HttpClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;// Set up timer that ticks every X milliseconds&lt;/span&gt;
+      &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;REFRESH_INTERVAL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+      &lt;span class=&quot;c1&quot;&gt;// For each tick make an http request to fetch new data&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;switchMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;requestJokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;shareReplay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CACHE_SIZE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Awesome! Wanna try it out yourself? Go ahead and play with the following live demo. From the dashboard, go to the list component and then watch the magic happening. Give it a few seconds so that you can see the update in action. Remember, the cache is refreshed every &lt;strong&gt;10 seconds&lt;/strong&gt;, but feel free to fiddle with the &lt;code&gt;REFRESH_INTERVAL&lt;/code&gt;.&lt;/p&gt;
+
+&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://stackblitz.com/edit/advanced-caching-with-rxjs-step-2?ctl=1&amp;amp;embed=1&amp;amp;file=app/joke.service.ts&amp;amp;view=preview&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h2 id=&quot;sending-update-notifications&quot;&gt;Sending update notifications&lt;/h2&gt;
+
+&lt;p&gt;Let’s recap for a moment what we have built so far.&lt;/p&gt;
+
+&lt;p&gt;When we request data from our &lt;code&gt;JokeService&lt;/code&gt; we always prefer to request that data from a cache rather than requesting it from the server every time. The underlying data of this cache is refreshed every 10 seconds and when this happens, the data is propagated to the component causing the UI to update automatically.&lt;/p&gt;
+
+&lt;p&gt;That’s unfortunate. Imagine we’re a user that is reading one of the jokes and all of the sudden it’s gone because the UI is updated automatically. That’s super annoying and a bad user experience.&lt;/p&gt;
+
+&lt;p&gt;Therefore, our users should rather receive &lt;strong&gt;notifications&lt;/strong&gt; when there’s new data available. In other words, we want the user to enforce the UI update.&lt;/p&gt;
+
+&lt;p&gt;It turns out that we don’t have to touch our service in order to implement this. The logic is quite simple. After all, our service should not worry about sending notifications and the view should be in charge when and how to update the data on the screen.&lt;/p&gt;
+
+&lt;p&gt;First, we have to get an &lt;strong&gt;initial value&lt;/strong&gt; to show something to the user, because otherwise the screen will be blank until the cache was updated the first time. We’ll see why in just a moment. Setting up a stream for the inital value is as easy as calling the getter function. Additionally, since we are only interested in the very first value we can use the &lt;code&gt;take&lt;/code&gt; operator.&lt;/p&gt;
+
+&lt;p&gt;To make this logic reusable we create a helper methode &lt;code&gt;getDataOnce()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;take&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;initialJokes$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getDataOnce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;getDataOnce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokeService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;take&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From our requirements we know that we only want to update the UI when the user really enforces an update rather than reflecting the change automatically. How does the user enforce an update you ask? This happens when we click on a button in the UI that says “Update”. This button is shown together with the notification. For now, let’s not worry about the notification and instead focus on the logic that updates the UI when we click that button.&lt;/p&gt;
+
+&lt;p&gt;To make this work, we need a way to create an Observable from DOM events, specifically from button clicks. There are several ways but a very common way is to use a &lt;code&gt;Subject&lt;/code&gt; as a &lt;strong&gt;bridge&lt;/strong&gt; between the template and the view logic that lives in the component class. In a nutshell, a Subject is a type that implements both &lt;code&gt;Observer&lt;/code&gt; and &lt;code&gt;Observable&lt;/code&gt; types. Observables define the data flow and produce the data while Observers can subscribe to Observables and receive the data.&lt;/p&gt;
+
+&lt;p&gt;The good thing about the Subject here is that we can simply use an event binding in the template and then call &lt;code&gt;next&lt;/code&gt; when the event is triggered. This will cause the specified value to be broadcasted to all Observers that are listening for values. Note that we can also omit the value if the Subject is of type &lt;code&gt;void&lt;/code&gt;. In fact, this is true for our case.&lt;/p&gt;
+
+&lt;p&gt;Let’s go ahead and instantiate a new Subject.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we can go ahead and wire this up in the template.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;div&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;notification&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;span&amp;gt;&lt;/span&gt;There&#39;s new data available. Click to reload the data.&lt;span class=&quot;nt&quot;&gt;&amp;lt;/span&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;button&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;mat-raised-button&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;color=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;accent&quot;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;click&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;)=&quot;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;()&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;div&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;flex-row&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;mat-icon&amp;gt;&lt;/span&gt;cached&lt;span class=&quot;nt&quot;&gt;&amp;lt;/mat-icon&amp;gt;&lt;/span&gt;
+      UPDATE
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/button&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;See how we use the &lt;strong&gt;event binding&lt;/strong&gt; syntax to capture the click event on the &lt;code&gt;&amp;lt;button&amp;gt;&lt;/code&gt;? When we click on the button we simply propagate a &lt;em&gt;ghost&lt;/em&gt; value causing all active Observers to be notified. We call it ghost value because we are not actually passing in any value, or at least a value of type &lt;code&gt;void&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Another way would be to use the &lt;code&gt;@ViewChild()&lt;/code&gt; decorator in combination with the &lt;code&gt;fromEvent&lt;/code&gt; operator from RxJS. However, this requires us to “mess” with the DOM and query an HTML element from the view. With a Subject we are actually just bridging the two sides and don’t really touch the DOM at all except the event binding we are adding to the button.&lt;/p&gt;
+
+&lt;p&gt;Alright, with the view being setup we can now switch to the logic that takes care of updating the UI.&lt;/p&gt;
+
+&lt;p&gt;So what does it mean to update the UI? Well, the cache is updated in the background automatically and we want to render the most recent value from the cache when we click on that button, right? This means that our &lt;strong&gt;source&lt;/strong&gt; stream in this case is the Subject. Every time a value is broadcasted on &lt;code&gt;update$&lt;/code&gt; we want to &lt;strong&gt;map&lt;/strong&gt; this value to an Observable that gives us the latest cached value. In other words, we are dealing with a so-called &lt;strong&gt;Higher Order Observable&lt;/strong&gt;, an Observable that emits Observables.&lt;/p&gt;
+
+&lt;p&gt;From before we should know that there’s &lt;code&gt;switchMap&lt;/code&gt; that solves exactly this problem. This time we’ll use &lt;code&gt;mergeMap&lt;/code&gt; instead. This operator behaves very similar to &lt;code&gt;switchMap&lt;/code&gt; with the difference that it does not unsubscribe from the previously projected inner Observable and simply merges the inner emissions in the output Observable.&lt;/p&gt;
+
+&lt;p&gt;In fact, when requesting the most recent value from the cache, the HTTP request is already done and the cache was successfully updated. Therefore, we don’t really face the problem of race-conditions here. Though it seems to be asynchronous, it’s actually somewhat &lt;strong&gt;synchronous&lt;/strong&gt; because the value will be emitted in the same &lt;em&gt;tick&lt;/em&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;mergeMap&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;updates$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;mergeMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getDataOnce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Sweet! For every “update” we request the latest value from the cache using our helper method we implemented earlier.&lt;/p&gt;
+
+&lt;p&gt;From here, it’s only a small step to come up with the stream for the jokes that are rendered onto the screen. All we have to do is to merge the initial list of jokes with our &lt;code&gt;update$&lt;/code&gt; stream.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Observable&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/observable/merge&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;mergeMap&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;jokes$&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Joke&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;initialJokes$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getDataOnce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;updates$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;mergeMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getDataOnce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokes$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;initialJokes$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;updates$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It’s important that we use our helper method &lt;code&gt;getDataOnce()&lt;/code&gt; to map each update event to the latest cached value. If we recall, it uses &lt;code&gt;take(1)&lt;/code&gt; internally which will take the first value and then &lt;strong&gt;complete&lt;/strong&gt; the stream. This is crucial because otherwise we’d end up with an on-going stream or live connection to the cache. In this case we would basically break our logic of enforcing a UI update only by clicking the “Update” button.&lt;/p&gt;
+
+&lt;p&gt;Also, because the underlying cache is multicasted, it’s totally safe to always re-subscribe to the cache to get the latest value.&lt;/p&gt;
+
+&lt;p&gt;Before we continue with the notification stream, let’s stop for a moment and visualize what we just implemented as a marble diagram.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/jokes.png&quot; width=&quot;100%&quot; alt=&quot;jokes&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As we can see in the diagram above, &lt;code&gt;initialJokes$&lt;/code&gt; is crucial because otherwise we’d only see something on the screen when we click “Update”. While the data is already updated in the background every 10 seconds, there’s no way we can press this button. That’s because the button is part of the notification and we never really show it to the user.&lt;/p&gt;
+
+&lt;p&gt;Let’s fill this gap and implement the missing functionality to complete the puzzle.&lt;/p&gt;
+
+&lt;p&gt;For that, we have to create an Observable that is responsible for showing or hiding the notification. Essentially, we need a stream that either emits &lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;. We want the value to be &lt;code&gt;true&lt;/code&gt; when there’s an update, and &lt;code&gt;false&lt;/code&gt; when the user clicks on the “Update” button.&lt;/p&gt;
+
+&lt;p&gt;In addition we want to &lt;strong&gt;skip&lt;/strong&gt; the first (initial) value emitted by our cache because it’s not really a refresh.&lt;/p&gt;
+
+&lt;p&gt;If we think in terms of streams, we can break this up into multiple streams and &lt;strong&gt;merge&lt;/strong&gt; them together to turn them into a single Observable. The final stream then has the desired behavior to show or hide notifications.&lt;/p&gt;
+
+&lt;p&gt;Enough theory! Here’s the code:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Observable&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;skip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;mapTo&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;showNotification$&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;boolean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;initialNotifications$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokeService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;skip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;show$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;initialNotifications$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mapTo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hide$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mapTo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;showNotification$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;show$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hide$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here, we listen for all values emitted by our cache but skip the first because it’s not a &lt;strong&gt;refresh&lt;/strong&gt;. For every new value on &lt;code&gt;initialNotifications$&lt;/code&gt; we map it to &lt;code&gt;true&lt;/code&gt; to show the notification. Once we click the “Update” button in the notification, a value is produced on &lt;code&gt;update$&lt;/code&gt; and we can simply map it to &lt;code&gt;false&lt;/code&gt; causing the notification to disappear.&lt;/p&gt;
+
+&lt;p&gt;Let’s use &lt;code&gt;showNotification$&lt;/code&gt; inside the template of the &lt;code&gt;JokeListComponent&lt;/code&gt; to toggle a class that either shows or hides the notification.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;div&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;notification&quot;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]=&quot;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;showNotification&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;async&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  ...
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Yay! We are getting really close to the final solution. But before we continue, let’s try it out and play around with the live demo. Take your time and go through the code step by step again.&lt;/p&gt;
+
+&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://stackblitz.com/edit/advanced-caching-with-rxjs-step-3?ctl=1&amp;amp;embed=1&amp;amp;file=app/joke.service.ts&amp;amp;view=preview&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h2 id=&quot;fetching-new-data-on-demand&quot;&gt;Fetching new data on demand&lt;/h2&gt;
+
+&lt;p&gt;Awesome! We have come a long way and already implemented a few very cool features for our cache. To finish up this article and take our cache to a whole new level, there’s one thing left for us to do. As a user we want to be able to &lt;strong&gt;force&lt;/strong&gt; an update at any point in time.&lt;/p&gt;
+
+&lt;p&gt;It’s not really that complicated but we have to touch both the component and the service to make this work.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with our service. What we need is a public facing API that will force the cache to reload the data. Technically speaking, we’ll &lt;strong&gt;complete&lt;/strong&gt; the current cache and set it to &lt;code&gt;null&lt;/code&gt;. This means that the next time we request the data from our service we will set up a new cache, fetch the data and store this for future subscribers. It’s not a big deal to create a new cache every time we enforce an update because it will be completed and eventually garbage collected. In fact, this has the positive side effect that we also &lt;strong&gt;reset&lt;/strong&gt; the timer which is absolutely desired. Let’s say we have waited 9 seconds and now click “Fetch new Jokes”. We expect the data to be refreshed, but we don’t to see a notification popping up 1 second later. Instead we want to restart the timer so that when we enforce an update it another 10 seconds to trigger the &lt;strong&gt;automatic update&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Another reason for the destroying the cache is that it’s much less complex compared to a mechanism that keeps the cache running all the time. If that’s the case then the cache needs to be aware of whether a reload was enforced or not.&lt;/p&gt;
+
+&lt;p&gt;Let’s create a Subject that we use to tell the cache to complete. We’ll leverage &lt;code&gt;takeUntil&lt;/code&gt; and pluck it into our &lt;code&gt;cache$&lt;/code&gt; stream. In addition, we implement a public facing API that, internally, sets the cache to &lt;code&gt;null&lt;/code&gt; and also broadcasts an event on our Subject.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/observable/timer&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;switchMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shareReplay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;takeUntil&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;REFRESH_INTERVAL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Injectable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeService&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kr&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reload$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;REFRESH_INTERVAL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;switchMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;requestJokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;takeUntil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;reload$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;shareReplay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CACHE_SIZE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;forceReload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Calling next will complete the current cache instance&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;reload$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Setting the cache to null will create a new cache the&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// next time &#39;jokes&#39; is called&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cache$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This alone doesn’t do much, so let’s go ahead and use that in our &lt;code&gt;JokeListComponent&lt;/code&gt;. For this we’ll implement a function &lt;code&gt;forceReload()&lt;/code&gt; that is called whenever we click on the button that says “Fetch new Jokes”. Also, we need to create a Subject that is used as an event bus for updating the UI as well as showing the notifications. We’ll see in a moment where this comes into play.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;forceReload$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;forceReload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokeService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forceReload&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forceReload$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With this in place we can wire up the button in the template of the &lt;code&gt;JokeListComponent&lt;/code&gt; to force the cache to reload the data. All we have to do is listen for the &lt;code&gt;click&lt;/code&gt; event using Angular’s event binding syntax and call &lt;code&gt;forceReload()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;button&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;reload-button&quot;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;click&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;)=&quot;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;forceReload&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;()&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;mat-raised-button&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;color=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;accent&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;div&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;flex-row&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;mat-icon&amp;gt;&lt;/span&gt;cached&lt;span class=&quot;nt&quot;&gt;&amp;lt;/mat-icon&amp;gt;&lt;/span&gt;
+    FETCH NEW JOKES
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/button&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This already works, but only if we go back to the dashboard and then again to the list view. This is of course not what we want. We want the UI to update &lt;strong&gt;immediately&lt;/strong&gt; when we force the cache to reload the data.&lt;/p&gt;
+
+&lt;p&gt;Remeber that we have implemented a stream &lt;code&gt;updates$&lt;/code&gt; that, when we click on “Update”, requests the latest data from our cache? It turns out that we need exactly the same behavior, so we can go ahead and extend this stream. This means we have to &lt;strong&gt;merge&lt;/strong&gt; both &lt;code&gt;update$&lt;/code&gt; and &lt;code&gt;forceReload$&lt;/code&gt;, because those two streams are the sources for updating the UI.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/observable/merge&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;mergeMap&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;forceReload$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;updates$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forceReload$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;mergeMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getDataOnce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;That was easy, wasn’t it? Yea but we are not done. In fact, we just “broke” our notifications. It all works just fine until we click “Fetch new Jokes”. The data is updated on the screen as well as in our cache, but when we wait 10 seconds there’s no notification popping up. The problem here is that forcing an update will complete the cache instance, meaning we no longer receive values in the component. The notification stream (&lt;code&gt;initialNotifications$&lt;/code&gt;) is basically dead. That’s unfortunate, so how can we fix this?&lt;/p&gt;
+
+&lt;p&gt;Quite easy! We listen for events on &lt;code&gt;forceReload$&lt;/code&gt; and for every value we switch to a new notification stream. Important here is that we &lt;strong&gt;unsubscribe&lt;/strong&gt; from the &lt;strong&gt;previous&lt;/strong&gt; stream. Does that ring a bell? Sounds a lot like we need &lt;code&gt;switchMap&lt;/code&gt; here, doesn’t it?&lt;/p&gt;
+
+&lt;p&gt;Let’s get our hands dirty and implement this!&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Observable&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/Subject&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/observable/merge&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;take&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;switchMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;mergeMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;skip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;mapTo&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;rxjs/operators&#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;JokeListComponent&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;OnInit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;showNotification$&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Observable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;boolean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;forceReload$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Subject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;ngOnInit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reload$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forceReload$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;switchMap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getNotifications&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()));&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;initialNotifications$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getNotifications&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;show$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;initialNotifications$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reload$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mapTo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hide$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;update$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mapTo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;showNotification$&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;merge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;show$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hide$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;getNotifications&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokeService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;jokes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pipe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;skip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s it. Whenever &lt;code&gt;forceReload$&lt;/code&gt; emits a value we unsubscribe from the previous Observable and switch to a new &lt;em&gt;notification&lt;/em&gt; stream. Note that there’s a piece of code that we needed twice, that is &lt;code&gt;this.jokeService.jokes.pipe(skip(1))&lt;/code&gt;. Instead of repeating ourselves, we created a function &lt;code&gt;getNotifications()&lt;/code&gt; that simply returns a stream of jokes but &lt;strong&gt;skips&lt;/strong&gt; the first value. Finally, we merge both &lt;code&gt;initialNotifications$&lt;/code&gt; and &lt;code&gt;reload$&lt;/code&gt; together into one stream called &lt;code&gt;show$&lt;/code&gt;. This stream is responsible for showing the notification on the screen. There’s also no need to unsubscribe from &lt;code&gt;initialNotifications$&lt;/code&gt; because this stream completes before the cache is re-created on the next subscription. The rest stays the same.&lt;/p&gt;
+
+&lt;p&gt;Puh, we did it. Let’s take a moment and look at a more visual representation of what we just implemented.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/notification_cache.png&quot; width=&quot;100%&quot; alt=&quot;notification system&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As we can see in the marble diagrams, &lt;code&gt;initialNotifications$&lt;/code&gt; is very important for showing notifications. If we were missing this particular stream then we would only see a notification when we force the cache to update. That said, when we request new data on demand, we have to constantly switch to a new notification stream because the previous (old) Observable will complete and no longer emit values.&lt;/p&gt;
+
+&lt;p&gt;That’s it! We’ve made it and implemented a sophisticated caching mechanism using RxJS and the tools provided by Angular. To recap, our service exposes a stream that gives us a list of jokes. The underlying HTTP request is periodically triggered every 10 seconds to update the cache. To improve the user experience, we show a notification so that the user has to enforce an update of the UI. On top of that, we have implemented a way for the user to request new data on demand.&lt;/p&gt;
+
+&lt;p&gt;Awesome! Here’s the final solution. Take a few minutes to review the code once again. Try out different scenarios to see if everything works as expected.&lt;/p&gt;
+
+&lt;iframe style=&quot;height: 500px&quot; src=&quot;https://stackblitz.com/edit/advanced-caching-with-rxjs-step-4?ctl=1&amp;amp;embed=1&amp;amp;file=app/joke.service.ts&amp;amp;view=preview&quot; frameborder=&quot;0&quot; webkitallowfullscreen=&quot;&quot; mozallowfullscreen=&quot;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h2 id=&quot;outlook&quot;&gt;Outlook&lt;/h2&gt;
+
+&lt;p&gt;If you want some homework or brain food for later, here are some thoughts for improvements:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Add error handling&lt;/li&gt;
+  &lt;li&gt;Refactor the logic from the component into a service to make it reusable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;special-thanks&quot;&gt;Special Thanks&lt;/h2&gt;
+
+&lt;p&gt;Special thanks to &lt;a href=&quot;https://twitter.com/KwintenP&quot;&gt;Kwinten Pisman&lt;/a&gt; for helping me with the code. Also, I’d like to thank &lt;a href=&quot;https://twitter.com/BenLesh&quot;&gt;Ben Lesh&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/BTroncone&quot;&gt;Brian Troncone&lt;/a&gt; for giving me valuable feedback and pointing out a few improvements. In addition, big thanks to &lt;a href=&quot;https://twitter.com/cburgdorf&quot;&gt;Christoph Burgdorf&lt;/a&gt; for reviewing my article as well as the code.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 05 Mar 2018 01:00:00 +0100</pubDate>
+        <link>http://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html</link>
+        <guid isPermaLink="true">http://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html</guid>
+      </item>
+    
+      <item>
         <title>A simple guide to Reinforcement Learning</title>
         <description>&lt;p&gt;This is the first post in a series of articles on &lt;strong&gt;Reinforcement Learning&lt;/strong&gt; which is a subfield of &lt;strong&gt;Machine Learning&lt;/strong&gt; on that we have &lt;a href=&quot;/machine-learning/2016/09/23/beginning-ml-with-keras-and-tensorflow.html&quot;&gt;blogged&lt;/a&gt; &lt;a href=&quot;/machine-learning/2016/11/02/understanding-XOR-with-keras-and-tensorlow.html&quot;&gt;about&lt;/a&gt; &lt;a href=&quot;/announcements/machine-learning/2017/12/20/machine-learning-jump-start-online-course.html&quot;&gt;before&lt;/a&gt;.&lt;/p&gt;
 
@@ -2888,73 +3540,6 @@ We loved the rooftop terrace a lot, every morning we’ve had breakfast there, f
         <pubDate>Wed, 26 Jul 2017 02:00:00 +0200</pubDate>
         <link>http://blog.thoughtram.io/angular/2017/07/26/a-web-animations-deep-dive-with-angular.html</link>
         <guid isPermaLink="true">http://blog.thoughtram.io/angular/2017/07/26/a-web-animations-deep-dive-with-angular.html</guid>
-      </item>
-    
-      <item>
-        <title>Announcing Angular Master Class in Houston</title>
-        <description>&lt;h3 id=&quot;angular-master-class-training&quot;&gt;Angular Master-Class Training&lt;/h3&gt;
-
-&lt;p&gt;It’s been almost 7 months since our last AMC training in USA: 
-&lt;a href=&quot;https://blog.thoughtram.io/announcements/2016/08/30/announcing-angular-2-master-class-in-nyc.html&quot;&gt;Brooklyn, NY&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;With help from Bonnie Brennan &lt;a href=&quot;https://www.meetup.com/ngHouston/&quot;&gt;Angular Meetup Houston&lt;/a&gt;, we are very pleased to announce that our 
-Angular Master Class is finally coming to &lt;strong&gt;Houston, Texas&lt;/strong&gt; on &lt;strong&gt;August 22 - 25, 2017!&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;And we found the perfect, artsy venue: Bisong Art Gallery, Houston Texas.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.google.com/maps/place/Bisong+Art+Gallery/@29.7682252,-95.3704114,14.27z/data=!4m5!3m4!1s0x8640bf298647bd0d:0x78cc6f2afbb33e48!8m2!3d29.7675697!4d-95.35409?hl=en&quot; target=&quot;_blank&quot;&gt;
-  &lt;img src=&quot;/images/amc_houston_hall2.jpg&quot; alt=&quot;AMC Houston Event Location&quot; /&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;After all, fun places are sure to get everyone into the right state of mind to learn the 
-nuances and power of Angular!&lt;/p&gt;
-
-&lt;h3 id=&quot;about-the-training&quot;&gt;About the Training&lt;/h3&gt;
-
-&lt;p&gt;You or your team should attend our 4-day &lt;strong&gt;Angular Master Class&lt;/strong&gt; training.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Developers should note that this is the first time we have offered a public &lt;strong&gt;4-day&lt;/strong&gt; training!
-The reason we added another day is because we want to teach our brand new course material focused on  &lt;strong&gt;Redux and ngrx&lt;/strong&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;training-schedule&quot;&gt;Training Schedule&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Day 1: Jump Start with full, high-level introduction to Angular&lt;/li&gt;
-  &lt;li&gt;Day 2: Observables &amp;amp; Component Architecture&lt;/li&gt;
-  &lt;li&gt;Day 3: Routing &amp;amp; Forms&lt;/li&gt;
-  &lt;li&gt;Day 4: Redux + ngrx with immutable, 1-way dataflows and reactive programming
-&lt;img src=&quot;/images/ngrx_sample.jpg&quot; style=&quot;margin-top:15px; width:75%; margin-bottom:10px&quot; alt=&quot;Sample: ngRx Lab Exercise&quot; /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;These are intense, full 8-hour days… but don’t worry, we make the classroom fun. thoughtram teaches the class with two (2) trainers. And almost every 30 minutes, students work with hands-on, coding lab exercises.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;We have also updated our course and lab exercises to use Angular Material and Angular Flex-Layout. You can read about that here: &lt;a href=&quot;https://blog.thoughtram.io/angular/2017/01/08/a-revamped-angular-master-class.html&quot;&gt;Revamped Angular Master Class&lt;/a&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;We also have social time after class on Day 2 and Day 4. Leverage the social times for networking, offline questions, and simply relaxing with your fellow Angular-philes.
-So come to our training, have a blast, and get the best acceleration into Angular possible.&lt;/p&gt;
-
-&lt;h3 id=&quot;on-premise-private-training&quot;&gt;On-Premise, Private Training?&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/sample_private_training.jpg&quot; style=&quot;margin-top:15px; width:75%; margin-bottom:10px&quot; alt=&quot;Public Training at Trade Me, June 2017 New Zealand&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If you prefer private, on-site training for your development teams [10 or more developers], 
-please contact us for rates, details, and scheduling: &lt;a href=&quot;mailto:hello@thoughtram.io?subject=Re Private AMC Training&quot;&gt;hello@thoughtram.io&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;tickets-on-sale-now&quot;&gt;Tickets on sale now&lt;/h3&gt;
-
-&lt;p&gt;You can find more information on our official &lt;a href=&quot;https://amc-houston.eventbrite.com/?aff=blogAnnouncement&quot;&gt;event page&lt;/a&gt;, or grab your public training ticket right here!&lt;/p&gt;
-
-&lt;iframe src=&quot;//eventbrite.de/tickets-external?eid=35632678300&amp;amp;ref=etckt&quot; frameborder=&quot;0&quot; vspace=&quot;0&quot; hspace=&quot;0&quot; marginheight=&quot;5&quot; marginwidth=&quot;5&quot; scrolling=&quot;auto&quot; allowtransparency=&quot;true&quot;&gt;&lt;/iframe&gt;
-
-&lt;p&gt;See you in Houston!&lt;/p&gt;
-</description>
-        <pubDate>Fri, 23 Jun 2017 02:00:00 +0200</pubDate>
-        <link>http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-houston.html</link>
-        <guid isPermaLink="true">http://blog.thoughtram.io/announcements/2017/06/23/announcing-angular-master-class-in-houston.html</guid>
       </item>
     
   </channel>

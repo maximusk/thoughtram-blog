@@ -1,0 +1,970 @@
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="TODO">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="thoughtram">
+    <title>Advanced caching with RxJS by thoughtram</title>
+    <meta name="google-site-verification" content="o9eGPEgIETEqYGombq7NiQuBIB_qa6gz1yAL7PxKyK0">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4D8799">
+    <link rel="icon" sizes="192x192" href="/images/touch/chrome-touch-icon-192x192.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="thoughtram">
+    <link rel="apple-touch-icon" href="/images/touch/apple-touch-icon.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="/images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#4D8799">
+
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Advanced caching with RxJS">
+    <meta property="og:description" content="TODO">
+    <meta property="og:url" content="http://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html">
+    <meta property="og:site_name" content="Articles by thoughtram">
+    <meta property="og:image" content="http://blog.thoughtram.io/images/banner/advanced_caching.jpg">
+    <meta property="og:publisher" content="http://www.facebook.com/thoughtram">
+
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:title" content="Advanced caching with RxJS">
+    <meta property="twitter:site" content="thoughtram Blog">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css" type="text/css">
+  </head>
+  <body class="sub-site">
+    <!-- Add your site or app content here -->
+
+    <!--[if lt IE 10]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <header class="thtrm-header" role="banner">
+      <div class="thtrm-header-bar">
+        <div class="thtrm-constraint">
+          <a href="http://thoughtram.io" class="thtrm-header-logo-link" title="thoughtram.io Start Page"><h1 class="thtrm-header-logo">thoughtram</h1></a>
+          <div class="thtrm-header-menu-wrapper">
+            <span role="button" tabindex="0" class="thtrm-header-menu-label">Menu</span>
+            <ul class="thtrm-header-menu">
+              <li><a title="Training" class="thtrm-header-menu-item" href="http://thoughtram.io/training.html">Training</a></li>
+              <li><a title="Code Review" class="thtrm-header-menu-item" href="http://thoughtram.io/code-review.html">Code Review</a></li>
+              <li><a title="Casts" class="thtrm-header-menu-item " href="http://casts.thoughtram.io">Casts</a></li>
+              <li><a title="Blog" class="thtrm-header-menu-item" href="/">Blog</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main role="main" class="thtrm-main">
+    <div class="thtrm-banner" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%), url('/images/banner/advanced_caching.jpg');">
+        <hgroup class="thtrm-banner-container">
+          <div class="thtrm-constraint thtrm-constraint--slim">
+            <h2 class="thtrm-banner-text">Advanced caching with RxJS</h2>
+            <span>by <a href="http://twitter.com/" title="Dominic Elm on Twitter">Dominic Elm</a> on Mar 5, 2018<br>40 minute read</span>
+
+          </div>
+        </hgroup>
+      </div>
+      <div class="thtrm-constraint thtrm-constraint--slim">
+
+        <div class="thtrm-article">
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+</section>
+
+
+
+          <p>When building web applications, performance should always be a top priority. There are many things we can do to speed up our Angular applications like tree-shaking, AoT (ahead-of-time compilation), lazy loading modules or caching. To get an overview of practices that will help you boost the performance of your Angular applications, we highly recommend you to check out the <a href="https://github.com/mgechev/angular-performance-checklist#lazy-loading-of-resources">Angular Performance Checklist</a> by <a href="https://twitter.com/mgechev">Minko Gechev</a>. In this post we focus on <strong>caching</strong>.</p>
+
+<p>In fact, caching is one of the most efficient ways to improve the experience of our site, especially when our users are on bandwidth restricted devices or slow networks.</p>
+
+<p>There are several ways to cache data or assets. Static assets are most commenly cached with the standard browser cache or Service Workers. While Service Workers can also cache API requests, they are typically more useful for caching resources like images, HTML, JS or CSS files. To cache application <em>data</em> we usually use custom mechanisms.</p>
+
+<p>No matter what mechanism we use, a cache generally <strong>improves the responsiveness</strong> of our application, <strong>decreases network costs</strong> and has the advantage that <strong>content becomes available during network interruptions</strong>. In other words, when the content is cached closer to the consumer, say on the client side, requests don’t cause additional network activity and cached data can be retrieved much faster because we save on an entire network round trip.</p>
+
+<p>In this post we’ll develop an advanced caching mechanism with RxJS and the tools provided by Angular.</p>
+
+<div class="thtrm-toc is-sticky">
+  <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
+<ul id="markdown-toc">
+  <li><a href="#motivation" id="markdown-toc-motivation">Motivation</a></li>
+  <li><a href="#the-requirements" id="markdown-toc-the-requirements">The Requirements</a></li>
+  <li><a href="#implementing-a-basic-cache" id="markdown-toc-implementing-a-basic-cache">Implementing a basic cache</a></li>
+  <li><a href="#automatic-updates" id="markdown-toc-automatic-updates">Automatic updates</a></li>
+  <li><a href="#sending-update-notifications" id="markdown-toc-sending-update-notifications">Sending update notifications</a></li>
+  <li><a href="#fetching-new-data-on-demand" id="markdown-toc-fetching-new-data-on-demand">Fetching new data on demand</a></li>
+  <li><a href="#outlook" id="markdown-toc-outlook">Outlook</a></li>
+  <li><a href="#special-thanks" id="markdown-toc-special-thanks">Special Thanks</a></li>
+</ul>
+
+</div>
+
+<h2 id="motivation">Motivation</h2>
+
+<p>Every now and then there’s this question popping up how to cache data in an Angular application that makes excessive use of Observables. Most people have a good understanding on how to cache data with Promises but feel overwhelmed when it comes to functional reactive programming, due to its complexity (large API), fundamental shift in mindset (from imperative to declarative) and the multitude of concepts. Hence, it can be hard to actually translate an existing caching mechanism based on Promises to Observables, especially if you want that mechanism to be a little bit more advanced.</p>
+
+<p>In an Angular application, we typically perform HTTP requests through the <code>HttpClient</code> that comes with the <code>HttpClientModule</code>. All of its APIs are Observabled-based meaning that methods like <code>get</code>, <code>post</code>, <code>put</code> or <code>delete</code> return an Observable. Because Observables are lazy by nature the request is only made when we call <code>subscribe</code>. However, calling <code>subscribe</code> multiple times on the same Observable will cause the source Observable to be re-created over and over again and, hence, perform a request on each subscription. We call this <strong>cold</strong> Observables.</p>
+
+<p>If you are completely new to this, we have written an article on <a href="/angular/2016/06/16/cold-vs-hot-observables.html">Cold vs Hot Observables</a>.</p>
+
+<p>This behavior can make it tricky to implement a caching mechanism with Observables. Simple approaches often require a fair amount of boilerplate and we probably end up bypassing RxJS, which works, but is not the recommended way if we want to harness the power of Observables. Literally speaking, we don’t wanna drive a Ferrari with a scooter engine, right?</p>
+
+<h2 id="the-requirements">The Requirements</h2>
+
+<p>Before we dive into code, let’s start to define the requirements for our advanced caching mechanism.</p>
+
+<p>We want to build an application called <strong>World of Jokes</strong>. It’s a simple app that randomly shows jokes for a given category. To keep it simple and focused, there’s only one category.</p>
+
+<p>This app has three components: <code>AppComponent</code>, <code>DashboardComponent</code> and <code>JokeListComponent</code>.</p>
+
+<p>The <code>AppComponent</code> is our entry point and renders a toolbar as well as a <code>&lt;router-outlet&gt;</code> that is filled based on the current router state.</p>
+
+<p>The <code>DashboardComponent</code> simply shows a list of categories. From here, we can navigate to the <code>JokeListComponent</code> which then renders a list of jokes onto the screen.</p>
+
+<p>The jokes themselves are fetched from a server using Angular’s <code>HttpClient</code> service. To keep the component’s responsibility focused and separate the concerns, we want to create a <code>JokeService</code> that takes care of requesting the data. The component can then simply inject the service and access the data through its public APIs.</p>
+
+<p>All of the above is just our application’s architecture and there’s no caching involved yet.</p>
+
+<p>When navigating from the dashboard to the list view, we prefer to request the data from a cache rather than requesting it from the server every time. The underlying data of this cache would update itself every 10 seconds.</p>
+
+<p>Of course, polling for new data every 10 seconds isn’t a solid strategy for a production app where we would rather use a more sophisticated approach to update the cache (e.g. web socket push updates). But we’ll try to keep things simple here to focus on the caching aspect.</p>
+
+<p>In any case we’d receive some sort of update notification. For our application we want the data in the UI (<code>JokeListComponent</code>) to not automatically update when the cache updates but rather waits for the user to enforce the UI update. Why? Imagine a user may be reading one of the jokes and then all of a sudden it’s gone because the data is updated automatically. That would be super annoying and a bad user experience. Therefore, our users receive notifications whenever new data is available.</p>
+
+<p>To make it even more fun, we want the user to be able to force the cache to update. This is different from solely updating the UI because forcing an update means to freshly request the data from the server, update the cache and then also update the UI accordingly.</p>
+
+<p>Let’s summarize what we want to build:</p>
+
+<ul>
+  <li>Our app has two components where navigating from component A to B should prefer requesting B’s data from a cache rather than requesting it from the server every time</li>
+  <li>Cache is updated every 10 seconds</li>
+  <li>Data in the UI is not automatically updated and requires the user to enforce an update</li>
+  <li>User can force an update that will cause a request to actually update the cache and the UI</li>
+</ul>
+
+<p>Here’s a preview of what we are going to build:</p>
+
+<p><img src="/images/cache_app_preview.gif" alt="app preview" /></p>
+
+<h2 id="implementing-a-basic-cache">Implementing a basic cache</h2>
+
+<p>Let’s start simple and work our way up to the final and fully-fledged solution.</p>
+
+<p>The first step is to create a new service.</p>
+
+<p>Next, we’ll add two interfaces, one that describes the shape of a <code>Joke</code> and the other is used to <strong>strongly type</strong> the response of our HTTP request. This makes TypeScript happy but most importantly more convenient and obvious to work with.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">interface</span> <span class="nx">Joke</span> <span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
+  <span class="nl">joke</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+  <span class="nl">categories</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="kr">interface</span> <span class="nx">JokeResponse</span> <span class="p">{</span>
+  <span class="nl">type</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+  <span class="nl">value</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Joke</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Now let’s implement the <code>JokeService</code>. We don’t want to reveal the implementation detail of whether the data was served from cache or freshly requested from the server, hence we simply expose a property <code>jokes</code> returning an Observable that captures a list of jokes.</p>
+
+<p>In order to perform HTTP requests, we need to make sure to inject the <code>HttpClient</code> service in the <strong>constructor</strong> of our service.</p>
+
+<p>Here’s the shell for the <code>JokeService</code>:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">HttpClient</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/common/http'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeService</span> <span class="p">{</span>
+
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">http</span><span class="err">:</span> <span class="nx">HttpClient</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="nx">get</span> <span class="nx">jokes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Next, we implement a <em>private</em> method <code>requestJokes()</code> which uses the <code>HttpClient</code> to perform a <em>GET</em> request to retrieve a list of jokes.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">map</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeService</span> <span class="p">{</span>
+
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">http</span><span class="err">:</span> <span class="nx">HttpClient</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="nx">get</span> <span class="nx">jokes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+  <span class="p">}</span>
+
+  <span class="kr">private</span> <span class="nx">requestJokes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="o">&lt;</span><span class="nx">JokeResponse</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">API_ENDPOINT</span><span class="p">).</span><span class="nx">pipe</span><span class="p">(</span>
+      <span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>With that in place, we have everything we need to implement the <code>jokes</code> getter method.</p>
+
+<p>One naive approach would be to simply return <code>this.requestJokes()</code>, but that doesn’t do the trick. We know from the beginning that all methods exposed by the <code>HttpClient</code>, for instance <code>get</code>, return <strong>cold</strong> Observables. This means that the whole data stream is re-emitted for each subscriber causing an overhead of HTTP requests. After all, the idea behind a cache is to speed up the load time of our application and limit the amount of network requests to a minimum.</p>
+
+<p>Instead we want to make our stream <strong>hot</strong>. Not only that, but every new subscriber should receive the latest cached value. It turns out that there’s a very convenient operator called <code>shareReplay</code>. This operator returns an Observable that shares a <strong>single</strong> subscription to the underlying source, which is the Observable returned from <code>this.requestJokes()</code>.</p>
+
+<p>In addition, <code>shareReplay</code> accepts an optional parameter <code>bufferSize</code> that is really handy in our case. The <code>bufferSize</code> determines the maximum element count of the replay buffer, that is the number of elements that are cached and replayed for every subscriber. For our scenario we only want to replay the most recent value and, hence, set the <code>bufferSize</code> to one (1).</p>
+
+<p>Let’s look at the code and use what we have just learned:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Observable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Observable'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">shareReplay</span><span class="p">,</span> <span class="nx">map</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">API_ENDPOINT</span> <span class="o">=</span> <span class="s1">'https://api.icndb.com/jokes/random/5?limitTo=[nerdy]'</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">CACHE_SIZE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeService</span> <span class="p">{</span>
+  <span class="kr">private</span> <span class="nx">cache$</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Joke</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">http</span><span class="err">:</span> <span class="nx">HttpClient</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="nx">get</span> <span class="nx">jokes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">cache$</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">cache$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">requestJokes</span><span class="p">().</span><span class="nx">pipe</span><span class="p">(</span>
+        <span class="nx">shareReplay</span><span class="p">(</span><span class="nx">CACHE_SIZE</span><span class="p">)</span>
+      <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache$</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kr">private</span> <span class="nx">requestJokes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="o">&lt;</span><span class="nx">JokeResponse</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">API_ENDPOINT</span><span class="p">).</span><span class="nx">pipe</span><span class="p">(</span>
+      <span class="nx">map</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Ok, we already talked about most of what we see above. But wait, what’s about the private <code>cache$</code> property and <code>if</code> statement inside the getter? The answer to this is quite simple. If we returned <code>this.requestJokes().pipe(shareReplay(CACHE_SIZE))</code> directly then every subscriber creates a <strong>new</strong> cache instance. However, we want to share a single instance across all subscribers. Therefore, we keep the instance in a private property <code>cache$</code> and initialize it as soon as the getter was called the first time. All subsequent consumers will receive the shared instance without re-creating the cache every time.</p>
+
+<p>Let’s look at a more visual representation of what we’ve just implemented:</p>
+
+<p><img src="/images/cache_sequence_diagram.png" width="100%" alt="sequence diagram for our simple cache mechanism" /></p>
+
+<p>Above we can see a <strong>sequence diagram</strong> that depicts the objects involved in our scenario, that is requesting a list of jokes, and the sequences of messages exchanged between the objects. Let’s break it down to understand what’s going on here.</p>
+
+<p>We start out on the dashboard from where we navigate to the list component.</p>
+
+<p>After the component was initialized and Angular calls the <code>ngOnInit</code> life cycle hook, we request the list of jokes by calling the getter function <code>jokes</code> exposed by the <code>JokeService</code>. Since this is the first time we ask for the data, the cache itself is empty and not yet initialized, meaning <code>JokeService.cache$</code> is <code>undefined</code>. Internally we call <code>requestJokes()</code>. This will give us an Observable that emits the data from the server. At the same time we apply the <code>shareReplay</code> operator to get the desired behavior.</p>
+
+<p>The <code>shareReplay</code> operator automatically creates a <code>ReplaySubject</code> between the original source and all future subscribers. As soon as the number of subscribers goes from zero to one it will connect the Subject to the underlying source Observable and broadcast all its values. All future subscribers will be connected to that in-between Subject, so that effectively there’s just one subscription to the underlying cold Observable. This is called <strong>multicasting</strong> and defines the foundation for our simple cache.</p>
+
+<p>Once the data comes back from the server it will be cached.</p>
+
+<p>Note that the <code>Cache</code> is a standalone object in the sequence diagram and is supposed to illustrate the <code>ReplaySubject</code> that is created in between the consumer (subscribers) and the underlying source (HTTP request).</p>
+
+<p>The next time we request the data for the list component, our cache will replay the most recent value and send that to the consumer. There’s no additional HTTP call involved.</p>
+
+<p>Simple, right?</p>
+
+<p>To rip this really apart, let’s take this one step further and look at how the cache works on an Observable level. For this we use a <strong>marble diagram</strong> to visualize how the stream actually works:</p>
+
+<p><img src="/images/cache_share_replay.png" width="100%" alt="marble diagram for our cache" /></p>
+
+<p>The marble diagram makes it really clear that there’s only <strong>one subscription</strong> to the underlying Observable and all consumers simply subscribe to the shared Observable, that is the <code>ReplaySubject</code>. We can also see that only the first subscriber triggers the HTTP call and all others get the latest value replayed.</p>
+
+<p>Finally, let’s look at the <code>JokeListComponent</code> and how we can display the data. The first step is to inject the <code>JokeService</code>. After that, inside <code>ngOnInit</code> we initialize a property <code>jokes$</code> with the value returned by the getter function that is exposed by our service. This will return an Observable of type <code>Array&lt;Joke&gt;</code> and this is exactly what we want.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">jokes$</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Joke</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jokeService</span><span class="err">:</span> <span class="nx">JokeService</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">jokes$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">jokeService</span><span class="p">.</span><span class="nx">jokes</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Note that we are not imperatively subscribing to <code>jokes$</code>. Instead we use the <code>async</code> pipe in the template because it turns out that this pipe is full of little wonders. Curious? Check out this article that unravels <a href="/angular/2017/02/27/three-things-you-didnt-know-about-the-async-pipe.html">three things you didn’t know about the AsyncPipe</a>.</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;mat-card</span> <span class="err">*</span><span class="na">ngFor=</span><span class="s">"let joke of jokes$ | async"</span><span class="nt">&gt;</span>...<span class="nt">&lt;/mat-card&gt;</span></code></pre></div>
+
+<p>Cool! Here’s our simple cache in action. To verify if the request is only made once, open up Chrome’s DevTools, click on the <em>Network</em> tab and then select <em>XHR</em>. Start out on the dashboard, go to the list view and then navigate back and forth.</p>
+
+<iframe style="height: 500px" src="https://stackblitz.com/edit/advanced-caching-with-rxjs-step-1?ctl=1&amp;embed=1&amp;file=app/joke.service.ts&amp;view=preview" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<h2 id="automatic-updates">Automatic updates</h2>
+
+<p>So far we have built a simple caching mechanism in a few lines of code. In fact, most of the heavy lifting is done by the <code>shareReplay</code> operator which takes care of caching and replaying the most recent value(s).</p>
+
+<p>This works perfectly fine but the data is never actually updated in the background. What if the data is likely to change every few minutes? We certainly don’t want to force the user to reload the entire page just to get the latest data from the server.</p>
+
+<p>Wouldn’t it be cool if our cache is updated every 10 seconds in the background? Totally! As a user we don’t have to reload the page and if the data has changed the UI will update accordingly. Again, in a real-world application we would most probably not even use polling but instead have the server <strong>push</strong> notifications. For our little demo app a <em>refresh interval</em> of 10 seconds is just fine.</p>
+
+<p>The implementation is fairly easy. In a nutshell, we want to create an Observable that emits a sequence of values spaced by a given time interval, or simply said, we want to produce a value every <em>X</em> milliseconds. For that we have several options.</p>
+
+<p>The first option is to use <code>interval</code>. This operator takes an optional parameter <code>period</code> that defines the time between each emission. Consider the following example:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">interval</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/observable/interval'</span><span class="p">;</span>
+
+<span class="nx">interval</span><span class="p">(</span><span class="mi">10000</span><span class="p">).</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span></code></pre></div>
+
+<p>Here we set up an Observable that emits an infinite sequence of integers where each value is emitted every 10 seconds. That also means that the first value is somewhat delayed by the given interval. To better demonstrate the behavior, let’s take a look at the marble diagram for <code>interval</code>.</p>
+
+<p><img src="/images/interval_operator.png" width="100%" alt="interval operator" /></p>
+
+<p>Yep, as expected. The first value is “delayed” and this is not what we want. Why? Because if we come from the dashboard and navigate to the list component to read some funny jokes, we’d have to wait for 10 seconds before the data is requested from the server and rendered onto the screen.</p>
+
+<p>We could fix this by introducing another operator called <code>startWith(value)</code> which would emit the given <code>value</code> first, as an initial value. But we can do better!</p>
+
+<p>What if I told you that there’s an operator that emits a sequence of values after a given duration (initial delay) and then after each period (regular interval)? Meet <code>timer</code>.</p>
+
+<p>Visualization time!</p>
+
+<p><img src="/images/timer_operator.png" width="100%" alt="timer operator" /></p>
+
+<p>Cool, but does that really solve our problem? Yep it does. If we set the initial delay to <strong>zero (0)</strong> and set the period to <strong>10 seconds</strong>, we end up with the same behavior as if we used <code>interval(10000).pipe(startWith(0))</code> but only with a single operator.</p>
+
+<p>Let’s take that and plug it into our exisiting caching mechanism.</p>
+
+<p>We have to set up a <strong>timer</strong> and for every <em>tick</em> we want to make an HTTP request to fetch new data from the server. That is, for every tick we need to <strong>switchMap</strong> to an Observable that, on subscription, fetches a new list of jokes. Using <code>switchMap</code> has the positive side effect that we avoid race conditions. That’s due to the nature of this operator because it will unsubscribe from the previously projected Observable and only emit values from the most recently projected Observable.</p>
+
+<p>The rest of our cache remains untouched, meaning that our stream is still multicasted and all subscribers share one underlying source.</p>
+
+<p>Again, the nature of <code>shareReplay</code> will broadcast new values to exisiting subscribers and replay the most recent value to new subscribers.</p>
+
+<p><img src="/images/timer_cache.png" width="100%" alt="timer based cache" /></p>
+
+<p>As we can see in the marble diagram, the timer emits a value every 10 seconds. For every value we switch to an inner Observable that fetches our data. Because we are using <code>switchMap</code>, we avoid race conditions and therefore the consumer only receives the value <code>1</code> and <code>3</code>. The value from the second inner Observable is “skipped” because we are already unsubscribed when the value arrives.</p>
+
+<p>Let’s apply our learnings and update the <code>JokeService</code> accordingly.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">timer</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/observable/timer'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">switchMap</span><span class="p">,</span> <span class="nx">shareReplay</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">REFRESH_INTERVAL</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeService</span> <span class="p">{</span>
+  <span class="kr">private</span> <span class="nx">cache$</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Joke</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">http</span><span class="err">:</span> <span class="nx">HttpClient</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="nx">get</span> <span class="nx">jokes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">cache$</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// Set up timer that ticks every X milliseconds</span>
+      <span class="kr">const</span> <span class="nx">timer$</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">REFRESH_INTERVAL</span><span class="p">);</span>
+
+      <span class="c1">// For each tick make an http request to fetch new data</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">cache$</span> <span class="o">=</span> <span class="nx">timer$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span>
+        <span class="nx">switchMap</span><span class="p">(</span><span class="nx">_</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">requestJokes</span><span class="p">()),</span>
+        <span class="nx">shareReplay</span><span class="p">(</span><span class="nx">CACHE_SIZE</span><span class="p">)</span>
+      <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache$</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Awesome! Wanna try it out yourself? Go ahead and play with the following live demo. From the dashboard, go to the list component and then watch the magic happening. Give it a few seconds so that you can see the update in action. Remember, the cache is refreshed every <strong>10 seconds</strong>, but feel free to fiddle with the <code>REFRESH_INTERVAL</code>.</p>
+
+<iframe style="height: 500px" src="https://stackblitz.com/edit/advanced-caching-with-rxjs-step-2?ctl=1&amp;embed=1&amp;file=app/joke.service.ts&amp;view=preview" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<h2 id="sending-update-notifications">Sending update notifications</h2>
+
+<p>Let’s recap for a moment what we have built so far.</p>
+
+<p>When we request data from our <code>JokeService</code> we always prefer to request that data from a cache rather than requesting it from the server every time. The underlying data of this cache is refreshed every 10 seconds and when this happens, the data is propagated to the component causing the UI to update automatically.</p>
+
+<p>That’s unfortunate. Imagine we’re a user that is reading one of the jokes and all of the sudden it’s gone because the UI is updated automatically. That’s super annoying and a bad user experience.</p>
+
+<p>Therefore, our users should rather receive <strong>notifications</strong> when there’s new data available. In other words, we want the user to enforce the UI update.</p>
+
+<p>It turns out that we don’t have to touch our service in order to implement this. The logic is quite simple. After all, our service should not worry about sending notifications and the view should be in charge when and how to update the data on the screen.</p>
+
+<p>First, we have to get an <strong>initial value</strong> to show something to the user, because otherwise the screen will be blank until the cache was updated the first time. We’ll see why in just a moment. Setting up a stream for the inital value is as easy as calling the getter function. Additionally, since we are only interested in the very first value we can use the <code>take</code> operator.</p>
+
+<p>To make this logic reusable we create a helper methode <code>getDataOnce()</code>.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">take</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">initialJokes$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDataOnce</span><span class="p">();</span>
+    <span class="p">...</span>
+  <span class="p">}</span>
+
+  <span class="nx">getDataOnce</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jokeService</span><span class="p">.</span><span class="nx">jokes</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">take</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>From our requirements we know that we only want to update the UI when the user really enforces an update rather than reflecting the change automatically. How does the user enforce an update you ask? This happens when we click on a button in the UI that says “Update”. This button is shown together with the notification. For now, let’s not worry about the notification and instead focus on the logic that updates the UI when we click that button.</p>
+
+<p>To make this work, we need a way to create an Observable from DOM events, specifically from button clicks. There are several ways but a very common way is to use a <code>Subject</code> as a <strong>bridge</strong> between the template and the view logic that lives in the component class. In a nutshell, a Subject is a type that implements both <code>Observer</code> and <code>Observable</code> types. Observables define the data flow and produce the data while Observers can subscribe to Observables and receive the data.</p>
+
+<p>The good thing about the Subject here is that we can simply use an event binding in the template and then call <code>next</code> when the event is triggered. This will cause the specified value to be broadcasted to all Observers that are listening for values. Note that we can also omit the value if the Subject is of type <code>void</code>. In fact, this is true for our case.</p>
+
+<p>Let’s go ahead and instantiate a new Subject.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">update$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Now we can go ahead and wire this up in the template.</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notification"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;span&gt;</span>There's new data available. Click to reload the data.<span class="nt">&lt;/span&gt;</span>
+  <span class="nt">&lt;button</span> <span class="na">mat-raised-button</span> <span class="na">color=</span><span class="s">"accent"</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">update</span><span class="err">$.</span><span class="na">next</span><span class="err">()"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"flex-row"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;mat-icon&gt;</span>cached<span class="nt">&lt;/mat-icon&gt;</span>
+      UPDATE
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
+
+<p>See how we use the <strong>event binding</strong> syntax to capture the click event on the <code>&lt;button&gt;</code>? When we click on the button we simply propagate a <em>ghost</em> value causing all active Observers to be notified. We call it ghost value because we are not actually passing in any value, or at least a value of type <code>void</code>.</p>
+
+<p>Another way would be to use the <code>@ViewChild()</code> decorator in combination with the <code>fromEvent</code> operator from RxJS. However, this requires us to “mess” with the DOM and query an HTML element from the view. With a Subject we are actually just bridging the two sides and don’t really touch the DOM at all except the event binding we are adding to the button.</p>
+
+<p>Alright, with the view being setup we can now switch to the logic that takes care of updating the UI.</p>
+
+<p>So what does it mean to update the UI? Well, the cache is updated in the background automatically and we want to render the most recent value from the cache when we click on that button, right? This means that our <strong>source</strong> stream in this case is the Subject. Every time a value is broadcasted on <code>update$</code> we want to <strong>map</strong> this value to an Observable that gives us the latest cached value. In other words, we are dealing with a so-called <strong>Higher Order Observable</strong>, an Observable that emits Observables.</p>
+
+<p>From before we should know that there’s <code>switchMap</code> that solves exactly this problem. This time we’ll use <code>mergeMap</code> instead. This operator behaves very similar to <code>switchMap</code> with the difference that it does not unsubscribe from the previously projected inner Observable and simply merges the inner emissions in the output Observable.</p>
+
+<p>In fact, when requesting the most recent value from the cache, the HTTP request is already done and the cache was successfully updated. Therefore, we don’t really face the problem of race-conditions here. Though it seems to be asynchronous, it’s actually somewhat <strong>synchronous</strong> because the value will be emitted in the same <em>tick</em>.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">mergeMap</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">update$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+
+  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="kr">const</span> <span class="nx">updates$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">update$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span>
+      <span class="nx">mergeMap</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDataOnce</span><span class="p">())</span>
+    <span class="p">);</span>
+    <span class="p">...</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Sweet! For every “update” we request the latest value from the cache using our helper method we implemented earlier.</p>
+
+<p>From here, it’s only a small step to come up with the stream for the jokes that are rendered onto the screen. All we have to do is to merge the initial list of jokes with our <code>update$</code> stream.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Observable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Observable'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">merge</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/observable/merge'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">mergeMap</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">jokes$</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Joke</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nx">update$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+
+  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">initialJokes$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDataOnce</span><span class="p">();</span>
+
+    <span class="kr">const</span> <span class="nx">updates$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">update$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span>
+      <span class="nx">mergeMap</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDataOnce</span><span class="p">())</span>
+    <span class="p">);</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">jokes$</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">initialJokes$</span><span class="p">,</span> <span class="nx">updates$</span><span class="p">);</span>
+    <span class="p">...</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>It’s important that we use our helper method <code>getDataOnce()</code> to map each update event to the latest cached value. If we recall, it uses <code>take(1)</code> internally which will take the first value and then <strong>complete</strong> the stream. This is crucial because otherwise we’d end up with an on-going stream or live connection to the cache. In this case we would basically break our logic of enforcing a UI update only by clicking the “Update” button.</p>
+
+<p>Also, because the underlying cache is multicasted, it’s totally safe to always re-subscribe to the cache to get the latest value.</p>
+
+<p>Before we continue with the notification stream, let’s stop for a moment and visualize what we just implemented as a marble diagram.</p>
+
+<p><img src="/images/jokes.png" width="100%" alt="jokes" /></p>
+
+<p>As we can see in the diagram above, <code>initialJokes$</code> is crucial because otherwise we’d only see something on the screen when we click “Update”. While the data is already updated in the background every 10 seconds, there’s no way we can press this button. That’s because the button is part of the notification and we never really show it to the user.</p>
+
+<p>Let’s fill this gap and implement the missing functionality to complete the puzzle.</p>
+
+<p>For that, we have to create an Observable that is responsible for showing or hiding the notification. Essentially, we need a stream that either emits <code>true</code> or <code>false</code>. We want the value to be <code>true</code> when there’s an update, and <code>false</code> when the user clicks on the “Update” button.</p>
+
+<p>In addition we want to <strong>skip</strong> the first (initial) value emitted by our cache because it’s not really a refresh.</p>
+
+<p>If we think in terms of streams, we can break this up into multiple streams and <strong>merge</strong> them together to turn them into a single Observable. The final stream then has the desired behavior to show or hide notifications.</p>
+
+<p>Enough theory! Here’s the code:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Observable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Observable'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">skip</span><span class="p">,</span> <span class="nx">mapTo</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">showNotification$</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="kr">boolean</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="nx">update$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+
+  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="kr">const</span> <span class="nx">initialNotifications$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">jokeService</span><span class="p">.</span><span class="nx">jokes</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">skip</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="kr">const</span> <span class="nx">show$</span> <span class="o">=</span> <span class="nx">initialNotifications$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">mapTo</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="kr">const</span> <span class="nx">hide$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">update$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">mapTo</span><span class="p">(</span><span class="kc">false</span><span class="p">));</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">showNotification$</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">show$</span><span class="p">,</span> <span class="nx">hide$</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Here, we listen for all values emitted by our cache but skip the first because it’s not a <strong>refresh</strong>. For every new value on <code>initialNotifications$</code> we map it to <code>true</code> to show the notification. Once we click the “Update” button in the notification, a value is produced on <code>update$</code> and we can simply map it to <code>false</code> causing the notification to disappear.</p>
+
+<p>Let’s use <code>showNotification$</code> inside the template of the <code>JokeListComponent</code> to toggle a class that either shows or hides the notification.</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notification"</span> <span class="err">[</span><span class="na">class</span><span class="err">.</span><span class="na">visible</span><span class="err">]="</span><span class="na">showNotification</span><span class="err">$</span> <span class="err">|</span> <span class="na">async</span><span class="err">"</span><span class="nt">&gt;</span>
+  ...
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
+
+<p>Yay! We are getting really close to the final solution. But before we continue, let’s try it out and play around with the live demo. Take your time and go through the code step by step again.</p>
+
+<iframe style="height: 500px" src="https://stackblitz.com/edit/advanced-caching-with-rxjs-step-3?ctl=1&amp;embed=1&amp;file=app/joke.service.ts&amp;view=preview" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<h2 id="fetching-new-data-on-demand">Fetching new data on demand</h2>
+
+<p>Awesome! We have come a long way and already implemented a few very cool features for our cache. To finish up this article and take our cache to a whole new level, there’s one thing left for us to do. As a user we want to be able to <strong>force</strong> an update at any point in time.</p>
+
+<p>It’s not really that complicated but we have to touch both the component and the service to make this work.</p>
+
+<p>Let’s start with our service. What we need is a public facing API that will force the cache to reload the data. Technically speaking, we’ll <strong>complete</strong> the current cache and set it to <code>null</code>. This means that the next time we request the data from our service we will set up a new cache, fetch the data and store this for future subscribers. It’s not a big deal to create a new cache every time we enforce an update because it will be completed and eventually garbage collected. In fact, this has the positive side effect that we also <strong>reset</strong> the timer which is absolutely desired. Let’s say we have waited 9 seconds and now click “Fetch new Jokes”. We expect the data to be refreshed, but we don’t to see a notification popping up 1 second later. Instead we want to restart the timer so that when we enforce an update it another 10 seconds to trigger the <strong>automatic update</strong>.</p>
+
+<p>Another reason for the destroying the cache is that it’s much less complex compared to a mechanism that keeps the cache running all the time. If that’s the case then the cache needs to be aware of whether a reload was enforced or not.</p>
+
+<p>Let’s create a Subject that we use to tell the cache to complete. We’ll leverage <code>takeUntil</code> and pluck it into our <code>cache$</code> stream. In addition, we implement a public facing API that, internally, sets the cache to <code>null</code> and also broadcasts an event on our Subject.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">timer</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/observable/timer'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">switchMap</span><span class="p">,</span> <span class="nx">shareReplay</span><span class="p">,</span> <span class="nx">map</span><span class="p">,</span> <span class="nx">takeUntil</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">REFRESH_INTERVAL</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeService</span> <span class="p">{</span>
+  <span class="kr">private</span> <span class="nx">reload$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+
+  <span class="nx">get</span> <span class="nx">jokes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">cache$</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">timer$</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">REFRESH_INTERVAL</span><span class="p">);</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">cache$</span> <span class="o">=</span> <span class="nx">timer$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span>
+        <span class="nx">switchMap</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">requestJokes</span><span class="p">()),</span>
+        <span class="nx">takeUntil</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">reload$</span><span class="p">),</span>
+        <span class="nx">shareReplay</span><span class="p">(</span><span class="nx">CACHE_SIZE</span><span class="p">)</span>
+      <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache$</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">forceReload</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Calling next will complete the current cache instance</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">reload$</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+
+    <span class="c1">// Setting the cache to null will create a new cache the</span>
+    <span class="c1">// next time 'jokes' is called</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">cache$</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>This alone doesn’t do much, so let’s go ahead and use that in our <code>JokeListComponent</code>. For this we’ll implement a function <code>forceReload()</code> that is called whenever we click on the button that says “Fetch new Jokes”. Also, we need to create a Subject that is used as an event bus for updating the UI as well as showing the notifications. We’ll see in a moment where this comes into play.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">forceReload$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+
+  <span class="nx">forceReload</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">jokeService</span><span class="p">.</span><span class="nx">forceReload</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">forceReload$</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>With this in place we can wire up the button in the template of the <code>JokeListComponent</code> to force the cache to reload the data. All we have to do is listen for the <code>click</code> event using Angular’s event binding syntax and call <code>forceReload()</code>.</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;button</span> <span class="na">class=</span><span class="s">"reload-button"</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">forceReload</span><span class="err">()"</span> <span class="na">mat-raised-button</span> <span class="na">color=</span><span class="s">"accent"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"flex-row"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;mat-icon&gt;</span>cached<span class="nt">&lt;/mat-icon&gt;</span>
+    FETCH NEW JOKES
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/button&gt;</span></code></pre></div>
+
+<p>This already works, but only if we go back to the dashboard and then again to the list view. This is of course not what we want. We want the UI to update <strong>immediately</strong> when we force the cache to reload the data.</p>
+
+<p>Remeber that we have implemented a stream <code>updates$</code> that, when we click on “Update”, requests the latest data from our cache? It turns out that we need exactly the same behavior, so we can go ahead and extend this stream. This means we have to <strong>merge</strong> both <code>update$</code> and <code>forceReload$</code>, because those two streams are the sources for updating the UI.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">merge</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/observable/merge'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">mergeMap</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">update$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="nx">forceReload$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+
+  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="kr">const</span> <span class="nx">updates$</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">update$</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">forceReload$</span><span class="p">).</span><span class="nx">pipe</span><span class="p">(</span>
+      <span class="nx">mergeMap</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDataOnce</span><span class="p">())</span>
+    <span class="p">);</span>
+    <span class="p">...</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>That was easy, wasn’t it? Yea but we are not done. In fact, we just “broke” our notifications. It all works just fine until we click “Fetch new Jokes”. The data is updated on the screen as well as in our cache, but when we wait 10 seconds there’s no notification popping up. The problem here is that forcing an update will complete the cache instance, meaning we no longer receive values in the component. The notification stream (<code>initialNotifications$</code>) is basically dead. That’s unfortunate, so how can we fix this?</p>
+
+<p>Quite easy! We listen for events on <code>forceReload$</code> and for every value we switch to a new notification stream. Important here is that we <strong>unsubscribe</strong> from the <strong>previous</strong> stream. Does that ring a bell? Sounds a lot like we need <code>switchMap</code> here, doesn’t it?</p>
+
+<p>Let’s get our hands dirty and implement this!</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Observable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Observable'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">merge</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/observable/merge'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">take</span><span class="p">,</span> <span class="nx">switchMap</span><span class="p">,</span> <span class="nx">mergeMap</span><span class="p">,</span> <span class="nx">skip</span><span class="p">,</span> <span class="nx">mapTo</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">JokeListComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="nx">showNotification$</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="kr">boolean</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="nx">update$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="nx">forceReload$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
+  <span class="p">...</span>
+
+  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="kr">const</span> <span class="nx">reload$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">forceReload$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">switchMap</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">getNotifications</span><span class="p">()));</span>
+    <span class="kr">const</span> <span class="nx">initialNotifications$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getNotifications</span><span class="p">();</span>
+    <span class="kr">const</span> <span class="nx">show$</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">initialNotifications$</span><span class="p">,</span> <span class="nx">reload$</span><span class="p">).</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">mapTo</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
+    <span class="kr">const</span> <span class="nx">hide$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">update$</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">mapTo</span><span class="p">(</span><span class="kc">false</span><span class="p">));</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">showNotification$</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">show$</span><span class="p">,</span> <span class="nx">hide$</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">getNotifications</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jokeService</span><span class="p">.</span><span class="nx">jokes</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">skip</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>That’s it. Whenever <code>forceReload$</code> emits a value we unsubscribe from the previous Observable and switch to a new <em>notification</em> stream. Note that there’s a piece of code that we needed twice, that is <code>this.jokeService.jokes.pipe(skip(1))</code>. Instead of repeating ourselves, we created a function <code>getNotifications()</code> that simply returns a stream of jokes but <strong>skips</strong> the first value. Finally, we merge both <code>initialNotifications$</code> and <code>reload$</code> together into one stream called <code>show$</code>. This stream is responsible for showing the notification on the screen. There’s also no need to unsubscribe from <code>initialNotifications$</code> because this stream completes before the cache is re-created on the next subscription. The rest stays the same.</p>
+
+<p>Puh, we did it. Let’s take a moment and look at a more visual representation of what we just implemented.</p>
+
+<p><img src="/images/notification_cache.png" width="100%" alt="notification system" /></p>
+
+<p>As we can see in the marble diagrams, <code>initialNotifications$</code> is very important for showing notifications. If we were missing this particular stream then we would only see a notification when we force the cache to update. That said, when we request new data on demand, we have to constantly switch to a new notification stream because the previous (old) Observable will complete and no longer emit values.</p>
+
+<p>That’s it! We’ve made it and implemented a sophisticated caching mechanism using RxJS and the tools provided by Angular. To recap, our service exposes a stream that gives us a list of jokes. The underlying HTTP request is periodically triggered every 10 seconds to update the cache. To improve the user experience, we show a notification so that the user has to enforce an update of the UI. On top of that, we have implemented a way for the user to request new data on demand.</p>
+
+<p>Awesome! Here’s the final solution. Take a few minutes to review the code once again. Try out different scenarios to see if everything works as expected.</p>
+
+<iframe style="height: 500px" src="https://stackblitz.com/edit/advanced-caching-with-rxjs-step-4?ctl=1&amp;embed=1&amp;file=app/joke.service.ts&amp;view=preview" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+
+<h2 id="outlook">Outlook</h2>
+
+<p>If you want some homework or brain food for later, here are some thoughts for improvements:</p>
+
+<ul>
+  <li>Add error handling</li>
+  <li>Refactor the logic from the component into a service to make it reusable</li>
+</ul>
+
+<h2 id="special-thanks">Special Thanks</h2>
+
+<p>Special thanks to <a href="https://twitter.com/KwintenP">Kwinten Pisman</a> for helping me with the code. Also, I’d like to thank <a href="https://twitter.com/BenLesh">Ben Lesh</a> and <a href="https://twitter.com/BTroncone">Brian Troncone</a> for giving me valuable feedback and pointing out a few improvements. In addition, big thanks to <a href="https://twitter.com/cburgdorf">Christoph Burgdorf</a> for reviewing my article as well as the code.</p>
+
+
+          
+
+
+
+
+        </div>
+
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+</section>
+
+        <div class="thtrm-subscriber">
+  <h3>Get updates on new articles and trainings.</h3>
+  <p>Join over 1400 other developers who get our content first.</p>
+  <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
+    <label for="mce-EMAIL"></label>
+    <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
+    <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
+    <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
+  </form>
+</div>
+
+
+
+        <div class="thtrm-social-links">
+            <!-- Sharingbutton Facebook -->
+            <a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=http%3A%2F%2Fblog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html" target="_blank" aria-label="Share on Facebook">
+              <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M18.768,7.465H14.5V5.56c0-0.896,0.594-1.105,1.012-1.105s2.988,0,2.988,0V0.513L14.171,0.5C10.244,0.5,9.5,3.438,9.5,5.32 v2.145h-3v4h3c0,5.212,0,12,0,12h5c0,0,0-6.85,0-12h3.851L18.768,7.465z"/>
+                    </g>
+                </svg>
+                </div>Share on Facebook</div>
+            </a>
+
+            <!-- Sharingbutton Twitter -->
+            <a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?text=Advanced%20caching%20with%20RxJS&amp;url=http://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html" target="_blank" aria-label="Share on Twitter">
+              <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M23.444,4.834c-0.814,0.363-1.5,0.375-2.228,0.016c0.938-0.562,0.981-0.957,1.32-2.019c-0.878,0.521-1.851,0.9-2.886,1.104 C18.823,3.053,17.642,2.5,16.335,2.5c-2.51,0-4.544,2.036-4.544,4.544c0,0.356,0.04,0.703,0.117,1.036 C8.132,7.891,4.783,6.082,2.542,3.332C2.151,4.003,1.927,4.784,1.927,5.617c0,1.577,0.803,2.967,2.021,3.782 C3.203,9.375,2.503,9.171,1.891,8.831C1.89,8.85,1.89,8.868,1.89,8.888c0,2.202,1.566,4.038,3.646,4.456 c-0.666,0.181-1.368,0.209-2.053,0.079c0.579,1.804,2.257,3.118,4.245,3.155C5.783,18.102,3.372,18.737,1,18.459 C3.012,19.748,5.399,20.5,7.966,20.5c8.358,0,12.928-6.924,12.928-12.929c0-0.198-0.003-0.393-0.012-0.588 C21.769,6.343,22.835,5.746,23.444,4.834z"/>
+                    </g>
+                </svg>
+                </div>Share on Twitter</div>
+            </a>
+
+            <!-- Sharingbutton Google+ -->
+            <a class="resp-sharing-button__link" href="https://plus.google.com/share?url=http%3A%2F%2Fblog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html" target="_blank" aria-label="Share on Google+">
+              <div class="resp-sharing-button resp-sharing-button--google resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+                <svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+                    <g>
+                        <path d="M11.366,12.928c-0.729-0.516-1.393-1.273-1.404-1.505c0-0.425,0.038-0.627,0.988-1.368 c1.229-0.962,1.906-2.228,1.906-3.564c0-1.212-0.37-2.289-1.001-3.044h0.488c0.102,0,0.2-0.033,0.282-0.091l1.364-0.989 c0.169-0.121,0.24-0.338,0.176-0.536C14.102,1.635,13.918,1.5,13.709,1.5H7.608c-0.667,0-1.345,0.118-2.011,0.347 c-2.225,0.766-3.778,2.66-3.778,4.605c0,2.755,2.134,4.845,4.987,4.91c-0.056,0.22-0.084,0.434-0.084,0.645 c0,0.425,0.108,0.827,0.33,1.216c-0.026,0-0.051,0-0.079,0c-2.72,0-5.175,1.334-6.107,3.32C0.623,17.06,0.5,17.582,0.5,18.098 c0,0.501,0.129,0.984,0.382,1.438c0.585,1.046,1.843,1.861,3.544,2.289c0.877,0.223,1.82,0.335,2.8,0.335 c0.88,0,1.718-0.114,2.494-0.338c2.419-0.702,3.981-2.482,3.981-4.538C13.701,15.312,13.068,14.132,11.366,12.928z M3.66,17.443 c0-1.435,1.823-2.693,3.899-2.693h0.057c0.451,0.005,0.892,0.072,1.309,0.2c0.142,0.098,0.28,0.192,0.412,0.282 c0.962,0.656,1.597,1.088,1.774,1.783c0.041,0.175,0.063,0.35,0.063,0.519c0,1.787-1.333,2.693-3.961,2.693 C5.221,20.225,3.66,19.002,3.66,17.443z M5.551,3.89c0.324-0.371,0.75-0.566,1.227-0.566l0.055,0 c1.349,0.041,2.639,1.543,2.876,3.349c0.133,1.013-0.092,1.964-0.601,2.544C8.782,9.589,8.363,9.783,7.866,9.783H7.865H7.844 c-1.321-0.04-2.639-1.6-2.875-3.405C4.836,5.37,5.049,4.462,5.551,3.89z"/>
+                        <polygon points="23.5,9.5 20.5,9.5 20.5,6.5 18.5,6.5 18.5,9.5 15.5,9.5 15.5,11.5 18.5,11.5 18.5,14.5 20.5,14.5 20.5,11.5  23.5,11.5   "/>
+                    </g>
+                </svg>
+                </div>Share on Google+</div>
+            </a>
+        </div>
+
+        <h3 class="thtrm-section-headline thtrm-section-headline--with-margin">Author</h3>
+        <div class="thtrm-article-author">
+          <span class="thtrm-article-author-avatar"><img src="/images/author_dominic.jpg" alt="Picture of Dominic Elm"></span>
+          <div class="thtrm-article-author-matter">
+            <h4 class="thtrm-article-author-name">Dominic Elm</h4>
+            <p class="thtrm-article-author-text">Dominic is a graduate in computer science and is passionate about many web technologies including Angular, Firebase, and ReactiveX. He has always been enthusiastic about teaching. In fact, Dominic devoted his thesis on the topic of enterprise gamification making the the process of sharing and learning within companies fun and enjoyable for everyone.</p>
+            <p>
+              <a class="thtrm-article-author-cta thtrm-article-author-cta-twitter" href="https://twitter.com/elmd_" title="Dominic Elm on Twitter">Twitter</a>
+              <a class="thtrm-article-author-cta" href="https://github.com/d3lm" title="Dominic Elm on GitHub">GitHub</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="thtrm-constraint">
+
+        
+        <h4 class="thtrm-section-headline thtrm-section-headline--with-big-margin thtrm-section-headline--centered">Related Posts</h4>
+        <ul class="thtrm-three-column-list thtrm-three-column-list--with-padding">
+        
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/rxjs/2017/08/24/taming-snakes-with-reactive-streams.html" title="Taming snakes with reactive streams">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/reactive_snake.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Taming snakes with reactive streams</h3>
+                <p>Reactive Programming is revolutionary but it's not always straightforward and requires a fundamental shift in mindset. In this post, we'll...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/rx/2016/08/01/exploring-rx-operators-flatmap.html" title="Exploring Rx Operators: flatMap">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rx-flatmap.jpeg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Exploring Rx Operators: flatMap</h3>
+                <p>Another post in a series of articles to discover the magic of different Rx operators. In this article we like...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/08/angular-master-class-redux-and-ngrx.html" title="Angular Master Class - Redux and ngrx">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/ngrx_slide_logo.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Angular Master Class - Redux and ngrx</h3>
+                <p>Today we're super excited to announce that we finished working on our new Angular Master Class courseware. Read on for...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/02/27/three-things-you-didnt-know-about-the-async-pipe.html" title="Three things you didn't know about the AsyncPipe">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/three-things-about-the-async-pipe.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Three things you didn't know about the AsyncPipe</h3>
+                <p>This article explains three lesser known features of the AsyncPipe that help us to write better async code.</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2016/06/16/cold-vs-hot-observables.html" title="Cold vs Hot Observables">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/hot-vs-cold-observables.jpeg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Cold vs Hot Observables</h3>
+                <p>In this article we are going to demystify what the term hot vs cold means when it comes to Observables....</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2016/05/16/exploring-rx-operators-map.html" title="Exploring Rx Operators: map">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rx-map.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Exploring Rx Operators: map</h3>
+                <p>This is the first article that is part of a new series where we take a look at different operators...</p>
+              </div>
+            </a>
+          </li>
+        
+        
+        </ul>
+        
+
+      
+
+      </div>
+    </main>
+    <footer role="contentinfo" class="thtrm-footer thtrm-footer--slim">
+  <div class="thtrm-footer-text">
+    <img class="thtrm-footer-logo" alt="thoughtram brain" src="/images/thoughtram-brain-white.png">
+    <p>This website was created in collaboration with <a href="http://twitter.com/timche_" title="Tim Cheung on Twitter"><strong>Tim Cheung</strong></a> and <a href="http://twitter.com/tim_hartmann_" title="Tim Hartmann on Twitter"><strong>Tim Hartmann</strong></a>.</p>
+    <p ><a href="http://thoughtram.io/code-of-conduct.html" title="Code of Conduct">Code of Conduct</a> &bullet; <a href="http://thoughtram.io/imprint.html" title="Legal Notice">Legal notice</a></p>
+    <p class="thtrm-footer-bottom">&copy; 2014-2017 thoughtram GmbH</p>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-51360648-2', 'auto');
+ga('send', 'pageview');
+
+var form = document.getElementById('search-form');
+var eventCta = document.getElementById('event-cta');
+
+if (eventCta) {
+
+  eventCta.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    setTimeout(clickLink, 1000);
+
+    function clickLink() {
+      window.location.replace(eventCta.getAttribute('href'));
+    }
+
+    ga('send', 'event', {
+      eventCategory: 'Event Link',
+      eventAction: 'click',
+      eventLabel: eventCta.getAttribute('title'),
+      hitCallback: clickLink
+    });
+  });
+}
+
+if (form) {
+
+  var searchTerm = document.getElementById('search-term');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var formSubmitted = false;
+
+    setTimeout(submitForm, 1000);
+
+    function submitForm() {
+      if (!formSubmitted) {
+        formSubmitted = true;
+        form.submit();
+      }
+    }
+
+    ga('send', 'event', {
+      eventCategory: 'Search Form',
+      eventAction: 'submit',
+      eventLabel: searchTerm.value,
+      hitCallback: submitForm
+    });
+  });
+}
+</script>
+
+
+
+    <script src="/scripts/linkjuice/dist/linkjuice.js"></script>
+    <script src="/scripts/main.js"></script>
+  </body>
+</html>
