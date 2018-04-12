@@ -90,7 +90,7 @@
 
           <p>If you’ve read our article series on everything dependency injection in Angular, you’ve probably realized that Angular is doing a pretty good job on that. We can either use string or type tokens to make dependencies available to the injector. However, when using string tokens, there’s a possibility of running into naming collisions because… well, maybe someone else has used the same token for a different provider. In this article, we’re going to learn how so-called “opaque tokens” solve this problem.</p>
 
-<p><strong>UPDATE</strong>: Since Angular version 4.x <code>OpaqueToken</code> is considered deprecated in favour of <code>InjectionToken</code>. Learn about the differences <a href="#injectiontoken-since-angular-4x">here</a>.</p>
+<p><strong>UPDATE</strong>: Since Angular version 4.x <code class="highlighter-rouge">OpaqueToken</code> is considered deprecated in favour of <code class="highlighter-rouge">InjectionToken</code>. Learn about the differences <a href="#injectiontoken-since-angular-4x">here</a>.</p>
 
 <p style="text-align: center; margin-bottom: -1em;"><strong>Want to see things in action first?</strong></p>
 
@@ -123,158 +123,158 @@
 
 <p>Angular DI injects singleton instances which are created by provider-registered factories. And it is these instances that are injected at runtime. In order to configure your application DI and associate a factory with a token, we have to setup providers. A couple weeks ago we blogged how <a href="/angular/2016/05/13/angular-2-providers-using-map-literals.html">providers can be created using Map literals</a>, if you haven’t read this one yet we recommend to check it out, as this article pretty much builds up on that one.</p>
 
-<p>The bottom line is that a provider token can be either a string or a type. Depending on our use case, we want to use one or the other. For example, if we have a <code>DataService</code> class, and all we want to do is inject an instance of that class when we ask for a dependency of that type, we would use <code>DataService</code> as a provider token like this:</p>
+<p>The bottom line is that a provider token can be either a string or a type. Depending on our use case, we want to use one or the other. For example, if we have a <code class="highlighter-rouge">DataService</code> class, and all we want to do is inject an instance of that class when we ask for a dependency of that type, we would use <code class="highlighter-rouge">DataService</code> as a provider token like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-component'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span><span class="na">provide</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">dataService</span><span class="err">:</span> <span class="nx">DataService</span><span class="p">)</span> <span class="p">{}</span>
-<span class="p">}</span></code></pre></div>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">dataService</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">}</span></code></pre></figure>
 
-<p>Since the token matches the dependency instance-type and the provider strategy is <code>useClass</code>, we can also use the <strong>shorthand</strong> version, as:</p>
+<p>Since the token matches the dependency instance-type and the provider strategy is <code class="highlighter-rouge">useClass</code>, we can also use the <strong>shorthand</strong> version, as:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">providers</span><span class="err">:</span> <span class="p">[</span><span class="nx">DataService</span><span class="p">]</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">DataService</span><span class="p">]</span></code></pre></figure>
 
 <p>Angular has many shorthand versions (DI, annotations, etc); and the above code is just one example of those.</p>
 
 <p>Now this is cool, as long as we have classes (or types) to represent the things we want to work with. However, sometimes we need to create other objects that don’t necessarily need to be put in a class representation. We could, for example, have a configuration object that we want to inject into our application. This configuration object can be a simple object literal where there is no type involved.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">CONFIG</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">apiUrl</span><span class="p">:</span> <span class="s1">'http://my.api.com'</span><span class="p">,</span>
   <span class="na">theme</span><span class="p">:</span> <span class="s1">'suicid-squad'</span><span class="p">,</span>
   <span class="na">title</span><span class="p">:</span> <span class="s1">'My awesome app'</span>
-<span class="p">};</span></code></pre></div>
+<span class="p">};</span></code></pre></figure>
 
 <p>Or maybe, we have a primitive value we want to make injectable, like a string or a boolean value.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">FEATURE_ENABLED</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">FEATURE_ENABLED</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span></code></pre></figure>
 
-<p>In these cases, we can’t use the <code>String</code> or <code>Boolean</code> type, as this would set a default value for the place where we ask for dependencies of these types. And we really don’t want to introduce a new type just to represent these values.</p>
+<p>In these cases, we can’t use the <code class="highlighter-rouge">String</code> or <code class="highlighter-rouge">Boolean</code> type, as this would set a default value for the place where we ask for dependencies of these types. And we really don’t want to introduce a new type just to represent these values.</p>
 
 <p>That’s where string tokens come into play. They allow us to make objects available via DI without introducing an actual type:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">featureEnabledToken</span> <span class="o">=</span> <span class="s1">'featureEnabled'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">featureEnabledToken</span> <span class="o">=</span> <span class="s1">'featureEnabled'</span><span class="p">;</span>
 <span class="kd">let</span> <span class="nx">configToken</span> <span class="o">=</span> <span class="s1">'config'</span><span class="p">;</span>
 
 <span class="p">...</span>
-<span class="nl">providers</span><span class="p">:</span> <span class="p">[</span>
+<span class="nx">providers</span><span class="p">:</span> <span class="p">[</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">featureEnabledToken</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="nx">FEATURE_ENABLED</span> <span class="p">},</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">configToken</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="nx">CONFIG</span> <span class="p">}</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
-<p>Basically all we do is, instead of using a type, we use a simple string as a token. We can inject this dependency using the <code>@Inject()</code> decorator likes this:</p>
+<p>Basically all we do is, instead of using a type, we use a simple string as a token. We can inject this dependency using the <code class="highlighter-rouge">@Inject()</code> decorator likes this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="kr">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">(</span>
-    <span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">featureEnabledToken</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">featureEnabled</span><span class="p">,</span>
-    <span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">configToken</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">config</span>
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="p">@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">featureEnabledToken</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">featureEnabled</span><span class="p">,</span>
+    <span class="p">@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">configToken</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">config</span>
   <span class="p">)</span> <span class="p">{...}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Note: that above we used <code>@Inject(featureEnabledToken) private featureEnabled</code> without any typing information; e.g. <code>private featureEnabled:boolean</code>.</p>
+<p>Note: that above we used <code class="highlighter-rouge">@Inject(featureEnabledToken) private featureEnabled</code> without any typing information; e.g. <code class="highlighter-rouge">private featureEnabled:boolean</code>.</p>
 
 <p>Okay awesome, we can use strings and types as tokens to inject dependencies in our application. Unfortunately, using string tokens like this opens up potential risks for naming collisions.</p>
 
 <h2 id="the-problem-with-string-tokens">The problem with string tokens</h2>
 
-<p>Let’s get back to our <code>config</code> string token for a second. “config” is a pretty general name, so we probably could’ve done better naming this thing in the first place. However, even if we come up with a more distinguishable name, it is easily possible that someone else will use the same string as a token. Providers are flattened, meaning that, if there are multiple providers with the same token, the last one wins.</p>
+<p>Let’s get back to our <code class="highlighter-rouge">config</code> string token for a second. “config” is a pretty general name, so we probably could’ve done better naming this thing in the first place. However, even if we come up with a more distinguishable name, it is easily possible that someone else will use the same string as a token. Providers are flattened, meaning that, if there are multiple providers with the same token, the last one wins.</p>
 
 <p>And there is another concept that allows us to define multiple providers for the same token. Those are multi providers, and we’ve written about them <a href="/angular2/2015/11/23/multi-providers-in-angular-2.html">here</a>.</p>
 
 <p>Let’s say we use some sort of third-party library that comes with a set of providers defined like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">THIRD_PARTY_LIB_PROVIDERS</span> <span class="o">=</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">const</span> <span class="nx">THIRD_PARTY_LIB_PROVIDERS</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="s1">'config'</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">ThirdParyConfig</span> <span class="p">}</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
 <p>Even though it’s not a common pattern to use a string token with a class, it’s totally possible to do that, but we really just want to demonstrate the problem here. We can import and use these third-party providers like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="nx">THIRD_PARTY_LIB_PROVIDERS</span> <span class="nx">from</span> <span class="s1">'./third-party-lib'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="nx">THIRD_PARTY_LIB_PROVIDERS</span> <span class="k">from</span> <span class="s1">'./third-party-lib'</span><span class="p">;</span>
 
 <span class="p">...</span>
 <span class="nx">providers</span> <span class="o">=</span> <span class="p">[</span>
   <span class="nx">DataService</span><span class="p">,</span>
   <span class="nx">THIRD_PARTY_LIB_PROVIDERS</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
-<p>Okay, so far so good. Very often, we don’t really know what’s defined behind other library providers unless we check out the documentation or the source code. Let’s assume we also don’t know this time, that there’s a string token for <code>config</code>, and we try to add our own provider like this:</p>
+<p>Okay, so far so good. Very often, we don’t really know what’s defined behind other library providers unless we check out the documentation or the source code. Let’s assume we also don’t know this time, that there’s a string token for <code class="highlighter-rouge">config</code>, and we try to add our own provider like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 <span class="nx">providers</span> <span class="o">=</span> <span class="p">[</span>
   <span class="nx">DataService</span><span class="p">,</span>
   <span class="nx">THIRD_PARTY_LIB_PROVIDERS</span><span class="p">,</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">configToken</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="nx">CONFIG</span> <span class="p">}</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
-<p>This will pretty much break our third-party library, because now, the thing that gets injected for the <code>config</code> string token is a different object than what the library expects. We basically ran into a naming collision.</p>
+<p>This will pretty much break our third-party library, because now, the thing that gets injected for the <code class="highlighter-rouge">config</code> string token is a different object than what the library expects. We basically ran into a naming collision.</p>
 
 <h2 id="opaque-tokens-to-the-rescue">Opaque Tokens to the rescue</h2>
 
-<p>Luckily, Angular anticipated such scenarios. It comes with a type called <code>OpaqueToken</code> that basically allows us to create string-based tokens without running into any collisions.</p>
+<p>Luckily, Angular anticipated such scenarios. It comes with a type called <code class="highlighter-rouge">OpaqueToken</code> that basically allows us to create string-based tokens without running into any collisions.</p>
 
-<p>Creating an <code>OpaqueToken</code> is easy. All we need to do is to import and use it. Here’s what the third-party providers collection looks like using <code>OpaqueToken</code>:</p>
+<p>Creating an <code class="highlighter-rouge">OpaqueToken</code> is easy. All we need to do is to import and use it. Here’s what the third-party providers collection looks like using <code class="highlighter-rouge">OpaqueToken</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">OpaqueToken</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">OpaqueToken</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="kr">const</span> <span class="nx">CONFIG_TOKEN</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'config'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">CONFIG_TOKEN</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'config'</span><span class="p">);</span>
 
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">THIRDPARTYLIBPROVIDERS</span> <span class="o">=</span> <span class="p">[</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">THIRDPARTYLIBPROVIDERS</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">CONFIG_TOKEN</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">ThirdPartyConfig</span> <span class="p">}</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
-<p>Of course, this is an implementation detail and we usually shouldn’t have to care about what APIs are used inside a third-party library. Let’s assume we’ve created an <code>OpaqueToken</code> for our config token as well.</p>
+<p>Of course, this is an implementation detail and we usually shouldn’t have to care about what APIs are used inside a third-party library. Let’s assume we’ve created an <code class="highlighter-rouge">OpaqueToken</code> for our config token as well.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">OpaqueToken</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="nx">THIRDPARTYLIBPROVIDERS</span> <span class="nx">from</span> <span class="s1">'./third-party-lib'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">OpaqueToken</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">THIRDPARTYLIBPROVIDERS</span> <span class="k">from</span> <span class="s1">'./third-party-lib'</span><span class="p">;</span>
 
-<span class="kr">const</span> <span class="nx">MY_CONFIG_TOKEN</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'config'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">MY_CONFIG_TOKEN</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'config'</span><span class="p">);</span>
 
 <span class="p">...</span>
 <span class="nx">providers</span> <span class="o">=</span> <span class="p">[</span>
   <span class="nx">DataService</span><span class="p">,</span>
   <span class="nx">THIRDPARTYLIBPROVIDERS</span><span class="p">,</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">MY_CONFIG_TOKEN</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="nx">CONFIG</span> <span class="p">}</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
 <p>Running this code will show us that, even though our application seems to use the exact same string token for different providers, Angular’s DI is still smart enough to figure out which dependency we’re interested in. As if we’d have two <em>different</em> tokens. And technically, this is exactly what happens.</p>
 
 <h2 id="why-it-works">Why it works</h2>
 
-<p>If we take a look at the implementation of <code>OpaqueToken</code> we’ll realize that it’s just a simple class with only a <code>.toString()</code> method.</p>
+<p>If we take a look at the implementation of <code class="highlighter-rouge">OpaqueToken</code> we’ll realize that it’s just a simple class with only a <code class="highlighter-rouge">.toString()</code> method.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">OpaqueToken</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">OpaqueToken</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">_desc</span><span class="err">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">_desc</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{}</span>
 
-  <span class="nx">toString</span><span class="p">()</span><span class="err">:</span> <span class="nx">string</span> <span class="p">{</span> <span class="k">return</span> <span class="err">`</span><span class="nx">Token</span> <span class="nx">$</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">_desc</span><span class="p">}</span><span class="err">`</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+  <span class="nx">toString</span><span class="p">():</span> <span class="nx">string</span> <span class="p">{</span> <span class="k">return</span> <span class="s2">`Token </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">_desc</span><span class="p">}</span><span class="s2">`</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
 
-<p><code>toString()</code> gets called when an error is thrown in case we’re asking for a dependency that doesn’t have a provider. All it does is add a tiny bit more information to the error message.</p>
+<p><code class="highlighter-rouge">toString()</code> gets called when an error is thrown in case we’re asking for a dependency that doesn’t have a provider. All it does is add a tiny bit more information to the error message.</p>
 
-<p>However, the secret sauce is, that we’re creating actual object instances of <code>OpaqueToken</code> as opposed to simple string primitives. That’s why Angular’s DI is able to distinguish between our opaque tokens, even though they are based on the same string, because these instances are never the same.</p>
+<p>However, the secret sauce is, that we’re creating actual object instances of <code class="highlighter-rouge">OpaqueToken</code> as opposed to simple string primitives. That’s why Angular’s DI is able to distinguish between our opaque tokens, even though they are based on the same string, because these instances are never the same.</p>
 
 <p>We can easily double-check the equality of two opaque tokens like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">TOKEN_A</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'token'</span><span class="p">);</span>
-<span class="kr">const</span> <span class="nx">TOKEN_B</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'token'</span><span class="p">);</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">TOKEN_A</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'token'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">TOKEN_B</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'token'</span><span class="p">);</span>
 
-<span class="nx">TOKEN_A</span> <span class="o">===</span> <span class="nx">TOKEN_B</span> <span class="c1">// false</span></code></pre></div>
+<span class="nx">TOKEN_A</span> <span class="o">===</span> <span class="nx">TOKEN_B</span> <span class="c1">// false</span></code></pre></figure>
 
 <h2 id="injectiontoken-since-angular-4x">InjectionToken since Angular 4.x</h2>
 
-<p>Since Angular version 4.x there’s a new, even a little bit better, way of achieving this. <code>InjectionToken</code> does pretty much the same thing as <code>OpaqueToken</code> (in fact, it derives from it). However, it allows to attach type info on the token via TypeScript generics, plus, it adds a little bit of sugar that makes the developer’s life a bit more pleasant when creating factory providers that come with their own dependencies.</p>
+<p>Since Angular version 4.x there’s a new, even a little bit better, way of achieving this. <code class="highlighter-rouge">InjectionToken</code> does pretty much the same thing as <code class="highlighter-rouge">OpaqueToken</code> (in fact, it derives from it). However, it allows to attach type info on the token via TypeScript generics, plus, it adds a little bit of sugar that makes the developer’s life a bit more pleasant when creating factory providers that come with their own dependencies.</p>
 
-<p>Let’s take a look at the following provider configuration for <code>DataService</code>:</p>
+<p>Let’s take a look at the following provider configuration for <code class="highlighter-rouge">DataService</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">API_URL</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'apiUrl'</span><span class="p">);</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">API_URL</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpaqueToken</span><span class="p">(</span><span class="s1">'apiUrl'</span><span class="p">);</span>
 
 
 <span class="nl">providers</span><span class="p">:</span> <span class="p">[</span>
@@ -288,15 +288,15 @@
       <span class="k">new</span> <span class="nx">Inject</span><span class="p">(</span><span class="nx">API_URL</span><span class="p">)</span>
     <span class="p">]</span>
   <span class="p">}</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
-<p>We’re using a factory function that will create a <code>DataService</code> instance using <code>http</code> and <code>apiUrl</code>. To ensure Angular knows what <code>http</code> and <code>apiUrl</code> are, we add the corresponding DI token to the provider configuration’s <code>deps</code> property. Notice how we can just add the <code>Http</code> token. However, <code>apiUrl</code> is providing using an <code>OpaqueToken</code>, and since it since a type, we have to use the <code>Inject()</code> constructor (equivalent of <code>@Inject()</code> inside constructors).</p>
+<p>We’re using a factory function that will create a <code class="highlighter-rouge">DataService</code> instance using <code class="highlighter-rouge">http</code> and <code class="highlighter-rouge">apiUrl</code>. To ensure Angular knows what <code class="highlighter-rouge">http</code> and <code class="highlighter-rouge">apiUrl</code> are, we add the corresponding DI token to the provider configuration’s <code class="highlighter-rouge">deps</code> property. Notice how we can just add the <code class="highlighter-rouge">Http</code> token. However, <code class="highlighter-rouge">apiUrl</code> is providing using an <code class="highlighter-rouge">OpaqueToken</code>, and since it since a type, we have to use the <code class="highlighter-rouge">Inject()</code> constructor (equivalent of <code class="highlighter-rouge">@Inject()</code> inside constructors).</p>
 
-<p>While this works perfectly fine, developers often ran into errors when they forgot to call <code>new Inject()</code> on the token. <strong>That’s why since Angular 4.x we don’t have to do this anymore.</strong> We can replace all <code>OpaqueToken</code> instances with <code>InjectionToken</code> instances and everything would work exactly the same way, except for the fact that we don’t have to call <code>new Inject()</code> in factory provider dependencies anymore. Also, notice the generic. It’s the type of what the injector is going to return.</p>
+<p>While this works perfectly fine, developers often ran into errors when they forgot to call <code class="highlighter-rouge">new Inject()</code> on the token. <strong>That’s why since Angular 4.x we don’t have to do this anymore.</strong> We can replace all <code class="highlighter-rouge">OpaqueToken</code> instances with <code class="highlighter-rouge">InjectionToken</code> instances and everything would work exactly the same way, except for the fact that we don’t have to call <code class="highlighter-rouge">new Inject()</code> in factory provider dependencies anymore. Also, notice the generic. It’s the type of what the injector is going to return.</p>
 
 <p>In other words, the code above can then be written like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">API_URL</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InjectionToken</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'apiUrl'</span><span class="p">);</span> <span class="c1">// generic defines return value of injector</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">API_URL</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InjectionToken</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'apiUrl'</span><span class="p">);</span> <span class="c1">// generic defines return value of injector</span>
 
 
 <span class="nl">providers</span><span class="p">:</span> <span class="p">[</span>
@@ -310,13 +310,13 @@
       <span class="nx">API_URL</span> <span class="c1">// no `new Inject()` needed!</span>
     <span class="p">]</span>
   <span class="p">}</span>
-<span class="p">]</span></code></pre></div>
+<span class="p">]</span></code></pre></figure>
 
-<p>Cool right? As of version 4.x <code>OpaqueToken</code> is considered deprecated.</p>
+<p>Cool right? As of version 4.x <code class="highlighter-rouge">OpaqueToken</code> is considered deprecated.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>Opaque tokens are distinguishable and prevent us from running into naming collisions. In addition, they provide a bit better error messages. Whenever we create a token that is not a type, <code>OpaqueToken</code> should be used. If we’re using Angular in version &gt;= 4.x, we use <code>InjectionToken</code> instead.</p>
+<p>Opaque tokens are distinguishable and prevent us from running into naming collisions. In addition, they provide a bit better error messages. Whenever we create a token that is not a type, <code class="highlighter-rouge">OpaqueToken</code> should be used. If we’re using Angular in version &gt;= 4.x, we use <code class="highlighter-rouge">InjectionToken</code> instead.</p>
 
 
           
@@ -425,6 +425,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -463,17 +474,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>Easy Dialogs with Angular Material</h3>
                 <p>Building modals and dialogs isn't easy - if we do it ourselves. Angular Material comes with a powerful dialog service...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/07/26/a-web-animations-deep-dive-with-angular.html" title="A web animations deep dive with Angular">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/angular-animations.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>A web animations deep dive with Angular</h3>
-                <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
               </div>
             </a>
           </li>

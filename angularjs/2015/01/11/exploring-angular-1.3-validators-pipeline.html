@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Validators Pipeline in Angular 1.3</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Jan 11, 2015, last updated on Nov 8, 2016<br>10 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Jan 11, 2015, last updated on Nov 8, 2016<br>11 minute read</span>
 
           </div>
         </hgroup>
@@ -97,7 +97,7 @@
 <ul id="markdown-toc">
   <li><a href="#built-in-form-validation" id="markdown-toc-built-in-form-validation">Built-in form validation</a></li>
   <li><a href="#custom-validations---the-old-way" id="markdown-toc-custom-validations---the-old-way">Custom Validations - The Old Way</a></li>
-  <li><a href="#meet-the-validators-pipeline" id="markdown-toc-meet-the-validators-pipeline">Meet the <code>$validators</code> pipeline</a></li>
+  <li><a href="#meet-the-validators-pipeline" id="markdown-toc-meet-the-validators-pipeline">Meet the <code class="highlighter-rouge">$validators</code> pipeline</a></li>
   <li><a href="#async-validators" id="markdown-toc-async-validators">Async validators</a></li>
 </ul>
 
@@ -107,69 +107,69 @@
 
 <p>Before we start looking at what the latest bigger Angular release brings to the table when it comes to form validation, let’s take a look at what capabilities we had anyway and also especially, why there was a need for an improvement at all.</p>
 
-<p>HTML5 provides some validation attributes we can use to let the browser validate our form controls. For example, if we want to have native validation support for email input fields, all we have to do is to apply the <code>required</code> attribute to that element.</p>
+<p>HTML5 provides some validation attributes we can use to let the browser validate our form controls. For example, if we want to have native validation support for email input fields, all we have to do is to apply the <code class="highlighter-rouge">required</code> attribute to that element.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">required</span><span class="nt">&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">required</span><span class="nt">&gt;</span></code></pre></figure>
 
-<p>And as you probably know, there are a couple of other validation attributes like <code>minlength</code>, <code>maxlength</code> and <code>pattern</code>. However, it turns out that the API is inconsistent and not even supported in all browsers and platforms today. That’s why Angular provides basic implementation for HTML5 validation with its <code>ngModel</code> directive and controller and makes it consistent between browsers.</p>
+<p>And as you probably know, there are a couple of other validation attributes like <code class="highlighter-rouge">minlength</code>, <code class="highlighter-rouge">maxlength</code> and <code class="highlighter-rouge">pattern</code>. However, it turns out that the API is inconsistent and not even supported in all browsers and platforms today. That’s why Angular provides basic implementation for HTML5 validation with its <code class="highlighter-rouge">ngModel</code> directive and controller and makes it consistent between browsers.</p>
 
 <p>Here’s a list of supported validation attributes:</p>
 
 <ul>
-  <li><code>ng-required</code></li>
-  <li><code>ng-minlength</code></li>
-  <li><code>ng-maxlength</code></li>
-  <li><code>ng-min</code></li>
-  <li><code>ng-max</code></li>
-  <li><code>ng-pattern</code></li>
+  <li><code class="highlighter-rouge">ng-required</code></li>
+  <li><code class="highlighter-rouge">ng-minlength</code></li>
+  <li><code class="highlighter-rouge">ng-maxlength</code></li>
+  <li><code class="highlighter-rouge">ng-min</code></li>
+  <li><code class="highlighter-rouge">ng-max</code></li>
+  <li><code class="highlighter-rouge">ng-pattern</code></li>
 </ul>
 
-<p>In addition to that, Angular validates certain input types automatically without us doing anything. The following code displays a simple form that has just one field of type <code>email</code>. Applying an <code>ng-model</code> to it makes Angular aware of it. Also notice the <code>name</code> attribute of the form which publishes the <code>FormController</code> instance of the form into the scope.</p>
+<p>In addition to that, Angular validates certain input types automatically without us doing anything. The following code displays a simple form that has just one field of type <code class="highlighter-rouge">email</code>. Applying an <code class="highlighter-rouge">ng-model</code> to it makes Angular aware of it. Also notice the <code class="highlighter-rouge">name</code> attribute of the form which publishes the <code class="highlighter-rouge">FormController</code> instance of the form into the scope.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"myForm"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"myForm"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">name=</span><span class="s">"emailField"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"myForm.emailField.$error.email"</span><span class="nt">&gt;</span>Email address is not valid!<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
-<p>Running this code in the browser, you can see the validation happens automatically. Errors are even exposed on the <code>FormController</code>’s <code>$error</code> object, which makes displaying error messages a breeze.</p>
+<p>Running this code in the browser, you can see the validation happens automatically. Errors are even exposed on the <code class="highlighter-rouge">FormController</code>’s <code class="highlighter-rouge">$error</code> object, which makes displaying error messages a breeze.</p>
 
-<p>Of course, <code>email</code> is not the only type where automatic validation happens. It’s also triggered when type <code>url</code> or <code>number</code> is used. In 1.3 there’s additional support for date and time inputs like <code>date</code>, <code>time</code>, <code>datetime-local</code>, <code>week</code> and <code>month</code> as well.</p>
+<p>Of course, <code class="highlighter-rouge">email</code> is not the only type where automatic validation happens. It’s also triggered when type <code class="highlighter-rouge">url</code> or <code class="highlighter-rouge">number</code> is used. In 1.3 there’s additional support for date and time inputs like <code class="highlighter-rouge">date</code>, <code class="highlighter-rouge">time</code>, <code class="highlighter-rouge">datetime-local</code>, <code class="highlighter-rouge">week</code> and <code class="highlighter-rouge">month</code> as well.</p>
 
 <h2 id="custom-validations---the-old-way">Custom Validations - The Old Way</h2>
 
 <p>Built-in validations are nice, but in some cases we need validations that go far beyond the basic functionality we get out of the box. And this is where custom validations come in.</p>
 
-<p>The key part of validation in Angular is the <code>ngModelController</code> since it controls the logic of passing values back and forth between the DOM and the scope. In versions before 1.3, we were able to implement custom validations by using <code>ngModelController</code> and it’s <code>$formatters</code> and <code>$parsers</code> pipeline.</p>
+<p>The key part of validation in Angular is the <code class="highlighter-rouge">ngModelController</code> since it controls the logic of passing values back and forth between the DOM and the scope. In versions before 1.3, we were able to implement custom validations by using <code class="highlighter-rouge">ngModelController</code> and it’s <code class="highlighter-rouge">$formatters</code> and <code class="highlighter-rouge">$parsers</code> pipeline.</p>
 
-<p>Let’s say we want to implement a custom validation that checks if the value that is passed by the user is an actual integer. In order to do that, we would first create a new directive that accesses <code>ngModelController</code> like so:</p>
+<p>Let’s say we want to implement a custom validation that checks if the value that is passed by the user is an actual integer. In order to do that, we would first create a new directive that accesses <code class="highlighter-rouge">ngModelController</code> like so:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateInteger'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateInteger'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">require</span><span class="p">:</span> <span class="s1">'ngModel'</span><span class="p">,</span>
     <span class="na">link</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">element</span><span class="p">,</span> <span class="nx">attrs</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
       <span class="c1">// add validation to ctrl</span>
     <span class="p">}</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>In a directive’s <code>link</code> function, we can ask for other directives controllers with the <code>require</code> property of the directive definition object. <code>ctrl</code> is now a reference to an <code>ngModelController</code> instance which has a <code>$formatters</code> and <code>$parsers</code> property. These two properties are arrays, that act as pipelines that get called when certain things happen.</p>
+<p>In a directive’s <code class="highlighter-rouge">link</code> function, we can ask for other directives controllers with the <code class="highlighter-rouge">require</code> property of the directive definition object. <code class="highlighter-rouge">ctrl</code> is now a reference to an <code class="highlighter-rouge">ngModelController</code> instance which has a <code class="highlighter-rouge">$formatters</code> and <code class="highlighter-rouge">$parsers</code> property. These two properties are arrays, that act as pipelines that get called when certain things happen.</p>
 
 <p>These certain things are:</p>
 
 <ul>
   <li>
-    <p><strong>Model to view update</strong> - Whenever the bound model changes, all functions in <code>$formatters</code> are called one by one, in order to format the value and changes it’s validity state.</p>
+    <p><strong>Model to view update</strong> - Whenever the bound model changes, all functions in <code class="highlighter-rouge">$formatters</code> are called one by one, in order to format the value and changes it’s validity state.</p>
   </li>
   <li>
-    <p><strong>View to model update</strong> - Whenever the user interacts with a form control, it calls the <code>ngModelController</code>’s <code>$setViewValue</code> method, which in turn calls all functions of the <code>$parsers</code> array in order to convert the value and also change it’s validity state accordingly.</p>
+    <p><strong>View to model update</strong> - Whenever the user interacts with a form control, it calls the <code class="highlighter-rouge">ngModelController</code>’s <code class="highlighter-rouge">$setViewValue</code> method, which in turn calls all functions of the <code class="highlighter-rouge">$parsers</code> array in order to convert the value and also change it’s validity state accordingly.</p>
   </li>
 </ul>
 
-<p>Okay, so we have one pipeline that pipes the value from model to view and another one that pipes it from view to model. Since we want to check if the given value in our control is an actual integer, we need to use the pipeline that is executed when the view updates the model, which is the <code>$parsers</code> array.</p>
+<p>Okay, so we have one pipeline that pipes the value from model to view and another one that pipes it from view to model. Since we want to check if the given value in our control is an actual integer, we need to use the pipeline that is executed when the view updates the model, which is the <code class="highlighter-rouge">$parsers</code> array.</p>
 
-<p>All we have to do now, is to add a new function to <code>$parsers</code> that performs the needed checks and sets the validity state with <code>$setValidity()</code> accordingly. In order to make sure that our validation function is called first in the pipe, we use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift">Array.prototype.unshift</a>.</p>
+<p>All we have to do now, is to add a new function to <code class="highlighter-rouge">$parsers</code> that performs the needed checks and sets the validity state with <code class="highlighter-rouge">$setValidity()</code> accordingly. In order to make sure that our validation function is called first in the pipe, we use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift">Array.prototype.unshift</a>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateInteger'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateInteger'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
   <span class="kd">var</span> <span class="nx">REGEX</span> <span class="o">=</span> <span class="sr">/^</span><span class="se">\-?\d</span><span class="sr">+$/</span><span class="p">;</span>
 
@@ -192,32 +192,32 @@
       <span class="p">});</span>
     <span class="p">}</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>We check if the new values matches against our regular expression. If it matches we set the validity of <code>integer</code> to <code>true</code> and return <code>viewValue</code>, so it can be passed to further parser functions.</p>
+<p>We check if the new values matches against our regular expression. If it matches we set the validity of <code class="highlighter-rouge">integer</code> to <code class="highlighter-rouge">true</code> and return <code class="highlighter-rouge">viewValue</code>, so it can be passed to further parser functions.</p>
 
-<p>In case it doesn’t match, we set it’s validity to <code>false</code>, which also exposes an <code>integer</code> member on the <code>FormController</code>’s <code>$error</code> object, so we can display error messages accordingly. We also return <code>undefined</code> explicitly, in order to stop processing of the pipe.</p>
+<p>In case it doesn’t match, we set it’s validity to <code class="highlighter-rouge">false</code>, which also exposes an <code class="highlighter-rouge">integer</code> member on the <code class="highlighter-rouge">FormController</code>’s <code class="highlighter-rouge">$error</code> object, so we can display error messages accordingly. We also return <code class="highlighter-rouge">undefined</code> explicitly, in order to stop processing of the pipe.</p>
 
 <p>We can then use it like every other directive:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"myForm"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"myForm"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">validate-integer</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"myForm.$error.integer"</span><span class="nt">&gt;</span>Oups error.<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
-<p>As you can see, there’s a lot to take care of when writing custom validations. We need to know about the <code>$parsers</code> and <code>$formatters</code> pipeline. We also need to set a value’s validity state explicitly with <code>$setValidity()</code>.</p>
+<p>As you can see, there’s a lot to take care of when writing custom validations. We need to know about the <code class="highlighter-rouge">$parsers</code> and <code class="highlighter-rouge">$formatters</code> pipeline. We also need to set a value’s validity state explicitly with <code class="highlighter-rouge">$setValidity()</code>.</p>
 
 <p>In addition to that, it turns out that due to the nature of HTML5 form validation, some input types may not expose the input value until the valid value is entered.</p>
 
 <p>So how does Angular 1.3 a better job?</p>
 
-<h2 id="meet-the-validators-pipeline">Meet the <code>$validators</code> pipeline</h2>
+<h2 id="meet-the-validators-pipeline">Meet the <code class="highlighter-rouge">$validators</code> pipeline</h2>
 
-<p>Angular 1.3 introduces yet another pipeline, the <code>$validators</code> pipeline, which is rather used than <code>$parsers</code> + <code>$formatters</code>. Unlike parsers and formatters, the validators pipeline has access to both, <code>viewValue</code> and <code>modelValue</code>, since it’s called once <code>$parsers</code> and <code>$formatters</code> has been successfully run.</p>
+<p>Angular 1.3 introduces yet another pipeline, the <code class="highlighter-rouge">$validators</code> pipeline, which is rather used than <code class="highlighter-rouge">$parsers</code> + <code class="highlighter-rouge">$formatters</code>. Unlike parsers and formatters, the validators pipeline has access to both, <code class="highlighter-rouge">viewValue</code> and <code class="highlighter-rouge">modelValue</code>, since it’s called once <code class="highlighter-rouge">$parsers</code> and <code class="highlighter-rouge">$formatters</code> has been successfully run.</p>
 
-<p>Another API difference is that <code>$validators</code> is not an array, but an object with each member describing a validator. Let’s implement our <code>integer</code> custom validation as part of the <code>$validators</code> pipeline.</p>
+<p>Another API difference is that <code class="highlighter-rouge">$validators</code> is not an array, but an object with each member describing a validator. Let’s implement our <code class="highlighter-rouge">integer</code> custom validation as part of the <code class="highlighter-rouge">$validators</code> pipeline.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateInteger'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateInteger'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
   <span class="kd">var</span> <span class="nx">REGEX</span> <span class="o">=</span> <span class="sr">/^</span><span class="se">\-?\d</span><span class="sr">+$/</span><span class="p">;</span>
 
@@ -234,21 +234,21 @@
       <span class="p">};</span>
     <span class="p">}</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>As you can see, we no longer have to take care of calling <code>$setValidity()</code>. Angular calls <code>$setValidity()</code> internally, with the value that a validator returns, which is either <code>true</code> or <code>false</code>.</p>
+<p>As you can see, we no longer have to take care of calling <code class="highlighter-rouge">$setValidity()</code>. Angular calls <code class="highlighter-rouge">$setValidity()</code> internally, with the value that a validator returns, which is either <code class="highlighter-rouge">true</code> or <code class="highlighter-rouge">false</code>.</p>
 
-<p>And of course, if a value is invalid, an <code>$error</code> is exposed on the <code>FormController</code> accordingly.</p>
+<p>And of course, if a value is invalid, an <code class="highlighter-rouge">$error</code> is exposed on the <code class="highlighter-rouge">FormController</code> accordingly.</p>
 
 <h2 id="async-validators">Async validators</h2>
 
 <p>With 1.3, Angular goes even a step futher and makes asynchronous validations possible. Just imagine the case you have an input field for a user name and whenever a user types in a name, you need to perform some validity checks on your server. The application needs to wait until the server responses.</p>
 
-<p>That’s why there’s next to <code>$validators</code> <strong>another</strong> validators object called <code>$asyncValidators</code>. Asynchronous validators work pretty much like synchronous validators except that they are asynchronous and therefore promise based. Instead of returning <code>true</code> or <code>false</code>, we return a promise that holds the state of an asynchronous code execution.</p>
+<p>That’s why there’s next to <code class="highlighter-rouge">$validators</code> <strong>another</strong> validators object called <code class="highlighter-rouge">$asyncValidators</code>. Asynchronous validators work pretty much like synchronous validators except that they are asynchronous and therefore promise based. Instead of returning <code class="highlighter-rouge">true</code> or <code class="highlighter-rouge">false</code>, we return a promise that holds the state of an asynchronous code execution.</p>
 
 <p>Here’s what it could look like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateUsername'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$q</span><span class="p">,</span> <span class="nx">userService</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'validateUsername'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$q</span><span class="p">,</span> <span class="nx">userService</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="k">return</span> <span class="p">{</span>
     <span class="na">require</span><span class="p">:</span> <span class="s1">'ngModel'</span><span class="p">,</span>
@@ -265,22 +265,22 @@
       <span class="p">};</span>
     <span class="p">}</span>
   <span class="p">};</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>Asynchronous validators are called, after synchronous validators have been successfully executed. While an asynchronous validator is running, a <code>$pending</code> object will be exposed on the field’s <code>ngModelController</code>. Flags like <code>$valid</code> and <code>$invalid</code> are set to <code>undefined</code> at this point.</p>
+<p>Asynchronous validators are called, after synchronous validators have been successfully executed. While an asynchronous validator is running, a <code class="highlighter-rouge">$pending</code> object will be exposed on the field’s <code class="highlighter-rouge">ngModelController</code>. Flags like <code class="highlighter-rouge">$valid</code> and <code class="highlighter-rouge">$invalid</code> are set to <code class="highlighter-rouge">undefined</code> at this point.</p>
 
-<p>We could display a loading message like this (notice the <code>name</code> attribute applied to the field to expose it’s controller):</p>
+<p>We could display a loading message like this (notice the <code class="highlighter-rouge">name</code> attribute applied to the field to expose it’s controller):</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"myForm"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">name=</span><span class="s">"myForm"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"username"</span> <span class="na">validate-username</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p</span> <span class="na">ng-if=</span><span class="s">"myForm.username.$pending"</span><span class="nt">&gt;</span>Validating user name...<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
-<p>Okay, we now learned about <code>$validators</code> and <code>$asynchValidators</code>, but does that mean our existing <code>$parsers</code> and <code>$formatters</code> won’t work anymore?</p>
+<p>Okay, we now learned about <code class="highlighter-rouge">$validators</code> and <code class="highlighter-rouge">$asynchValidators</code>, but does that mean our existing <code class="highlighter-rouge">$parsers</code> and <code class="highlighter-rouge">$formatters</code> won’t work anymore?</p>
 
 <p>The answer is <strong>no</strong>. The validation pipeline has been added to the existing pipelines. It is basically there, so developers can explicitly distinguish between validations and parsing/formatting related functionality.</p>
 
-<p>Also, as we learned, the validators pipeline has a slight simpler API. We don’t have to take care of setting <code>$setValidity()</code> anymore. And we can finally do proper asynchronous validations.</p>
+<p>Also, as we learned, the validators pipeline has a slight simpler API. We don’t have to take care of setting <code class="highlighter-rouge">$setValidity()</code> anymore. And we can finally do proper asynchronous validations.</p>
 
 
           

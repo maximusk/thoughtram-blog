@@ -141,64 +141,64 @@ after the request that carries the results for <em>car</em>. This may happen bec
 
 <p>We will use the free and open wikipedia API to write a little demo.</p>
 
-<p>For simplicity our demo will simply consist of two files: <code>app.ts</code> and <code>wikipedia-service.ts</code>. In a real world scenario we would most likely split things further up though.</p>
+<p>For simplicity our demo will simply consist of two files: <code class="highlighter-rouge">app.ts</code> and <code class="highlighter-rouge">wikipedia-service.ts</code>. In a real world scenario we would most likely split things further up though.</p>
 
 <p>Let’s start with a Promise-based implementation that doesn’t handle any of the described edge cases.</p>
 
-<p>This is what our <code>WikipediaService</code> looks like. Despite the fact that the Http/JsonP API still has some little unergonomic parts, there shouldn’t be much of surprise here.</p>
+<p>This is what our <code class="highlighter-rouge">WikipediaService</code> looks like. Despite the fact that the Http/JsonP API still has some little unergonomic parts, there shouldn’t be much of surprise here.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">URLSearchParams</span><span class="p">,</span> <span class="nx">Jsonp</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">URLSearchParams</span><span class="p">,</span> <span class="nx">Jsonp</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">WikipediaService</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jsonp</span><span class="err">:</span> <span class="nx">Jsonp</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">WikipediaService</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jsonp</span><span class="p">:</span> <span class="nx">Jsonp</span><span class="p">)</span> <span class="p">{}</span>
 
-  <span class="nx">search</span> <span class="p">(</span><span class="nx">term</span><span class="err">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">search</span> <span class="p">(</span><span class="nx">term</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">()</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jsonp</span>
-                <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
+                <span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
                 <span class="p">.</span><span class="nx">toPromise</span><span class="p">()</span>
                 <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()[</span><span class="mi">1</span><span class="p">]);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Basically we are injecting the <code>Jsonp</code> service to make a <code>GET</code> request against the wikipedia API with a given search term. Notice that we call <code>toPromise</code> in order to get from an <code>Observable&lt;Response&gt;</code> to a <code>Promise&lt;Response&gt;</code>. With a little bit of <code>then</code>-chaining we eventually end up with a <code>Promise&lt;Array&lt;string&gt;&gt;</code> as the return type of our <code>search</code> method.</p>
+<p>Basically we are injecting the <code class="highlighter-rouge">Jsonp</code> service to make a <code class="highlighter-rouge">GET</code> request against the wikipedia API with a given search term. Notice that we call <code class="highlighter-rouge">toPromise</code> in order to get from an <code class="highlighter-rouge">Observable&lt;Response&gt;</code> to a <code class="highlighter-rouge">Promise&lt;Response&gt;</code>. With a little bit of <code class="highlighter-rouge">then</code>-chaining we eventually end up with a <code class="highlighter-rouge">Promise&lt;Array&lt;string&gt;&gt;</code> as the return type of our <code class="highlighter-rouge">search</code> method.</p>
 
-<p>So far so good, let’s take a look at the <code>app.ts</code> file that holds our <code>App</code> Component.</p>
+<p>So far so good, let’s take a look at the <code class="highlighter-rouge">app.ts</code> file that holds our <code class="highlighter-rouge">App</code> Component.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// check the plnkr for the full list of imports</span>
-<span class="kr">import</span> <span class="p">{...}</span> <span class="nx">from</span> <span class="s1">'...'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// check the plnkr for the full list of imports</span>
+<span class="k">import</span> <span class="p">{...}</span> <span class="k">from</span> <span class="s1">'...'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Wikipedia</span> <span class="nx">Search</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">input</span> <span class="err">#</span><span class="nx">term</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="p">(</span><span class="nx">keyup</span><span class="p">)</span><span class="o">=</span><span class="s2">"search(term.value)"</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let item of items"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">item</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;div&gt;
+      &lt;h2&gt;Wikipedia Search&lt;/h2&gt;
+      &lt;input #term type="text" (keyup)="search(term.value)"&gt;
+      &lt;ul&gt;
+        &lt;li *ngFor="let item of items"&gt;{{item}}&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="na">items</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+  <span class="nl">items</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">)</span>
                          <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Not much of a surprise here either. We inject our <code>WikipediaService</code> and expose it’s functionality via a <code>search</code> method to the template. The template simply binds to <code>keyup</code> and calls <code>search(term.value)</code> leveraging Angular’s awesome <em>template ref</em> feature.</p>
+<p>Not much of a surprise here either. We inject our <code class="highlighter-rouge">WikipediaService</code> and expose it’s functionality via a <code class="highlighter-rouge">search</code> method to the template. The template simply binds to <code class="highlighter-rouge">keyup</code> and calls <code class="highlighter-rouge">search(term.value)</code> leveraging Angular’s awesome <em>template ref</em> feature.</p>
 
-<p>We unwrap the result of the <code>Promise</code> that the <code>search</code> method of the <code>WikipediaService</code> returns and expose it as a simple Array of strings to the template so that we can have <code>*ngFor</code> loop through it and build up a list for us.</p>
+<p>We unwrap the result of the <code class="highlighter-rouge">Promise</code> that the <code class="highlighter-rouge">search</code> method of the <code class="highlighter-rouge">WikipediaService</code> returns and expose it as a simple Array of strings to the template so that we can have <code class="highlighter-rouge">*ngFor</code> loop through it and build up a list for us.</p>
 
 <p>You can play with the demo and fiddle with the code through this plnkr.</p>
 
@@ -210,114 +210,114 @@ after the request that carries the results for <em>car</em>. This may happen bec
 
 <p>Let’s change our code to not hammer the endpoint with every keystroke but instead only send a request when the user stopped typing for 400 ms. This is where Observables really shine. The Reactive Extensions (Rx) offer a broad range of operators that let us alter the behavior of Observables and create new Observables with the desired semantics.</p>
 
-<p>To unveil such super powers we first need to get an <code>Observable&lt;string&gt;</code> that carries the search term that the user types in. Instead of manually binding to the <code>keyup</code> event, we can take advantage of Angular’s <code>formControl</code> directive. To use this directive, we first need to import the <code>ReactiveFormsModule</code> into our application module.</p>
+<p>To unveil such super powers we first need to get an <code class="highlighter-rouge">Observable&lt;string&gt;</code> that carries the search term that the user types in. Instead of manually binding to the <code class="highlighter-rouge">keyup</code> event, we can take advantage of Angular’s <code class="highlighter-rouge">formControl</code> directive. To use this directive, we first need to import the <code class="highlighter-rouge">ReactiveFormsModule</code> into our application module.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">JsonpModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ReactiveFormsModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">JsonpModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ReactiveFormsModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">,</span> <span class="nx">JsonpModule</span><span class="p">,</span> <span class="nx">ReactiveFormsModule</span><span class="p">]</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>Once imported, we can use <code>formControl</code> from within our template and set it to the name <code>"term"</code>.</p>
+<p>Once imported, we can use <code class="highlighter-rouge">formControl</code> from within our template and set it to the name <code class="highlighter-rouge">"term"</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="p">[</span><span class="nx">formControl</span><span class="p">]</span><span class="o">=</span><span class="s2">"term"</span><span class="o">/&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="p">[</span><span class="nx">formControl</span><span class="p">]</span><span class="o">=</span><span class="s2">"term"</span><span class="o">/&gt;</span></code></pre></figure>
 
-<p>In our component we create an instance of <code>FormControl</code> from <code>@angular/form</code> and expose it as a field under the name <code>term</code> on our component.</p>
+<p>In our component we create an instance of <code class="highlighter-rouge">FormControl</code> from <code class="highlighter-rouge">@angular/form</code> and expose it as a field under the name <code class="highlighter-rouge">term</code> on our component.</p>
 
-<p>Behind the scenes <code>term</code> automatically exposes an <code>Observable&lt;string&gt;</code> as property <code>valueChanges</code> that we can subscribe to. Now that we have an <code>Observable&lt;string&gt;</code>, taming the user input is as easy as calling <code>debounceTime(400)</code> on our Observable. This will return a new <code>Observable&lt;string&gt;</code> that will only emit a new value when there haven’t been coming new values for 400ms.</p>
+<p>Behind the scenes <code class="highlighter-rouge">term</code> automatically exposes an <code class="highlighter-rouge">Observable&lt;string&gt;</code> as property <code class="highlighter-rouge">valueChanges</code> that we can subscribe to. Now that we have an <code class="highlighter-rouge">Observable&lt;string&gt;</code>, taming the user input is as easy as calling <code class="highlighter-rouge">debounceTime(400)</code> on our Observable. This will return a new <code class="highlighter-rouge">Observable&lt;string&gt;</code> that will only emit a new value when there haven’t been coming new values for 400ms.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">App</span> <span class="p">{</span>
   <span class="nl">items</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">;</span>
   <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="err">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
              <span class="p">.</span><span class="nx">debounceTime</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
              <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p><strong>Don’t hit me twice</strong></p>
 
-<p>As we said, it would be a waste of resources to send out another request for a search term that our app already shows the results for. Fortunately Rx simplifies many operations that it nearly feels unnecessary to mention them. All we have to do to achieve the desired behavior is to call the <code>distinctUntilChanged</code> operator right after we called <code>debounceTime(400)</code>. Again, we will get back an <code>Observable&lt;string&gt;</code> but one that ignores values that are the same as the previous.</p>
+<p>As we said, it would be a waste of resources to send out another request for a search term that our app already shows the results for. Fortunately Rx simplifies many operations that it nearly feels unnecessary to mention them. All we have to do to achieve the desired behavior is to call the <code class="highlighter-rouge">distinctUntilChanged</code> operator right after we called <code class="highlighter-rouge">debounceTime(400)</code>. Again, we will get back an <code class="highlighter-rouge">Observable&lt;string&gt;</code> but one that ignores values that are the same as the previous.</p>
 
 <p><strong>Dealing with out-of-order responses</strong></p>
 
 <p>Dealing with out of order responses can be a tricky task. Basically we need a way to express that we aren’t interested anymore in results from previous in-flight requests as soon as we are sending out new requests. In other words: cancel out all previous request as soon as we start a new one. As I briefly mentioned in the beginning Observables are disposable which means we can unsubscribe from them.</p>
 
-<p>This is where we want to change our <code>WikipediaService</code> to return an <code>Observable&lt;Array&lt;string&gt;&gt;</code> instead of an <code>Promise&lt;Array&lt;string&gt;&gt;</code>. That’s as easy as dropping <code>toPromise</code> and using <code>map</code> instead of <code>then</code>.</p>
+<p>This is where we want to change our <code class="highlighter-rouge">WikipediaService</code> to return an <code class="highlighter-rouge">Observable&lt;Array&lt;string&gt;&gt;</code> instead of an <code class="highlighter-rouge">Promise&lt;Array&lt;string&gt;&gt;</code>. That’s as easy as dropping <code class="highlighter-rouge">toPromise</code> and using <code class="highlighter-rouge">map</code> instead of <code class="highlighter-rouge">then</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">search</span> <span class="p">(</span><span class="nx">term</span><span class="err">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">search</span> <span class="p">(</span><span class="nx">term</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">()</span>
-  <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
-  <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
-  <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
+  <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
+  <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
+  <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
   <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jsonp</span>
-              <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
+              <span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
               <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()[</span><span class="mi">1</span><span class="p">]);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Now that our <code>WikipediaSerice</code> returns an Observable instead of a Promise we simply need to replace <code>then</code> with <code>subscribe</code> in our <code>App</code> component.</p>
+<p>Now that our <code class="highlighter-rouge">WikipediaSerice</code> returns an Observable instead of a Promise we simply need to replace <code class="highlighter-rouge">then</code> with <code class="highlighter-rouge">subscribe</code> in our <code class="highlighter-rouge">App</code> component.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
            <span class="p">.</span><span class="nx">debounceTime</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
            <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
-           <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">).</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">));</span></code></pre></div>
+           <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">).</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">));</span></code></pre></figure>
 
-<p>But now we have two <code>subscribe</code> calls. This is needlessly verbose and often a sign for unidiomatic usage.
-The good news is, now that <code>search</code> returns an <code>Observable&lt;Array&lt;string&gt;&gt;</code> we can simply use <code>flatMap</code> to project our <code>Observable&lt;string&gt;</code> into the desired <code>Observable&lt;Array&lt;string&gt;&gt;</code> by composing the Observables.</p>
+<p>But now we have two <code class="highlighter-rouge">subscribe</code> calls. This is needlessly verbose and often a sign for unidiomatic usage.
+The good news is, now that <code class="highlighter-rouge">search</code> returns an <code class="highlighter-rouge">Observable&lt;Array&lt;string&gt;&gt;</code> we can simply use <code class="highlighter-rouge">flatMap</code> to project our <code class="highlighter-rouge">Observable&lt;string&gt;</code> into the desired <code class="highlighter-rouge">Observable&lt;Array&lt;string&gt;&gt;</code> by composing the Observables.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
          <span class="p">.</span><span class="nx">debounceTime</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
          <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
          <span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">))</span>
-         <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">);</span></code></pre></div>
+         <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">items</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">items</span><span class="p">);</span></code></pre></figure>
 
-<p>You may be wondering what <code>flatMap</code> does and why we can’t use <code>map</code> here. The answer is quite simple. The <code>map</code> operator expects a function that takes a value <code>T</code> and returns a value <code>U</code>. For instance a function that takes in a <code>string</code> and returns a <code>Number</code>. Hence when you use <code>map</code> you get from an <code>Observable&lt;T&gt;</code> to an <code>Observable&lt;U&gt;</code>. However, our <code>search</code> method produces an <code>Observable&lt;Array&gt;</code> itself. So coming from an <code>Observable&lt;string&gt;</code> that we have right after <code>distinctUntilChanged</code>, map would take us to an <code>Observable&lt;Observable&lt;Array&lt;string&gt;&gt;</code>. That’s not quite what we want.</p>
+<p>You may be wondering what <code class="highlighter-rouge">flatMap</code> does and why we can’t use <code class="highlighter-rouge">map</code> here. The answer is quite simple. The <code class="highlighter-rouge">map</code> operator expects a function that takes a value <code class="highlighter-rouge">T</code> and returns a value <code class="highlighter-rouge">U</code>. For instance a function that takes in a <code class="highlighter-rouge">string</code> and returns a <code class="highlighter-rouge">Number</code>. Hence when you use <code class="highlighter-rouge">map</code> you get from an <code class="highlighter-rouge">Observable&lt;T&gt;</code> to an <code class="highlighter-rouge">Observable&lt;U&gt;</code>. However, our <code class="highlighter-rouge">search</code> method produces an <code class="highlighter-rouge">Observable&lt;Array&gt;</code> itself. So coming from an <code class="highlighter-rouge">Observable&lt;string&gt;</code> that we have right after <code class="highlighter-rouge">distinctUntilChanged</code>, map would take us to an <code class="highlighter-rouge">Observable&lt;Observable&lt;Array&lt;string&gt;&gt;</code>. That’s not quite what we want.</p>
 
-<p>The <code>flatMap</code> operator on the other hand expects a function that takes a <code>T</code> and returns an <code>Observable&lt;U&gt;</code> and produces an <code>Observable&lt;U&gt;</code> for us.</p>
+<p>The <code class="highlighter-rouge">flatMap</code> operator on the other hand expects a function that takes a <code class="highlighter-rouge">T</code> and returns an <code class="highlighter-rouge">Observable&lt;U&gt;</code> and produces an <code class="highlighter-rouge">Observable&lt;U&gt;</code> for us.</p>
 
 <p><strong>NOTE</strong>: <em>That’s not entirely true, but it helps as a simplification</em>.</p>
 
-<p>That perfectly matches our case. We have an <code>Observable&lt;string&gt;</code>, then call <code>flatMap</code> with a function that takes a <code>string</code> and returns an <code>Observable&lt;Array&lt;string&gt;&gt;</code>.</p>
+<p>That perfectly matches our case. We have an <code class="highlighter-rouge">Observable&lt;string&gt;</code>, then call <code class="highlighter-rouge">flatMap</code> with a function that takes a <code class="highlighter-rouge">string</code> and returns an <code class="highlighter-rouge">Observable&lt;Array&lt;string&gt;&gt;</code>.</p>
 
-<p>So does this solve our out-of-order response issues? Unfortunately not. So, why am I bothering you with all this in the first place? Well, now that you understood <code>flatMap</code> just replace it with <code>switchMap</code> and you are done.</p>
+<p>So does this solve our out-of-order response issues? Unfortunately not. So, why am I bothering you with all this in the first place? Well, now that you understood <code class="highlighter-rouge">flatMap</code> just replace it with <code class="highlighter-rouge">switchMap</code> and you are done.</p>
 
-<p>What?! You may be wondering if I’m kidding you but no I am not. That’s the beautify of Rx with all it’s useful operators. The <code>switchMap</code> operator is comparable to <code>flatMap</code> in a way. Both operators automatically subscribe to the Observable that the function produces and flatten the result for us. The difference is that the <code>switchMap</code> operator automatically unsubscribes from previous subscriptions as soon as the outer Observable emits new values.</p>
+<p>What?! You may be wondering if I’m kidding you but no I am not. That’s the beautify of Rx with all it’s useful operators. The <code class="highlighter-rouge">switchMap</code> operator is comparable to <code class="highlighter-rouge">flatMap</code> in a way. Both operators automatically subscribe to the Observable that the function produces and flatten the result for us. The difference is that the <code class="highlighter-rouge">switchMap</code> operator automatically unsubscribes from previous subscriptions as soon as the outer Observable emits new values.</p>
 
 <h2 id="putting-some-sugar-on-top">Putting some sugar on top</h2>
 
-<p>Now that we got the semantics right, there’s one more little trick that we can use to save us some typing. Instead of manually subscribing to the Observable we can let Angular do the unwrapping for us right from within the template. All we have to do to accomplish that is to use the <code>AsyncPipe</code> in our template and expose the <code>Observable&lt;Array&lt;string&gt;&gt;</code> instead of <code>Array&lt;string&gt;</code>.</p>
+<p>Now that we got the semantics right, there’s one more little trick that we can use to save us some typing. Instead of manually subscribing to the Observable we can let Angular do the unwrapping for us right from within the template. All we have to do to accomplish that is to use the <code class="highlighter-rouge">AsyncPipe</code> in our template and expose the <code class="highlighter-rouge">Observable&lt;Array&lt;string&gt;&gt;</code> instead of <code class="highlighter-rouge">Array&lt;string&gt;</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Wikipedia</span> <span class="nx">Search</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="p">[</span><span class="nx">formControl</span><span class="p">]</span><span class="o">=</span><span class="s2">"term"</span><span class="o">/&gt;</span>
-      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let item of items | async"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">item</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;div&gt;
+      &lt;h2&gt;Wikipedia Search&lt;/h2&gt;
+      &lt;input type="text" [formControl]="term"/&gt;
+      &lt;ul&gt;
+        &lt;li *ngFor="let item of items | async"&gt;{{item}}&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">App</span> <span class="p">{</span>
 
-  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
                  <span class="p">.</span><span class="nx">debounceTime</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
                  <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
                  <span class="p">.</span><span class="nx">switchMap</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>And voilà, we’re done. Check out the demos below!</p>
 
@@ -458,6 +458,17 @@ The good news is, now that <code>search</code> returns an <code>Observable&lt;Ar
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2016/01/07/taking-advantage-of-observables-in-angular2-pt2.html" title="Taking advantage of Observables in Angular 2 - Part 2">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/fallback.jpeg);"></div>
               <div class="thtrm-article-card-content ">
@@ -485,17 +496,6 @@ The good news is, now that <code>search</code> returns an <code>Observable&lt;Ar
               <div class="thtrm-article-card-content ">
                 <h3>Cold vs Hot Observables</h3>
                 <p>In this article we are going to demystify what the term hot vs cold means when it comes to Observables....</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2016/05/16/exploring-rx-operators-map.html" title="Exploring Rx Operators: map">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rx-map.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Exploring Rx Operators: map</h3>
-                <p>This is the first article that is part of a new series where we take a look at different operators...</p>
               </div>
             </a>
           </li>

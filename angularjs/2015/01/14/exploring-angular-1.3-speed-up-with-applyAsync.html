@@ -90,19 +90,19 @@
 
           <p>As already mentioned in our articles on <a href="http://blog.thoughtram.io/angularjs/2014/10/14/exploring-angular-1.3-one-time-bindings.html">one-time bindings</a> and <a href="http://blog.thoughtram.io/angularjs/2014/12/22/exploring-angular-1.3-disabling-debug-info.html">disabling debug info</a>, one of the biggest goals of the 1.3 release was to improve Angular’s overall performance.</p>
 
-<p>This article details yet another nice feature that makes your Angular applications in particular cases potentially faster: It lets you resolve multiple <code>$http</code> responses, that are received around the same time, in one <code>$digest</code> cycle with a new API added to the <code>$rootScope</code> called <code>$applyAsync</code>.</p>
+<p>This article details yet another nice feature that makes your Angular applications in particular cases potentially faster: It lets you resolve multiple <code class="highlighter-rouge">$http</code> responses, that are received around the same time, in one <code class="highlighter-rouge">$digest</code> cycle with a new API added to the <code class="highlighter-rouge">$rootScope</code> called <code class="highlighter-rouge">$applyAsync</code>.</p>
 
 <p>Let’s talk about what that actually means and why you want to do that.</p>
 
-<h2 id="why-and-when-we-need-the-digest-cycle">Why and when we need the <code>$digest</code> cycle</h2>
+<h2 id="why-and-when-we-need-the-digest-cycle">Why and when we need the <code class="highlighter-rouge">$digest</code> cycle</h2>
 
 <p>We know that two-way data binding is one big selling point of Angular. Changes to our model in the imperative world of JavaScript seem to sync magically with the model values in the declarative world of HTML and vice versa, without us setting up any event listener and other things that are required to achieve that functionality.</p>
 
-<p>In fact, two-way binding is just one kind of binding that Angular supports. We also have one-way bindings and even one-time bindings (since version 1.3) as mentioned earlier. In order to make data binding possible, Angular comes with this sort of event loop (the <code>$digest</code>) to update our application model and DOM, whenever it is needed.</p>
+<p>In fact, two-way binding is just one kind of binding that Angular supports. We also have one-way bindings and even one-time bindings (since version 1.3) as mentioned earlier. In order to make data binding possible, Angular comes with this sort of event loop (the <code class="highlighter-rouge">$digest</code>) to update our application model and DOM, whenever it is needed.</p>
 
-<p>But how does Angular know, when it has to trigger another <code>$digest</code> cycle? We don’t want to go in too much detail here, since there are ton of resources out there that cover this topic very well, but let’s clarify at least the most important facts. Some people think initially, that Angular has a kind of poll mechanism that checks every few milliseconds if something on the model changed so it can update the view accordingly. <strong>This is not true</strong>.</p>
+<p>But how does Angular know, when it has to trigger another <code class="highlighter-rouge">$digest</code> cycle? We don’t want to go in too much detail here, since there are ton of resources out there that cover this topic very well, but let’s clarify at least the most important facts. Some people think initially, that Angular has a kind of poll mechanism that checks every few milliseconds if something on the model changed so it can update the view accordingly. <strong>This is not true</strong>.</p>
 
-<p>There are basically three possible cases when the state of an application can change and these are the only moments where <code>$digest</code> cycles are needed. The case are:</p>
+<p>There are basically three possible cases when the state of an application can change and these are the only moments where <code class="highlighter-rouge">$digest</code> cycles are needed. The case are:</p>
 
 <ul>
   <li><strong>User Interaction through events</strong> - The user clicks UI controls like buttons and in turn triggers something in our application that changes state.</li>
@@ -110,49 +110,49 @@
   <li><strong>Timeouts</strong> - Asynchronous operations cause through timers that can possibly change the state of our application</li>
 </ul>
 
-<p>Whenever one of the above things happens, Angular knows it needs to trigger a <code>$digest</code>. You might still wonder how that works, since you don’t have to inform Angular about these interactions explicitly. This is because Angular intercepts all of these interactions already for you.</p>
+<p>Whenever one of the above things happens, Angular knows it needs to trigger a <code class="highlighter-rouge">$digest</code>. You might still wonder how that works, since you don’t have to inform Angular about these interactions explicitly. This is because Angular intercepts all of these interactions already for you.</p>
 
-<p>That’s why we have all these predefined directives like <code>ng-click</code> or even directives that override existing tags like <code>&lt;input&gt;</code>. The <code>$http</code> service that Angular brings to the table also makes sure that a <code>$digest</code> is triggered once a request returns.</p>
+<p>That’s why we have all these predefined directives like <code class="highlighter-rouge">ng-click</code> or even directives that override existing tags like <code class="highlighter-rouge">&lt;input&gt;</code>. The <code class="highlighter-rouge">$http</code> service that Angular brings to the table also makes sure that a <code class="highlighter-rouge">$digest</code> is triggered once a request returns.</p>
 
-<p>In addtion, this explains why you need to call <code>$scope.$apply()</code>, which in turn triggers a <code>$digest</code> internally, when you have third-party code that changes your application’s state from the outside world.</p>
+<p>In addtion, this explains why you need to call <code class="highlighter-rouge">$scope.$apply()</code>, which in turn triggers a <code class="highlighter-rouge">$digest</code> internally, when you have third-party code that changes your application’s state from the outside world.</p>
 
-<p>Okay, so now we have a general picture of what the <code>$digest</code> is about and when it’s needed and triggered and also how we can trigger it explicitly with <code>$scope.$apply</code>. But we haven’t talked about when <code>$applyAsync</code> comes into play.</p>
+<p>Okay, so now we have a general picture of what the <code class="highlighter-rouge">$digest</code> is about and when it’s needed and triggered and also how we can trigger it explicitly with <code class="highlighter-rouge">$scope.$apply</code>. But we haven’t talked about when <code class="highlighter-rouge">$applyAsync</code> comes into play.</p>
 
-<h2 id="batching-multiple-http-responses-into-one-digest">Batching multiple <code>$http</code> responses into one <code>$digest</code></h2>
+<h2 id="batching-multiple-http-responses-into-one-digest">Batching multiple <code class="highlighter-rouge">$http</code> responses into one <code class="highlighter-rouge">$digest</code></h2>
 
-<p>As the name already says, <code>$applyAsync</code> has something to do with executing a <code>$scope.$apply</code> through an asynchronous operation. But what does that mean and when makes it actually sense?</p>
+<p>As the name already says, <code class="highlighter-rouge">$applyAsync</code> has something to do with executing a <code class="highlighter-rouge">$scope.$apply</code> through an asynchronous operation. But what does that mean and when makes it actually sense?</p>
 
-<p>We mentioned that one of the cases where a <code>$digest</code> is triggered, is when an XHR call using <code>$http</code> service returns from it’s execution. This is nice because we don’t have to worry about updating our model in the DOM once the model is updated. Here’s a small snippet that details that scenario (note that we don’t use <code>$scope</code> here since we assume that <a href="http://blog.thoughtram.io/angularjs/2015/01/02/exploring-angular-1.3-bindToController.html">controllerAs</a> syntax is used:</p>
+<p>We mentioned that one of the cases where a <code class="highlighter-rouge">$digest</code> is triggered, is when an XHR call using <code class="highlighter-rouge">$http</code> service returns from it’s execution. This is nice because we don’t have to worry about updating our model in the DOM once the model is updated. Here’s a small snippet that details that scenario (note that we don’t use <code class="highlighter-rouge">$scope</code> here since we assume that <a href="http://blog.thoughtram.io/angularjs/2015/01/02/exploring-angular-1.3-bindToController.html">controllerAs</a> syntax is used:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'Ctrl'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'Ctrl'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="c1">// Make XHR and update model accordingly</span>
-  <span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'fetch/some/json/'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">$http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'fetch/some/json/'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">myModel</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
   <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>We have a controller that asks for <code>$http</code> service and uses it to make an XHR to some url and once the call resolves, we update <code>myModel</code> on our controller with the new data that we got from the server. There’s nothing we need to do to update <code>myModel</code> in our DOM, since this call, once it resolves, triggers a <code>$digest</code> that takes care of the rest.</p>
+<p>We have a controller that asks for <code class="highlighter-rouge">$http</code> service and uses it to make an XHR to some url and once the call resolves, we update <code class="highlighter-rouge">myModel</code> on our controller with the new data that we got from the server. There’s nothing we need to do to update <code class="highlighter-rouge">myModel</code> in our DOM, since this call, once it resolves, triggers a <code class="highlighter-rouge">$digest</code> that takes care of the rest.</p>
 
-<p>Now imagine we build an application where it’s required to make <strong>three</strong> XHRs at bootstrap time. That means, three independent requests that all resolve independently after different periods of time, which in turn causes three <code>$digest</code> cycles that get triggered once each of the calls return. This can slow down our application. Wouldn’t it be nice if we could collect the promises that return from the XHR calls that are made around the same time and resolve them at the next <code>$digest</code> cycle that happens? Yes! And this is exactly where <code>$applyAsync</code> comes into play.</p>
+<p>Now imagine we build an application where it’s required to make <strong>three</strong> XHRs at bootstrap time. That means, three independent requests that all resolve independently after different periods of time, which in turn causes three <code class="highlighter-rouge">$digest</code> cycles that get triggered once each of the calls return. This can slow down our application. Wouldn’t it be nice if we could collect the promises that return from the XHR calls that are made around the same time and resolve them at the next <code class="highlighter-rouge">$digest</code> cycle that happens? Yes! And this is exactly where <code class="highlighter-rouge">$applyAsync</code> comes into play.</p>
 
-<p>Since Angular 1.3, <code>$rootScope</code> comes with a new method <a href="https://code.angularjs.org/1.3.8/docs/api/ng/type/$rootScope.Scope#$applyAsync">$applyAsync</a> that lets us basically collect expressions. These expressions get immediately evaluated but resolved with the next tick (<code>$digest</code>). In order to make this work nice with requests that happen through <code>$http</code> calls, <code>$httpProvider</code> comes with a corresponding API that tells Angular that we actually want to use that feature.</p>
+<p>Since Angular 1.3, <code class="highlighter-rouge">$rootScope</code> comes with a new method <a href="https://code.angularjs.org/1.3.8/docs/api/ng/type/$rootScope.Scope#$applyAsync">$applyAsync</a> that lets us basically collect expressions. These expressions get immediately evaluated but resolved with the next tick (<code class="highlighter-rouge">$digest</code>). In order to make this work nice with requests that happen through <code class="highlighter-rouge">$http</code> calls, <code class="highlighter-rouge">$httpProvider</code> comes with a corresponding API that tells Angular that we actually want to use that feature.</p>
 
 <p>All we need to do is to call the provider’s <a href="https://code.angularjs.org/1.3.8/docs/api/ng/provider/$httpProvider#useApplyAsync">useApplyAsync</a> method and Angular takes care of deferring the resolution of your XHR calls to the next tick. Here’s what it looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$httpProvider</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$httpProvider</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">$httpProvider</span><span class="p">.</span><span class="nx">useApplyAsync</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>That’s it! If the application now receives multiple <code>$http</code> responses at around the same time, this is what happens (a bit simplified though):</p>
+<p>That’s it! If the application now receives multiple <code class="highlighter-rouge">$http</code> responses at around the same time, this is what happens (a bit simplified though):</p>
 
 <ul>
   <li>The call’s promise is pushed into a queue</li>
-  <li>An asynchronous <code>$apply</code> is scheduled in case there’s no one scheduled yet, by telling the browser to execute <code>setTimeout()</code></li>
-  <li>Once timed out, the queue is flushed and the actual <code>$apply</code> is triggered</li>
+  <li>An asynchronous <code class="highlighter-rouge">$apply</code> is scheduled in case there’s no one scheduled yet, by telling the browser to execute <code class="highlighter-rouge">setTimeout()</code></li>
+  <li>Once timed out, the queue is flushed and the actual <code class="highlighter-rouge">$apply</code> is triggered</li>
 </ul>
 
-<p>The <code>setTimeout()</code> is called with a <code>0</code> delay which causes an actual delay of around 10 milliseconds depending on the browser. That means, if our three asynchronous calls return at around the same time (somewhere inside that particular timeout delay), they get resolve with a single <code>$digest</code> cycle instead of three which speeds up our application.</p>
+<p>The <code class="highlighter-rouge">setTimeout()</code> is called with a <code class="highlighter-rouge">0</code> delay which causes an actual delay of around 10 milliseconds depending on the browser. That means, if our three asynchronous calls return at around the same time (somewhere inside that particular timeout delay), they get resolve with a single <code class="highlighter-rouge">$digest</code> cycle instead of three which speeds up our application.</p>
 
 
           

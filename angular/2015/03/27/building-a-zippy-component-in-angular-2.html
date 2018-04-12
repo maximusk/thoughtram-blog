@@ -120,18 +120,18 @@
 
 <p>We start by installing Angular CLI as a global command on our local machine using npm.</p>
 
-<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install -g angular-cli</code></pre></div>
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nv">$ </span>npm <span class="nb">install</span> <span class="nt">-g</span> angular-cli</code></pre></figure>
 
-<p>Once that is done, we can scaffold a new Angular project by running <code>ng new &lt;PROJECT_NAME&gt;</code>. Note that the project is scaffolded in the directory where we’re in at this moment.</p>
+<p>Once that is done, we can scaffold a new Angular project by running <code class="highlighter-rouge">ng new &lt;PROJECT_NAME&gt;</code>. Note that the project is scaffolded in the directory where we’re in at this moment.</p>
 
-<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>ng new zippy-app</code></pre></div>
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nv">$ </span>ng new zippy-app</code></pre></figure>
 
-<p>Next, we navigate into the project and run <code>ng serve</code>, which will essentially build and serve a hello world app on <code>http://localhost:4200</code>.</p>
+<p>Next, we navigate into the project and run <code class="highlighter-rouge">ng serve</code>, which will essentially build and serve a hello world app on <code class="highlighter-rouge">http://localhost:4200</code>.</p>
 
-<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span><span class="nb">cd </span>zippy-app
-<span class="gp">$ </span>ng serve</code></pre></div>
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nv">$ </span><span class="nb">cd </span>zippy-app
+<span class="nv">$ </span>ng serve</code></pre></figure>
 
-<p>We open a browser tab on <code>localhost://4200</code> and what we see is the text “zippy-app works!”. Cool, we’re all set up to build a zippy component in Angular!</p>
+<p>We open a browser tab on <code class="highlighter-rouge">localhost://4200</code> and what we see is the text “zippy-app works!”. Cool, we’re all set up to build a zippy component in Angular!</p>
 
 <h2 id="building-the-zippy-component">Building the zippy component</h2>
 
@@ -141,9 +141,9 @@
 
 <iframe src="http://embed.plnkr.co/1djdpE5uFLfYpYO8qBnm/preview?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Also known as “accordion”. You can click the summary text and the actual content toggles accordingly. If you take a look at this particular plunk, you’ll see that we actually don’t need to do any special implementation to get this working. We have the <code>&lt;details&gt;</code> element that does the job for us. But how can we implement such a thing in Angular?</p>
+<p>Also known as “accordion”. You can click the summary text and the actual content toggles accordingly. If you take a look at this particular plunk, you’ll see that we actually don’t need to do any special implementation to get this working. We have the <code class="highlighter-rouge">&lt;details&gt;</code> element that does the job for us. But how can we implement such a thing in Angular?</p>
 
-<p>We start off by adding a new file <code>src/app/my-zippy.component.ts</code> and creating a class in ES2015 that we export, so it can be imported by other consumers of this class, by using the ES2015 module system. If you’re not familiar with modules in ES2015 you might want to read our article on <a href="/angularjs/es6/2015/01/23/exploring-angular-1.3-using-es6.html">using ES2015 with Angular today</a>.</p>
+<p>We start off by adding a new file <code class="highlighter-rouge">src/app/my-zippy.component.ts</code> and creating a class in ES2015 that we export, so it can be imported by other consumers of this class, by using the ES2015 module system. If you’re not familiar with modules in ES2015 you might want to read our article on <a href="/angularjs/es6/2015/01/23/exploring-angular-1.3-using-es6.html">using ES2015 with Angular today</a>.</p>
 
 <blockquote>
   <blockquote>
@@ -151,58 +151,58 @@
   </blockquote>
 </blockquote>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>The next thing we want to do, is to make our <code>ZippyComponent</code> class an actual component and give it a template so that we can see that it is ready to be used. In order to tell Angular that this particular class is a component, we use something called “Decorators”.</p>
+<p>The next thing we want to do, is to make our <code class="highlighter-rouge">ZippyComponent</code> class an actual component and give it a template so that we can see that it is ready to be used. In order to tell Angular that this particular class is a component, we use something called “Decorators”.</p>
 
 <p>Decorators are a way to add metadata to our existing code. Those decorators are actually not supported by ES2015 but have been developed as language extension of the TypeScript transpiler, which is used in this project. We’re not required to use decorators though. As mentioned, those are just transpiled to ES5 and then simply used by the framework. However, for simplicity sake we’ll use them in this article.</p>
 
-<p>Angular provides us with a couple of decorators so we can express our code in a much more elegant way. In order to build a component, we need the <code>@Component()</code> decorator. Decorators can be imported just like classes or other symbols, by using ES2015 module syntax. If you heard about <strong>annotations in traceur</strong> before and wonder how they relate to decorators, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between annotations and decorators</a>.</p>
+<p>Angular provides us with a couple of decorators so we can express our code in a much more elegant way. In order to build a component, we need the <code class="highlighter-rouge">@Component()</code> decorator. Decorators can be imported just like classes or other symbols, by using ES2015 module syntax. If you heard about <strong>annotations in traceur</strong> before and wonder how they relate to decorators, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between annotations and decorators</a>.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>The <code>Component</code> decorator adds information about what our component’s element name will be, what  input properties it has and more. We can also add information about the component’s view and template.</p>
+<p>The <code class="highlighter-rouge">Component</code> decorator adds information about what our component’s element name will be, what  input properties it has and more. We can also add information about the component’s view and template.</p>
 
-<p>We want our zippy component to be usable as <code>&lt;my-zippy&gt;</code> element. So all we need to do, is to add a <code>@Component()</code> decorator with that particular information. To specify the element name, or rather CSS selector, we need to add a <code>selector</code> property that matches a CSS selector.</p>
+<p>We want our zippy component to be usable as <code class="highlighter-rouge">&lt;my-zippy&gt;</code> element. So all we need to do, is to add a <code class="highlighter-rouge">@Component()</code> decorator with that particular information. To specify the element name, or rather CSS selector, we need to add a <code class="highlighter-rouge">selector</code> property that matches a CSS selector.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Next, our component needs a template. We add information about the component’s view. <code>templateUrl</code> tells Angular where to load the component template from. To make <code>templateUrl</code> work with relative paths, we add another property <code>moduleId</code> with a value <code>module.id</code>. To get more information on <code>moduleId</code>, make sure to check out our article on <a href="/angular/2016/06/08/component-relative-paths-in-angular-2.html">Component-Relative Paths in Angular</a></p>
+<p>Next, our component needs a template. We add information about the component’s view. <code class="highlighter-rouge">templateUrl</code> tells Angular where to load the component template from. To make <code class="highlighter-rouge">templateUrl</code> work with relative paths, we add another property <code class="highlighter-rouge">moduleId</code> with a value <code class="highlighter-rouge">module.id</code>. To get more information on <code class="highlighter-rouge">moduleId</code>, make sure to check out our article on <a href="/angular/2016/06/08/component-relative-paths-in-angular-2.html">Component-Relative Paths in Angular</a></p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Later at runtime, when Angular compiles this component, it’ll fetch <code>my-zippy.component.html</code> asynchronously. Let’s create a file <code>src/app/my-zippy.component.html</code> with the following contents:</p>
+<p>Later at runtime, when Angular compiles this component, it’ll fetch <code class="highlighter-rouge">my-zippy.component.html</code> asynchronously. Let’s create a file <code class="highlighter-rouge">src/app/my-zippy.component.html</code> with the following contents:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy__title"</span><span class="nt">&gt;</span>
     <span class="ni">&amp;blacktriangledown;</span> Details
   <span class="nt">&lt;/div&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy__content"</span><span class="nt">&gt;</span>
     This is some content.
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></div>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
 
 <p>CSS classes can be ignored for now. They just give us some semantics throughout our template.</p>
 
@@ -210,37 +210,37 @@
 
 <ul>
   <li>Add our new component to the application module</li>
-  <li>Use <code>ZippyComponent</code> in <code>ZippyAppComponent</code>’s template</li>
+  <li>Use <code class="highlighter-rouge">ZippyComponent</code> in <code class="highlighter-rouge">ZippyAppComponent</code>’s template</li>
 </ul>
 
-<p>Angular comes with a module system that allows us to register directives, components, service and many other things in a single place, so we can use them throughout our application. If we take a look at the <code>src/app/app.module.ts</code> file, we see that Angular CLI already created a module for us.  To register <code>ZippyComponent</code> on <code>AppModule</code>, we import it and add it to the list <code>AppModule</code>’s declarations:</p>
+<p>Angular comes with a module system that allows us to register directives, components, service and many other things in a single place, so we can use them throughout our application. If we take a look at the <code class="highlighter-rouge">src/app/app.module.ts</code> file, we see that Angular CLI already created a module for us.  To register <code class="highlighter-rouge">ZippyComponent</code> on <code class="highlighter-rouge">AppModule</code>, we import it and add it to the list <code class="highlighter-rouge">AppModule</code>’s declarations:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ZippyAppComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./zippy-app.component'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ZippyComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./my-zippy.component'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ZippyAppComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./zippy-app.component'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ZippyComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./my-zippy.component'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">ZippyAppComponent</span><span class="p">,</span> <span class="nx">ZippyComponent</span><span class="p">],</span> <span class="c1">// we're adding ZippyComponent here</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">ZippyAppComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>We don’t worry too much about the <code>imports</code> for now, but we acknowledge that Angular needs <code>BrowserModule</code> to make our app run in the browser. The <code>declarations</code> property defines all directives and pipes that are used in this module and <code>bootstrap</code> tells Angular, which component should be bootstrapped to run the application. <code>ZippyAppComponent</code> is our root component and has been generated by Angular CLI as well, <code>ZippyComponent</code> is our own custom component that we’ve just created.</p>
+<p>We don’t worry too much about the <code class="highlighter-rouge">imports</code> for now, but we acknowledge that Angular needs <code class="highlighter-rouge">BrowserModule</code> to make our app run in the browser. The <code class="highlighter-rouge">declarations</code> property defines all directives and pipes that are used in this module and <code class="highlighter-rouge">bootstrap</code> tells Angular, which component should be bootstrapped to run the application. <code class="highlighter-rouge">ZippyAppComponent</code> is our root component and has been generated by Angular CLI as well, <code class="highlighter-rouge">ZippyComponent</code> is our own custom component that we’ve just created.</p>
 
-<p>Now, to actually render our zippy component in our application, we need to use it in <code>ZippyAppComponent</code>’s template. Let’s do that right away:</p>
+<p>Now, to actually render our zippy component in our application, we need to use it in <code class="highlighter-rouge">ZippyAppComponent</code>’s template. Let’s do that right away:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'zippy-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;my-zippy&gt;&lt;/my-zippy&gt;'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyAppComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyAppComponent</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Nice! Running this in the browser gives us at least something that looks like a zippy component. The next step is to bring our component to life.</p>
 
@@ -251,110 +251,110 @@
 <ul>
   <li>Clicking on the zippy title should toggle the content</li>
   <li>The title of the should be configurable from the outside world, currently hard-coded in the template</li>
-  <li>DOM that is used inside the <code>&lt;my-zippy&gt;</code> element should be projected in the zippy content</li>
+  <li>DOM that is used inside the <code class="highlighter-rouge">&lt;my-zippy&gt;</code> element should be projected in the zippy content</li>
 </ul>
 
 <p>Let’s start with the first one: when clicking on the zippy title, the content should toggle. How do we implement that in Angular?</p>
 
-<p>We know, in Angular 1.x, we’d probably add an <code>ngClick</code> directive to the title and set a scope property to <code>true</code> or <code>false</code> and toggle the zippy content respectively by using either <code>ngHide</code> or <code>ngShow</code>. We can do pretty much the same in Angular &gt;= 2.x as well, just that we have a bit different semantics.</p>
+<p>We know, in Angular 1.x, we’d probably add an <code class="highlighter-rouge">ngClick</code> directive to the title and set a scope property to <code class="highlighter-rouge">true</code> or <code class="highlighter-rouge">false</code> and toggle the zippy content respectively by using either <code class="highlighter-rouge">ngHide</code> or <code class="highlighter-rouge">ngShow</code>. We can do pretty much the same in Angular &gt;= 2.x as well, just that we have a bit different semantics.</p>
 
-<p>Instead of adding an <code>ngClick</code> directive (which we don’t have in Angular 2.x), to call for instance a method <code>toggle()</code>, we bind to the <code>click</code> event directly using the following template syntax.</p>
+<p>Instead of adding an <code class="highlighter-rouge">ngClick</code> directive (which we don’t have in Angular 2.x), to call for instance a method <code class="highlighter-rouge">toggle()</code>, we bind to the <code class="highlighter-rouge">click</code> event directly using the following template syntax.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">...
+<figure class="highlight"><pre><code class="language-html" data-lang="html">...
 <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy__title"</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">toggle</span><span class="err">()"</span><span class="nt">&gt;</span>
   <span class="ni">&amp;blacktriangledown;</span> Details
 <span class="nt">&lt;/div&gt;</span>
-...</code></pre></div>
+...</code></pre></figure>
 
 <p>If you’re not familiar with this syntax I recommend you either reading this article on <a href="http://pascalprecht.github.io/2014/10/25/integrating-web-components-with-angularjs/">integrating Web Components with Angular</a>, or this article about <a href="http://blog.thoughtram.io/angular/2015/08/11/angular-2-template-syntax-demystified-part-1.html">Angular’s template syntax demystified</a>. <a href="https://www.youtube.com/watch?v=-dMBcqwvYA0">Misko’s keynote</a> from this year’s ng-conf is also a nice resource.</p>
 
-<p>Now we’re basically listening on a <code>click</code> event and execute a <strong>statement</strong>. But where does <code>toggle()</code> come from? We can access component methods directly in our template. There’s no <code>$scope</code> service or controller that provides those methods. Which means, <code>toggle()</code> is just a method defined in <code>ZippyComponent</code>.</p>
+<p>Now we’re basically listening on a <code class="highlighter-rouge">click</code> event and execute a <strong>statement</strong>. But where does <code class="highlighter-rouge">toggle()</code> come from? We can access component methods directly in our template. There’s no <code class="highlighter-rouge">$scope</code> service or controller that provides those methods. Which means, <code class="highlighter-rouge">toggle()</code> is just a method defined in <code class="highlighter-rouge">ZippyComponent</code>.</p>
 
 <p>Here’s what the implementation of this method could look like:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
   <span class="nx">toggle</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">visible</span> <span class="o">=</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">visible</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We simply invert the value of the component’s <code>visible</code> property. In order to get a decent default state, we set <code>visible</code> to <code>true</code> when the component is loaded.</p>
+<p>We simply invert the value of the component’s <code class="highlighter-rouge">visible</code> property. In order to get a decent default state, we set <code class="highlighter-rouge">visible</code> to <code class="highlighter-rouge">true</code> when the component is loaded.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
 
   <span class="nx">visible</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
   <span class="nx">toggle</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">visible</span> <span class="o">=</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">visible</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Now that we have a property that represents the visibility state of the content, we can use it in our template accordingly. Instead of <code>ngHide</code> or <code>ngShow</code> (which we also don’t have in Angular &gt;= 2.x), we can simply bind the value of our <code>visible</code> property to our zippy content’s <code>hidden</code> property, which every DOM element has by default.</p>
+<p>Now that we have a property that represents the visibility state of the content, we can use it in our template accordingly. Instead of <code class="highlighter-rouge">ngHide</code> or <code class="highlighter-rouge">ngShow</code> (which we also don’t have in Angular &gt;= 2.x), we can simply bind the value of our <code class="highlighter-rouge">visible</code> property to our zippy content’s <code class="highlighter-rouge">hidden</code> property, which every DOM element has by default.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">...
+<figure class="highlight"><pre><code class="language-html" data-lang="html">...
 <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy__content"</span> <span class="err">[</span><span class="na">hidden</span><span class="err">]="!</span><span class="na">visible</span><span class="err">"</span><span class="nt">&gt;</span>
   This is some content.
 <span class="nt">&lt;/div&gt;</span>
-...</code></pre></div>
+...</code></pre></figure>
 
 <p>Again, what we see here is part of the new template syntax in Angular. Angular &gt;= 2.x binds to properties rather than attributes in order to work with Web Components, and this is how you do it. We can now click on the zippy title and the content toggles!</p>
 
 <p>Oh! The little arrow in the title still points down, even if the zippy is closed. We can fix that easily with Angular’s interpolation like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">...
+<figure class="highlight"><pre><code class="language-html" data-lang="html">...
 <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy__title"</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">toggle</span><span class="err">()"</span><span class="nt">&gt;</span>
   {{ visible ? '<span class="ni">&amp;blacktriangledown;</span>' : '<span class="ni">&amp;blacktriangleright;</span>' }} Details
 <span class="nt">&lt;/div&gt;</span>
-...</code></pre></div>
+...</code></pre></figure>
 
 <p>Okay, we’re almost there. Let’s make the zippy title configurable. We want that consumers of our component can define how they pass a title to it. Here’s what our consumer will be able to do:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;zippy</span> <span class="na">title=</span><span class="s">"Details"</span><span class="nt">&gt;&lt;/zippy&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;zippy</span> <span class="na">title=</span><span class="s">"Details"</span><span class="nt">&gt;&lt;/zippy&gt;</span>
 <span class="nt">&lt;zippy</span> <span class="err">[</span><span class="na">title</span><span class="err">]="'</span><span class="na">Details</span><span class="err">'"</span><span class="nt">&gt;&lt;/zippy&gt;</span>
-<span class="nt">&lt;zippy</span> <span class="err">[</span><span class="na">title</span><span class="err">]="</span><span class="na">evaluatesToTitle</span><span class="err">"</span><span class="nt">&gt;&lt;/zippy&gt;</span></code></pre></div>
+<span class="nt">&lt;zippy</span> <span class="err">[</span><span class="na">title</span><span class="err">]="</span><span class="na">evaluatesToTitle</span><span class="err">"</span><span class="nt">&gt;&lt;/zippy&gt;</span></code></pre></figure>
 
-<p>In Angular &gt;= 2.x, we don’t need to specify how scope properties are bound in our component, the consumer does. That means, this gets <strong>a lot</strong> easier in Angular too, because all we need to do is to import the <code>@Input()</code> decorator and teach our component about an input property, like this:</p>
+<p>In Angular &gt;= 2.x, we don’t need to specify how scope properties are bound in our component, the consumer does. That means, this gets <strong>a lot</strong> easier in Angular too, because all we need to do is to import the <code class="highlighter-rouge">@Input()</code> decorator and teach our component about an input property, like this:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">title</span><span class="p">;</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Basically what we’re doing here, is telling Angular that the value of the <code>title</code> <strong>attribute</strong> is projected to the <code>title</code> <strong>property</strong>. Input data that flows into the component. If we want to map the <code>title</code> property to a different attribute name, we can do so by passing the attribute name to <code>@Input()</code>:</p>
+<p>Basically what we’re doing here, is telling Angular that the value of the <code class="highlighter-rouge">title</code> <strong>attribute</strong> is projected to the <code class="highlighter-rouge">title</code> <strong>property</strong>. Input data that flows into the component. If we want to map the <code class="highlighter-rouge">title</code> property to a different attribute name, we can do so by passing the attribute name to <code class="highlighter-rouge">@Input()</code>:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">(</span><span class="s1">'zippyTitle'</span><span class="p">)</span> <span class="nx">title</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">(</span><span class="s1">'zippyTitle'</span><span class="p">)</span> <span class="nx">title</span><span class="p">;</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>But for simplicity’s sake, we stick with the shorthand syntax. There’s nothing more to do to make the title configurable, let’s update the template for <code>ZippyAppComponent</code> app.</p>
+<p>But for simplicity’s sake, we stick with the shorthand syntax. There’s nothing more to do to make the title configurable, let’s update the template for <code class="highlighter-rouge">ZippyAppComponent</code> app.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'zippy-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;my-zippy title="Details"&gt;&lt;/zippy&gt;'</span><span class="p">,</span>
 <span class="p">})</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
 <p>Now we need to change the template of zippy to make title to appear at correct place, let’s udpate the template for zippy title.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">...
+<figure class="highlight"><pre><code class="language-html" data-lang="html">...
 <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy__title"</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">toggle</span><span class="err">()"</span><span class="nt">&gt;</span>
   {{ visible ? '<span class="ni">&amp;blacktriangledown;</span>' : '<span class="ni">&amp;blacktriangleright;</span>' }} {{title}}
 <span class="nt">&lt;/div&gt;</span>
-...</code></pre></div>
+...</code></pre></figure>
 
 <h2 id="insertion-points-instead-of-transclusion">Insertion Points instead of Transclusion</h2>
 
@@ -362,57 +362,57 @@
 
 <p>We could for example use our component like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-zippy</span> <span class="na">title=</span><span class="s">"Details"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;my-zippy</span> <span class="na">title=</span><span class="s">"Details"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p&gt;</span>Here's some detailed content.<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/my-zippy&gt;</span></code></pre></div>
+<span class="nt">&lt;/my-zippy&gt;</span></code></pre></figure>
 
 <p>In order to make this work, we’ve used transclusion in Angular 1. We don’t need transclusion anymore, since Angular 2.x makes use of Shadow DOM (Emulation) which is part of the Web Components specification. Shadow DOM comes with something called “Content Insertion Points” or “Content Projection”, which lets us specify, where DOM from the outside world is projected in the Shadow DOM or view of the component.</p>
 
-<p>I know, it’s hard to believe, but all we need to do is adding a <code>&lt;ng-content&gt;</code> tag to our component template.</p>
+<p>I know, it’s hard to believe, but all we need to do is adding a <code class="highlighter-rouge">&lt;ng-content&gt;</code> tag to our component template.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">...
+<figure class="highlight"><pre><code class="language-html" data-lang="html">...
 <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy__content"</span> <span class="err">[</span><span class="na">hidden</span><span class="err">]="!</span><span class="na">visible</span><span class="err">"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;ng-content&gt;&lt;/ng-content&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
-...</code></pre></div>
+...</code></pre></figure>
 
-<p>Angular uses Shadow DOM (Emulation) since 2.x by default, so we can just take advantage of that technology. <s>It turns out that insertion points in Shadow DOM are even more powerful than transclusion in Angular.</s> Angular 1.5 introduces <a href="http://localhost:4000/angular/2015/11/16/multiple-transclusion-and-named-slots.html">multiple transclusion slots</a>, so we can explicitly “pick” which DOM is going to be projected into our directive’s template. The <code>&lt;ng-content&gt;</code> tag lets us define <strong>which</strong> DOM elements are projected too. If you want to learn more about Shadow DOM, I recommend the articles on <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">html5rocks.com</a> or watch <a href="https://www.youtube.com/watch?v=gSTNTXtQwaY">this talk</a> from ng-europe.</p>
+<p>Angular uses Shadow DOM (Emulation) since 2.x by default, so we can just take advantage of that technology. <s>It turns out that insertion points in Shadow DOM are even more powerful than transclusion in Angular.</s> Angular 1.5 introduces <a href="http://localhost:4000/angular/2015/11/16/multiple-transclusion-and-named-slots.html">multiple transclusion slots</a>, so we can explicitly “pick” which DOM is going to be projected into our directive’s template. The <code class="highlighter-rouge">&lt;ng-content&gt;</code> tag lets us define <strong>which</strong> DOM elements are projected too. If you want to learn more about Shadow DOM, I recommend the articles on <a href="http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">html5rocks.com</a> or watch <a href="https://www.youtube.com/watch?v=gSTNTXtQwaY">this talk</a> from ng-europe.</p>
 
 <h2 id="putting-it-all-together">Putting it all together</h2>
 
 <p>Yay, this is how we build a zippy component in Angular. Just to make sure we’re on the same page, here’s the complete zippy component code we’ve written throughout this article:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
 
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="p">;</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">title</span><span class="p">;</span>
   <span class="nx">visible</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
   <span class="nx">toggle</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">visible</span> <span class="o">=</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">visible</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>And here’s the template:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"zippy"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">toggle</span><span class="err">()"</span> <span class="na">class=</span><span class="s">"zippy__title"</span><span class="nt">&gt;</span>
     {{ visible ? '<span class="ni">&amp;blacktriangledown;</span>' : '<span class="ni">&amp;blacktriangleright;</span>' }} {{title}}
   <span class="nt">&lt;/div&gt;</span>
   <span class="nt">&lt;div</span> <span class="err">[</span><span class="na">hidden</span><span class="err">]="!</span><span class="na">visible</span><span class="err">"</span> <span class="na">class=</span><span class="s">"zippy__content"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;ng-content&gt;&lt;/ng-content&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></div>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
 
 <p>I’ve set up a repository so you can play with the code <a href="https://github.com/thoughtram/angular-zippy">here</a>. In fact, I’ve also added this component to the Angular project. The pull request is <s>pending</s> merged <a href="https://github.com/angular/angular/pull/729">here</a> <s>and likely to be merged the next few days</s>. At this point I’d like to say thank you to <a href="http://twitter.com/vberchet">Victor</a> and <a href="http://twitter.com/mhevery">Misko</a> for helping me out on getting this implemented.</p>
 
-<p>You might notice that it also comes with e2e tests. The component itself even emits it’s own events using <code>EventEmitter</code>, which we haven’t covered in this article. Check out the demos to see event emitters in action!</p>
+<p>You might notice that it also comes with e2e tests. The component itself even emits it’s own events using <code class="highlighter-rouge">EventEmitter</code>, which we haven’t covered in this article. Check out the demos to see event emitters in action!</p>
 
 
           
@@ -512,6 +512,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -561,17 +572,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom themes with Angular Material</h3>
-                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

@@ -125,7 +125,7 @@
 
 <p>Before we get started and build our own custom form control, we want to make sure that we have an idea of the things come into play when creating custom form controls.</p>
 
-<p>First of all, it’s important to realise that we shouldn’t just create custom form controls right away, if there’s a native element (like <code>&lt;input type="number"&gt;</code>) that perfectly takes care of the job. It seems native form elements are often underestimated in what they are capable of. While we often just see a text box that we can type into, it does way more work for us. <strong>Every native form element is accessible</strong>, some inputs have built-in validation and some even provide an improved user experience on different platforms (e.g. mobile browsers).</p>
+<p>First of all, it’s important to realise that we shouldn’t just create custom form controls right away, if there’s a native element (like <code class="highlighter-rouge">&lt;input type="number"&gt;</code>) that perfectly takes care of the job. It seems native form elements are often underestimated in what they are capable of. While we often just see a text box that we can type into, it does way more work for us. <strong>Every native form element is accessible</strong>, some inputs have built-in validation and some even provide an improved user experience on different platforms (e.g. mobile browsers).</p>
 
 <p>So whenever we think of creating a custom form control we should ask ourselves:</p>
 
@@ -155,25 +155,25 @@
 
 <h2 id="creating-a-custom-counter">Creating a custom counter</h2>
 
-<p>Let’s start off with a rather simple counter component. The idea is to have a component that lets us increment and decrement a model value. And yes, if we think about the <a href="#things-to-consider">things to consider</a>, we probably realise that an <code>&lt;input type="number"&gt;</code> would do the trick.</p>
+<p>Let’s start off with a rather simple counter component. The idea is to have a component that lets us increment and decrement a model value. And yes, if we think about the <a href="#things-to-consider">things to consider</a>, we probably realise that an <code class="highlighter-rouge">&lt;input type="number"&gt;</code> would do the trick.</p>
 
 <p>However, in this article we want to demonstrate how to implement a custom form control and a custom counter component seems trivial enough to make things look not too complicated. In addition, our counter component will have a different appearance that should work the same across all browsers, which is where we might reach the boundaries of a native input element anyways.</p>
 
 <p>We start off with the raw component. All we need is a model value that can be changed and two buttons that cause the change.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'counter-input'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"increment()"</span><span class="o">&gt;+&lt;</span><span class="sr">/button</span><span class="err">&gt;
-</span>    <span class="p">{{</span><span class="nx">counterValue</span><span class="p">}}</span>
-    <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"decrement()"</span><span class="o">&gt;-&lt;</span><span class="sr">/button</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;button (click)="increment()"&gt;+&lt;/button&gt;
+    {{counterValue}}
+    &lt;button (click)="decrement()"&gt;-&lt;/button&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="p">{</span>
 
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span>
   <span class="nx">counterValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
   <span class="nx">increment</span><span class="p">()</span> <span class="p">{</span>
@@ -183,127 +183,127 @@
   <span class="nx">decrement</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span><span class="o">--</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Nothing special going on here. <code>CounterInputComponent</code> has a model <code>counterValue</code> that is interpolated in its template and can be incremented or decremented by the <code>increment()</code> and <code>decrement()</code> methods respectively. This component works perfectly fine, we can already use it once declared on our application module, as it is by putting it into another component like this:</p>
+<p>Nothing special going on here. <code class="highlighter-rouge">CounterInputComponent</code> has a model <code class="highlighter-rouge">counterValue</code> that is interpolated in its template and can be incremented or decremented by the <code class="highlighter-rouge">increment()</code> and <code class="highlighter-rouge">decrement()</code> methods respectively. This component works perfectly fine, we can already use it once declared on our application module, as it is by putting it into another component like this:</p>
 
 <p><strong>app.module.ts</strong></p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">,</span> <span class="nx">CounterInputComponent</span><span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
 <p><strong>app.component.ts</strong></p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app-component'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">counter</span><span class="o">-</span><span class="nx">input</span><span class="o">&gt;&lt;</span><span class="sr">/counter-input</span><span class="err">&gt;
-</span>  <span class="err">`</span><span class="p">,</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;counter-input&gt;&lt;/counter-input&gt;
+  `</span><span class="p">,</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{}</span></code></pre></div>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{}</span></code></pre></figure>
 
 <p>Okay cool, but now we want to make it work with Angular’s form APIs. Ideally, what we end up with is a custom control that works with template-driven forms and reactive/model-driven forms. For example, in the most simple scenario, we should be able to create a template-driven form like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- this doesn't work YET --&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- this doesn't work YET --&gt;</span>
 <span class="nt">&lt;form</span> <span class="err">#</span><span class="na">form=</span><span class="s">"ngForm"</span> <span class="err">(</span><span class="na">ngSubmit</span><span class="err">)="</span><span class="na">submit</span><span class="err">(</span><span class="na">form</span><span class="err">.</span><span class="na">value</span><span class="err">)"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;counter-input</span> <span class="na">name=</span><span class="s">"counter"</span> <span class="na">ngModel</span><span class="nt">&gt;&lt;/counter-input&gt;</span>
   <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">"submit"</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></div>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
 
-<p>If that syntax is new to you, check out our article on <a href="/angular/2016/03/21/template-driven-forms-in-angular-2.html">Template-Driven forms in Angular</a>. Okay but how do we get there? We need to learn what a <code>ControlValueAccessor</code> is, because that’s the thing that Angular uses to build a bridge between a form model and a DOM element.</p>
+<p>If that syntax is new to you, check out our article on <a href="/angular/2016/03/21/template-driven-forms-in-angular-2.html">Template-Driven forms in Angular</a>. Okay but how do we get there? We need to learn what a <code class="highlighter-rouge">ControlValueAccessor</code> is, because that’s the thing that Angular uses to build a bridge between a form model and a DOM element.</p>
 
 <h2 id="understanding-controlvalueaccessor">Understanding ControlValueAccessor</h2>
 
-<p>While our counter component works, there’s currently no way we can connect it to an outer form. In fact, if we try to bind any kind of form model to our custom control, we’ll get an error that there’s a missing <code>ControlValueAccessor</code>. And that’s exactly what we need to enable proper integration with forms in Angular.</p>
+<p>While our counter component works, there’s currently no way we can connect it to an outer form. In fact, if we try to bind any kind of form model to our custom control, we’ll get an error that there’s a missing <code class="highlighter-rouge">ControlValueAccessor</code>. And that’s exactly what we need to enable proper integration with forms in Angular.</p>
 
-<p>So, what is a <code>ControlValueAccessor</code>? Well, remember the things we talked about earlier that are needed to implement a custom form control? One of the things we need to make sure is that changes are propagated from the model to the view/DOM, and also from the view, back to the model. <strong>This is what a <code>ControlValueAccessor</code> is for.</strong></p>
+<p>So, what is a <code class="highlighter-rouge">ControlValueAccessor</code>? Well, remember the things we talked about earlier that are needed to implement a custom form control? One of the things we need to make sure is that changes are propagated from the model to the view/DOM, and also from the view, back to the model. <strong>This is what a <code class="highlighter-rouge">ControlValueAccessor</code> is for.</strong></p>
 
-<p>A <code>ControlValueAccessor</code> is an interface that takes care of:</p>
+<p>A <code class="highlighter-rouge">ControlValueAccessor</code> is an interface that takes care of:</p>
 
 <ul>
   <li>Writing a value from the form model into the view/DOM</li>
   <li>Informing other form directives and controls when the view/DOM changes</li>
 </ul>
 
-<p>The reason why Angular has such an interface, is because the way how DOM elements need to be updated can vary across input types. For example, a normal text input has a <code>value</code> property that needs to be written to, whereas a checkbox comes with a <code>checked</code> property that needs to be updated. If we take a look under the hood, we realise that <strong>there’s a <code>ControlValueAccessor</code> for every input type</strong>  which knows how to update its view/DOM.</p>
+<p>The reason why Angular has such an interface, is because the way how DOM elements need to be updated can vary across input types. For example, a normal text input has a <code class="highlighter-rouge">value</code> property that needs to be written to, whereas a checkbox comes with a <code class="highlighter-rouge">checked</code> property that needs to be updated. If we take a look under the hood, we realise that <strong>there’s a <code class="highlighter-rouge">ControlValueAccessor</code> for every input type</strong>  which knows how to update its view/DOM.</p>
 
-<p>There’s the <code>DefaultValueAccessor</code> that takes care of text inputs and textareas, the <code>SelectControlValueAccessor</code> that handles select inputs, or the <code>CheckboxControlValueAccessor</code>, which, surprise, deals with checkboxes, and many more.</p>
+<p>There’s the <code class="highlighter-rouge">DefaultValueAccessor</code> that takes care of text inputs and textareas, the <code class="highlighter-rouge">SelectControlValueAccessor</code> that handles select inputs, or the <code class="highlighter-rouge">CheckboxControlValueAccessor</code>, which, surprise, deals with checkboxes, and many more.</p>
 
-<p>Our counter component needs a <code>ControlValueAccessor</code> that knows how to update the <code>counterValue</code> model and inform the outside world about changes too. As soon as we implement that interface, it’ll be able to talk to Angular forms.</p>
+<p>Our counter component needs a <code class="highlighter-rouge">ControlValueAccessor</code> that knows how to update the <code class="highlighter-rouge">counterValue</code> model and inform the outside world about changes too. As soon as we implement that interface, it’ll be able to talk to Angular forms.</p>
 
 <h2 id="implementing-controlvalueaccessor">Implementing ControlValueAccessor</h2>
 
-<p>The <code>ControlValueAccessor</code> interface looks like this:</p>
+<p>The <code class="highlighter-rouge">ControlValueAccessor</code> interface looks like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">interface</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
-  <span class="nx">writeValue</span><span class="p">(</span><span class="nx">obj</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="err">:</span> <span class="k">void</span>
-  <span class="nx">registerOnChange</span><span class="p">(</span><span class="nx">fn</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="err">:</span> <span class="k">void</span>
-  <span class="nx">registerOnTouched</span><span class="p">(</span><span class="nx">fn</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="err">:</span> <span class="k">void</span>
-<span class="p">}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kr">interface</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+  <span class="nx">writeValue</span><span class="p">(</span><span class="nx">obj</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">:</span> <span class="k">void</span>
+  <span class="nx">registerOnChange</span><span class="p">(</span><span class="nx">fn</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">:</span> <span class="k">void</span>
+  <span class="nx">registerOnTouched</span><span class="p">(</span><span class="nx">fn</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">:</span> <span class="k">void</span>
+<span class="p">}</span></code></pre></figure>
 
-<p><strong>writeValue(obj: any)</strong> is the method that writes a new value from the form model into the view or (if needed) DOM property. This is where we want to update our <code>counterValue</code> model, as that’s the thing that is used in the view.</p>
+<p><strong>writeValue(obj: any)</strong> is the method that writes a new value from the form model into the view or (if needed) DOM property. This is where we want to update our <code class="highlighter-rouge">counterValue</code> model, as that’s the thing that is used in the view.</p>
 
-<p><strong>registerOnChange(fn: any)</strong> is a method that registers a handler that should be called when something in the view has changed. It gets a function that tells other form directives and form controls to update their values. In other words, that’s the handler function we want to call whenever <code>counterValue</code> changes through the view.</p>
+<p><strong>registerOnChange(fn: any)</strong> is a method that registers a handler that should be called when something in the view has changed. It gets a function that tells other form directives and form controls to update their values. In other words, that’s the handler function we want to call whenever <code class="highlighter-rouge">counterValue</code> changes through the view.</p>
 
-<p><strong>registerOnTouched(fn: any)</strong> Similiar to <code>registerOnChange()</code>, this registers a handler specifically for when a control receives a touch event. We don’t need that in our custom control.</p>
+<p><strong>registerOnTouched(fn: any)</strong> Similiar to <code class="highlighter-rouge">registerOnChange()</code>, this registers a handler specifically for when a control receives a touch event. We don’t need that in our custom control.</p>
 
-<p>A <code>ControlValueAccessor</code> needs access to its control’s view and model, which means, the custom form control itself has to implement that interface. Let’s start with <code>writeValue()</code>. First we import the interface and update the class signature.</p>
+<p>A <code class="highlighter-rouge">ControlValueAccessor</code> needs access to its control’s view and model, which means, the custom form control itself has to implement that interface. Let’s start with <code class="highlighter-rouge">writeValue()</code>. First we import the interface and update the class signature.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ControlValueAccessor</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">ControlValueAccessor</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Next, we implement <code>writeValue()</code>. As mentioned earlier, it takes a new value from the form model and writes it into the view. In our case, all we need is updating the <code>counterValue</code> property, as it’s interpolated automatically.</p>
+<p>Next, we implement <code class="highlighter-rouge">writeValue()</code>. As mentioned earlier, it takes a new value from the form model and writes it into the view. In our case, all we need is updating the <code class="highlighter-rouge">counterValue</code> property, as it’s interpolated automatically.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">writeValue</span><span class="p">(</span><span class="nx">value</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">writeValue</span><span class="p">(</span><span class="nx">value</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>This method gets called when the form is initialized, with the form model’s initial value. This means it will override the default value <code>0</code>, which is fine but if we think about the simple form setup we talked about earlier, we realise that there is no initial value in the form model:</p>
+<p>This method gets called when the form is initialized, with the form model’s initial value. This means it will override the default value <code class="highlighter-rouge">0</code>, which is fine but if we think about the simple form setup we talked about earlier, we realise that there is no initial value in the form model:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">counter</span><span class="o">-</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"counter"</span> <span class="nx">ngModel</span><span class="o">&gt;&lt;</span><span class="sr">/counter-input&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">counter</span><span class="o">-</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"counter"</span> <span class="nx">ngModel</span><span class="o">&gt;&lt;</span><span class="sr">/counter-input&gt;</span></code></pre></figure>
 
 <p>This will cause our component to render an empty string. As a quick fix, we only set the value when it’s not undefined:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">writeValue</span><span class="p">(</span><span class="nx">value</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">writeValue</span><span class="p">(</span><span class="nx">value</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Now, it only overrides the default when there’s an actual value written to the control. Next, we implement <code>registerOnChange()</code> and <code>registerOnTouched()</code>. <code>registerOnChange()</code> has access to a function that informs the outside world about changes. Here’s where we can do special work, whenever we propagate the change, if we wanted to. <code>registerOnTouched()</code> registers a callback that is excuted whenever a form control is “touched”. E.g. when an input element blurs, it fire the touch event. We don’t want to do anything at this event, so we can implement the interface with an empty function.</p>
+<p>Now, it only overrides the default when there’s an actual value written to the control. Next, we implement <code class="highlighter-rouge">registerOnChange()</code> and <code class="highlighter-rouge">registerOnTouched()</code>. <code class="highlighter-rouge">registerOnChange()</code> has access to a function that informs the outside world about changes. Here’s where we can do special work, whenever we propagate the change, if we wanted to. <code class="highlighter-rouge">registerOnTouched()</code> registers a callback that is excuted whenever a form control is “touched”. E.g. when an input element blurs, it fire the touch event. We don’t want to do anything at this event, so we can implement the interface with an empty function.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">propagateChange</span> <span class="o">=</span> <span class="p">(</span><span class="nx">_</span><span class="err">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{};</span>
+  <span class="nx">propagateChange</span> <span class="o">=</span> <span class="p">(</span><span class="nx">_</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{};</span>
 
   <span class="nx">registerOnChange</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">propagateChange</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="nx">registerOnTouched</span><span class="p">()</span> <span class="p">{}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Great, our counter input now implements the <code>ControlValueAccessor</code> interface. The next thing we need to do is to call <code>propagateChange()</code> with the value whenever <code>counterValue</code> changes through the view. In other words, if either the <code>increment()</code> or <code>decrement()</code> button is clicked, we want to propagate the new value to the outside world.</p>
+<p>Great, our counter input now implements the <code class="highlighter-rouge">ControlValueAccessor</code> interface. The next thing we need to do is to call <code class="highlighter-rouge">propagateChange()</code> with the value whenever <code class="highlighter-rouge">counterValue</code> changes through the view. In other words, if either the <code class="highlighter-rouge">increment()</code> or <code class="highlighter-rouge">decrement()</code> button is clicked, we want to propagate the new value to the outside world.</p>
 
 <p>Let’s update these methods accordingly.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">increment</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span><span class="o">++</span><span class="p">;</span>
@@ -314,21 +314,21 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span><span class="o">--</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">propagateChange</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We can make this code a little better using property mutators. Both methods, <code>increment()</code> and <code>decrement()</code>, call <code>propagateChange()</code> whenever <code>counterValue</code> changes. Let’s use getters and setters to get rid off the redudant code:</p>
+<p>We can make this code a little better using property mutators. Both methods, <code class="highlighter-rouge">increment()</code> and <code class="highlighter-rouge">decrement()</code>, call <code class="highlighter-rouge">propagateChange()</code> whenever <code class="highlighter-rouge">counterValue</code> changes. Let’s use getters and setters to get rid off the redudant code:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span>
   <span class="nx">_counterValue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// notice the '_'</span>
 
-  <span class="nx">get</span> <span class="nx">counterValue</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">get</span> <span class="nx">counterValue</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_counterValue</span><span class="p">;</span>
   <span class="p">}</span>
 
-  <span class="nx">set</span> <span class="nx">counterValue</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">set</span> <span class="nx">counterValue</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_counterValue</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">propagateChange</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_counterValue</span><span class="p">);</span>
   <span class="p">}</span>
@@ -340,24 +340,24 @@
   <span class="nx">decrement</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">counterValue</span><span class="o">--</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><code>CounterInputComponent</code> is almost ready for prime-time. Even though it implements the <code>ControlValueAccessor</code> interface, there’s nothing that tells Angular that it should be considered as such. We need to register it.</p>
+<p><code class="highlighter-rouge">CounterInputComponent</code> is almost ready for prime-time. Even though it implements the <code class="highlighter-rouge">ControlValueAccessor</code> interface, there’s nothing that tells Angular that it should be considered as such. We need to register it.</p>
 
 <h2 id="registering-the-controlvalueaccessor">Registering the ControlValueAccessor</h2>
 
 <p>Implementing the interface is only half of the story. As we know, interfaces don’t exist in ES5, which means once the code is transpiled, that information is gone. So after all, it happens that our component implements the interface, but we still need to make Angular pick it up as such.</p>
 
-<p>In our article on <a href="/angular2/2015/11/23/multi-providers-in-angular-2.html">multi-providers in Angular</a> we learned that there are some DI tokens that Angular uses to inject multiple values, to do certain things with them. For example there’s the <code>NG_VALIDATORS</code> token that gives Angular all registered validators on a form control, and we can add our own validators to it.</p>
+<p>In our article on <a href="/angular2/2015/11/23/multi-providers-in-angular-2.html">multi-providers in Angular</a> we learned that there are some DI tokens that Angular uses to inject multiple values, to do certain things with them. For example there’s the <code class="highlighter-rouge">NG_VALIDATORS</code> token that gives Angular all registered validators on a form control, and we can add our own validators to it.</p>
 
-<p>In order to get hold of a <code>ControlValueAccessor</code> for a form control, Angular internaly injects all values that are registered on the <code>NG_VALUE_ACCESSOR</code> token. So all we need to do is to extend the multi-provider for <code>NG_VALUE_ACCESSOR</code> with our own value accessor instance (which is our component).</p>
+<p>In order to get hold of a <code class="highlighter-rouge">ControlValueAccessor</code> for a form control, Angular internaly injects all values that are registered on the <code class="highlighter-rouge">NG_VALUE_ACCESSOR</code> token. So all we need to do is to extend the multi-provider for <code class="highlighter-rouge">NG_VALUE_ACCESSOR</code> with our own value accessor instance (which is our component).</p>
 
 <p>Let’s do that right away:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span><span class="p">,</span> <span class="nx">forwardRef</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">NG_VALUE_ACCESSOR</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Input</span><span class="p">,</span> <span class="nx">forwardRef</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">NG_VALUE_ACCESSOR</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span> 
@@ -367,11 +367,11 @@
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>If this code doesn’t make any sense to you, you should definitely check out our article on <a href="/angular2/2015/11/23/multi-providers-in-angular-2.html">multi-providers in Angular</a>, but the bottom line is, that we’re adding our custom value accessor to the DI system so Angular can get an instance of it. We also have to use <code>useExisting</code> because <code>CounterInputComponent</code> will be already created as a directive dependency in the component that uses it. If we don’t do that, we get a new instance as this is how DI in Angular works. The <code>forwardRef()</code> call is explained in <a href="/angular/2015/09/03/forward-references-in-angular-2.html">this article</a>.</p>
+<p>If this code doesn’t make any sense to you, you should definitely check out our article on <a href="/angular2/2015/11/23/multi-providers-in-angular-2.html">multi-providers in Angular</a>, but the bottom line is, that we’re adding our custom value accessor to the DI system so Angular can get an instance of it. We also have to use <code class="highlighter-rouge">useExisting</code> because <code class="highlighter-rouge">CounterInputComponent</code> will be already created as a directive dependency in the component that uses it. If we don’t do that, we get a new instance as this is how DI in Angular works. The <code class="highlighter-rouge">forwardRef()</code> call is explained in <a href="/angular/2015/09/03/forward-references-in-angular-2.html">this article</a>.</p>
 
 <p>Awesome, our custom form control is now ready to be used!</p>
 
@@ -383,103 +383,103 @@
 
 <p>As discussed in our article on <a href="/angular/2016/03/21/template-driven-forms-in-angular-2.html#activating-new-form-apis">template-driven forms in Angular</a>, we need to activate the form APIs like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">FormsModule</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">FormsModule</span><span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">,</span> <span class="nx">FormsModule</span><span class="p">],</span> <span class="c1">// we're add FormsModule here</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
 <h3 id="without-model-initialization">Without model initialization</h3>
 
-<p>That’s pretty much it! Remember our <code>AppComponent</code> from ealier? Let’s create a template-driven form in it and see if it works. Here’s an example that uses the counter control without initializing it with a value (it will use its own internal default value which is <code>0</code>):</p>
+<p>That’s pretty much it! Remember our <code class="highlighter-rouge">AppComponent</code> from ealier? Let’s create a template-driven form in it and see if it works. Here’s an example that uses the counter control without initializing it with a value (it will use its own internal default value which is <code class="highlighter-rouge">0</code>):</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app-component'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">form</span> <span class="err">#</span><span class="nx">form</span><span class="o">=</span><span class="s2">"ngForm"</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">counter</span><span class="o">-</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"counter"</span> <span class="nx">ngModel</span><span class="o">&gt;&lt;</span><span class="sr">/counter-input</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
-</span>
-    <span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">form</span><span class="p">.</span><span class="nx">value</span> <span class="o">|</span> <span class="nx">json</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/pre</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;form #form="ngForm"&gt;
+      &lt;counter-input name="counter" ngModel&gt;&lt;/counter-input&gt;
+    &lt;/form&gt;
+
+    &lt;pre&gt;{{ form.value | json }}&lt;/pre&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{}</span></code></pre></div>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{}</span></code></pre></figure>
 
 <blockquote>
   <p><strong>Special Tip:</strong> Using the json pipe is a great trick to debug a form’s value.</p>
 </blockquote>
 
-<p><code>form.value</code> returns the values of all form controls mapped to their names in a JSON structure. That’s why <code>JsonPipe</code> will out put an object literal with a <code>counter</code> field of the value that the counter has.</p>
+<p><code class="highlighter-rouge">form.value</code> returns the values of all form controls mapped to their names in a JSON structure. That’s why <code class="highlighter-rouge">JsonPipe</code> will out put an object literal with a <code class="highlighter-rouge">counter</code> field of the value that the counter has.</p>
 
 <h3 id="model-initialization-with-property-binding">Model initialization with property binding</h3>
 
 <p>Here’s another example that binds a value to the custom control using property binding:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app-component'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">form</span> <span class="err">#</span><span class="nx">form</span><span class="o">=</span><span class="s2">"ngForm"</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">counter</span><span class="o">-</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"counter"</span> <span class="p">[</span><span class="nx">ngModel</span><span class="p">]</span><span class="o">=</span><span class="s2">"outerCounterValue"</span><span class="o">&gt;&lt;</span><span class="sr">/counter-input</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
-</span>
-    <span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">form</span><span class="p">.</span><span class="nx">value</span> <span class="o">|</span> <span class="nx">json</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/pre</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;form #form="ngForm"&gt;
+      &lt;counter-input name="counter" [ngModel]="outerCounterValue"&gt;&lt;/counter-input&gt;
+    &lt;/form&gt;
+
+    &lt;pre&gt;{{ form.value | json }}&lt;/pre&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
   <span class="nx">outerCounterValue</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>  
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <h3 id="two-way-data-binding-with-ngmodel-template-driven">Two-way data binding with ngModel</h3>
 
-<p>And of course, we can take advantage of <code>ngModel</code>’s two-way data binding implementation simply by changing the syntax to this:</p>
+<p>And of course, we can take advantage of <code class="highlighter-rouge">ngModel</code>’s two-way data binding implementation simply by changing the syntax to this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>ngModel value: {{outerCounterValue}}<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;counter-input</span> <span class="na">name=</span><span class="s">"counter"</span> <span class="err">[(</span><span class="na">ngModel</span><span class="err">)]="</span><span class="na">outerCounterValue</span><span class="err">"</span><span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>ngModel value: {{outerCounterValue}}<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;counter-input</span> <span class="na">name=</span><span class="s">"counter"</span> <span class="err">[(</span><span class="na">ngModel</span><span class="err">)]="</span><span class="na">outerCounterValue</span><span class="err">"</span><span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></figure>
 
 <p>How cool is that? Our custom form control works seamlessly with the template-driven forms APIs! Let’s see what that looks like when using model-driven forms.</p>
 
 <h2 id="using-it-inside-model-driven-forms">Using it inside model-driven forms</h2>
 
-<p>The following examples use Angular’s reactive form directives, so don’t forget to add <code>ReactiveFormsModule</code> to <code>AppModule</code> as discussed in <a href="/angular/2016/06/22/model-driven-forms-in-angular-2.html">this article</a>.</p>
+<p>The following examples use Angular’s reactive form directives, so don’t forget to add <code class="highlighter-rouge">ReactiveFormsModule</code> to <code class="highlighter-rouge">AppModule</code> as discussed in <a href="/angular/2016/06/22/model-driven-forms-in-angular-2.html">this article</a>.</p>
 
 <h3 id="binding-value-via-formcontrolname">Binding value via formControlName</h3>
 
-<p>Once we’ve set up a <code>FormGroup</code> that represents our form model, we can bind it to a form element and associate each control using <code>formControlName</code>. This example binds a value to our custom form control from a form model:</p>
+<p>Once we’ve set up a <code class="highlighter-rouge">FormGroup</code> that represents our form model, we can bind it to a form element and associate each control using <code class="highlighter-rouge">formControlName</code>. This example binds a value to our custom form control from a form model:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app-component'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">form</span> <span class="p">[</span><span class="nx">formGroup</span><span class="p">]</span><span class="o">=</span><span class="s2">"form"</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">counter</span><span class="o">-</span><span class="nx">input</span> <span class="nx">formControlName</span><span class="o">=</span><span class="s2">"counter"</span><span class="o">&gt;&lt;</span><span class="sr">/counter-input</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
-</span>
-    <span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">form</span><span class="p">.</span><span class="nx">value</span> <span class="o">|</span> <span class="nx">json</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/pre</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;form [formGroup]="form"&gt;
+      &lt;counter-input formControlName="counter"&gt;&lt;/counter-input&gt;
+    &lt;/form&gt;
+
+    &lt;pre&gt;{{ form.value | json }}&lt;/pre&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
-  <span class="na">form</span><span class="p">:</span> <span class="nx">FormGroup</span><span class="p">;</span>
+  <span class="nl">form</span><span class="p">:</span> <span class="nx">FormGroup</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">fb</span><span class="p">:</span> <span class="nx">FormBuilder</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">fb</span><span class="p">:</span> <span class="nx">FormBuilder</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">form</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fb</span><span class="p">.</span><span class="nx">group</span><span class="p">({</span>
       <span class="na">counter</span><span class="p">:</span> <span class="mi">5</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <h2 id="adding-custom-validation">Adding custom validation</h2>
 
 <p>One last thing we want to take a look at is how we can add validation to our custom control. In fact, we’ve already written an article on <a href="/angular/2016/03/14/custom-validators-in-angular-2.html">custom validators in Angular</a> and everything we need to know is written down there. However, to make things more clear we’ll add a custom validator to our custom form control by example.</p>
 
-<p>Let’s say we want to teach our control to become invalid when its <code>counterValue</code> is greater than <code>10</code> or smaller than <code>0</code>. Here’s what it could look like:</p>
+<p>Let’s say we want to teach our control to become invalid when its <code class="highlighter-rouge">counterValue</code> is greater than <code class="highlighter-rouge">10</code> or smaller than <code class="highlighter-rouge">0</code>. Here’s what it could look like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NG_VALIDATORS</span><span class="p">,</span> <span class="nx">FormControl</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">NG_VALIDATORS</span><span class="p">,</span> <span class="nx">FormControl</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span> 
@@ -499,20 +499,20 @@
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We register a validator function that returns <code>null</code> if the control value is valid, or an error object when it’s not. This already works great, we can display an error message accordingly like this:</p>
+<p>We register a validator function that returns <code class="highlighter-rouge">null</code> if the control value is valid, or an error object when it’s not. This already works great, we can display an error message accordingly like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">form</span> <span class="p">[</span><span class="nx">formGroup</span><span class="p">]</span><span class="o">=</span><span class="s2">"form"</span><span class="o">&gt;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">form</span> <span class="p">[</span><span class="nx">formGroup</span><span class="p">]</span><span class="o">=</span><span class="s2">"form"</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="nx">counter</span><span class="o">-</span><span class="nx">input</span>
     <span class="nx">formControlName</span><span class="o">=</span><span class="s2">"counter"</span>
     <span class="o">&gt;&lt;</span><span class="sr">/counter-input</span><span class="err">&gt;
 </span><span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
 </span>
 <span class="o">&lt;</span><span class="nx">p</span> <span class="o">*</span><span class="nx">ngIf</span><span class="o">=</span><span class="s2">"!form.valid"</span><span class="o">&gt;</span><span class="nx">Counter</span> <span class="nx">is</span> <span class="nx">invalid</span><span class="o">!&lt;</span><span class="sr">/p</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">form</span><span class="p">.</span><span class="nx">value</span> <span class="o">|</span> <span class="nx">json</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/pre&gt;</span></code></pre></div>
+</span><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">form</span><span class="p">.</span><span class="nx">value</span> <span class="o">|</span> <span class="nx">json</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/pre&gt;</span></code></pre></figure>
 
 <h2 id="making-the-validator-testable">Making the validator testable</h2>
 
@@ -520,7 +520,7 @@
 
 <p>Let’s change our code to this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">validateCounterRange</span><span class="p">(</span><span class="nx">c</span><span class="err">:</span> <span class="nx">FormControl</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">function</span> <span class="nx">validateCounterRange</span><span class="p">(</span><span class="nx">c</span><span class="p">:</span> <span class="nx">FormControl</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">err</span> <span class="o">=</span> <span class="p">{</span>
     <span class="na">rangeError</span><span class="p">:</span> <span class="p">{</span>
       <span class="na">given</span><span class="p">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span>
@@ -532,7 +532,7 @@
   <span class="k">return</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">value</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">?</span> <span class="nx">err</span> <span class="p">:</span> <span class="kc">null</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span> 
@@ -542,9 +542,9 @@
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <blockquote>
   <blockquote>
@@ -554,17 +554,17 @@
 
 <p>Now, the validator can be imported and added to our form model like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">validateCounterRange</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./counter-input'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">validateCounterRange</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./counter-input'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">form</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fb</span><span class="p">.</span><span class="nx">group</span><span class="p">({</span>
       <span class="na">counter</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="nx">validateCounterRange</span><span class="p">]</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>This custom control is getting better and better, but wouldn’t it be <strong>really</strong> cool if the validator was configurable, so that the consumer of the custom form control can decide what the max and min range values are?</p>
 
@@ -572,34 +572,34 @@
 
 <p>Ideally, the consumer of our custom control should be able to do something like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;counter-input</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;counter-input</span>
   <span class="na">formControlName=</span><span class="s">"counter"</span>
   <span class="na">counterRangeMax=</span><span class="s">"10"</span>
   <span class="na">counterRangeMin=</span><span class="s">"0"</span>
-  <span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></div>
+  <span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></figure>
 
 <p>Thanks to Angular’s dependency injection and property binding system, this is very easy to implement. Basically what we want to do is to teach our <a href="/angular/2016/03/14/custom-validators-in-angular-2.html#custom-validators-with-dependencies">validator to have dependencies</a>.</p>
 
 <p>Let’s start off by adding the input properties.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Input</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Input</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="p">...</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span>
   <span class="nx">counterRangeMax</span><span class="p">;</span>
 
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span>
   <span class="nx">counterRangeMin</span><span class="p">;</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Next, we somehow have to pass these values to our <code>validateCounterRange(c: FormControl)</code>, but per API it only asks for a <code>FormControl</code>. That means we need to create that validator function using a factory that creates a closure like this:</p>
+<p>Next, we somehow have to pass these values to our <code class="highlighter-rouge">validateCounterRange(c: FormControl)</code>, but per API it only asks for a <code class="highlighter-rouge">FormControl</code>. That means we need to create that validator function using a factory that creates a closure like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">createCounterRangeValidator</span><span class="p">(</span><span class="nx">maxValue</span><span class="p">,</span> <span class="nx">minValue</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="kd">function</span> <span class="nx">validateCounterRange</span><span class="p">(</span><span class="nx">c</span><span class="err">:</span> <span class="nx">FormControl</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">function</span> <span class="nx">createCounterRangeValidator</span><span class="p">(</span><span class="nx">maxValue</span><span class="p">,</span> <span class="nx">minValue</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span> <span class="nx">validateCounterRange</span><span class="p">(</span><span class="nx">c</span><span class="p">:</span> <span class="nx">FormControl</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">err</span> <span class="o">=</span> <span class="p">{</span>
       <span class="na">rangeError</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">given</span><span class="p">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span>
@@ -610,38 +610,38 @@
 
     <span class="k">return</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">value</span> <span class="o">&gt;</span> <span class="o">+</span><span class="nx">maxValue</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">value</span> <span class="o">&lt;</span> <span class="o">+</span><span class="nx">minValue</span><span class="p">)</span> <span class="p">?</span> <span class="nx">err</span><span class="p">:</span> <span class="kc">null</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Great, we can now create the validator function with the dynamic values we get from the input properties inside our component, and implement a <code>validate()</code> method that Angular will use to perform validation:</p>
+<p>Great, we can now create the validator function with the dynamic values we get from the input properties inside our component, and implement a <code class="highlighter-rouge">validate()</code> method that Angular will use to perform validation:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Input</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Input</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="p">...</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">{</span>
   <span class="p">...</span>
 
-  <span class="nl">validateFn</span><span class="p">:</span><span class="nb">Function</span><span class="p">;</span>
+  <span class="nx">validateFn</span><span class="p">:</span><span class="nb">Function</span><span class="p">;</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">validateFn</span> <span class="o">=</span> <span class="nx">createCounterRangeValidator</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">counterRangeMax</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">counterRangeMin</span><span class="p">);</span>
   <span class="p">}</span>
 
-  <span class="nx">validate</span><span class="p">(</span><span class="nx">c</span><span class="err">:</span> <span class="nx">FormControl</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">validate</span><span class="p">(</span><span class="nx">c</span><span class="p">:</span> <span class="nx">FormControl</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">validateFn</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>This works but introduces a new problem: <code>validateFn</code> is only set in <code>ngOnInit()</code>. What if <code>counterRangeMax</code> or <code>counterRangeMin</code> change via their bindings? We need to create a new validator function based on these changes. Luckily there’s the <code>ngOnChanges()</code> lifecycle hook that, allows us to do exactly that. All we have to do is to check if there are changes on one of the input properties and recreate our validator function. We can even get rid off <code>ngOnInit()</code> again, because <code>ngOnChanges()</code> is called before <code>ngOnInit()</code> anyways:</p>
+<p>This works but introduces a new problem: <code class="highlighter-rouge">validateFn</code> is only set in <code class="highlighter-rouge">ngOnInit()</code>. What if <code class="highlighter-rouge">counterRangeMax</code> or <code class="highlighter-rouge">counterRangeMin</code> change via their bindings? We need to create a new validator function based on these changes. Luckily there’s the <code class="highlighter-rouge">ngOnChanges()</code> lifecycle hook that, allows us to do exactly that. All we have to do is to check if there are changes on one of the input properties and recreate our validator function. We can even get rid off <code class="highlighter-rouge">ngOnInit()</code> again, because <code class="highlighter-rouge">ngOnChanges()</code> is called before <code class="highlighter-rouge">ngOnInit()</code> anyways:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Input</span><span class="p">,</span> <span class="nx">OnChanges</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Input</span><span class="p">,</span> <span class="nx">OnChanges</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="p">...</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">OnChanges</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">OnChanges</span> <span class="p">{</span>
   <span class="p">...</span>
 
-  <span class="nl">validateFn</span><span class="p">:</span><span class="nb">Function</span><span class="p">;</span>
+  <span class="nx">validateFn</span><span class="p">:</span><span class="nb">Function</span><span class="p">;</span>
 
   <span class="nx">ngOnChanges</span><span class="p">(</span><span class="nx">changes</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">changes</span><span class="p">.</span><span class="nx">counterRangeMin</span> <span class="o">||</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">counterRangeMax</span><span class="p">)</span> <span class="p">{</span>
@@ -649,11 +649,11 @@
     <span class="p">}</span>
   <span class="p">}</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Last but not least, we need to update the provider for the validator, as it’s now no longer just the function, but the component itself that performs validation:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...</span>
@@ -664,41 +664,41 @@
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">CounterInputComponent</span> <span class="kr">implements</span> <span class="nx">ControlValueAccessor</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Believe it or not, we can now configure the max and min values for our custom form control! If we’re building template-driven forms, it simply looks like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;counter-input</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;counter-input</span>
   <span class="na">ngModel</span>
   <span class="na">name=</span><span class="s">"counter"</span>
   <span class="na">counterRangeMax=</span><span class="s">"10"</span>
   <span class="na">counterRangeMin=</span><span class="s">"0"</span>
-  <span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></div>
+  <span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></figure>
 
 <p>This works also with expressions:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;counter-input</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;counter-input</span>
   <span class="na">ngModel</span>
   <span class="na">name=</span><span class="s">"counter"</span>
   <span class="err">[</span><span class="na">counterRangeMax</span><span class="err">]="</span><span class="na">maxValue</span><span class="err">"</span>
   <span class="err">[</span><span class="na">counterRangeMin</span><span class="err">]="</span><span class="na">minValue</span><span class="err">"</span>
-  <span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></div>
+  <span class="nt">&gt;&lt;/counter-input&gt;</span></code></pre></figure>
 
 <p>If we’re building model-driven forms, we can simply use the validator factory to add the validator to the form control like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">createCounterRangeValidator</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./counter-input'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">createCounterRangeValidator</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./counter-input'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">form</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fb</span><span class="p">.</span><span class="nx">group</span><span class="p">({</span>
       <span class="na">counter</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="nx">createCounterRangeValidator</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Check out the demos below!</p>
 
@@ -852,11 +852,11 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
               <div class="thtrm-article-card-content ">
-                <h3>Advanced caching with RxJS</h3>
-                <p>When building web applications, performance should always be a top priority. One very efficient way to optimize the performance of...</p>
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
               </div>
             </a>
           </li>

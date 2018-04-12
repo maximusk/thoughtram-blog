@@ -90,50 +90,50 @@
 
           <p>In <a href="/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html">Taking advantage of Observables Part one</a> and <a href="/angular/2016/01/07/taking-advantage-of-observables-in-angular2-pt2.html">two</a> we already highlighted the importance of Observables in Angular. We believe that mastering Observables can make a key difference in how we write our applications. Well, if you agree, here are some good news! This article is the first of a series of posts where we’ll explore operators of the Reactive Extensions for JavaScript (RxJS) and their practical applications.</p>
 
-<p>The first operator we want to explore is the most commonly used one: <code>map</code>.</p>
+<p>The first operator we want to explore is the most commonly used one: <code class="highlighter-rouge">map</code>.</p>
 
-<h2 id="understanding-the-map-operator">Understanding the <code>map</code> operator</h2>
+<h2 id="understanding-the-map-operator">Understanding the <code class="highlighter-rouge">map</code> operator</h2>
 
-<p>We’ve probably all used <code>map</code> before when we were working with arrays. The idea is that each
+<p>We’ve probably all used <code class="highlighter-rouge">map</code> before when we were working with arrays. The idea is that each
 item in the collection will potentially be projected into a different value.</p>
 
 <p>Here is a very simple example where an array of numbers is transformed so that each number is multiplied by 10.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
 
 <span class="kd">let</span> <span class="nx">transformed</span> <span class="o">=</span> <span class="nx">values</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">value</span> <span class="o">=&gt;</span> <span class="nx">value</span> <span class="o">*</span> <span class="mi">10</span><span class="p">);</span>
 
 <span class="c1">//prints [10, 20, 30]</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">transformed</span><span class="p">);</span></code></pre></div>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">transformed</span><span class="p">);</span></code></pre></figure>
 
-<p>By now we may be wondering what that has to do with Observables and the <code>map</code> operator that is part of RxJS.</p>
+<p>By now we may be wondering what that has to do with Observables and the <code class="highlighter-rouge">map</code> operator that is part of RxJS.</p>
 
 <p>Observables are very much like arrays in a way. Well, they are actually more like Iterators but let’s not get lost in the details. The key point to understand is that both represent a sequence of values. The key difference is that with Arrays/Iterators you <em>pull</em> values out as you want to work with them whereas with Observables you get values <strong>pushed</strong> to you as they arrive.</p>
 
 <p>It’s this similarity that allows us to take advantage of pretty much all operators that we know from the pull-based world and apply them to the push-based world.</p>
 
-<h2 id="map-and-observables"><code>map</code> and Observables</h2>
+<h2 id="map-and-observables"><code class="highlighter-rouge">map</code> and Observables</h2>
 
-<p>Let’s start with a little demo. All we need is a simple <code>&lt;input&gt;</code> element to enter some text.</p>
+<p>Let’s start with a little demo. All we need is a simple <code class="highlighter-rouge">&lt;input&gt;</code> element to enter some text.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"demo"</span><span class="o">/&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"demo"</span><span class="o">/&gt;</span></code></pre></figure>
 
 <p>Then we create an Observable that emits every time that the value of our input changes.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">demoInput</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#demo'</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">demoInput</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#demo'</span><span class="p">)</span>
 <span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">fromEvent</span><span class="p">(</span><span class="nx">demoInput</span><span class="p">,</span> <span class="s1">'input'</span><span class="p">);</span>
 
 <span class="c1">// Activate the observable and log all 'pushed' events</span>
-<span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">));</span></code></pre></div>
+<span class="nx">obs</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">));</span></code></pre></figure>
 
-<p>The payload of the Observable is the plain old Event object that is provided by the <code>input</code> event of the browser. But that may not match what we are most interested in. What if we are more interested in the current value of the input? The <code>map</code> operator lets us project the payload of the Observable into something else. All it takes to project the payload is this tiny change.</p>
+<p>The payload of the Observable is the plain old Event object that is provided by the <code class="highlighter-rouge">input</code> event of the browser. But that may not match what we are most interested in. What if we are more interested in the current value of the input? The <code class="highlighter-rouge">map</code> operator lets us project the payload of the Observable into something else. All it takes to project the payload is this tiny change.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">fromEvent</span><span class="p">(</span><span class="nx">demoInput</span><span class="p">,</span> <span class="s1">'input'</span><span class="p">)</span>
-                       <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">fromEvent</span><span class="p">(</span><span class="nx">demoInput</span><span class="p">,</span> <span class="s1">'input'</span><span class="p">)</span>
+                       <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span></code></pre></figure>
 
-<p>We can go on and chain <code>map</code> calls to project the data even further. For instance, it may be more convenient to work with a data structure that carries the value among with the length of the string.</p>
+<p>We can go on and chain <code class="highlighter-rouge">map</code> calls to project the data even further. For instance, it may be more convenient to work with a data structure that carries the value among with the length of the string.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">fromEvent</span><span class="p">(</span><span class="nx">demoInput</span><span class="p">,</span> <span class="s1">'input'</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">obs</span> <span class="o">=</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">fromEvent</span><span class="p">(</span><span class="nx">demoInput</span><span class="p">,</span> <span class="s1">'input'</span><span class="p">)</span>
                        <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
                        <span class="p">.</span><span class="nx">filter</span><span class="p">(</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="p">)</span>
                        <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -141,19 +141,19 @@ item in the collection will potentially be projected into a different value.</p>
                            <span class="na">value</span><span class="p">:</span> <span class="nx">v</span><span class="p">,</span>
                            <span class="na">length</span><span class="p">:</span> <span class="nx">v</span><span class="p">.</span><span class="nx">length</span>
                          <span class="p">};</span>
-                       <span class="p">});</span></code></pre></div>
+                       <span class="p">});</span></code></pre></figure>
 
-<p>Of course, we could have done the same in the first <code>map</code> call. But it’s sometimes more readable to break things into multiple steps. Notice that often we also use different operators in between of two <code>map</code> calls (e.g to filter something out).</p>
+<p>Of course, we could have done the same in the first <code class="highlighter-rouge">map</code> call. But it’s sometimes more readable to break things into multiple steps. Notice that often we also use different operators in between of two <code class="highlighter-rouge">map</code> calls (e.g to filter something out).</p>
 
 <p>If you like to play a bit with the operator yourself, here is a working demo.</p>
 
 <iframe src="http://embed.plnkr.co/iWR9b2s4wd0pZSOEfHuR/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>At this point, you may think that Observables are really just a minor enhancement on the Observer or Promise patterns… better suited to handle a sequence of events rather than a single callback. And the <code>.map()</code> function certainly does not - at first glance - seem to offer any added-value. The power of Observables is revealed when you start using Rx operators to transform, combine, manipulate, and work with sequences of items emitted by Observables.</p>
+<p>At this point, you may think that Observables are really just a minor enhancement on the Observer or Promise patterns… better suited to handle a sequence of events rather than a single callback. And the <code class="highlighter-rouge">.map()</code> function certainly does not - at first glance - seem to offer any added-value. The power of Observables is revealed when you start using Rx operators to transform, combine, manipulate, and work with sequences of items emitted by Observables.</p>
 
 <p>These operators allow you to compose asynchronous sequences together in a declarative manner with all the efficiency benefits of callbacks but without the drawbacks of nesting callback handlers that are typically associated with asynchronous systems.</p>
 
-<p>We will see that in future articles. Watch out for the next article of this series where we’ll build upon this lesson with <code>map()</code> and take a look at the related <code>flatMap</code> operator.</p>
+<p>We will see that in future articles. Watch out for the next article of this series where we’ll build upon this lesson with <code class="highlighter-rouge">map()</code> and take a look at the related <code class="highlighter-rouge">flatMap</code> operator.</p>
 
 
           
@@ -264,6 +264,17 @@ item in the collection will potentially be projected into a different value.</p>
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -291,17 +302,6 @@ item in the collection will potentially be projected into a different value.</p>
               <div class="thtrm-article-card-content ">
                 <h3>Three things you didn't know about the AsyncPipe</h3>
                 <p>This article explains three lesser known features of the AsyncPipe that help us to write better async code.</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2016/06/16/cold-vs-hot-observables.html" title="Cold vs Hot Observables">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/hot-vs-cold-observables.jpeg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Cold vs Hot Observables</h3>
-                <p>In this article we are going to demystify what the term hot vs cold means when it comes to Observables....</p>
               </div>
             </a>
           </li>

@@ -112,28 +112,28 @@
 
 <h2 id="rendering-10000-draggable-svg-boxes">Rendering 10000 draggable SVG boxes</h2>
 
-<p>Let’s start off with the demo itself. We wanted to go with a scenario in which the framework reaches its boundaries, so that possible performance improvements are easier to visualise. This doesn’t have to be a real world scenario, but rather challenging enough to showcase what we can do. That’s why we decided to render 10000 <strong>draggable</strong> SVG boxes. Rendering 10000 SVG boxes isn’t necessarily a hard nor realistic task, however, it gets quite interesting when each of these boxes need to be draggable, because… well whenever there’s a <code>mousemove</code> event being fired, Angular has to perform change detection and rerender what needs to be rerendered. With 10000 boxes, this can be quite a lot of work.</p>
+<p>Let’s start off with the demo itself. We wanted to go with a scenario in which the framework reaches its boundaries, so that possible performance improvements are easier to visualise. This doesn’t have to be a real world scenario, but rather challenging enough to showcase what we can do. That’s why we decided to render 10000 <strong>draggable</strong> SVG boxes. Rendering 10000 SVG boxes isn’t necessarily a hard nor realistic task, however, it gets quite interesting when each of these boxes need to be draggable, because… well whenever there’s a <code class="highlighter-rouge">mousemove</code> event being fired, Angular has to perform change detection and rerender what needs to be rerendered. With 10000 boxes, this can be quite a lot of work.</p>
 
 <blockquote>
-  <p><strong>Special Tip</strong>: Learn in our article about <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">Angular’s Change Detection</a> why it’s performed on every <code>mousemove</code> event</p>
+  <p><strong>Special Tip</strong>: Learn in our article about <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">Angular’s Change Detection</a> why it’s performed on every <code class="highlighter-rouge">mousemove</code> event</p>
 </blockquote>
 
-<p>The application consists of two components - <code>AppComponent</code> and <code>BoxComponent</code> -  here’s what <code>AppComponent</code> looks like:</p>
+<p>The application consists of two components - <code class="highlighter-rouge">AppComponent</code> and <code class="highlighter-rouge">BoxComponent</code> -  here’s what <code class="highlighter-rouge">AppComponent</code> looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'demo-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">svg</span> <span class="p">(</span><span class="nx">mousedown</span><span class="p">)</span><span class="o">=</span><span class="s2">"mouseDown($event)"</span>
-         <span class="p">(</span><span class="nx">mouseup</span><span class="p">)</span><span class="o">=</span><span class="s2">"mouseUp($event)"</span>
-         <span class="p">(</span><span class="nx">mousemove</span><span class="p">)</span><span class="o">=</span><span class="s2">"mouseMove($event)"</span><span class="o">&gt;</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;svg (mousedown)="mouseDown($event)"
+         (mouseup)="mouseUp($event)"
+         (mousemove)="mouseMove($event)"&gt;
 
-      <span class="o">&lt;</span><span class="na">svg</span><span class="p">:</span><span class="nx">g</span> <span class="nx">box</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let box of boxes"</span> <span class="p">[</span><span class="nx">box</span><span class="p">]</span><span class="o">=</span><span class="s2">"box"</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="sr">/svg:g</span><span class="err">&gt;
-</span>
-    <span class="o">&lt;</span><span class="sr">/svg</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+      &lt;svg:g box *ngFor="let box of boxes" [box]="box"&gt;
+      &lt;/svg:g&gt;
+
+    &lt;/svg&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
   <span class="nx">currentId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
   <span class="nx">boxes</span> <span class="o">=</span> <span class="p">[];</span>
@@ -145,8 +145,8 @@
   <span class="p">}</span>
 
   <span class="nx">mouseDown</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kr">const</span> <span class="nx">id</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">"dataId"</span><span class="p">));</span>
-    <span class="kr">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">boxes</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+    <span class="kd">const</span> <span class="nx">id</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">"dataId"</span><span class="p">));</span>
+    <span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">boxes</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">offsetX</span> <span class="o">=</span> <span class="nx">box</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">offsetY</span> <span class="o">=</span> <span class="nx">box</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">currentId</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
@@ -164,40 +164,40 @@
   <span class="p">}</span>
 
   <span class="nx">updateBox</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kr">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">boxes</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+    <span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">boxes</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
     <span class="nx">box</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
     <span class="nx">box</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Let’s not get too overwhelmed by the code. The only really important parts here are:</p>
 
 <ul>
-  <li>We have an SVG element with event handlers for <code>mousedown</code>, <code>mousemove</code> and <code>mouseup</code></li>
-  <li>We generate 10000 random coordinates for the boxes, which are rendered using <code>ngFor</code></li>
-  <li>We update the box that is being dragged in <code>mouseMove()</code></li>
+  <li>We have an SVG element with event handlers for <code class="highlighter-rouge">mousedown</code>, <code class="highlighter-rouge">mousemove</code> and <code class="highlighter-rouge">mouseup</code></li>
+  <li>We generate 10000 random coordinates for the boxes, which are rendered using <code class="highlighter-rouge">ngFor</code></li>
+  <li>We update the box that is being dragged in <code class="highlighter-rouge">mouseMove()</code></li>
 </ul>
 
-<p>Okay, next we take a look at the <code>BoxComponent</code>.</p>
+<p>Okay, next we take a look at the <code class="highlighter-rouge">BoxComponent</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'[box]'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="na">svg</span><span class="p">:</span><span class="nx">rect</span>
-      <span class="p">[</span><span class="nx">attr</span><span class="p">.</span><span class="nx">dataId</span><span class="p">]</span><span class="o">=</span><span class="s2">"box.id"</span>
-      <span class="p">[</span><span class="nx">attr</span><span class="p">.</span><span class="nx">x</span><span class="p">]</span><span class="o">=</span><span class="s2">"box.x"</span>
-      <span class="p">[</span><span class="nx">attr</span><span class="p">.</span><span class="nx">y</span><span class="p">]</span><span class="o">=</span><span class="s2">"box.y"</span>
-      <span class="nx">width</span><span class="o">=</span><span class="s2">"20"</span>
-      <span class="nx">height</span><span class="o">=</span><span class="s2">"20"</span>
-      <span class="nx">stroke</span><span class="o">=</span><span class="s2">"black"</span>
-      <span class="p">[</span><span class="nx">attr</span><span class="p">.</span><span class="nx">fill</span><span class="p">]</span><span class="o">=</span><span class="s2">"selected ? 'red' : 'transparent'"</span>
-      <span class="nx">strokeWidth</span><span class="o">=</span><span class="s2">"1"</span><span class="o">&gt;&lt;</span><span class="sr">/svg:rect</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;svg:rect
+      [attr.dataId]="box.id"
+      [attr.x]="box.x"
+      [attr.y]="box.y"
+      width="20"
+      height="20"
+      stroke="black"
+      [attr.fill]="selected ? 'red' : 'transparent'"
+      strokeWidth="1"&gt;&lt;/svg:rect&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">BoxComponent</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">box</span><span class="p">;</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">selected</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">BoxComponent</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">box</span><span class="p">;</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">selected</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>This one really just renders an SVG rect element using a couple of bindings to set the coordinates from the given box object.</p>
 
@@ -209,7 +209,7 @@
 
 <h2 id="measuring-the-apps-performance">Measuring the app’s performance</h2>
 
-<p>We’re interested in runtime performance and how long it takes Angular to perform a task when the <code>mousemove</code> event has been fired, as this is the work Angular has to do when we drag and drop a box.</p>
+<p>We’re interested in runtime performance and how long it takes Angular to perform a task when the <code class="highlighter-rouge">mousemove</code> event has been fired, as this is the work Angular has to do when we drag and drop a box.</p>
 
 <p>Measuring these kind of things nowadays is fairly easy. Chrome’s devtools for example come with an excellent <strong>Timeline Tool</strong> that lets us profile JavaScript execution and paint times per frame in the browser with a couple of mouse clicks.</p>
 
@@ -239,7 +239,7 @@
   <li>3rd Profile, Event (mousemove): <strong>~41ms, ~52ms (fastest, slowest)</strong></li>
 </ul>
 
-<p>Please note that there are multiple <code>mousemove</code> events being fired when moving the mouse, that’s why we’re showing fastest and slowest numbers. Also, these numbers might look different on your local machine. Okay, so it takes Angular roughly ~42ms - ~55ms in average to render 10000 boxes. That’s not too bad, <strong>considering that this is completely unoptimized</strong>. However, we want to learn how to make it faster. Let’s take a look!</p>
+<p>Please note that there are multiple <code class="highlighter-rouge">mousemove</code> events being fired when moving the mouse, that’s why we’re showing fastest and slowest numbers. Also, these numbers might look different on your local machine. Okay, so it takes Angular roughly ~42ms - ~55ms in average to render 10000 boxes. That’s not too bad, <strong>considering that this is completely unoptimized</strong>. However, we want to learn how to make it faster. Let’s take a look!</p>
 
 <h2 id="how-to-make-it-faster">How to make it fast(er)</h2>
 
@@ -253,37 +253,37 @@
 
 <h3 id="use-onpush-change-detection-strategy">Use OnPush change detection strategy</h3>
 
-<p>Probably the most obvious thing to do. In our article on <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">Change Detection in Angular</a> we talked about how Angular’s <code>OnPush</code> change detection strategy enables us to reduce the number of checks Angular has to make when a change in our application happens.</p>
+<p>Probably the most obvious thing to do. In our article on <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">Change Detection in Angular</a> we talked about how Angular’s <code class="highlighter-rouge">OnPush</code> change detection strategy enables us to reduce the number of checks Angular has to make when a change in our application happens.</p>
 
-<p>The idea is to make Angular only check a component’s view bindings if one of its inputs have changed. In our demo, we have only two components - <code>AppComponent</code> and <code>BoxComponent</code> - and only <code>BoxComponent</code> is receiving inputs. If we set <code>BoxComponent</code>’s change detection strategy to <code>OnPush</code>, we should be able to save 4 bindings per box (4 bindings, because there are 4 property bindings in <code>BoxComponent</code>’s view). That is 39996 bindings in total (one box is changing). In order to use <code>OnPush</code> properly, we need to make two tiny changes in our code: Set the change detection strategy and make sure that <code>BoxComponent</code>’s input values are immutable.</p>
+<p>The idea is to make Angular only check a component’s view bindings if one of its inputs have changed. In our demo, we have only two components - <code class="highlighter-rouge">AppComponent</code> and <code class="highlighter-rouge">BoxComponent</code> - and only <code class="highlighter-rouge">BoxComponent</code> is receiving inputs. If we set <code class="highlighter-rouge">BoxComponent</code>’s change detection strategy to <code class="highlighter-rouge">OnPush</code>, we should be able to save 4 bindings per box (4 bindings, because there are 4 property bindings in <code class="highlighter-rouge">BoxComponent</code>’s view). That is 39996 bindings in total (one box is changing). In order to use <code class="highlighter-rouge">OnPush</code> properly, we need to make two tiny changes in our code: Set the change detection strategy and make sure that <code class="highlighter-rouge">BoxComponent</code>’s input values are immutable.</p>
 
-<p>Here’s how we set the change detection strategy to <code>OnPush</code>:</p>
+<p>Here’s how we set the change detection strategy to <code class="highlighter-rouge">OnPush</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> 
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> 
   <span class="nx">Component</span><span class="p">,</span>
   <span class="nx">Input</span><span class="p">,</span>
   <span class="nx">ChangeDetectionStrategy</span>
-<span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'[box]'</span><span class="p">,</span>
   <span class="na">changeDetection</span><span class="p">:</span> <span class="nx">ChangeDetectionStrategy</span><span class="p">.</span><span class="nx">OnPush</span><span class="p">,</span> <span class="c1">// set to OnPush</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">BoxComponent</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">box</span><span class="p">;</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">selected</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">BoxComponent</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">box</span><span class="p">;</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">selected</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>To make all inputs immutable, we simply create new references every time we update a box:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">updateBox</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">boxes</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span> <span class="p">};</span> <span class="c1">// new references instead of mutation</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>That’s it! Here’s a the improved demo:</p>
 
@@ -299,7 +299,7 @@
   <li>3rd Profile, Event (mousemove): <strong>~23ms, ~37ms (fastest, slowest)</strong></li>
 </ul>
 
-<p>As we can see, using <code>OnPush</code> does indeed improve our runtime performance. We may not notice a huge visual difference, but as we can see in the numbers, our application is now about as twice as fast. Considering the small change we needed to do, this is a great result!</p>
+<p>As we can see, using <code class="highlighter-rouge">OnPush</code> does indeed improve our runtime performance. We may not notice a huge visual difference, but as we can see in the numbers, our application is now about as twice as fast. Considering the small change we needed to do, this is a great result!</p>
 
 <p>It turns out, we could improve this even further. Right now, all 10000 boxes are checked, only the views are skipped - you know, the 39996 bindings. This is because in order to find out if an input has changed or not (to skip a component’s view), Angular needs to check the component. We could introduce some kind of segmentation model that divides the 10000 boxes into, let’s say ten, segments with 1000 boxes each. This would reduce the number of components to be checked to just 999.</p>
 
@@ -307,9 +307,9 @@
 
 <h3 id="using-a-simpler-ngfor">Using a simpler NgFor</h3>
 
-<p>Another thing that is rather not obvious in our demo, is that <code>NgFor</code> might take up more time than it should. Now, what does that mean? Well, if we take a look at <code>NgFor</code>’s source code, we can see that it not only creates DOM items it iterates through, it also keeps track of the <strong>position</strong> of each item, in case things have been moved around. This is great for animations as we can animate-in and -out naturally.</p>
+<p>Another thing that is rather not obvious in our demo, is that <code class="highlighter-rouge">NgFor</code> might take up more time than it should. Now, what does that mean? Well, if we take a look at <code class="highlighter-rouge">NgFor</code>’s source code, we can see that it not only creates DOM items it iterates through, it also keeps track of the <strong>position</strong> of each item, in case things have been moved around. This is great for animations as we can animate-in and -out naturally.</p>
 
-<p>In our demo however, we don’t really move the items in the collection itself. In fact, we don’t really touch it at all. So what if we can use a simpler <code>NgFor</code> that doesn’t care about item positions in the collection? Creating such a directive requires a bit more work and it would not fit in the scope of this article, which is why we will discuss the implementation of <code>SimpleNgFor</code> in another article. However, we put the source code in the following demo, feel free to check it out:</p>
+<p>In our demo however, we don’t really move the items in the collection itself. In fact, we don’t really touch it at all. So what if we can use a simpler <code class="highlighter-rouge">NgFor</code> that doesn’t care about item positions in the collection? Creating such a directive requires a bit more work and it would not fit in the scope of this article, which is why we will discuss the implementation of <code class="highlighter-rouge">SimpleNgFor</code> in another article. However, we put the source code in the following demo, feel free to check it out:</p>
 
 <iframe src="http://embed.plnkr.co/rCqTphznFbImsy9wbWP6/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
@@ -331,67 +331,67 @@
   <li>3rd Profile, Event (mousemove): <strong>~21ms, ~30ms (fastest, slowest)</strong></li>
 </ul>
 
-<p>We’ve performed six measurements in total, three for the demo with just the <code>SimpleNgFor</code> directive and another three with <code>OnPush</code> enabled. As we can see, <code>SimpleNgFor</code> improves the numbers a little tiny bit. Again, if you profile on your local machine, those numbers might be different. Considering the amount of work that needs to be done to create <code>SimpleNgFor</code>, it’s <strong>probably not worth it</strong> if we only save ~5ms in average.</p>
+<p>We’ve performed six measurements in total, three for the demo with just the <code class="highlighter-rouge">SimpleNgFor</code> directive and another three with <code class="highlighter-rouge">OnPush</code> enabled. As we can see, <code class="highlighter-rouge">SimpleNgFor</code> improves the numbers a little tiny bit. Again, if you profile on your local machine, those numbers might be different. Considering the amount of work that needs to be done to create <code class="highlighter-rouge">SimpleNgFor</code>, it’s <strong>probably not worth it</strong> if we only save ~5ms in average.</p>
 
 <h3 id="detach-change-detectors-from-change-detector-tree">Detach change detectors from change detector tree</h3>
 
-<p>Angular is pretty powerful when it comes to giving us developers control over  how things are processed in the platform. <code>OnPush</code> enables us to decide when and where in the component tree change detection is skipped when a change has happened. While this is already super powerful, it turns out that there can be cases where even that is not enough. That’s why Angular gives us access to <code>ChangeDetectorRef</code>’s of each component, with which we can enable or disable change detection entirely. We touched on that in our article on <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">change detection in Angular</a> as well, but let’s discuss how this is useful in our demo application.</p>
+<p>Angular is pretty powerful when it comes to giving us developers control over  how things are processed in the platform. <code class="highlighter-rouge">OnPush</code> enables us to decide when and where in the component tree change detection is skipped when a change has happened. While this is already super powerful, it turns out that there can be cases where even that is not enough. That’s why Angular gives us access to <code class="highlighter-rouge">ChangeDetectorRef</code>’s of each component, with which we can enable or disable change detection entirely. We touched on that in our article on <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">change detection in Angular</a> as well, but let’s discuss how this is useful in our demo application.</p>
 
-<p>We’re dealing with 10000 draggable SVG boxes and all of them are checked on every change (every <code>mousemove</code> event). As discussed earlier, as of how our application is constructed right now,  <code>OnPush</code> doesn’t prevent Angular from checking the boxes themselves, only their views. However, what if we could turn off change detection entirely for all components and only perform change detection for the box component that is actually being moved? This would obviously result in way less work per task as we aren’t checking 10000 boxes anymore, but only one.</p>
+<p>We’re dealing with 10000 draggable SVG boxes and all of them are checked on every change (every <code class="highlighter-rouge">mousemove</code> event). As discussed earlier, as of how our application is constructed right now,  <code class="highlighter-rouge">OnPush</code> doesn’t prevent Angular from checking the boxes themselves, only their views. However, what if we could turn off change detection entirely for all components and only perform change detection for the box component that is actually being moved? This would obviously result in way less work per task as we aren’t checking 10000 boxes anymore, but only one.</p>
 
-<p>How do we get there? The first thing we do is, we detach the component’s change detectors from the tree. We can inject a component’s <code>ChangeDetectorRef</code> using DI and use its <code>detach()</code> method for that. The only thing we need to keep in mind is that we only want to detach the change detectors after change detection has been performed for the first time, otherwise we won’t see any boxes. To call <code>detach()</code> in the right moment, we can take advantage of Angular’s <code>AfterViewInit</code> life cycle hook.</p>
+<p>How do we get there? The first thing we do is, we detach the component’s change detectors from the tree. We can inject a component’s <code class="highlighter-rouge">ChangeDetectorRef</code> using DI and use its <code class="highlighter-rouge">detach()</code> method for that. The only thing we need to keep in mind is that we only want to detach the change detectors after change detection has been performed for the first time, otherwise we won’t see any boxes. To call <code class="highlighter-rouge">detach()</code> in the right moment, we can take advantage of Angular’s <code class="highlighter-rouge">AfterViewInit</code> life cycle hook.</p>
 
 <p>Here’s what that looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">AfterViewInit</span><span class="p">,</span> <span class="nx">ChangeDetectorRef</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">AfterViewInit</span><span class="p">,</span> <span class="nx">ChangeDetectorRef</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">cdr</span><span class="err">:</span> <span class="nx">ChangeDetectorRef</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">cdr</span><span class="p">:</span> <span class="nx">ChangeDetectorRef</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngAfterViewInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">cdr</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>We do exactly the same for the all box components.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">BoxComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">BoxComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">cdr</span><span class="err">:</span> <span class="nx">ChangeDetectorRef</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">cdr</span><span class="p">:</span> <span class="nx">ChangeDetectorRef</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngAfterViewInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">cdr</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Okay cool, now we should see all the boxes but the dragging and dropping doesn’t work anymore. That makes sense because change detection is turned off entirely and no handlers for any events are executed anymore.</p>
 
-<p>The next thing we need to do, is to make sure that change detection is performed for the box that is being dragged. We can extend our <code>BoxComponent</code> to have a method <code>update()</code> which performs change detection just like this:</p>
+<p>The next thing we need to do, is to make sure that change detection is performed for the box that is being dragged. We can extend our <code class="highlighter-rouge">BoxComponent</code> to have a method <code class="highlighter-rouge">update()</code> which performs change detection just like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">class</span> <span class="nx">BoxComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="kd">class</span> <span class="nx">BoxComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">cdr</span><span class="p">.</span><span class="nx">detectChanges</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Cool, now we need to call this method whenever needed. This is essentially in our <code>mouseDown()</code>, <code>mouseMove()</code> and <code>mouseUp()</code> handlers. But how to do we get access to that one particular box component instance that is touched? Simply relying on <code>this.boxes[id]</code> doesn’t do the trick anymore because it’s not an instance of <code>BoxComponent</code>. We need to extend the <code>event</code> object with such an instance so we access it accordingly.</p>
+<p>Cool, now we need to call this method whenever needed. This is essentially in our <code class="highlighter-rouge">mouseDown()</code>, <code class="highlighter-rouge">mouseMove()</code> and <code class="highlighter-rouge">mouseUp()</code> handlers. But how to do we get access to that one particular box component instance that is touched? Simply relying on <code class="highlighter-rouge">this.boxes[id]</code> doesn’t do the trick anymore because it’s not an instance of <code class="highlighter-rouge">BoxComponent</code>. We need to extend the <code class="highlighter-rouge">event</code> object with such an instance so we access it accordingly.</p>
 
-<p><strong>This is where it gets a liiiittle hacky</strong>. We could expect the <code>BoxComponent</code> instance on the DOM event object we get from the <code>mousedown</code> event like this:</p>
+<p><strong>This is where it gets a liiiittle hacky</strong>. We could expect the <code class="highlighter-rouge">BoxComponent</code> instance on the DOM event object we get from the <code class="highlighter-rouge">mousedown</code> event like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">mouseDown</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kr">const</span> <span class="nx">boxComponent</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">BoxComponent</span><span class="o">&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">[</span><span class="s1">'BoxComponent'</span><span class="p">];</span>
+    <span class="kd">const</span> <span class="nx">boxComponent</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">BoxComponent</span><span class="o">&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">[</span><span class="s1">'BoxComponent'</span><span class="p">];</span>
 
-    <span class="kr">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="nx">boxComponent</span><span class="p">.</span><span class="nx">box</span><span class="p">;</span>
-    <span class="kr">const</span> <span class="nx">mouseX</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
-    <span class="kr">const</span> <span class="nx">mouseY</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
+    <span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="nx">boxComponent</span><span class="p">.</span><span class="nx">box</span><span class="p">;</span>
+    <span class="kd">const</span> <span class="nx">mouseX</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientX</span><span class="p">;</span>
+    <span class="kd">const</span> <span class="nx">mouseY</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clientY</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">offsetX</span> <span class="o">=</span> <span class="nx">box</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">mouseX</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">offsetY</span> <span class="o">=</span> <span class="nx">box</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">mouseY</span><span class="p">;</span>
 
@@ -400,28 +400,28 @@
     <span class="nx">boxComponent</span><span class="p">.</span><span class="nx">selected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
     <span class="nx">boxComponent</span><span class="p">.</span><span class="nx">update</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>To make the box component instance available on <code>event.target</code>, where <code>target</code> is the underlying SVG rect element, we can access it as a view child of <code>BoxComponent</code> and extend it with a new property that has the <code>BoxComponent</code> instance. We also add a local template variable <code>#rect</code> to the SVG element, so that <code>ViewChild('rect')</code> can query it accordingly.</p>
+<p>To make the box component instance available on <code class="highlighter-rouge">event.target</code>, where <code class="highlighter-rouge">target</code> is the underlying SVG rect element, we can access it as a view child of <code class="highlighter-rouge">BoxComponent</code> and extend it with a new property that has the <code class="highlighter-rouge">BoxComponent</code> instance. We also add a local template variable <code class="highlighter-rouge">#rect</code> to the SVG element, so that <code class="highlighter-rouge">ViewChild('rect')</code> can query it accordingly.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'[box]'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="na">svg</span><span class="p">:</span><span class="nx">rect</span> <span class="err">#</span><span class="nx">rect</span> <span class="p">...</span><span class="o">&gt;&lt;</span><span class="sr">/svg:rect</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;svg:rect #rect ...&gt;&lt;/svg:rect&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">BoxComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">BoxComponent</span> <span class="kr">implements</span> <span class="nx">AfterViewInit</span> <span class="p">{</span>
 
-  <span class="err">@</span><span class="nx">ViewChild</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
-  <span class="nx">set</span> <span class="nx">rect</span><span class="p">(</span><span class="nx">value</span><span class="err">:</span> <span class="nx">ElementRef</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">ViewChild</span><span class="p">(</span><span class="s1">'rect'</span><span class="p">)</span>
+  <span class="kd">set</span> <span class="nx">rect</span><span class="p">(</span><span class="nx">value</span><span class="p">:</span> <span class="nx">ElementRef</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">value</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">[</span><span class="s1">'BoxComponent'</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">}</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Great! We can now go ahead and use <code>BoxComponent.update()</code> in all other methods where needed.</p>
+<p>Great! We can now go ahead and use <code class="highlighter-rouge">BoxComponent.update()</code> in all other methods where needed.</p>
 
 <p>Here’s the demo application in action, updating only the box that is being dragged:</p>
 
@@ -562,6 +562,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -578,17 +589,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>Custom Overlays with Angular's CDK - Part 2</h3>
                 <p>In this follow-up post we demonstrate how to use Angular's CDK to build a custom overlay that looks and feels...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/11/20/custom-overlays-with-angulars-cdk.html" title="Custom Overlays with Angular's CDK">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom_overlays.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom Overlays with Angular's CDK</h3>
-                <p>The Angular Material CDK provides us with tools to build awesome and high-quality Angular components without adopting the Material Design...</p>
               </div>
             </a>
           </li>

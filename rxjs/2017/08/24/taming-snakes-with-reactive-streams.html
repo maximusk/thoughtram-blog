@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Taming snakes with reactive streams</h2>
-            <span>by <a href="http://twitter.com/" title="Dominic Elm on Twitter">Dominic Elm</a> on Aug 24, 2017<br>32 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Dominic Elm on Twitter">Dominic Elm</a> on Aug 24, 2017<br>33 minute read</span>
 
           </div>
         </hgroup>
@@ -153,13 +153,13 @@
 
 <h2 id="setting-up-the-stage">Setting up the stage</h2>
 
-<p>Before we can start with the game’s functionality, we need set up a <code>&lt;canvas&gt;</code> element that gives us powerful drawing APIs from within JavaScript. We’ll use the canvas to draw our graphics including the playing area, the snake, the apples and basically everything we need for our game. In other words, the game will be rendered entirely on the <code>&lt;canvas&gt;</code> element.</p>
+<p>Before we can start with the game’s functionality, we need set up a <code class="highlighter-rouge">&lt;canvas&gt;</code> element that gives us powerful drawing APIs from within JavaScript. We’ll use the canvas to draw our graphics including the playing area, the snake, the apples and basically everything we need for our game. In other words, the game will be rendered entirely on the <code class="highlighter-rouge">&lt;canvas&gt;</code> element.</p>
 
 <p>If this is completely new to you, check out <a href="https://egghead.io/courses/learn-html5-graphics-and-animation">this</a> course on egghead by Keith Peters.</p>
 
-<p>The <code>index.html</code> is quite simple because most of the <em>magic</em> happens with JavaScript.</p>
+<p>The <code class="highlighter-rouge">index.html</code> is quite simple because most of the <em>magic</em> happens with JavaScript.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
 <span class="nt">&lt;head&gt;</span>
   <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;title&gt;</span>Reactive Snake<span class="nt">&lt;/title&gt;</span>
@@ -167,31 +167,31 @@
 <span class="nt">&lt;body&gt;</span>
   <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/main.bundle.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
 <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span></code></pre></div>
+<span class="nt">&lt;/html&gt;</span></code></pre></figure>
 
-<p>The script that we add to the body is essentially the output of the build process and contains all of our code. However, you may be wondering why there is no such <code>&lt;canvas&gt;</code> element inside the <code>&lt;body&gt;</code>. It’s because we’ll create that element using JavaScript. In addition, we add a few constants that define how many <code>rows</code> and <code>columns</code> we have as well as the <code>width</code> and <code>height</code> of the canvas.</p>
+<p>The script that we add to the body is essentially the output of the build process and contains all of our code. However, you may be wondering why there is no such <code class="highlighter-rouge">&lt;canvas&gt;</code> element inside the <code class="highlighter-rouge">&lt;body&gt;</code>. It’s because we’ll create that element using JavaScript. In addition, we add a few constants that define how many <code class="highlighter-rouge">rows</code> and <code class="highlighter-rouge">columns</code> we have as well as the <code class="highlighter-rouge">width</code> and <code class="highlighter-rouge">height</code> of the canvas.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">COLS</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">ROWS</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">GAP_SIZE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">CELL_SIZE</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">CANVAS_WIDTH</span> <span class="o">=</span> <span class="nx">COLS</span> <span class="o">*</span> <span class="p">(</span><span class="nx">CELL_SIZE</span> <span class="o">+</span> <span class="nx">GAP_SIZE</span><span class="p">);</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">CANVAS_HEIGHT</span> <span class="o">=</span> <span class="nx">ROWS</span> <span class="o">*</span> <span class="p">(</span><span class="nx">CELL_SIZE</span> <span class="o">+</span> <span class="nx">GAP_SIZE</span><span class="p">);</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">const</span> <span class="nx">COLS</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">ROWS</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">GAP_SIZE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">CELL_SIZE</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">CANVAS_WIDTH</span> <span class="o">=</span> <span class="nx">COLS</span> <span class="o">*</span> <span class="p">(</span><span class="nx">CELL_SIZE</span> <span class="o">+</span> <span class="nx">GAP_SIZE</span><span class="p">);</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">CANVAS_HEIGHT</span> <span class="o">=</span> <span class="nx">ROWS</span> <span class="o">*</span> <span class="p">(</span><span class="nx">CELL_SIZE</span> <span class="o">+</span> <span class="nx">GAP_SIZE</span><span class="p">);</span>
 
-<span class="kr">export</span> <span class="kd">function</span> <span class="nx">createCanvasElement</span><span class="p">()</span> <span class="p">{</span>
-  <span class="kr">const</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'canvas'</span><span class="p">);</span>
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">createCanvasElement</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'canvas'</span><span class="p">);</span>
   <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">CANVAS_WIDTH</span><span class="p">;</span>
   <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">CANVAS_HEIGHT</span><span class="p">;</span>
   <span class="k">return</span> <span class="nx">canvas</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>With that in place we can call this function, create a <code>&lt;canvas&gt;</code> element on the fly and append it to the <code>&lt;body&gt;</code> of our page:</p>
+<p>With that in place we can call this function, create a <code class="highlighter-rouge">&lt;canvas&gt;</code> element on the fly and append it to the <code class="highlighter-rouge">&lt;body&gt;</code> of our page:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">createCanvasElement</span><span class="p">();</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">createCanvasElement</span><span class="p">();</span>
 <span class="kd">let</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">'2d'</span><span class="p">);</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span></code></pre></div>
+<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span></code></pre></figure>
 
-<p>Note that we are also getting a reference to the <code>CanvasRenderingContext2D</code> by calling <code>getContext('2d')</code> on the <code>&lt;canvas&gt;</code> element. This 2D rendering context for the canvas allows us to draw for example rectangles, text, lines, paths and much more.</p>
+<p>Note that we are also getting a reference to the <code class="highlighter-rouge">CanvasRenderingContext2D</code> by calling <code class="highlighter-rouge">getContext('2d')</code> on the <code class="highlighter-rouge">&lt;canvas&gt;</code> element. This 2D rendering context for the canvas allows us to draw for example rectangles, text, lines, paths and much more.</p>
 
 <p>We’re good to go! Let’s start working on the core mechanics of the game.</p>
 
@@ -210,24 +210,24 @@
 
 <p>Let’s try to find our source streams by looking at the featurs above.</p>
 
-<p>First of all, user input is definitely something that will change over time. The player navigates the hungry snake using the arrow keys. That means our first source stream is <code>keydown$</code> which will emit values whenever a key is pressed down.</p>
+<p>First of all, user input is definitely something that will change over time. The player navigates the hungry snake using the arrow keys. That means our first source stream is <code class="highlighter-rouge">keydown$</code> which will emit values whenever a key is pressed down.</p>
 
-<p>Next we need to keep track of the player’s score. The score basically depends on how many apples the snake has eaten. We could say that the score depends on the length of the snake because whenever the snake grows we want to increase the score by <code>1</code>. Therefore, our next source stream is <code>snakeLength$</code>.</p>
+<p>Next we need to keep track of the player’s score. The score basically depends on how many apples the snake has eaten. We could say that the score depends on the length of the snake because whenever the snake grows we want to increase the score by <code class="highlighter-rouge">1</code>. Therefore, our next source stream is <code class="highlighter-rouge">snakeLength$</code>.</p>
 
 <p>Again, it is important to figure out the <strong>main</strong> sources from which we can compute whatever you need, e.g. the score. In most cases, the source streams are combined and refined into more concrete streams of data. We’ll see this in action in a minute. For now, let’s continue with identifying our main source streams.</p>
 
 <p>So far, we got the user input and the score in place. What’s left are the more <strong>game-facing</strong> or <strong>interactive</strong> streams, such as the snake or the apples.</p>
 
-<p>Let’s start with the snake. The core mechanic of the snake is simple; it moves over time and the more apples it eats the bigger it grows. But what exactly is the <strong>source</strong> of the snake? For now, we can forget about the fact that it eats and grows because what matters is that it primarily depends on a <strong>time factor</strong> as it moves <strong>over time</strong>, e.g. <code>5</code> pixels every <code>200ms</code>. So our source stream is an interval that produces a value after each period and we call this <code>ticks$</code>. This stream also determines the speed of our snake.</p>
+<p>Let’s start with the snake. The core mechanic of the snake is simple; it moves over time and the more apples it eats the bigger it grows. But what exactly is the <strong>source</strong> of the snake? For now, we can forget about the fact that it eats and grows because what matters is that it primarily depends on a <strong>time factor</strong> as it moves <strong>over time</strong>, e.g. <code class="highlighter-rouge">5</code> pixels every <code class="highlighter-rouge">200ms</code>. So our source stream is an interval that produces a value after each period and we call this <code class="highlighter-rouge">ticks$</code>. This stream also determines the speed of our snake.</p>
 
 <p>Last but not least the apples. With everyting else in place, the apples are farily easy. This stream basically depends on the snake. Everytime the snake moves we check whether the head collides with an apple or not. If it does, we remove that apple and generate a new one at a random position on the field. That said, we don’t need to introduce a new source stream for the apples.</p>
 
 <p>Great, that’s it for the source streams. Here’s a brief overview of the all source streams we need for our game:</p>
 
 <ul>
-  <li><code>keydown$</code>: keydown events (KeyboardEvent)</li>
-  <li><code>snakeLength$</code>: represents the length of the snake (Number)</li>
-  <li><code>ticks$</code>: interval that represents the pace of the snake (Number)</li>
+  <li><code class="highlighter-rouge">keydown$</code>: keydown events (KeyboardEvent)</li>
+  <li><code class="highlighter-rouge">snakeLength$</code>: represents the length of the snake (Number)</li>
+  <li><code class="highlighter-rouge">ticks$</code>: interval that represents the pace of the snake (Number)</li>
 </ul>
 
 <p>These source streams build the basis for our game from which we can calculate all other values we need including the score, snake and apples.</p>
@@ -236,53 +236,53 @@
 
 <h2 id="steering-the-snake">Steering the snake</h2>
 
-<p>Let’s dive right into code and implement the steering mechanism for our snake. As mentioned in the previous section the steering depends on keyboard inputs. Turns out it’s deceptively simple and the first step is to create an observable sequence from keyboard events. For this we can leverage the <code>fromEvent()</code> operator:</p>
+<p>Let’s dive right into code and implement the steering mechanism for our snake. As mentioned in the previous section the steering depends on keyboard inputs. Turns out it’s deceptively simple and the first step is to create an observable sequence from keyboard events. For this we can leverage the <code class="highlighter-rouge">fromEvent()</code> operator:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">keydown$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">fromEvent</span><span class="p">(</span><span class="nb">document</span><span class="p">,</span> <span class="s1">'keydown'</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">keydown$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">fromEvent</span><span class="p">(</span><span class="nb">document</span><span class="p">,</span> <span class="s1">'keydown'</span><span class="p">);</span></code></pre></figure>
 
-<p>This is our very first source stream and it will emit a <code>KeyboardEvent</code> everytime the user presses down a key. Note that literally every <code>keydown</code> event is emitted. Therefore, we also get events for keys that we are not really interested in and that’s basically everything else but the arrow keys. But before we tackle this specific issue, we define a constant map of directions:</p>
+<p>This is our very first source stream and it will emit a <code class="highlighter-rouge">KeyboardEvent</code> everytime the user presses down a key. Note that literally every <code class="highlighter-rouge">keydown</code> event is emitted. Therefore, we also get events for keys that we are not really interested in and that’s basically everything else but the arrow keys. But before we tackle this specific issue, we define a constant map of directions:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">interface</span> <span class="nx">Point2D</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kr">interface</span> <span class="nx">Point2D</span> <span class="p">{</span>
   <span class="nl">x</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
   <span class="nl">y</span><span class="p">:</span> <span class="nx">number</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kr">export</span> <span class="kr">interface</span> <span class="nx">Directions</span> <span class="p">{</span>
-  <span class="p">[</span><span class="nx">key</span><span class="err">:</span> <span class="nx">number</span><span class="p">]</span><span class="err">:</span> <span class="nx">Point2D</span><span class="p">;</span>
+<span class="k">export</span> <span class="kr">interface</span> <span class="nx">Directions</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">key</span><span class="p">:</span> <span class="nx">number</span><span class="p">]:</span> <span class="nx">Point2D</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">DIRECTIONS</span><span class="err">:</span> <span class="nx">Directions</span> <span class="o">=</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">DIRECTIONS</span><span class="p">:</span> <span class="nx">Directions</span> <span class="o">=</span> <span class="p">{</span>
   <span class="mi">37</span><span class="p">:</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span> <span class="p">},</span> <span class="c1">// Left Arrow</span>
   <span class="mi">39</span><span class="p">:</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span> <span class="p">},</span>  <span class="c1">// Right Arrow</span>
   <span class="mi">38</span><span class="p">:</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="p">},</span> <span class="c1">// Up Arrow</span>
   <span class="mi">40</span><span class="p">:</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>   <span class="c1">// Down Arrow</span>
-<span class="p">};</span></code></pre></div>
+<span class="p">};</span></code></pre></figure>
 
-<p>By looking at the <code>KeyboardEvent</code> object it appears that every key has a unique <code>keyCode</code>. In order to get the codes for the arrow keys we can use <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode">this</a> table.</p>
+<p>By looking at the <code class="highlighter-rouge">KeyboardEvent</code> object it appears that every key has a unique <code class="highlighter-rouge">keyCode</code>. In order to get the codes for the arrow keys we can use <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode">this</a> table.</p>
 
-<p>Each direction is of type <code>Point2D</code> which is simply an object with an <code>x</code> and <code>y</code> property. The value for for each property can either be <code>1</code>, <code>-1</code> or <code>0</code>, indicating where the snake should be heading. Later, we’ll use the direction to derive the new grid position for the snake’s head and tail.</p>
+<p>Each direction is of type <code class="highlighter-rouge">Point2D</code> which is simply an object with an <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> property. The value for for each property can either be <code class="highlighter-rouge">1</code>, <code class="highlighter-rouge">-1</code> or <code class="highlighter-rouge">0</code>, indicating where the snake should be heading. Later, we’ll use the direction to derive the new grid position for the snake’s head and tail.</p>
 
 <h3 id="the-direction-stream">The direction$ stream</h3>
 
-<p>So, we already have a stream for <code>keydown</code> events and everytime the player presses down a key we need to <strong>map</strong> the value, which will be a <code>KeyboardEvent</code>, to one of the direction vectors above. For that we can use the <code>map()</code> operator to project each keyboard event to a direction vector.</p>
+<p>So, we already have a stream for <code class="highlighter-rouge">keydown</code> events and everytime the player presses down a key we need to <strong>map</strong> the value, which will be a <code class="highlighter-rouge">KeyboardEvent</code>, to one of the direction vectors above. For that we can use the <code class="highlighter-rouge">map()</code> operator to project each keyboard event to a direction vector.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">direction$</span> <span class="o">=</span> <span class="nx">keydown$</span>
-  <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">event</span><span class="err">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">DIRECTIONS</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">direction$</span> <span class="o">=</span> <span class="nx">keydown$</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">event</span><span class="p">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">DIRECTIONS</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span></code></pre></figure>
 
-<p>As mentioned earlier, we’ll receive <strong>every</strong> keydown event because we are not filtering out the ones that we are not interested in, such as the character keys. However, one could argue that we are already filtering out events by looking them up in the directions map. For every <code>keyCode</code> that is not defined in that map it will return <code>undefined</code>. Nevertheless, that’s not really filtering out values on the stream which is why we can use the <code>filter()</code> operator to only pipe through desired values.</p>
+<p>As mentioned earlier, we’ll receive <strong>every</strong> keydown event because we are not filtering out the ones that we are not interested in, such as the character keys. However, one could argue that we are already filtering out events by looking them up in the directions map. For every <code class="highlighter-rouge">keyCode</code> that is not defined in that map it will return <code class="highlighter-rouge">undefined</code>. Nevertheless, that’s not really filtering out values on the stream which is why we can use the <code class="highlighter-rouge">filter()</code> operator to only pipe through desired values.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">direction$</span> <span class="o">=</span> <span class="nx">keydown$</span>
-  <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">event</span><span class="err">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">DIRECTIONS</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span>
-  <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">direction</span> <span class="o">=&gt;</span> <span class="o">!!</span><span class="nx">direction</span><span class="p">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">direction$</span> <span class="o">=</span> <span class="nx">keydown$</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">event</span><span class="p">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">DIRECTIONS</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">direction</span> <span class="o">=&gt;</span> <span class="o">!!</span><span class="nx">direction</span><span class="p">)</span></code></pre></figure>
 
 <p>Ok, that was easy. The code above is perfectly fine and works as expected. However, there’s still some room for improvement. Can you think of something?</p>
 
 <p>Well, one thing is that we want to prevent the snake from going into the opposite direction, e.g. from right to left or up and down. It doesn’t really make sense to allow such behavior because the number one rule is to avoid hitting your own trail, remember?</p>
 
-<p>The solution is fairly easy. We cache the previous direction and when a new event is emitted we check if the new direction is not equal to the opposite of the last one. Here’s a function that calculates the <code>next</code> direction:</p>
+<p>The solution is fairly easy. We cache the previous direction and when a new event is emitted we check if the new direction is not equal to the opposite of the last one. Here’s a function that calculates the <code class="highlighter-rouge">next</code> direction:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">nextDirection</span><span class="p">(</span><span class="nx">previous</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">isOpposite</span> <span class="o">=</span> <span class="p">(</span><span class="nx">previous</span><span class="err">:</span> <span class="nx">Point2D</span><span class="p">,</span> <span class="nx">next</span><span class="err">:</span> <span class="nx">Point2D</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">function</span> <span class="nx">nextDirection</span><span class="p">(</span><span class="nx">previous</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">isOpposite</span> <span class="o">=</span> <span class="p">(</span><span class="nx">previous</span><span class="p">:</span> <span class="nx">Point2D</span><span class="p">,</span> <span class="nx">next</span><span class="p">:</span> <span class="nx">Point2D</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">next</span><span class="p">.</span><span class="nx">x</span> <span class="o">===</span> <span class="nx">previous</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">next</span><span class="p">.</span><span class="nx">y</span> <span class="o">===</span> <span class="nx">previous</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
   <span class="p">};</span>
 
@@ -291,28 +291,28 @@
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nx">next</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>This is the first time we are tempted to store state outside of the Observable pipeline because we somehow need to keep track of the previous direction right? An easy solution is to simply keep the previous direction in an external state variable. But wait! We wanted to avoid this, right?</p>
 
-<p>To avoid external state, we need a way to sort of aggregate infinite Observables. RxJS has a very convenient operator we can use to solve our problem - <code>scan()</code>.</p>
+<p>To avoid external state, we need a way to sort of aggregate infinite Observables. RxJS has a very convenient operator we can use to solve our problem - <code class="highlighter-rouge">scan()</code>.</p>
 
-<p>The <code>scan()</code> operator is very similar to <code>Array.reduce()</code> but instead of only returning the last value, it emits each intermediate result. With <code>scan()</code> we can basically accumulate values and reduce a stream of incoming events to a single value infinitely. This way we can keep track of the previous direction without relying on external state.</p>
+<p>The <code class="highlighter-rouge">scan()</code> operator is very similar to <code class="highlighter-rouge">Array.reduce()</code> but instead of only returning the last value, it emits each intermediate result. With <code class="highlighter-rouge">scan()</code> we can basically accumulate values and reduce a stream of incoming events to a single value infinitely. This way we can keep track of the previous direction without relying on external state.</p>
 
-<p>Let’s apply this and take a look at our final <code>direction$</code> stream:</p>
+<p>Let’s apply this and take a look at our final <code class="highlighter-rouge">direction$</code> stream:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">direction$</span> <span class="o">=</span> <span class="nx">keydown$</span>
-  <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">event</span><span class="err">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">DIRECTIONS</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">direction$</span> <span class="o">=</span> <span class="nx">keydown$</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">event</span><span class="p">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">DIRECTIONS</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span>
   <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">direction</span> <span class="o">=&gt;</span> <span class="o">!!</span><span class="nx">direction</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">scan</span><span class="p">(</span><span class="nx">nextDirection</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">startWith</span><span class="p">(</span><span class="nx">INITIAL_DIRECTION</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">();</span></code></pre></div>
+  <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">();</span></code></pre></figure>
 
-<p>Notice that we are using <code>startWith()</code> to emit an inital value before beginning to emit values from the source Observable (<code>keydown$</code>). Without this operator our Observable would start emitting only when the player presses a key.</p>
+<p>Notice that we are using <code class="highlighter-rouge">startWith()</code> to emit an inital value before beginning to emit values from the source Observable (<code class="highlighter-rouge">keydown$</code>). Without this operator our Observable would start emitting only when the player presses a key.</p>
 
-<p>The second improvement is to <em>only</em> emit values when the emitted direction is different from the previous one. In other words, we only want <strong>distinct</strong> values. You might have noticed <code>distinctUntilChanged()</code> in the snippet above. This operator does the dirty work for us and suppresses duplicate items. Note that <code>distinctUntilChanged()</code> only filters out identical values unless a different one is emitted in between.</p>
+<p>The second improvement is to <em>only</em> emit values when the emitted direction is different from the previous one. In other words, we only want <strong>distinct</strong> values. You might have noticed <code class="highlighter-rouge">distinctUntilChanged()</code> in the snippet above. This operator does the dirty work for us and suppresses duplicate items. Note that <code class="highlighter-rouge">distinctUntilChanged()</code> only filters out identical values unless a different one is emitted in between.</p>
 
-<p>The following figure visualizes our <code>direction$</code> stream and how it works. Values painted in blue represent initial values, yellow means the value was changed on the Observable pipeline and values emitted on the <strong>result</strong> stream are colored orange.</p>
+<p>The following figure visualizes our <code class="highlighter-rouge">direction$</code> stream and how it works. Values painted in blue represent initial values, yellow means the value was changed on the Observable pipeline and values emitted on the <strong>result</strong> stream are colored orange.</p>
 
 <p><img src="/images/snake_direction.png" width="70%" alt="direction stream" /></p>
 
@@ -320,109 +320,109 @@
 
 <p>Before we implement the snake itself, let’s come up with an idea to keep track of its length. Why do we need the length in the first place? Well, we use that information to model the score. It’s right that in an imperative world we’d simply check if there was a collision whenever the snake moves and if that’s the case we increase the score. So there is actually no need to keep track of the length. However, it would introduce yet another external state variable which we want to avoid at all costs.</p>
 
-<p>In a reactive world it’s a bit different. One naive approach could be to use the <code>snake$</code> stream and every time it emits a value we know that the snake has grown in length. While it really depends on the implementation of <code>snake$</code>, this is not how we’ll implement it. From the beginning we know that it depends on <code>ticks$</code> as it moves a certain distance over time. As such, <code>snake$</code> will accumulate an array of body segments and because it’s based on <code>ticks$</code> it will generate a value every <code>x</code> milliseconds. That said, even if the snake does not collide with anything, <code>snake$</code> will still produce distinct values. That’s because the snake is constantly moving on the field and therefore the array will always be different.</p>
+<p>In a reactive world it’s a bit different. One naive approach could be to use the <code class="highlighter-rouge">snake$</code> stream and every time it emits a value we know that the snake has grown in length. While it really depends on the implementation of <code class="highlighter-rouge">snake$</code>, this is not how we’ll implement it. From the beginning we know that it depends on <code class="highlighter-rouge">ticks$</code> as it moves a certain distance over time. As such, <code class="highlighter-rouge">snake$</code> will accumulate an array of body segments and because it’s based on <code class="highlighter-rouge">ticks$</code> it will generate a value every <code class="highlighter-rouge">x</code> milliseconds. That said, even if the snake does not collide with anything, <code class="highlighter-rouge">snake$</code> will still produce distinct values. That’s because the snake is constantly moving on the field and therefore the array will always be different.</p>
 
-<p>This can be a bit tricky to grasp because there are some peer dependencies between the different streams. For example <code>apples$</code> will depend on <code>snake$</code>. The reason for this is that, everytime the snake moves we need the array of body segments to check if any of these pieces collides with an apple. While the <code>apples$</code> stream itself will accumulate an array of apples, we need a mechanism to model collisions that, at the same time, avoids a circular dependency.</p>
+<p>This can be a bit tricky to grasp because there are some peer dependencies between the different streams. For example <code class="highlighter-rouge">apples$</code> will depend on <code class="highlighter-rouge">snake$</code>. The reason for this is that, everytime the snake moves we need the array of body segments to check if any of these pieces collides with an apple. While the <code class="highlighter-rouge">apples$</code> stream itself will accumulate an array of apples, we need a mechanism to model collisions that, at the same time, avoids a circular dependency.</p>
 
 <h3 id="behaviorsubject-to-the-rescue">BehaviorSubject to the rescue</h3>
 
-<p>The solution to this is that we’ll implement a <em>broadcasting</em> mechanism using a <code>BehaviorSubject</code>. RxJS offers different types of Subjects with different functionalities. As such, the <code>Subject</code> class provides the base for creating more specialized Subjects. In a nutshell, a Subject is a type that implements both <code>Observer</code> and <code>Observable</code> types. Observables define the data flow and produce the data while Observers can subscribe to Observables and receive the data.</p>
+<p>The solution to this is that we’ll implement a <em>broadcasting</em> mechanism using a <code class="highlighter-rouge">BehaviorSubject</code>. RxJS offers different types of Subjects with different functionalities. As such, the <code class="highlighter-rouge">Subject</code> class provides the base for creating more specialized Subjects. In a nutshell, a Subject is a type that implements both <code class="highlighter-rouge">Observer</code> and <code class="highlighter-rouge">Observable</code> types. Observables define the data flow and produce the data while Observers can subscribe to Observables and receive the data.</p>
 
-<p>A <code>BehaviorSubject</code> is a more specialized Subject that represents a value that changes over time. Now, when an Observer subscribes to a <code>BehaviorSubject</code>, it will receive the last emitted value and then all subsequent values. Its uniqueness lies in the fact that it requires a <strong>starting value</strong>, so that all Observers will at least receive one value on subscription.</p>
+<p>A <code class="highlighter-rouge">BehaviorSubject</code> is a more specialized Subject that represents a value that changes over time. Now, when an Observer subscribes to a <code class="highlighter-rouge">BehaviorSubject</code>, it will receive the last emitted value and then all subsequent values. Its uniqueness lies in the fact that it requires a <strong>starting value</strong>, so that all Observers will at least receive one value on subscription.</p>
 
-<p>Let’s go ahead and create a new <code>BehaviorSubject</code> with an initial value of <code>SNAKE_LENGTH</code>:</p>
+<p>Let’s go ahead and create a new <code class="highlighter-rouge">BehaviorSubject</code> with an initial value of <code class="highlighter-rouge">SNAKE_LENGTH</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// SNAKE_LENGTH specifies the inital length of our snake</span>
-<span class="kd">let</span> <span class="nx">length$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BehaviorSubject</span><span class="o">&lt;</span><span class="nx">number</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">SNAKE_LENGTH</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// SNAKE_LENGTH specifies the inital length of our snake</span>
+<span class="kd">let</span> <span class="nx">length$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BehaviorSubject</span><span class="o">&lt;</span><span class="nx">number</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">SNAKE_LENGTH</span><span class="p">);</span></code></pre></figure>
 
-<p>From here it’s only a small step to implement <code>snakeLength$</code>:</p>
+<p>From here it’s only a small step to implement <code class="highlighter-rouge">snakeLength$</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">snakeLength$</span> <span class="o">=</span> <span class="nx">length$</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">snakeLength$</span> <span class="o">=</span> <span class="nx">length$</span>
   <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">step</span><span class="p">,</span> <span class="nx">snakeLength</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">snakeLength</span> <span class="o">+</span> <span class="nx">step</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></div>
+  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></figure>
 
-<p>In the code above we can see that <code>snakeLength$</code> is based on <code>length$</code> which is our <code>BehaviorSubject</code>. This means that whenever we feed a new value to the Subject using <code>next()</code>, it will be emitted on <code>snakeLength$</code>. In addition, we use <code>scan()</code> to accumulate the length over time. Cool, but you may be wondering what that <code>share()</code> is all about, right?</p>
+<p>In the code above we can see that <code class="highlighter-rouge">snakeLength$</code> is based on <code class="highlighter-rouge">length$</code> which is our <code class="highlighter-rouge">BehaviorSubject</code>. This means that whenever we feed a new value to the Subject using <code class="highlighter-rouge">next()</code>, it will be emitted on <code class="highlighter-rouge">snakeLength$</code>. In addition, we use <code class="highlighter-rouge">scan()</code> to accumulate the length over time. Cool, but you may be wondering what that <code class="highlighter-rouge">share()</code> is all about, right?</p>
 
-<p>As already mentioned, <code>snakeLength$</code> will later be used as an input for <code>snake$</code> but at the same time acts as a source stream for the player’s score. As a result, we would end up <strong>recreating</strong> that source stream with the second subscriptions to the same Observable. This happens because <code>length$</code> is a <strong>cold</strong> Observable.</p>
+<p>As already mentioned, <code class="highlighter-rouge">snakeLength$</code> will later be used as an input for <code class="highlighter-rouge">snake$</code> but at the same time acts as a source stream for the player’s score. As a result, we would end up <strong>recreating</strong> that source stream with the second subscriptions to the same Observable. This happens because <code class="highlighter-rouge">length$</code> is a <strong>cold</strong> Observable.</p>
 
 <p>If you are completely new to hot and cold Observables, we have written an article on <a href="/angular/2016/06/16/cold-vs-hot-observables.html">Cold vs Hot Observables</a>.</p>
 
-<p>The point is that, we use <code>share()</code> to allow multiple subscriptions to an Observable that would otherwise recreate its source with every subscription. This operator automatically creates a Subject between the original source and all future subscribers. As soon as the number of subscribers goes from zero to one it will connect the Subject to the underlying source Observable and broadcast all its notifications. All future subscribers will be connected to that in-between Subject, so that effectively there’s just one subscription to the underlying cold Observable. This is called <strong>multicasting</strong> and will make you stand out on dinner parties.</p>
+<p>The point is that, we use <code class="highlighter-rouge">share()</code> to allow multiple subscriptions to an Observable that would otherwise recreate its source with every subscription. This operator automatically creates a Subject between the original source and all future subscribers. As soon as the number of subscribers goes from zero to one it will connect the Subject to the underlying source Observable and broadcast all its notifications. All future subscribers will be connected to that in-between Subject, so that effectively there’s just one subscription to the underlying cold Observable. This is called <strong>multicasting</strong> and will make you stand out on dinner parties.</p>
 
-<p>Awesome! Now that we have a mechanism that we can use to broadcast values to multiple subscribers, we can go ahead and implement <code>score$</code>.</p>
+<p>Awesome! Now that we have a mechanism that we can use to broadcast values to multiple subscribers, we can go ahead and implement <code class="highlighter-rouge">score$</code>.</p>
 
 <h3 id="implementing-score">Implementing score$</h3>
 
-<p>The player’s score is as simple as it can get. Equipped with <code>snakeLength$</code> we can now create the <code>score$</code> stream that simply accumulates the player’s score using <code>scan()</code>:</p>
+<p>The player’s score is as simple as it can get. Equipped with <code class="highlighter-rouge">snakeLength$</code> we can now create the <code class="highlighter-rouge">score$</code> stream that simply accumulates the player’s score using <code class="highlighter-rouge">scan()</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">score$</span> <span class="o">=</span> <span class="nx">snakeLength$</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">score$</span> <span class="o">=</span> <span class="nx">snakeLength$</span>
   <span class="p">.</span><span class="nx">startWith</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">score</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">score</span> <span class="o">+</span> <span class="nx">POINTS_PER_APPLE</span><span class="p">);</span></code></pre></div>
+  <span class="p">.</span><span class="nx">scan</span><span class="p">((</span><span class="nx">score</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">score</span> <span class="o">+</span> <span class="nx">POINTS_PER_APPLE</span><span class="p">);</span></code></pre></figure>
 
-<p>We basically use <code>snakeLength$</code> or rather <code>length$</code> to notify subscribers that there’s been a collision and if there was, we just increase the score by <code>POINTS_PER_APPLE</code>, a constant amount of points per apple. Note that <code>startWith(0)</code> must be added before <code>scan()</code> to avoid specifying a <em>seed</em> (initial accumulator value).</p>
+<p>We basically use <code class="highlighter-rouge">snakeLength$</code> or rather <code class="highlighter-rouge">length$</code> to notify subscribers that there’s been a collision and if there was, we just increase the score by <code class="highlighter-rouge">POINTS_PER_APPLE</code>, a constant amount of points per apple. Note that <code class="highlighter-rouge">startWith(0)</code> must be added before <code class="highlighter-rouge">scan()</code> to avoid specifying a <em>seed</em> (initial accumulator value).</p>
 
 <p>Let’s look at a more visual representation of what we just implemented:</p>
 
 <p><img src="/images/snake_length_and_score.png" width="70%" alt="snake length and score" /></p>
 
-<p>By looking at the figure above you may be wondering why the initial value of the <code>BehaviorSubject</code> only shows up on <code>snakeLength$</code> and is missing on <code>score$</code>. That’s because the first subscriber will cause <code>share()</code> to subscribe to the underlying data source and because the underlying data source immediately emits a value, the value has already passed by the time that the subsequent subscriptions has happened.</p>
+<p>By looking at the figure above you may be wondering why the initial value of the <code class="highlighter-rouge">BehaviorSubject</code> only shows up on <code class="highlighter-rouge">snakeLength$</code> and is missing on <code class="highlighter-rouge">score$</code>. That’s because the first subscriber will cause <code class="highlighter-rouge">share()</code> to subscribe to the underlying data source and because the underlying data source immediately emits a value, the value has already passed by the time that the subsequent subscriptions has happened.</p>
 
 <p>Sweet. With that in place, let’s implement the stream for our snake. Isn’t this exciting?</p>
 
 <h2 id="taming-the-snake">Taming the snake$</h2>
 
-<p>So far, we have learned a bunch of operators and we can use them to implement our <code>snake$</code> stream. As discussed in the beginning of this post, we need some sort of <em>ticker</em> that keeps our hungry snake moving. Turns out there’s a handy operator for that called <code>interval(x)</code> which emits a value every <code>x</code> milliseconds. We’ll call each value <em>tick</em>.</p>
+<p>So far, we have learned a bunch of operators and we can use them to implement our <code class="highlighter-rouge">snake$</code> stream. As discussed in the beginning of this post, we need some sort of <em>ticker</em> that keeps our hungry snake moving. Turns out there’s a handy operator for that called <code class="highlighter-rouge">interval(x)</code> which emits a value every <code class="highlighter-rouge">x</code> milliseconds. We’ll call each value <em>tick</em>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">ticks$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="nx">SPEED</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">ticks$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="nx">SPEED</span><span class="p">);</span></code></pre></figure>
 
-<p>From here it’s only a small stretch to the final <code>snake$</code> stream. For every <em>tick</em>, depending on whether the snake has eaten an apple, we want to either move it foward or add new segment. Therefore, we can use the all so familiar <code>scan()</code> operator to accumulate an array of body segments. But, as you may have guessed, we’re facing a problem. Where’s the <code>direction$</code> or <code>snakeLength$</code> stream coming into play?</p>
+<p>From here it’s only a small stretch to the final <code class="highlighter-rouge">snake$</code> stream. For every <em>tick</em>, depending on whether the snake has eaten an apple, we want to either move it foward or add new segment. Therefore, we can use the all so familiar <code class="highlighter-rouge">scan()</code> operator to accumulate an array of body segments. But, as you may have guessed, we’re facing a problem. Where’s the <code class="highlighter-rouge">direction$</code> or <code class="highlighter-rouge">snakeLength$</code> stream coming into play?</p>
 
-<p>Absolutely legitimate question to ask. The direction nor the snake’s length is easily accessible from within our <code>snake$</code> stream unless we kept those information in a variable outside of the Observable pipeline. But again, we would be breaking our rule of not modifying external state.</p>
+<p>Absolutely legitimate question to ask. The direction nor the snake’s length is easily accessible from within our <code class="highlighter-rouge">snake$</code> stream unless we kept those information in a variable outside of the Observable pipeline. But again, we would be breaking our rule of not modifying external state.</p>
 
-<p>Luckily, RxJS offers yet another very convenient operator called <code>withLatestFrom()</code>. It’s an operator used to combine streams and that’s exactly what we’re looking for. This operator is applied to a <em>primary</em> source that controls when data is emitted on the result stream. In other words, you can think of <code>withLatestFrom()</code> as a way to <strong>throttle</strong> the output of a secondary stream.</p>
+<p>Luckily, RxJS offers yet another very convenient operator called <code class="highlighter-rouge">withLatestFrom()</code>. It’s an operator used to combine streams and that’s exactly what we’re looking for. This operator is applied to a <em>primary</em> source that controls when data is emitted on the result stream. In other words, you can think of <code class="highlighter-rouge">withLatestFrom()</code> as a way to <strong>throttle</strong> the output of a secondary stream.</p>
 
-<p>With the above, we have the tools we need to finally implement the hungry <code>snake$</code>:</p>
+<p>With the above, we have the tools we need to finally implement the hungry <code class="highlighter-rouge">snake$</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">snake$</span> <span class="o">=</span> <span class="nx">ticks$</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">snake$</span> <span class="o">=</span> <span class="nx">ticks$</span>
   <span class="p">.</span><span class="nx">withLatestFrom</span><span class="p">(</span><span class="nx">direction$</span><span class="p">,</span> <span class="nx">snakeLength$</span><span class="p">,</span> <span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">direction</span><span class="p">,</span> <span class="nx">snakeLength</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">direction</span><span class="p">,</span> <span class="nx">snakeLength</span><span class="p">])</span>
   <span class="p">.</span><span class="nx">scan</span><span class="p">(</span><span class="nx">move</span><span class="p">,</span> <span class="nx">generateSnake</span><span class="p">())</span>
-  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></div>
+  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></figure>
 
-<p>Our <em>primary</em> source is <code>ticks$</code> and whenever a new value comes down the pipe, we take the latest
-values from both <code>direction$</code> and <code>snakeLength$</code>. Note that even if the <em>secondary</em> streams frequently emit values, for example if the player is smashing his head on the keyboard, we’d only be proccessing the data for each <em>tick</em>.</p>
+<p>Our <em>primary</em> source is <code class="highlighter-rouge">ticks$</code> and whenever a new value comes down the pipe, we take the latest
+values from both <code class="highlighter-rouge">direction$</code> and <code class="highlighter-rouge">snakeLength$</code>. Note that even if the <em>secondary</em> streams frequently emit values, for example if the player is smashing his head on the keyboard, we’d only be proccessing the data for each <em>tick</em>.</p>
 
-<p>In addition, we are passing a <strong>selector</strong> function to <code>withLatestFrom</code> which is invoked when the <em>primary</em> stream produces a value. This function is optional and if omitted, a list with all elements is yielded.</p>
+<p>In addition, we are passing a <strong>selector</strong> function to <code class="highlighter-rouge">withLatestFrom</code> which is invoked when the <em>primary</em> stream produces a value. This function is optional and if omitted, a list with all elements is yielded.</p>
 
-<p>We’ll leave out the explanation for the <code>move()</code> function as the primary goal of this post is to facilitate the fundamental shift in mindset. Nonetheless, you can find the source code for this on <a href="https://github.com/d3lm/reactive-snake/blob/master/src/utils.ts#L25-L45">GitHub</a>.</p>
+<p>We’ll leave out the explanation for the <code class="highlighter-rouge">move()</code> function as the primary goal of this post is to facilitate the fundamental shift in mindset. Nonetheless, you can find the source code for this on <a href="https://github.com/d3lm/reactive-snake/blob/master/src/utils.ts#L25-L45">GitHub</a>.</p>
 
 <p>Here’s a figure that visually demonstrates the code above:</p>
 
 <p><img src="/images/snake_stream.png" width="110%" alt="snake stream" /></p>
 
-<p>See how we <em>throttle</em> <code>direction$</code>? The point is that <code>withLatestFrom()</code> is very practical when you want to <strong>combine</strong> multiple streams and you are not interested in producing values on the Observable pipeline when <strong>either</strong> of the streams emit data.</p>
+<p>See how we <em>throttle</em> <code class="highlighter-rouge">direction$</code>? The point is that <code class="highlighter-rouge">withLatestFrom()</code> is very practical when you want to <strong>combine</strong> multiple streams and you are not interested in producing values on the Observable pipeline when <strong>either</strong> of the streams emit data.</p>
 
 <h2 id="generating-apples">Generating apples</h2>
 
 <p>You may notice that implementing our core building blocks for the game becomes easier as we learn more and more operators. If you made it so far then the rest is going to be easy peasy.</p>
 
-<p>So far we have implemented a couple of streams such as <code>direction$</code>, <code>snakeLength$</code>, <code>score$</code> and <code>snake$</code>. If we combine them together we could already navigate that beast of snake around. But what is this game if there’s nothing to devour. Quite boring.</p>
+<p>So far we have implemented a couple of streams such as <code class="highlighter-rouge">direction$</code>, <code class="highlighter-rouge">snakeLength$</code>, <code class="highlighter-rouge">score$</code> and <code class="highlighter-rouge">snake$</code>. If we combine them together we could already navigate that beast of snake around. But what is this game if there’s nothing to devour. Quite boring.</p>
 
 <p>Let’s generate some apples to satisfy our snake’s appetite. First, let’s clarify what the state we need to preserve. Well, it could either be a single object or an array of objects. For our implementation we go with an array of apples. You hear the bells ringing?</p>
 
-<p>Right, we can use <code>scan()</code> again to accumulate an array of apples. We start with an initial value and every time the snake moves, we check if there was a collision. If that’s the case, we generate a new apple and return a <strong>new</strong> array. This way we can leverage <code>distinctUntilChanged()</code> to filter out identical values.</p>
+<p>Right, we can use <code class="highlighter-rouge">scan()</code> again to accumulate an array of apples. We start with an initial value and every time the snake moves, we check if there was a collision. If that’s the case, we generate a new apple and return a <strong>new</strong> array. This way we can leverage <code class="highlighter-rouge">distinctUntilChanged()</code> to filter out identical values.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">apples$</span> <span class="o">=</span> <span class="nx">snake$</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">apples$</span> <span class="o">=</span> <span class="nx">snake$</span>
   <span class="p">.</span><span class="nx">scan</span><span class="p">(</span><span class="nx">eat</span><span class="p">,</span> <span class="nx">generateApples</span><span class="p">())</span>
   <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
-  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></div>
+  <span class="p">.</span><span class="nx">share</span><span class="p">();</span></code></pre></figure>
 
-<p>Cool! This means that whenever <code>apples$</code> produces a new value we can assume that our snake has devoured one of those tasty fruits. What’s left is to increase to score and also notify other streams about this event, such as <code>snake$</code> that takes the latest value from <code>snakeLength$</code> to figure out whether to add a new body segment.</p>
+<p>Cool! This means that whenever <code class="highlighter-rouge">apples$</code> produces a new value we can assume that our snake has devoured one of those tasty fruits. What’s left is to increase to score and also notify other streams about this event, such as <code class="highlighter-rouge">snake$</code> that takes the latest value from <code class="highlighter-rouge">snakeLength$</code> to figure out whether to add a new body segment.</p>
 
 <h3 id="broadcasting-events">Broadcasting events</h3>
 
-<p>Earlier we have implemented this <strong>broadcasting</strong> mechanism, remember? Let’s use that to trigger the desired actions. Here’s our code for <code>eat()</code>:</p>
+<p>Earlier we have implemented this <strong>broadcasting</strong> mechanism, remember? Let’s use that to trigger the desired actions. Here’s our code for <code class="highlighter-rouge">eat()</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">eat</span><span class="p">(</span><span class="nx">apples</span><span class="err">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Point2D</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">snake</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">function</span> <span class="nx">eat</span><span class="p">(</span><span class="nx">apples</span><span class="p">:</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="nx">Point2D</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">snake</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">head</span> <span class="o">=</span> <span class="nx">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
 
   <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">apples</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -434,26 +434,26 @@ values from both <code>direction$</code> and <code>snakeLength$</code>. Note tha
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nx">apples</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>A simple solution is to call <code>length$.next(POINTS_PER_APPLE)</code> right inside that <code>if</code> block. But then we’re facing a problem because we couldn’t extract this <em>utility</em> method into its own module (ES2015 module). In ES2015 modules are stored in files and there’s exactly one module per file. The goal is to organize our code in a way that is easy to maintain and to reason about.</p>
+<p>A simple solution is to call <code class="highlighter-rouge">length$.next(POINTS_PER_APPLE)</code> right inside that <code class="highlighter-rouge">if</code> block. But then we’re facing a problem because we couldn’t extract this <em>utility</em> method into its own module (ES2015 module). In ES2015 modules are stored in files and there’s exactly one module per file. The goal is to organize our code in a way that is easy to maintain and to reason about.</p>
 
-<p>A more <em>sophisticated</em> solution is to introduce yet another stream called <code>applesEaten$</code>. This stream is based on <code>apples$</code> and every time a new value is emitted on the stream, we’d like to perform some kind of <strong>action</strong>, calling <code>length$.next()</code>. To do so we can use the <code>do()</code> operator which will execute some piece of code for each <em>event</em>.</p>
+<p>A more <em>sophisticated</em> solution is to introduce yet another stream called <code class="highlighter-rouge">applesEaten$</code>. This stream is based on <code class="highlighter-rouge">apples$</code> and every time a new value is emitted on the stream, we’d like to perform some kind of <strong>action</strong>, calling <code class="highlighter-rouge">length$.next()</code>. To do so we can use the <code class="highlighter-rouge">do()</code> operator which will execute some piece of code for each <em>event</em>.</p>
 
-<p>Sounds feasible. But, we somehow need to <strong>skip</strong> the first (initial) value emitted by <code>apples$</code>. Otherwise we end up increasing the score right away which doesn’t make much sense as the game has just started. Turns out RxJS has an operator for that, namely <code>skip()</code>.</p>
+<p>Sounds feasible. But, we somehow need to <strong>skip</strong> the first (initial) value emitted by <code class="highlighter-rouge">apples$</code>. Otherwise we end up increasing the score right away which doesn’t make much sense as the game has just started. Turns out RxJS has an operator for that, namely <code class="highlighter-rouge">skip()</code>.</p>
 
-<p>The fact that <code>applesEaten$</code> only acts as a <em>publisher</em> to notify other streams, there’s not going to be an Observer subscribing to this stream. Therefore, we have to <strong>manually</strong> subscribe.</p>
+<p>The fact that <code class="highlighter-rouge">applesEaten$</code> only acts as a <em>publisher</em> to notify other streams, there’s not going to be an Observer subscribing to this stream. Therefore, we have to <strong>manually</strong> subscribe.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">appleEaten$</span> <span class="o">=</span> <span class="nx">apples$</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">appleEaten$</span> <span class="o">=</span> <span class="nx">apples$</span>
   <span class="p">.</span><span class="nx">skip</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
   <span class="p">.</span><span class="k">do</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">length$</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">POINTS_PER_APPLE</span><span class="p">))</span>
-  <span class="p">.</span><span class="nx">subscribe</span><span class="p">();</span></code></pre></div>
+  <span class="p">.</span><span class="nx">subscribe</span><span class="p">();</span></code></pre></figure>
 
 <h2 id="putting-everything-together">Putting everything together</h2>
 
-<p>At this point, we have implemented all core buildings blocks of our game and we are good to go to finally combine everything into one result stream - <code>scene$</code>. For that we’ll use <code>combineLatest</code>. It’s quite similar to <code>withLatestFrom</code> but different in detail. First, let’s look at the code:</p>
+<p>At this point, we have implemented all core buildings blocks of our game and we are good to go to finally combine everything into one result stream - <code class="highlighter-rouge">scene$</code>. For that we’ll use <code class="highlighter-rouge">combineLatest</code>. It’s quite similar to <code class="highlighter-rouge">withLatestFrom</code> but different in detail. First, let’s look at the code:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">scene$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">combineLatest</span><span class="p">(</span><span class="nx">snake$</span><span class="p">,</span> <span class="nx">apples$</span><span class="p">,</span> <span class="nx">score$</span><span class="p">,</span> <span class="p">(</span><span class="nx">snake</span><span class="p">,</span> <span class="nx">apples</span><span class="p">,</span> <span class="nx">score</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span> <span class="nx">snake</span><span class="p">,</span> <span class="nx">apples</span><span class="p">,</span> <span class="nx">score</span> <span class="p">}));</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">scene$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">combineLatest</span><span class="p">(</span><span class="nx">snake$</span><span class="p">,</span> <span class="nx">apples$</span><span class="p">,</span> <span class="nx">score$</span><span class="p">,</span> <span class="p">(</span><span class="nx">snake</span><span class="p">,</span> <span class="nx">apples</span><span class="p">,</span> <span class="nx">score</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span> <span class="nx">snake</span><span class="p">,</span> <span class="nx">apples</span><span class="p">,</span> <span class="nx">score</span> <span class="p">}));</span></code></pre></figure>
 
 <p>Instead of throttling secondary streams, we are interested in an event whenever <strong>any</strong> of the <em>input</em> Observables produces a new value. The last argument is again a selector function and we are simply taking all the values and returning an object that represents our <strong>game state</strong>. The game state contains everything that needs to be rendered onto the canvas.</p>
 
@@ -463,38 +463,38 @@ values from both <code>direction$</code> and <code>snakeLength$</code>. Note tha
 
 <p>Not only in games but but also for web applications we aim for performance. Performance can mean a lot but in terms of our game, we’d like to redraw the whole scene 60 times per second.</p>
 
-<p>We can do that by introducing another stream similar to <code>ticks$</code> but for rendering. Basically it’s another interval:</p>
+<p>We can do that by introducing another stream similar to <code class="highlighter-rouge">ticks$</code> but for rendering. Basically it’s another interval:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Interval expects the period to be in milliseconds which is why we devide FPS by 1000</span>
-<span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="nx">FPS</span><span class="p">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Interval expects the period to be in milliseconds which is why we devide FPS by 1000</span>
+<span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="nx">FPS</span><span class="p">)</span></code></pre></figure>
 
 <p>The problem is that JavaScript is single-threaded. The worst case is that we prevent the browser from doing anything so that it locks up. In other words, the browser may not be able to process all these updates quickly enough. The reason for this is that the browser is trying to render a frame and then it’s immediately asked to render the next one. As a result, it drops the current one to keep up the speed. That’s when animations start to look choppy.</p>
 
-<p>Luckily, we can use <code>requestAnimationFrame</code> allowing the browser to line up work and perform it at the most appropriate time. But how do we use it for our Observable pipeline? The good news is that many operators including <code>interval()</code> take a <code>Scheduler</code> as its last argument. In a nutshell, a <code>Scheduler</code> is a mechanism to <strong>schedule</strong> some task to be performed in the future.</p>
+<p>Luckily, we can use <code class="highlighter-rouge">requestAnimationFrame</code> allowing the browser to line up work and perform it at the most appropriate time. But how do we use it for our Observable pipeline? The good news is that many operators including <code class="highlighter-rouge">interval()</code> take a <code class="highlighter-rouge">Scheduler</code> as its last argument. In a nutshell, a <code class="highlighter-rouge">Scheduler</code> is a mechanism to <strong>schedule</strong> some task to be performed in the future.</p>
 
-<p>While RxJS offers a variety of Schedulers, the one that we’re interested in is called <code>animationFrame</code>. This Scheduler performs a task when <code>window.requestAnimationFrame</code> would fire.</p>
+<p>While RxJS offers a variety of Schedulers, the one that we’re interested in is called <code class="highlighter-rouge">animationFrame</code>. This Scheduler performs a task when <code class="highlighter-rouge">window.requestAnimationFrame</code> would fire.</p>
 
-<p>Perfect! Let’s apply this to our interval and we’ll call the resulting Observable <code>game$</code>:</p>
+<p>Perfect! Let’s apply this to our interval and we’ll call the resulting Observable <code class="highlighter-rouge">game$</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Note the last parameter</span>
-<span class="kr">const</span> <span class="nx">game$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="nx">FPS</span><span class="p">,</span> <span class="nx">animationFrame</span><span class="p">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Note the last parameter</span>
+<span class="kd">const</span> <span class="nx">game$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="nx">FPS</span><span class="p">,</span> <span class="nx">animationFrame</span><span class="p">)</span></code></pre></figure>
 
 <p>This interval will now produce values roughly every 16ms maintaining 60 FPS.</p>
 
 <h3 id="rendering-the-scene">Rendering the scene</h3>
 
-<p>What’s left is to combine our <code>game$</code> with the <code>scene$</code>. Can you guess what operator we use for that? Remember, both streams emit at different intervals and the goal now is to render our scene onto the canvas, 60 times per second. We’ll use <code>game$</code> as our <strong>primary</strong> stream and every time it emits a value we combine it with the <strong>latest</strong> value from <code>scene$</code>. Sounds familiar? Yes, we can use <code>withLatestFrom</code> again.</p>
+<p>What’s left is to combine our <code class="highlighter-rouge">game$</code> with the <code class="highlighter-rouge">scene$</code>. Can you guess what operator we use for that? Remember, both streams emit at different intervals and the goal now is to render our scene onto the canvas, 60 times per second. We’ll use <code class="highlighter-rouge">game$</code> as our <strong>primary</strong> stream and every time it emits a value we combine it with the <strong>latest</strong> value from <code class="highlighter-rouge">scene$</code>. Sounds familiar? Yes, we can use <code class="highlighter-rouge">withLatestFrom</code> again.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Note the last parameter</span>
-<span class="kr">const</span> <span class="nx">game$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="nx">FPS</span><span class="p">,</span> <span class="nx">animationFrame</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Note the last parameter</span>
+<span class="kd">const</span> <span class="nx">game$</span> <span class="o">=</span> <span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="nx">FPS</span><span class="p">,</span> <span class="nx">animationFrame</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">withLatestFrom</span><span class="p">(</span><span class="nx">scene$</span><span class="p">,</span> <span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">scene</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">scene</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">takeWhile</span><span class="p">(</span><span class="nx">scene</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">isGameOver</span><span class="p">(</span><span class="nx">scene</span><span class="p">))</span>
   <span class="p">.</span><span class="nx">subscribe</span><span class="p">({</span>
     <span class="na">next</span><span class="p">:</span> <span class="p">(</span><span class="nx">scene</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">renderScene</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">scene</span><span class="p">),</span>
     <span class="na">complete</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">renderGameOver</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
-  <span class="p">});</span></code></pre></div>
+  <span class="p">});</span></code></pre></figure>
 
-<p>You may have spotted <code>takeWhile()</code> in the code above. It’s another very useful operator that we can call on an exisiting Observable. It will return values from <code>game$</code> <strong>until</strong> <code>isGameOver()</code> returns <code>true</code>.</p>
+<p>You may have spotted <code class="highlighter-rouge">takeWhile()</code> in the code above. It’s another very useful operator that we can call on an exisiting Observable. It will return values from <code class="highlighter-rouge">game$</code> <strong>until</strong> <code class="highlighter-rouge">isGameOver()</code> returns <code class="highlighter-rouge">true</code>.</p>
 
 <p>That’s it! We have just implemented snake, fully reactively and without relying on any external state using nothing but Observables and operators provided by RxJS.</p>
 
@@ -601,6 +601,17 @@ values from both <code>direction$</code> and <code>snakeLength$</code>. Note tha
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -650,17 +661,6 @@ values from both <code>direction$</code> and <code>snakeLength$</code>. Note tha
               <div class="thtrm-article-card-content ">
                 <h3>Cold vs Hot Observables</h3>
                 <p>In this article we are going to demystify what the term hot vs cold means when it comes to Observables....</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2016/05/16/exploring-rx-operators-map.html" title="Exploring Rx Operators: map">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rx-map.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Exploring Rx Operators: map</h3>
-                <p>This is the first article that is part of a new series where we take a look at different operators...</p>
               </div>
             </a>
           </li>

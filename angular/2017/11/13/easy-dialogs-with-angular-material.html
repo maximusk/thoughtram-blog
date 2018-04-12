@@ -92,13 +92,13 @@
 
 <p>One component that’s often needed in different applications but not trivial to implement, is a dialog or modal. Modals need to magically create an overlay and somehow position themselves correctly so that they are always exactly in the middle of the screen. In addition to that, we often want to react to when a user interacts with a modal. Whether they are pressing a button that will close the modal, or simply hitting the escape key to dismiss it right away.</p>
 
-<p>In this article we’ll take a look at how to leverage Angular Material’s built-in <code>MatDialog</code> to create easy to maintain dialogs and modals in our apps!</p>
+<p>In this article we’ll take a look at how to leverage Angular Material’s built-in <code class="highlighter-rouge">MatDialog</code> to create easy to maintain dialogs and modals in our apps!</p>
 
 <div class="thtrm-toc is-sticky">
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
 <ul id="markdown-toc">
   <li><a href="#motivation" id="markdown-toc-motivation">Motivation</a></li>
-  <li><a href="#creating-dialogs-with-matdialog" id="markdown-toc-creating-dialogs-with-matdialog">Creating dialogs with <code>MatDialog</code></a></li>
+  <li><a href="#creating-dialogs-with-matdialog" id="markdown-toc-creating-dialogs-with-matdialog">Creating dialogs with <code class="highlighter-rouge">MatDialog</code></a></li>
   <li><a href="#configuring-dialogs" id="markdown-toc-configuring-dialogs">Configuring dialogs</a></li>
   <li><a href="#adding-material-look--feel" id="markdown-toc-adding-material-look--feel">Adding Material look &amp; feel</a></li>
   <li><a href="#returning-data-from-dialogs" id="markdown-toc-returning-data-from-dialogs">Returning data from dialogs</a></li>
@@ -120,65 +120,65 @@
 
 <p>Let’s get right to it!</p>
 
-<h2 id="creating-dialogs-with-matdialog">Creating dialogs with <code>MatDialog</code></h2>
+<h2 id="creating-dialogs-with-matdialog">Creating dialogs with <code class="highlighter-rouge">MatDialog</code></h2>
 
-<p>Angular Material comes with a very easy to use API to create dialogs using the <code>MatDialog</code> service. In order to get hold of it we first need to import the <code>MatDialogModule</code> into our application’s <code>NgModule</code> like this:</p>
+<p>Angular Material comes with a very easy to use API to create dialogs using the <code class="highlighter-rouge">MatDialog</code> service. In order to get hold of it we first need to import the <code class="highlighter-rouge">MatDialogModule</code> into our application’s <code class="highlighter-rouge">NgModule</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">MatDialogModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">MatDialogModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...</span>
     <span class="nx">MatDialogModule</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>Remember that as of Angular Material <a href="https://github.com/angular/material2/blob/master/CHANGELOG.md#200-beta10-découpage-panjandrum-2017-08-29">2.0.0-beta.10</a> <code>MaterialModule</code> is deprecated, which is why we’re importing <code>MatDialogModule</code> here right away. However, best practice is rather to create your own <code>MaterialModule</code> that imports and exports the needed material modules. We keep it simple here for the sake of this article.</p>
+<p>Remember that as of Angular Material <a href="https://github.com/angular/material2/blob/master/CHANGELOG.md#200-beta10-découpage-panjandrum-2017-08-29">2.0.0-beta.10</a> <code class="highlighter-rouge">MaterialModule</code> is deprecated, which is why we’re importing <code class="highlighter-rouge">MatDialogModule</code> here right away. However, best practice is rather to create your own <code class="highlighter-rouge">MaterialModule</code> that imports and exports the needed material modules. We keep it simple here for the sake of this article.</p>
 
-<p>Now that we’ve imported <code>MatDialogModule</code> we can start using its services and directives. Let’s take a look at where and when we want to create a dialog. As mentioned, the file tree allows users to add or edit files and folders. Too keep things simple, let’s start of with opening a dialog when the “add file” button is clicked.</p>
+<p>Now that we’ve imported <code class="highlighter-rouge">MatDialogModule</code> we can start using its services and directives. Let’s take a look at where and when we want to create a dialog. As mentioned, the file tree allows users to add or edit files and folders. Too keep things simple, let’s start of with opening a dialog when the “add file” button is clicked.</p>
 
 <p>Here’s what the template of the file tree could look like:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
   <span class="nt">&lt;li</span> <span class="err">*</span><span class="na">ngFor=</span><span class="s">"file of files"</span><span class="nt">&gt;</span>
     {{file.name}}
   <span class="nt">&lt;li&gt;</span>
 <span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;button</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">openAddFileDialog</span><span class="err">()"</span><span class="nt">&gt;</span>Add file<span class="nt">&lt;/button&gt;</span></code></pre></div>
+<span class="nt">&lt;button</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">openAddFileDialog</span><span class="err">()"</span><span class="nt">&gt;</span>Add file<span class="nt">&lt;/button&gt;</span></code></pre></figure>
 
 <p>The corresponding component looks something like this (again, simplified):</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
 
   <span class="nx">openAddFileDialog</span><span class="p">()</span> <span class="p">{</span>
 
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Great. Now all we have to do is to use Angular Material’s <code>MatDialog</code> service to create a dialog. To do that we need to inject an instance of that service into our component and  tell it what component type to use to create such a dialog using its <code>open()</code> method. Let’s say we create a component <code>FileNameDialogComponent</code> which takes care of showing an input control so users can enter a name of a new file.</p>
+<p>Great. Now all we have to do is to use Angular Material’s <code class="highlighter-rouge">MatDialog</code> service to create a dialog. To do that we need to inject an instance of that service into our component and  tell it what component type to use to create such a dialog using its <code class="highlighter-rouge">open()</code> method. Let’s say we create a component <code class="highlighter-rouge">FileNameDialogComponent</code> which takes care of showing an input control so users can enter a name of a new file.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">MatDialog</span><span class="p">,</span> <span class="nx">MatDialogRef</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">FileNameDialogComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'../file-name-dialog'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">MatDialog</span><span class="p">,</span> <span class="nx">MatDialogRef</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">FileNameDialogComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'../file-name-dialog'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
 
   <span class="nl">fileNameDialogRef</span><span class="p">:</span> <span class="nx">MatDialogRef</span><span class="o">&lt;</span><span class="nx">FileNameDialogComponent</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">dialog</span><span class="err">:</span> <span class="nx">MatDialog</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">dialog</span><span class="p">:</span> <span class="nx">MatDialog</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">openAddFileDialog</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">fileNameDialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">dialog</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">FileNameDialogComponent</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Another thing we need to do is to add <code>FileNameDialogComponent</code> to our application module’s <code>entryComponents</code>, since it’s dynamically created at runtime.</p>
+<p>Another thing we need to do is to add <code class="highlighter-rouge">FileNameDialogComponent</code> to our application module’s <code class="highlighter-rouge">entryComponents</code>, since it’s dynamically created at runtime.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...</span>
@@ -190,9 +190,9 @@
   <span class="p">],</span>
   <span class="na">entryComponents</span><span class="p">:</span> <span class="p">[</span><span class="nx">FileNameDialogComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>There are a couple of things to note here. We’re injecting <code>MatDialog</code> into our component and call its <code>open()</code> method with the <code>FileNameDialogComponent</code> type when a user wants to add a file. <code>MatDialog#open()</code> returns a <code>MatDialogRef</code> which is, as the name states, a reference to the now created dialog. Yeap, the dialog has already been created with just this little amount of code.</p>
+<p>There are a couple of things to note here. We’re injecting <code class="highlighter-rouge">MatDialog</code> into our component and call its <code class="highlighter-rouge">open()</code> method with the <code class="highlighter-rouge">FileNameDialogComponent</code> type when a user wants to add a file. <code class="highlighter-rouge">MatDialog#open()</code> returns a <code class="highlighter-rouge">MatDialogRef</code> which is, as the name states, a reference to the now created dialog. Yeap, the dialog has already been created with just this little amount of code.</p>
 
 <p>The dialog reference is important because it lets us react to when something with our dialog happens. Also, it turns out that we have access to the same reference inside the dialog itself, enabling us to control the dialog from there. We’ll see in a second when this is useful.</p>
 
@@ -202,17 +202,17 @@
 
 <h2 id="configuring-dialogs">Configuring dialogs</h2>
 
-<p>Every dialog created using <code>MatDialog</code> already comes with a decent default behaviour and default configuration. However, we can still tune things to our needs. This includes things like the <code>width</code> or <code>height</code> of the dialog. Or whether the dialog should have a backdrop or not. Dialog configuration can be easily passed as a second argument to <code>MatDialog#open()</code> as an object like this:</p>
+<p>Every dialog created using <code class="highlighter-rouge">MatDialog</code> already comes with a decent default behaviour and default configuration. However, we can still tune things to our needs. This includes things like the <code class="highlighter-rouge">width</code> or <code class="highlighter-rouge">height</code> of the dialog. Or whether the dialog should have a backdrop or not. Dialog configuration can be easily passed as a second argument to <code class="highlighter-rouge">MatDialog#open()</code> as an object like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">openAddFileDialog</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">fileNameDialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">dialog</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">FileNameDialogComponent</span><span class="p">,</span> <span class="p">{</span>
       <span class="na">hasBackdrop</span><span class="p">:</span> <span class="kc">false</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>For a full list of configuration options checkout the dedicated <a href="https://material.angular.io/components/dialog/api#MatDialogConfig">API documentation</a>.</p>
 
@@ -228,21 +228,21 @@
   <li><strong>mat-dialog-actions</strong> - Good for action elements like buttons to confirm or close a dialog</li>
 </ul>
 
-<p>Alright, that’s use those in our <code>FileNameDialogComponent</code>:</p>
+<p>Alright, that’s use those in our <code class="highlighter-rouge">FileNameDialogComponent</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">mat</span><span class="o">-</span><span class="nx">dialog</span><span class="o">-</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">Add</span> <span class="nx">file</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">mat</span><span class="o">-</span><span class="nx">dialog</span><span class="o">-</span><span class="nx">content</span><span class="o">&gt;</span>
-      <span class="nx">Content</span> <span class="nx">goes</span> <span class="nx">here</span>
-    <span class="o">&lt;</span><span class="sr">/mat-dialog-content</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">mat</span><span class="o">-</span><span class="nx">dialog</span><span class="o">-</span><span class="nx">actions</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">mat</span><span class="o">-</span><span class="nx">button</span><span class="o">&gt;</span><span class="nx">Add</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">mat</span><span class="o">-</span><span class="nx">button</span><span class="o">&gt;</span><span class="nx">Cancel</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/mat-dialog-actions</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h1 mat-dialog-title&gt;Add file&lt;/h1&gt;
+    &lt;mat-dialog-content&gt;
+      Content goes here
+    &lt;/mat-dialog-content&gt;
+    &lt;mat-dialog-actions&gt;
+      &lt;button mat-button&gt;Add&lt;/button&gt;
+      &lt;button mat-button&gt;Cancel&lt;/button&gt;
+    &lt;/mat-dialog-actions&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileNameDialogComponent</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileNameDialogComponent</span> <span class="p">{}</span></code></pre></figure>
 
 <p>Okay, this already looks much better. Next we take care of accessing data returned by a dialog.</p>
 
@@ -250,24 +250,24 @@
 
 <h2 id="returning-data-from-dialogs">Returning data from dialogs</h2>
 
-<p>Now that our dialog looks good as well, we need to find a way to let the user enter a file name and once confirmed, taking that name and create a new file object in our application. As mentioned earlier, each <code>MatDialogRef</code> gives us APIs to react to events emitted by a dialog. When a dialog gets closed, either by hitting the escape key or by closing it using APIs, the <code>afterClosed()</code> Observable emits. From within the dialog, we can control if and what gets emitted by the dialog when it’s closed, giving us all the tools we need complete implementing this feature.</p>
+<p>Now that our dialog looks good as well, we need to find a way to let the user enter a file name and once confirmed, taking that name and create a new file object in our application. As mentioned earlier, each <code class="highlighter-rouge">MatDialogRef</code> gives us APIs to react to events emitted by a dialog. When a dialog gets closed, either by hitting the escape key or by closing it using APIs, the <code class="highlighter-rouge">afterClosed()</code> Observable emits. From within the dialog, we can control if and what gets emitted by the dialog when it’s closed, giving us all the tools we need complete implementing this feature.</p>
 
-<p>Let’s first take care of emitting the file name entered by the user after closing the dialog. To do that we create a small form within our <code>FileNameDialogComponent</code> which will close the dialog once it’s submitted.</p>
+<p>Let’s first take care of emitting the file name entered by the user after closing the dialog. To do that we create a small form within our <code class="highlighter-rouge">FileNameDialogComponent</code> which will close the dialog once it’s submitted.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">MatDialogRef</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">FormGroup</span><span class="p">,</span> <span class="nx">FormBuilder</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">MatDialogRef</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">FormGroup</span><span class="p">,</span> <span class="nx">FormBuilder</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'./file-name-dialog.component'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileNameDialogComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileNameDialogComponent</span> <span class="p">{</span>
 
   <span class="nl">form</span><span class="p">:</span> <span class="nx">FormGroup</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span>
-    <span class="kr">private</span> <span class="nx">formBuilder</span><span class="err">:</span> <span class="nx">FormBuilder</span><span class="p">,</span>
-    <span class="kr">private</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">MatDialogRef</span><span class="o">&lt;</span><span class="nx">FileNameDialogComponent</span><span class="o">&gt;</span>
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="kr">private</span> <span class="nx">formBuilder</span><span class="p">:</span> <span class="nx">FormBuilder</span><span class="p">,</span>
+    <span class="kr">private</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">MatDialogRef</span><span class="o">&lt;</span><span class="nx">FileNameDialogComponent</span><span class="o">&gt;</span>
   <span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
@@ -277,15 +277,15 @@
   <span class="p">}</span>
 
   <span class="nx">submit</span><span class="p">(</span><span class="nx">form</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">close</span><span class="p">(</span><span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="nx">form</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">filename</span><span class="p">}</span><span class="err">`</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">close</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">form</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">filename</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Notice how we inject <code>MatDialogRef&lt;FileNameDialogComponent&gt;</code>. Yes, this is exactly the same reference we have access to from within our <code>FileTreeComponent</code>. <code>MatDialogRef</code> has a method <code>close()</code> which will essentially close the dialog. Any data that is passed to that method call will be emitted in its <code>afterClosed()</code> stream. Since the template got a little bigger now, we’ve extracted it into its own template file.</p>
+<p>Notice how we inject <code class="highlighter-rouge">MatDialogRef&lt;FileNameDialogComponent&gt;</code>. Yes, this is exactly the same reference we have access to from within our <code class="highlighter-rouge">FileTreeComponent</code>. <code class="highlighter-rouge">MatDialogRef</code> has a method <code class="highlighter-rouge">close()</code> which will essentially close the dialog. Any data that is passed to that method call will be emitted in its <code class="highlighter-rouge">afterClosed()</code> stream. Since the template got a little bigger now, we’ve extracted it into its own template file.</p>
 
 <p>Here’s what it looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">form</span> <span class="p">[</span><span class="nx">formGroup</span><span class="p">]</span><span class="o">=</span><span class="s2">"form"</span> <span class="p">(</span><span class="nx">ngSubmit</span><span class="p">)</span><span class="o">=</span><span class="s2">"submit(form)"</span><span class="o">&gt;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">form</span> <span class="p">[</span><span class="nx">formGroup</span><span class="p">]</span><span class="o">=</span><span class="s2">"form"</span> <span class="p">(</span><span class="nx">ngSubmit</span><span class="p">)</span><span class="o">=</span><span class="s2">"submit(form)"</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">mat</span><span class="o">-</span><span class="nx">dialog</span><span class="o">-</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">Add</span> <span class="nx">file</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
 </span>  <span class="o">&lt;</span><span class="nx">mat</span><span class="o">-</span><span class="nx">dialog</span><span class="o">-</span><span class="nx">content</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="nx">mat</span><span class="o">-</span><span class="nx">form</span><span class="o">-</span><span class="nx">field</span><span class="o">&gt;</span>
@@ -296,17 +296,17 @@
     <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">mat</span><span class="o">-</span><span class="nx">button</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"submit"</span><span class="o">&gt;</span><span class="nx">Add</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
 </span>    <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">mat</span><span class="o">-</span><span class="nx">button</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"button"</span> <span class="nx">mat</span><span class="o">-</span><span class="nx">dialog</span><span class="o">-</span><span class="nx">close</span><span class="o">&gt;</span><span class="nx">Cancel</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
 </span>  <span class="o">&lt;</span><span class="sr">/mat-dialog-actions</span><span class="err">&gt;
-</span><span class="o">&lt;</span><span class="sr">/form&gt;</span></code></pre></div>
+</span><span class="o">&lt;</span><span class="sr">/form&gt;</span></code></pre></figure>
 
-<p>One thing to point out here is that we use the <code>mat-dialog-close</code> directive, which is kind of the equivalent to <code>(click)="dialogRef.close()"</code>, just that we don’t have to type it out every time. If all these forms APIs are new to you, we recommend checkout out our articles on <a href="/angular/2016/03/21/template-driven-forms-in-angular-2.html">Template-driven Forms</a> and <a href="https://blog.thoughtram.io/angular/2016/06/22/model-driven-forms-in-angular-2.html">Reactive Forms</a> in Angular.</p>
+<p>One thing to point out here is that we use the <code class="highlighter-rouge">mat-dialog-close</code> directive, which is kind of the equivalent to <code class="highlighter-rouge">(click)="dialogRef.close()"</code>, just that we don’t have to type it out every time. If all these forms APIs are new to you, we recommend checkout out our articles on <a href="/angular/2016/03/21/template-driven-forms-in-angular-2.html">Template-driven Forms</a> and <a href="https://blog.thoughtram.io/angular/2016/06/22/model-driven-forms-in-angular-2.html">Reactive Forms</a> in Angular.</p>
 
-<p>Great! Now that our dialog emits the entered file name, we can access it from within <code>FileTreeComponent</code> and create a new file object. In order to do that, we subscribe to <code>fileNameDialogRef.afterClosed()</code>. We also need to make sure that we only perform our file object creation when the emittion has an actual value and isn’t an empty string. This can be done easily by using Reactive Extensions and its <code>filter</code> operator (obviously we should add some validation for that but let’s not get distracted too much here).</p>
+<p>Great! Now that our dialog emits the entered file name, we can access it from within <code class="highlighter-rouge">FileTreeComponent</code> and create a new file object. In order to do that, we subscribe to <code class="highlighter-rouge">fileNameDialogRef.afterClosed()</code>. We also need to make sure that we only perform our file object creation when the emittion has an actual value and isn’t an empty string. This can be done easily by using Reactive Extensions and its <code class="highlighter-rouge">filter</code> operator (obviously we should add some validation for that but let’s not get distracted too much here).</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">filter</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">filter</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">openAddFileDialog</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">fileNameDialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">dialog</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">FileNameDialogComponent</span><span class="p">,</span> <span class="p">{</span>
@@ -318,7 +318,7 @@
         <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">filter</span><span class="p">(</span><span class="nx">name</span> <span class="o">=&gt;</span> <span class="nx">name</span><span class="p">))</span>
         <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">name</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">name</span><span class="p">,</span> <span class="na">content</span><span class="p">:</span> <span class="s1">''</span> <span class="p">}));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>That’s it! We can now add new files to our file tree via our brand new dialog. As mentioned earlier, we would also obviously take care of some validation, such as not allowing the user to submit the form when no file name has been entered. Another thing we might want to ensure is that no duplicated files can be created. However, this is out of the scope of this article.</p>
 
@@ -330,22 +330,22 @@
 
 <p>There’s one more thing we need to implement to make our dialog also work for scenarios where users want to edit an existing file name - sharing data between dialogs. When users edit a file name, we most likely want to simply reuse the same dialog we’ve just created because it’s essentially exactly the same form with the same rules and same behaviour, just that it should be pre-filled with the name of the file to edit. In other words, we need to find a way to pass data to the dialog that’s going to be opened.</p>
 
-<p>Luckily, this is quite easy because Angular Material got us covered! It turns out that we can pass any data we want to a dialog using its configuration when the dialog is created. All we have to do is to attach the data we need inside the dialog to the configuration’s <code>data</code> property.</p>
+<p>Luckily, this is quite easy because Angular Material got us covered! It turns out that we can pass any data we want to a dialog using its configuration when the dialog is created. All we have to do is to attach the data we need inside the dialog to the configuration’s <code class="highlighter-rouge">data</code> property.</p>
 
-<p>Since we want to use the same dialog for both actions, let’s also rename <code>openAddFileDialog()</code> to <code>openFileDialog()</code> and give it an optional <code>file</code> parameter. Here’s what that would look like:</p>
+<p>Since we want to use the same dialog for both actions, let’s also rename <code class="highlighter-rouge">openAddFileDialog()</code> to <code class="highlighter-rouge">openFileDialog()</code> and give it an optional <code class="highlighter-rouge">file</code> parameter. Here’s what that would look like:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
   <span class="nt">&lt;li</span> <span class="err">*</span><span class="na">ngFor=</span><span class="s">"file of files"</span><span class="nt">&gt;</span>
     {{file.name}}
     <span class="nt">&lt;button</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">openFileDialog</span><span class="err">(</span><span class="na">file</span><span class="err">)"</span><span class="nt">&gt;</span>Edit file<span class="nt">&lt;/button&gt;</span>
   <span class="nt">&lt;li&gt;</span>
 <span class="nt">&lt;/ul&gt;</span>
-<span class="nt">&lt;button</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">openFileDialog</span><span class="err">()"</span><span class="nt">&gt;</span>Add file<span class="nt">&lt;/button&gt;</span></code></pre></div>
+<span class="nt">&lt;button</span> <span class="err">(</span><span class="na">click</span><span class="err">)="</span><span class="na">openFileDialog</span><span class="err">()"</span><span class="nt">&gt;</span>Add file<span class="nt">&lt;/button&gt;</span></code></pre></figure>
 
 <p>Now, we also need to check inside our component whether a file has been passed to that method or not, and pass it on to the dialog like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">openFileDialog</span><span class="p">(</span><span class="nx">file</span><span class="p">?)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">fileNameDialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">dialog</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">FileNameDialogComponent</span><span class="p">,</span> <span class="p">{</span>
@@ -356,24 +356,24 @@
     <span class="p">});</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>All we need to do now is taking this data in our dialog and pre-fill our the form control accordingly. We can inject any data that is passed like that using the <code>MAT_DIALOG_DATA</code> injection token.</p>
+<p>All we need to do now is taking this data in our dialog and pre-fill our the form control accordingly. We can inject any data that is passed like that using the <code class="highlighter-rouge">MAT_DIALOG_DATA</code> injection token.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span><span class="p">,</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">MatDialogRef</span><span class="p">,</span> <span class="nx">MAT_DIALOG_DATA</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">OnInit</span><span class="p">,</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">MatDialogRef</span><span class="p">,</span> <span class="nx">MAT_DIALOG_DATA</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'./file-name-dialog.component'</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileNameDialogComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileNameDialogComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
   <span class="nl">form</span><span class="p">:</span> <span class="nx">FormGroup</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span>
-    <span class="kr">private</span> <span class="nx">formBuilder</span><span class="err">:</span> <span class="nx">FormBuilder</span><span class="p">,</span>
-    <span class="kr">private</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">MatDialogRef</span><span class="o">&lt;</span><span class="nx">FileNameDialogComponent</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">MAT_DIALOG_DATA</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">data</span>
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="kr">private</span> <span class="nx">formBuilder</span><span class="p">:</span> <span class="nx">FormBuilder</span><span class="p">,</span>
+    <span class="kr">private</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">MatDialogRef</span><span class="o">&lt;</span><span class="nx">FileNameDialogComponent</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="p">@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">MAT_DIALOG_DATA</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">data</span>
   <span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
@@ -381,14 +381,14 @@
       <span class="na">filename</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="p">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">name</span> <span class="p">:</span> <span class="s1">''</span>
     <span class="p">})</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Last but not least we need to ensure that when the dialog is closed, we update the file that has been edited instead of adding a new one. We keep it simple and just look for the index of the file that’s being edited and replace it with the updated one.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">(...)</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">(...)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">FileTreeComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">openAddFileDialog</span><span class="p">(</span><span class="nx">file</span><span class="p">?)</span> <span class="p">{</span>
     <span class="p">...</span>
@@ -397,7 +397,7 @@
       <span class="nx">filter</span><span class="p">(</span><span class="nx">name</span> <span class="o">=&gt;</span> <span class="nx">name</span><span class="p">)</span>
     <span class="p">).</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">name</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kr">const</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">f</span> <span class="o">=&gt;</span> <span class="nx">f</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="nx">file</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+        <span class="kd">const</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">f</span> <span class="o">=&gt;</span> <span class="nx">f</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="nx">file</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
           <span class="k">this</span><span class="p">.</span><span class="nx">files</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="p">,</span> <span class="na">content</span><span class="p">:</span> <span class="nx">file</span><span class="p">.</span><span class="nx">content</span> <span class="p">}</span>
         <span class="p">}</span>
@@ -406,7 +406,7 @@
       <span class="p">}</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Again, this is a trivial file tree implementation. In a real-world app we probably want to take care of having nested directories as well, which changes the level of complexity dramatically here. However, since this article is really all about how easy it is to create dialogs using Angular Material, we stick with what we have.</p>
 
@@ -540,6 +540,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -556,17 +567,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/08/angular-master-class-redux-and-ngrx.html" title="Angular Master Class - Redux and ngrx">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/ngrx_slide_logo.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Angular Master Class - Redux and ngrx</h3>
-                <p>Today we're super excited to announce that we finished working on our new Angular Master Class courseware. Read on for...</p>
               </div>
             </a>
           </li>

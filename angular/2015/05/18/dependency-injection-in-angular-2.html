@@ -115,7 +115,7 @@
   <h4 id="how-to-inject-a-service-in-angular">How to inject a service in Angular?</h4>
 
   <ol>
-    <li>Create a provider either on your <code>@NgModule</code>, <code>@Component</code>, or <code>@Directive</code> using a type or a string as provider token.</li>
+    <li>Create a provider either on your <code class="highlighter-rouge">@NgModule</code>, <code class="highlighter-rouge">@Component</code>, or <code class="highlighter-rouge">@Directive</code> using a type or a string as provider token.</li>
     <li>Inject the service in the component’s constructor where it’s needed using that configured token.</li>
   </ol>
 </div>
@@ -149,85 +149,85 @@
 
 <p>We start by taking a look at the following code and analysing the problems it introduces.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Car</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Car</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Engine</span><span class="p">();</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">tires</span> <span class="o">=</span> <span class="nx">Tires</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">doors</span> <span class="o">=</span> <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'doors'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">doors</span> <span class="o">=</span> <span class="nx">app</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'doors'</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Nothing special here. We have a class <code>Car</code> that has a constructor in which we set up everything we need in order to construct a car object once needed. What’s the problem with this code? Well, as you can see, the constructor not only assigns needed dependencies to internal properties, it also knows how those object are created. For example the engine object is created using the <code>Engine</code> constructor, <code>Tires</code> seems to be a singleton interface and the doors are requested via a global object that acts as a <strong>service locator</strong>.</p>
+<p>Nothing special here. We have a class <code class="highlighter-rouge">Car</code> that has a constructor in which we set up everything we need in order to construct a car object once needed. What’s the problem with this code? Well, as you can see, the constructor not only assigns needed dependencies to internal properties, it also knows how those object are created. For example the engine object is created using the <code class="highlighter-rouge">Engine</code> constructor, <code class="highlighter-rouge">Tires</code> seems to be a singleton interface and the doors are requested via a global object that acts as a <strong>service locator</strong>.</p>
 
-<p>This leads to code that is hard to maintain and even harder to test. Just imagine you’d like to test this class. How would you replace <code>Engine</code> with a <code>MockEngine</code> dependency in that code? When writing tests, we want to test different scenarios that our code is used in, hence each scenario needs its own configuration. If we want to write testable code, we need to write reusable code. Our code should work in any environment as long as all dependencies are satisfied. Which brings us to the conclusion that <strong>testable code is reusable code</strong> and vise versa.</p>
+<p>This leads to code that is hard to maintain and even harder to test. Just imagine you’d like to test this class. How would you replace <code class="highlighter-rouge">Engine</code> with a <code class="highlighter-rouge">MockEngine</code> dependency in that code? When writing tests, we want to test different scenarios that our code is used in, hence each scenario needs its own configuration. If we want to write testable code, we need to write reusable code. Our code should work in any environment as long as all dependencies are satisfied. Which brings us to the conclusion that <strong>testable code is reusable code</strong> and vise versa.</p>
 
 <p>So how can we write this code better and make it more testable? It’s super easy and you probably already know what to do. We change our code to this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Car</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">engine</span><span class="p">,</span> <span class="nx">tires</span><span class="p">,</span> <span class="nx">doors</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Car</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">engine</span><span class="p">,</span> <span class="nx">tires</span><span class="p">,</span> <span class="nx">doors</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">engine</span> <span class="o">=</span> <span class="nx">engine</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">tires</span> <span class="o">=</span> <span class="nx">tires</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">doors</span> <span class="o">=</span> <span class="nx">doors</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>All we did is we moved the dependency creation out of the constructor and extended the constructor function to expect all needed dependencies. There are no concrete implementations anymore in this code, we literally moved the responsibility of creating those dependencies to a higher level. If we want to create a car object now, all we have to do is to pass all needed dependencies to the constructor:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Car</span><span class="p">(</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Car</span><span class="p">(</span>
   <span class="k">new</span> <span class="nx">Engine</span><span class="p">(),</span>
   <span class="k">new</span> <span class="nx">Tires</span><span class="p">(),</span>
   <span class="k">new</span> <span class="nx">Doors</span><span class="p">()</span>
-<span class="p">);</span></code></pre></div>
+<span class="p">);</span></code></pre></figure>
 
 <p>How cool is that? The dependencies are now decoupled from our class, which allows us to pass in mocked dependencies in case we’re writing tests:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Car</span><span class="p">(</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Car</span><span class="p">(</span>
   <span class="k">new</span> <span class="nx">MockEngine</span><span class="p">(),</span>
   <span class="k">new</span> <span class="nx">MockTires</span><span class="p">(),</span>
   <span class="k">new</span> <span class="nx">MockDoors</span><span class="p">()</span>
-<span class="p">);</span></code></pre></div>
+<span class="p">);</span></code></pre></figure>
 
 <p>And guess what, <strong>this is dependency injection</strong>. To be a bit more specific, this particular pattern is also called <strong>constructor injection</strong>. There are two other injection patterns, setter injection and interface injection, but we won’t cover them in this article.</p>
 
 <p>Okay cool, now we use DI, but when comes a DI <strong>system</strong> into play? As mentioned before, we literally moved the responsibility of dependency creation to a higher level. And this is exactly what our new problem is. Who takes care of assembling all those dependencies for us? It’s us.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Engine</span><span class="p">();</span>
   <span class="kd">var</span> <span class="nx">tires</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Tires</span><span class="p">();</span>
   <span class="kd">var</span> <span class="nx">doors</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Doors</span><span class="p">();</span>
   <span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Car</span><span class="p">(</span><span class="nx">engine</span><span class="p">,</span> <span class="nx">tires</span><span class="p">,</span> <span class="nx">doors</span><span class="p">);</span>
 
   <span class="nx">car</span><span class="p">.</span><span class="nx">drive</span><span class="p">();</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We need to maintain a <code>main</code> function now. Doing that manually can be quite hairy, especially when the application gets bigger and bigger. Wouldn’t it be nice if we could do something like this?</p>
+<p>We need to maintain a <code class="highlighter-rouge">main</code> function now. Doing that manually can be quite hairy, especially when the application gets bigger and bigger. Wouldn’t it be nice if we could do something like this?</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Injector</span><span class="p">(...)</span>
-  <span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">Car</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">Car</span><span class="p">);</span>
 
   <span class="nx">car</span><span class="p">.</span><span class="nx">drive</span><span class="p">();</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <h2 id="dependency-injection-as-a-framework">Dependency Injection as a framework</h2>
 
-<p>This is where dependency injection as a framework comes in. As we all know, Angular 1 has it’s own DI system which allows us to annotate services and other components and let the injector find out, what dependencies need to be instantiated. For example, the following code shows how we can annotate our <code>Car</code> class in Angular 1:</p>
+<p>This is where dependency injection as a framework comes in. As we all know, Angular 1 has it’s own DI system which allows us to annotate services and other components and let the injector find out, what dependencies need to be instantiated. For example, the following code shows how we can annotate our <code class="highlighter-rouge">Car</code> class in Angular 1:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Car</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Car</span> <span class="p">{</span>
   <span class="p">...</span>
 <span class="p">}</span>
 
-<span class="nx">Car</span><span class="p">.</span><span class="nx">$inject</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Engine'</span><span class="p">,</span> <span class="s1">'Tires'</span><span class="p">,</span> <span class="s1">'Doors'</span><span class="p">];</span></code></pre></div>
+<span class="nx">Car</span><span class="p">.</span><span class="nx">$inject</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Engine'</span><span class="p">,</span> <span class="s1">'Tires'</span><span class="p">,</span> <span class="s1">'Doors'</span><span class="p">];</span></code></pre></figure>
 
-<p>Then, we register our <code>Car</code> as a service and whenever we ask for it, we get a singleton instance of it without needing to care about creating needed dependencies for the car.</p>
+<p>Then, we register our <code class="highlighter-rouge">Car</code> as a service and whenever we ask for it, we get a singleton instance of it without needing to care about creating needed dependencies for the car.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]);</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]);</span>
 
 <span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'Car'</span><span class="p">,</span> <span class="nx">Car</span><span class="p">);</span>
 
 <span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'OtherService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Car</span><span class="p">)</span> <span class="p">{</span> 
   <span class="c1">// instance of Car available</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>This is all cool but it turns out, that the existing DI has some problem though:</p>
 
@@ -246,9 +246,9 @@
   <h3 id="attention">Attention</h3>
 
   <p><br />
-The <code>ReflectiveInjector</code> APIs discussed in this article are deprecated as of <a href="https://github.com/angular/angular/commit/fcadbf4bf6d00ea5b250a8069e05b3e4bd000a29">this commit</a>.</p>
+The <code class="highlighter-rouge">ReflectiveInjector</code> APIs discussed in this article are deprecated as of <a href="https://github.com/angular/angular/commit/fcadbf4bf6d00ea5b250a8069e05b3e4bd000a29">this commit</a>.</p>
 
-  <p>To learn about the newer <code>StaticInjector</code> API, head over to <a href="#new-staticinjector-apis">this section</a>. However, concepts are still exactly the same, so it’s worthwhile to keep on reading.</p>
+  <p>To learn about the newer <code class="highlighter-rouge">StaticInjector</code> API, head over to <a href="#new-staticinjector-apis">this section</a>. However, concepts are still exactly the same, so it’s worthwhile to keep on reading.</p>
 </div>
 
 <p>Before we take a look at actual code, let’s first understand the concept behind the new DI in Angular. The following graphic illustrates required components in the new DI system:</p>
@@ -263,9 +263,9 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
   <li><strong>Dependency</strong> - A dependency is the <strong>type</strong> of which an object should be created.</li>
 </ul>
 
-<p>Okay, now that we have an idea of what the concept looks like, lets see how this is translated to code. We stick with our <code>Car</code> class and it’s dependencies. Here’s how we can use Angular’s DI to get an instance of <code>Car</code>:</p>
+<p>Okay, now that we have an idea of what the concept looks like, lets see how this is translated to code. We stick with our <code class="highlighter-rouge">Car</code> class and it’s dependencies. Here’s how we can use Angular’s DI to get an instance of <code class="highlighter-rouge">Car</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ReflectiveInjector</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">ReflectiveInjector</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
   <span class="nx">Car</span><span class="p">,</span>
@@ -274,57 +274,57 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
   <span class="nx">Doors</span>
 <span class="p">]);</span>
           
-<span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">Car</span><span class="p">);</span></code></pre></div>
+<span class="kd">var</span> <span class="nx">car</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">Car</span><span class="p">);</span></code></pre></figure>
 
-<p>We import <code>ReflectiveInjector</code> from Angular which is an injector implementation that exposes some static APIs to create injectors. <code>resolveAndCreate()</code> is basically a factory function that creates an injector and takes a list of providers. We’ll explore how those classes are supposed to be providers in a second, but for now we focus on <code>injector.get()</code>. See how we ask for an instance of <code>Car</code> in the last line? How does our injector know, which dependencies need to be created in order to instantiate a car? A look at our <code>Car</code> class will explain…</p>
+<p>We import <code class="highlighter-rouge">ReflectiveInjector</code> from Angular which is an injector implementation that exposes some static APIs to create injectors. <code class="highlighter-rouge">resolveAndCreate()</code> is basically a factory function that creates an injector and takes a list of providers. We’ll explore how those classes are supposed to be providers in a second, but for now we focus on <code class="highlighter-rouge">injector.get()</code>. See how we ask for an instance of <code class="highlighter-rouge">Car</code> in the last line? How does our injector know, which dependencies need to be created in order to instantiate a car? A look at our <code class="highlighter-rouge">Car</code> class will explain…</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="kr">class</span> <span class="nx">Car</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span>
-    <span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">Engine</span><span class="p">)</span> <span class="nx">engine</span><span class="p">,</span>
-    <span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">Tires</span><span class="p">)</span> <span class="nx">tires</span><span class="p">,</span>
-    <span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">Doors</span><span class="p">)</span> <span class="nx">doors</span>
+<span class="kd">class</span> <span class="nx">Car</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="p">@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">Engine</span><span class="p">)</span> <span class="nx">engine</span><span class="p">,</span>
+    <span class="p">@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">Tires</span><span class="p">)</span> <span class="nx">tires</span><span class="p">,</span>
+    <span class="p">@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">Doors</span><span class="p">)</span> <span class="nx">doors</span>
   <span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We import something called <code>Inject</code> from the framework and apply it as decorator to our constructor parameters. If you don’t know what decorators are, you might want to read our articles on <a href="/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between decorators and annotations</a> and how to <a href="/angular/2015/05/09/writing-angular-2-code-in-es5.html">write Angular code in ES5</a>.</p>
+<p>We import something called <code class="highlighter-rouge">Inject</code> from the framework and apply it as decorator to our constructor parameters. If you don’t know what decorators are, you might want to read our articles on <a href="/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between decorators and annotations</a> and how to <a href="/angular/2015/05/09/writing-angular-2-code-in-es5.html">write Angular code in ES5</a>.</p>
 
-<p>The <code>Inject</code> decorator attaches meta data to our <code>Car</code> class, that is then consumed by the DI system afterwards. So basically what we’re doing here, is that we tell the DI that the first constructor parameter should be an instance of type <code>Engine</code>, the second of type <code>Tires</code> and the third of type <code>Doors</code>. We can rewrite this code to TypeScript, which feels a bit more natural:</p>
+<p>The <code class="highlighter-rouge">Inject</code> decorator attaches meta data to our <code class="highlighter-rouge">Car</code> class, that is then consumed by the DI system afterwards. So basically what we’re doing here, is that we tell the DI that the first constructor parameter should be an instance of type <code class="highlighter-rouge">Engine</code>, the second of type <code class="highlighter-rouge">Tires</code> and the third of type <code class="highlighter-rouge">Doors</code>. We can rewrite this code to TypeScript, which feels a bit more natural:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Car</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">engine</span><span class="err">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="nx">tires</span><span class="err">:</span> <span class="nx">Tires</span><span class="p">,</span> <span class="nx">doors</span><span class="err">:</span> <span class="nx">Doors</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Car</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">engine</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="nx">tires</span><span class="p">:</span> <span class="nx">Tires</span><span class="p">,</span> <span class="nx">doors</span><span class="p">:</span> <span class="nx">Doors</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Nice, our class declares it’s own dependencies and the DI can read that information to instantiate whatever is needed to create an object of <code>Car</code>. But how does the injector know <strong>how</strong> to create such an object? This is where the providers come into play. Remember the <code>resolveAndCreate()</code> method in which we passed a list of classes?</p>
+<p>Nice, our class declares it’s own dependencies and the DI can read that information to instantiate whatever is needed to create an object of <code class="highlighter-rouge">Car</code>. But how does the injector know <strong>how</strong> to create such an object? This is where the providers come into play. Remember the <code class="highlighter-rouge">resolveAndCreate()</code> method in which we passed a list of classes?</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
   <span class="nx">Car</span><span class="p">,</span>
   <span class="nx">Engine</span><span class="p">,</span>
   <span class="nx">Tires</span><span class="p">,</span>
   <span class="nx">Doors</span>
-<span class="p">]);</span></code></pre></div>
+<span class="p">]);</span></code></pre></figure>
 
 <p>Again, you might wonder how this list of classes is supposed to be a list of providers. Well, it turns out that this is actually a shorthand syntax. If we translate this to the longer, more verbose, syntax, things might become a bit more clear.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">RelfectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">RelfectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Car</span> <span class="p">},</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Engine</span> <span class="p">},</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Tires</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Tires</span> <span class="p">},</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Doors</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">Doors</span> <span class="p">}</span>
-<span class="p">]);</span></code></pre></div>
+<span class="p">]);</span></code></pre></figure>
 
-<p>We have an object with a <code>provide</code> property, that maps a <strong>token</strong> to a configuration object. The token can either be a type or a string. If you read those providers now, it’s much easier to understand what’s happening. We provide an instance of type <code>Car</code> via the class <code>Car</code>,  type <code>Engine</code> via the class <code>Engine</code> and so on and so forth. This is the recipe mechanism we were talking about earlier. So with the providers we not only let the injector know which dependencies are used across the application, we also configure how objects of these dependencies are created.</p>
+<p>We have an object with a <code class="highlighter-rouge">provide</code> property, that maps a <strong>token</strong> to a configuration object. The token can either be a type or a string. If you read those providers now, it’s much easier to understand what’s happening. We provide an instance of type <code class="highlighter-rouge">Car</code> via the class <code class="highlighter-rouge">Car</code>,  type <code class="highlighter-rouge">Engine</code> via the class <code class="highlighter-rouge">Engine</code> and so on and so forth. This is the recipe mechanism we were talking about earlier. So with the providers we not only let the injector know which dependencies are used across the application, we also configure how objects of these dependencies are created.</p>
 
-<p>Now the next question comes up: When do we want to use the longer instead of the shorthand syntax? There’s no reason to write <code>{ provide: Foo, useClass: Foo}</code> if we could just stick with <code>Foo</code>, right? Yes, that’s correct. That’s why we started with the shorthand syntax in the first place. However, the longer syntax enables us to do something very very powerful. Take a look at the next code snippet.</p>
+<p>Now the next question comes up: When do we want to use the longer instead of the shorthand syntax? There’s no reason to write <code class="highlighter-rouge">{ provide: Foo, useClass: Foo}</code> if we could just stick with <code class="highlighter-rouge">Foo</code>, right? Yes, that’s correct. That’s why we started with the shorthand syntax in the first place. However, the longer syntax enables us to do something very very powerful. Take a look at the next code snippet.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="nx">useClass</span><span class="err">:</span> <span class="nx">OtherEngine</span> <span class="p">}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="nx">useClass</span><span class="p">:</span> <span class="nx">OtherEngine</span> <span class="p">}</span></code></pre></figure>
 
-<p>Right. We can map a token to pretty much what ever we want. Here we’re mapping the token <code>Engine</code> to the class <code>OtherEngine</code>. Which means, when we now ask for an object of type <code>Engine</code>, we get an instance of class <code>OtherEngine</code>.</p>
+<p>Right. We can map a token to pretty much what ever we want. Here we’re mapping the token <code class="highlighter-rouge">Engine</code> to the class <code class="highlighter-rouge">OtherEngine</code>. Which means, when we now ask for an object of type <code class="highlighter-rouge">Engine</code>, we get an instance of class <code class="highlighter-rouge">OtherEngine</code>.</p>
 
 <p>This is super powerful, because this allows us not only to prevent name collisions, we can also create a type as interface and bind it to a concrete implementation. In addition to that, we can swap out the actual dependency for a token in a single place without touching any other code.</p>
 
@@ -336,9 +336,9 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
 
 <p><strong>Providing values</strong></p>
 
-<p>We can provide a simple value using <code>useValue: value</code></p>
+<p>We can provide a simple value using <code class="highlighter-rouge">useValue: value</code></p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="s1">'some value'</span><span class="p">,</span> <span class="nx">useValue</span><span class="err">:</span> <span class="s1">'Hello World'</span> <span class="p">}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="s1">'some value'</span><span class="p">,</span> <span class="nx">useValue</span><span class="p">:</span> <span class="s1">'Hello World'</span> <span class="p">}</span></code></pre></figure>
 
 <p>This comes in handy when we want to provide simple configuration values.</p>
 
@@ -346,45 +346,45 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
 
 <p>We can map an alias token to another token like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="nx">useClass</span><span class="err">:</span> <span class="nx">Engine</span> <span class="p">}</span>
-<span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">V8</span><span class="p">,</span> <span class="nx">useExisting</span><span class="err">:</span> <span class="nx">Engine</span> <span class="p">}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span> <span class="nx">useClass</span><span class="p">:</span> <span class="nx">Engine</span> <span class="p">}</span>
+<span class="p">{</span> <span class="nl">provide</span><span class="p">:</span> <span class="nx">V8</span><span class="p">,</span> <span class="nx">useExisting</span><span class="p">:</span> <span class="nx">Engine</span> <span class="p">}</span></code></pre></figure>
 
 <p><strong>Providing factories</strong></p>
 
 <p>Yes, our beloved factories.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> 
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> 
   <span class="nl">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span>
-  <span class="nx">useFactory</span><span class="err">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">useFactory</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">IS_V8</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">return</span> <span class="k">new</span> <span class="nx">V8Engine</span><span class="p">();</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
       <span class="k">return</span> <span class="k">new</span> <span class="nx">V6Engine</span><span class="p">();</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Of course, a factory might have its own dependencies. Passing dependencies to factories is as easy as adding a list of tokens to the factory:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span>
   <span class="nl">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span>
-  <span class="nx">useFactory</span><span class="err">:</span> <span class="p">(</span><span class="nx">car</span><span class="p">,</span> <span class="nx">engine</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">useFactory</span><span class="p">:</span> <span class="p">(</span><span class="nx">car</span><span class="p">,</span> <span class="nx">engine</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
 
   <span class="p">},</span>
-  <span class="nx">deps</span><span class="err">:</span> <span class="p">[</span><span class="nx">Car</span><span class="p">,</span> <span class="nx">Engine</span><span class="p">]</span>
-<span class="p">}</span></code></pre></div>
+  <span class="nx">deps</span><span class="p">:</span> <span class="p">[</span><span class="nx">Car</span><span class="p">,</span> <span class="nx">Engine</span><span class="p">]</span>
+<span class="p">}</span></code></pre></figure>
 
 <h2 id="optional-dependencies">Optional Dependencies</h2>
 
-<p>The <code>@Optional</code> decorator lets us declare dependencies as optional. This comes in handy if, for example, our application expects a third-party library, and in case it’s not available, it can fallback.</p>
+<p>The <code class="highlighter-rouge">@Optional</code> decorator lets us declare dependencies as optional. This comes in handy if, for example, our application expects a third-party library, and in case it’s not available, it can fallback.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Car</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="err">@</span><span class="nx">Optional</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">)</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Car</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(@</span><span class="nd">Optional</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">)</span> <span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// set up fallback</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>As you can see, Angular’s DI solves pretty much all issues we have with Angular 1’s DI. But there’s still one thing we haven’t talked about yet. Does the new DI still create singletons? The answer is yes.</p>
 
@@ -394,42 +394,42 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
 
 <p><strong>Factories</strong> can return instances of classes. Those won’t be singletons. Note that in the following code we’re <strong>creating</strong> a factory.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> 
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span> 
   <span class="nl">provide</span><span class="p">:</span> <span class="nx">Engine</span><span class="p">,</span>
-  <span class="nx">useFactory</span><span class="err">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">useFactory</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="k">return</span> <span class="k">new</span> <span class="nx">Engine</span><span class="p">();</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We can create a <strong>child injector</strong> using <code>Injector.resolveAndCreateChild()</code>. A child injector introduces its own bindings and an instance of an object will be different from the parent injector’s instance.</p>
+<p>We can create a <strong>child injector</strong> using <code class="highlighter-rouge">Injector.resolveAndCreateChild()</code>. A child injector introduces its own bindings and an instance of an object will be different from the parent injector’s instance.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span><span class="nx">Engine</span><span class="p">]);</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span><span class="nx">Engine</span><span class="p">]);</span>
 <span class="kd">var</span> <span class="nx">childInjector</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">resolveAndCreateChild</span><span class="p">([</span><span class="nx">Engine</span><span class="p">]);</span>
 
-<span class="nx">injector</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">Engine</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">childInjector</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">Engine</span><span class="p">);</span></code></pre></div>
+<span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">Engine</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">childInjector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">Engine</span><span class="p">);</span></code></pre></figure>
 
 <p>Child injectors are even more interesting. It turns out that a child injector will look up a token binding on it’s parent injector if no binding for the given token is registered on the child injector. The following graphic visualises what happens:</p>
 
 <p><img style="margin-bottom: 2em;" alt="Child injectors" src="/images/transient-dependencies-4.svg" /></p>
 
-<p>The graphic shows three injectors where two of them are child injectors. Each injector gets its own configuration of providers. Now, if we ask the second child injector for an instance of type <code>Car</code>, the car object will be created by that child injector. However, the engine will be created by the first child injector and the tires and doors will be created by the outer most parent injector. It kind of works like a prototype chain.</p>
+<p>The graphic shows three injectors where two of them are child injectors. Each injector gets its own configuration of providers. Now, if we ask the second child injector for an instance of type <code class="highlighter-rouge">Car</code>, the car object will be created by that child injector. However, the engine will be created by the first child injector and the tires and doors will be created by the outer most parent injector. It kind of works like a prototype chain.</p>
 
 <p>We can even configure the <strong>visibility</strong> of dependencies, and also until where a child injector should look things up. However, this will be covered in another <a href="/angular/2015/08/20/host-and-visibility-in-angular-2-dependency-injection.html">article</a>.</p>
 
 <h2 id="new-staticinjector-apis">New StaticInjector APIs</h2>
 
-<p>Since version 5.0.0, <code>ReflectiveInjector</code> has been deprecated in favour of <code>StaticInjector</code> to not depend on reflection to get hold of dependencies. We don’t really have to worry about this if we aren’t dealing with creating injectors manually (because Angular does it for us). However, if we are, for whatever reason, relying on lower level injector APIs, here’s what’s different:</p>
+<p>Since version 5.0.0, <code class="highlighter-rouge">ReflectiveInjector</code> has been deprecated in favour of <code class="highlighter-rouge">StaticInjector</code> to not depend on reflection to get hold of dependencies. We don’t really have to worry about this if we aren’t dealing with creating injectors manually (because Angular does it for us). However, if we are, for whatever reason, relying on lower level injector APIs, here’s what’s different:</p>
 
 <ul>
-  <li>Creating injectors is done via <code>Injector.create()</code></li>
-  <li>Dependencies tokens have to be listed explicitly using <code>deps</code> property</li>
+  <li>Creating injectors is done via <code class="highlighter-rouge">Injector.create()</code></li>
+  <li>Dependencies tokens have to be listed explicitly using <code class="highlighter-rouge">deps</code> property</li>
 </ul>
 
-<p><code>StaticInjector</code> doesn’t really need to resolve tokens anymore as everything is supposed to be static and passed right to the configuration. That’s why there’s not <code>resolveAndCreate()</code>, but a <code>create()</code> method. Also, instead of importing <code>ReflectiveInjector</code>, we’re importing <code>Injector</code>.</p>
+<p><code class="highlighter-rouge">StaticInjector</code> doesn’t really need to resolve tokens anymore as everything is supposed to be static and passed right to the configuration. That’s why there’s not <code class="highlighter-rouge">resolveAndCreate()</code>, but a <code class="highlighter-rouge">create()</code> method. Also, instead of importing <code class="highlighter-rouge">ReflectiveInjector</code>, we’re importing <code class="highlighter-rouge">Injector</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injector</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Injector</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="kd">let</span> <span class="nx">injector</span> <span class="o">=</span> <span class="nx">Injector</span><span class="p">.</span><span class="nx">create</span><span class="p">([</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Car</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[</span><span class="nx">Engine</span><span class="p">,</span> <span class="nx">Tires</span><span class="p">,</span> <span class="nx">Doors</span><span class="p">]</span> <span class="p">},</span>
@@ -438,9 +438,9 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Doors</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
 <span class="p">]);</span>
 
-<span class="kd">let</span> <span class="nx">car</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">Car</span><span class="p">);</span></code></pre></div>
+<span class="kd">let</span> <span class="nx">car</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">Car</span><span class="p">);</span></code></pre></figure>
 
-<p>Notice in the following section we discuss how DI is used within Angular. There we don’t have to specificy <code>deps</code> explicitly as long as we’re defining providers in <code>@Component()</code> or <code>@NgModule()</code>.</p>
+<p>Notice in the following section we discuss how DI is used within Angular. There we don’t have to specificy <code class="highlighter-rouge">deps</code> explicitly as long as we’re defining providers in <code class="highlighter-rouge">@Component()</code> or <code class="highlighter-rouge">@NgModule()</code>.</p>
 
 <h2 id="how-is-it-used-in-angular-then">How is it used in Angular then?</h2>
 
@@ -448,68 +448,68 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
 
 <p>Lets take a look at the following simple Angular component.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;Hello !&lt;/h1&gt;'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">App</span> <span class="p">{</span>
   <span class="nx">name</span> <span class="o">=</span> <span class="s1">'World'</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Nothing special here. If this is entirely new to you, you might want to read our article on <a href="/angular/2015/03/27/building-a-zippy-component-in-angular-2.html">building a zippy</a> component in Angular. Lets say we want to extend this component by using a <code>NameService</code> that is used in the component’s constructor. Such a service could look something like this:</p>
+<p>Nothing special here. If this is entirely new to you, you might want to read our article on <a href="/angular/2015/03/27/building-a-zippy-component-in-angular-2.html">building a zippy</a> component in Angular. Lets say we want to extend this component by using a <code class="highlighter-rouge">NameService</code> that is used in the component’s constructor. Such a service could look something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">NameService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">NameService</span> <span class="p">{</span>
   <span class="nx">name</span> <span class="o">=</span> <span class="s1">'Pascal'</span><span class="p">;;</span>
 
   <span class="nx">getName</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Again, nothing special here. We just create a class. Now, to make it available in our application as an injectable, we need to pass some provider configurations to our application’s injector. But how do we do that? We haven’t even created one.</p>
 
-<p>To boostrap an application, we define an <code>NgModule</code>. The <code>@NgModule()</code> decorator creates metadata that can include providers, just like this:</p>
+<p>To boostrap an application, we define an <code class="highlighter-rouge">NgModule</code>. The <code class="highlighter-rouge">@NgModule()</code> decorator creates metadata that can include providers, just like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">],</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">NameService</span><span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">App</span><span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">App</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>That’s it. Now, to actually inject it, we just use the tools we’ve already learned about - <code>@Inject</code> decorators.</p>
+<p>That’s it. Now, to actually inject it, we just use the tools we’ve already learned about - <code class="highlighter-rouge">@Inject</code> decorators.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">NameService</span><span class="p">)</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">App</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">NameService</span><span class="p">)</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">NameService</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Or, if we prefer TypeScript, we can just add type annotations to our constructor:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">NameService</span><span class="err">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">App</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">NameService</span><span class="p">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">NameService</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Awesome! All of a sudden, we don’t have any Angular machinery at all anymore. But there’s one last thing: What if we want a different binding configuration in a specific component?</p>
 
-<p>Lets say we have <code>NameService</code> as application wide injectable for the type <code>NameService</code>, but one particular component should get a different one? This is where the <code>@Component</code> decorators’ <code>providers</code> property comes in. It allows us to add providers to a specific component (and its child components).</p>
+<p>Lets say we have <code class="highlighter-rouge">NameService</code> as application wide injectable for the type <code class="highlighter-rouge">NameService</code>, but one particular component should get a different one? This is where the <code class="highlighter-rouge">@Component</code> decorators’ <code class="highlighter-rouge">providers</code> property comes in. It allows us to add providers to a specific component (and its child components).</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'app'</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">NameService</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="s1">'Thomas'</span> <span class="p">}</span>
   <span class="p">],</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;Hello {{name}}!&lt;/h1&gt;'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">App</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>To make things clear: <code>providers</code> doesn’t configure the instances that will be injected. It configures a child injector that is created for that component. As mentioned earlier, we can also configure the visibility of our bindings, to be even more specific which component can inject what. E.g. the <code>viewProviders</code> property allows to make dependencies only available to a component’s view, but not its children. <s>We're going to cover that in another article.</s> Dependency injection host and visibility are covered in <a href="/angular/2015/08/20/host-and-visibility-in-angular-2-dependency-injection.html">this article</a>.</p>
+<p>To make things clear: <code class="highlighter-rouge">providers</code> doesn’t configure the instances that will be injected. It configures a child injector that is created for that component. As mentioned earlier, we can also configure the visibility of our bindings, to be even more specific which component can inject what. E.g. the <code class="highlighter-rouge">viewProviders</code> property allows to make dependencies only available to a component’s view, but not its children. <s>We're going to cover that in another article.</s> Dependency injection host and visibility are covered in <a href="/angular/2015/08/20/host-and-visibility-in-angular-2-dependency-injection.html">this article</a>.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
@@ -629,6 +629,17 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -678,17 +689,6 @@ The <code>ReflectiveInjector</code> APIs discussed in this article are deprecate
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom themes with Angular Material</h3>
-                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

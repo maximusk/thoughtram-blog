@@ -114,21 +114,21 @@
 
 <p>The easiest way to get hold of Angular ES5 bundles is npmcdn. Here’s what we need to embed to get started with ES5 and Angular:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://npmcdn.com/@angular/core@2.0.0-rc.5/bundles/core.umd.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://npmcdn.com/@angular/core@2.0.0-rc.5/bundles/core.umd.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
 <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://npmcdn.com/@angular/common@2.0.0-rc.5/bundles/common.umd.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
 <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://npmcdn.com/@angular/compiler@2.0.0-rc.5/bundles/compiler.umd.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
 <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://npmcdn.com/@angular/platform-browser@2.0.0-rc.5/bundles/platform-browser.umd.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://npmcdn.com/@angular/platform-browser-dynamic@2.0.0-rc.5/bundles/platform-browser-dynamic.umd.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></div>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://npmcdn.com/@angular/platform-browser-dynamic@2.0.0-rc.5/bundles/platform-browser-dynamic.umd.js"</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></figure>
 
-<p>Whereas <code>@2.0.0-rc.5</code> is the version number we specify. So that part might change depending on what we want to do.</p>
+<p>Whereas <code class="highlighter-rouge">@2.0.0-rc.5</code> is the version number we specify. So that part might change depending on what we want to do.</p>
 
 <p>Now the next question comes up: How can we access and use given annotations and/or decorators? Usually, in ES2015, we would import them from the framework but now there’s no way for us to import them.</p>
 
-<p>Well, it turns out that the bundled version exposes an <code>ng.core</code> object on the current global scope or reuses an existing one, which has all annotations added to it. In our <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">last article</a> we’ve learned that annotations are just classes, which in the end are just functions. And those functions are called as constructor functions to add meta data to our components. That means, all we have to do is to call those annotation constructors manually and assign them to our component’s <code>annotations</code> property.</p>
+<p>Well, it turns out that the bundled version exposes an <code class="highlighter-rouge">ng.core</code> object on the current global scope or reuses an existing one, which has all annotations added to it. In our <a href="http://blog.thoughtram.io/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">last article</a> we’ve learned that annotations are just classes, which in the end are just functions. And those functions are called as constructor functions to add meta data to our components. That means, all we have to do is to call those annotation constructors manually and assign them to our component’s <code class="highlighter-rouge">annotations</code> property.</p>
 
 <p>Let’s start off with a simple component that has a template:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HelloComponent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HelloComponent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
 <span class="p">};</span>
 
@@ -137,84 +137,84 @@
     <span class="na">selector</span><span class="p">:</span> <span class="s1">'hello-cmp'</span><span class="p">,</span>
     <span class="na">template</span><span class="p">:</span> <span class="s1">'Hello World!'</span>
   <span class="p">})</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
 <p>That’s it. We have a constructor function that has a component annotation and a view annotation. The TypeScript equivalent would look something like this:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'hello-cmp'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'Hello World!'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">HelloComponent</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">HelloComponent</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <h2 id="bootstrapping-an-angular-app-in-es5">Bootstrapping an Angular app in ES5</h2>
 
-<p>When we come to the point that we want to bootstrap our application, we need to define an <code>NgModule</code> that has everything attached to it that is needed to make our app run, and bootstrap it on a dedicated platform (e.g. browser, webworker or server).</p>
+<p>When we come to the point that we want to bootstrap our application, we need to define an <code class="highlighter-rouge">NgModule</code> that has everything attached to it that is needed to make our app run, and bootstrap it on a dedicated platform (e.g. browser, webworker or server).</p>
 
-<p>Let’s go ahead and create such a module first. <code>ng.core.NgModule</code> can be used to create the needed metadata on a constructor function. Just like with our <code>HelloComponent</code>, we create an <code>AppModule</code> function like this:</p>
+<p>Let’s go ahead and create such a module first. <code class="highlighter-rouge">ng.core.NgModule</code> can be used to create the needed metadata on a constructor function. Just like with our <code class="highlighter-rouge">HelloComponent</code>, we create an <code class="highlighter-rouge">AppModule</code> function like this:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">AppModule</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">AppModule</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-<span class="p">};</span></code></pre></div>
+<span class="p">};</span></code></pre></figure>
 
-<p>Next, we add <code>NgModule</code> annotations to it:</p>
+<p>Next, we add <code class="highlighter-rouge">NgModule</code> annotations to it:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">AppModule</span><span class="p">.</span><span class="nx">annotations</span> <span class="o">=</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">AppModule</span><span class="p">.</span><span class="nx">annotations</span> <span class="o">=</span> <span class="p">[</span>
   <span class="k">new</span> <span class="nx">ng</span><span class="p">.</span><span class="nx">core</span><span class="p">.</span><span class="nx">NgModule</span><span class="p">({</span>
     <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">ng</span><span class="p">.</span><span class="nx">platformBrowser</span><span class="p">.</span><span class="nx">BrowserModule</span><span class="p">],</span>
     <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">HelloComponent</span><span class="p">],</span>
     <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">HelloComponent</span><span class="p">]</span>
   <span class="p">})</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
-<p>Similar to TypeScript world, we have to import the <code>BrowserModule</code> from the <code>ng.platformBrowser</code> package, so we can bootstrap our module in the browser environment. Next, we declare all directives and components that are used inside this module, which in our case, is only the <code>HelloComponent</code>. Last but not least, we tell Angular which component to bootstrap when the module is bootstrapped.</p>
+<p>Similar to TypeScript world, we have to import the <code class="highlighter-rouge">BrowserModule</code> from the <code class="highlighter-rouge">ng.platformBrowser</code> package, so we can bootstrap our module in the browser environment. Next, we declare all directives and components that are used inside this module, which in our case, is only the <code class="highlighter-rouge">HelloComponent</code>. Last but not least, we tell Angular which component to bootstrap when the module is bootstrapped.</p>
 
-<p>We need to make sure that all of the DOM is loaded before we bootstrap our module. Adding an event listener for the <code>DOMContentLoaded</code> event and call <code>bootstrap</code> once triggered, will help here. When the event is fired, we can call <code>platformBrowserDynamic().bootstrapModule(AppModule)</code> to bootstrap our app:</p>
+<p>We need to make sure that all of the DOM is loaded before we bootstrap our module. Adding an event listener for the <code class="highlighter-rouge">DOMContentLoaded</code> event and call <code class="highlighter-rouge">bootstrap</code> once triggered, will help here. When the event is fired, we can call <code class="highlighter-rouge">platformBrowserDynamic().bootstrapModule(AppModule)</code> to bootstrap our app:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'DOMContentLoaded'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'DOMContentLoaded'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="nx">ng</span><span class="p">.</span><span class="nx">platformBrowserDynamic</span>
     <span class="p">.</span><span class="nx">platformBrowserDynamic</span><span class="p">().</span><span class="nx">bootstrapModule</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">);</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
 <p>And of course, the corresponding application template looks like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body&gt;</span>
   <span class="nt">&lt;hello-component&gt;&lt;/hello-component&gt;</span>
-<span class="nt">&lt;/body&gt;</span></code></pre></div>
+<span class="nt">&lt;/body&gt;</span></code></pre></figure>
 
 <p>Great we’ve just bootstrapped our Angular application written in ES5! Was it that hard?</p>
 
 <h2 id="injecting-services-in-es5">Injecting services in ES5</h2>
 
-<p>Let’s say we want to add a <code>GreetingService</code> to our component. The <code>@Component</code> annotation takes a property <code>viewProviders</code> to define injectable types for this particular component. This is easy to add. First we build the service. A service in Angular can be just a class, which translates to just a function, which is also just an object in JavaScript.</p>
+<p>Let’s say we want to add a <code class="highlighter-rouge">GreetingService</code> to our component. The <code class="highlighter-rouge">@Component</code> annotation takes a property <code class="highlighter-rouge">viewProviders</code> to define injectable types for this particular component. This is easy to add. First we build the service. A service in Angular can be just a class, which translates to just a function, which is also just an object in JavaScript.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">GreetingService</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{}</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">GreetingService</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{}</span>
 
 <span class="nx">GreetingService</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">greeting</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="s1">'Hello'</span><span class="p">;</span>
-<span class="p">};</span></code></pre></div>
+<span class="p">};</span></code></pre></figure>
 
 <p>Next we tell our component about it’s injectable types:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">HelloComponent</span><span class="p">.</span><span class="nx">annotations</span> <span class="o">=</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">HelloComponent</span><span class="p">.</span><span class="nx">annotations</span> <span class="o">=</span> <span class="p">[</span>
   <span class="k">new</span> <span class="nx">ng</span><span class="p">.</span><span class="nx">Component</span><span class="p">({</span>
     <span class="na">selector</span><span class="p">:</span> <span class="s1">'hello-cmp'</span><span class="p">,</span>
     <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">GreetingService</span><span class="p">]</span>
   <span class="p">}),</span>
   <span class="p">...</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
-<p>This basically tells our component that it should return an instance of <code>GreetingService</code> when somebody asks for <code>GreetingService</code>. Nobody asked for it yet, so let’s change that. First we need something we want to inject into our component’s constructor:</p>
+<p>This basically tells our component that it should return an instance of <code class="highlighter-rouge">GreetingService</code> when somebody asks for <code class="highlighter-rouge">GreetingService</code>. Nobody asked for it yet, so let’s change that. First we need something we want to inject into our component’s constructor:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HelloComponent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">greetingService</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HelloComponent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">greetingService</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">greeting</span> <span class="o">=</span> <span class="nx">greetingService</span><span class="p">.</span><span class="nx">greeting</span><span class="p">();</span>
-<span class="p">};</span></code></pre></div>
+<span class="p">};</span></code></pre></figure>
 
-<p>To make our component explicitly ask for something that is a <code>GreetingService</code>, or in other words, to tell the injector that our <code>greetingService</code> parameter should be an instance of <code>GreetingService</code>, we need to add a parameter annotation accordingly:</p>
+<p>To make our component explicitly ask for something that is a <code class="highlighter-rouge">GreetingService</code>, or in other words, to tell the injector that our <code class="highlighter-rouge">greetingService</code> parameter should be an instance of <code class="highlighter-rouge">GreetingService</code>, we need to add a parameter annotation accordingly:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">HelloComponent</span><span class="p">.</span><span class="nx">parameters</span> <span class="o">=</span> <span class="p">[[</span><span class="k">new</span> <span class="nx">ng</span><span class="p">.</span><span class="nx">core</span><span class="p">.</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">GreetingService</span><span class="p">)]];</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">HelloComponent</span><span class="p">.</span><span class="nx">parameters</span> <span class="o">=</span> <span class="p">[[</span><span class="k">new</span> <span class="nx">ng</span><span class="p">.</span><span class="nx">core</span><span class="p">.</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">GreetingService</span><span class="p">)]];</span></code></pre></figure>
 
 <p>If you wonder why we define a nested array, this is because one constructor parameter can have more than one associated annotation.</p>
 
@@ -323,6 +323,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -372,17 +383,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom themes with Angular Material</h3>
-                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

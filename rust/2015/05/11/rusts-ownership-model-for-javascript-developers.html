@@ -125,16 +125,16 @@
 
 <p>Let’s explore it by comparing some simple JavaScript code (written in ES6) with it’s Rust counterpart.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Product</span> <span class="p">{}</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Product</span> <span class="p">{}</span>
 
-<span class="kr">class</span> <span class="nx">Config</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">debugMode</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">Config</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">debugMode</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">debugMode</span> <span class="o">=</span> <span class="nx">debugMode</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
-  <span class="nx">constructor</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
+  <span class="kd">constructor</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
   <span class="p">}</span>
 
@@ -147,8 +147,8 @@
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">BasketService</span> <span class="p">{</span>
-  <span class="nx">constructor</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">BasketService</span> <span class="p">{</span>
+  <span class="kd">constructor</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
   <span class="p">}</span>
 
@@ -165,27 +165,27 @@
 <span class="kd">let</span> <span class="nx">basketService</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BasketService</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
 
 <span class="kd">var</span> <span class="nx">product</span> <span class="o">=</span> <span class="nx">productService</span><span class="p">.</span><span class="nx">getProduct</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="nx">basketService</span><span class="p">.</span><span class="nx">addProduct</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span></code></pre></div>
+<span class="nx">basketService</span><span class="p">.</span><span class="nx">addProduct</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span></code></pre></figure>
 
-<p>It’s a simple e-commerce example with four different classes working hand in hand. We have a <code>Product</code> class without any functionality because it’s sole purpose is to represent a product in this demo context. Then there’s a <code>Config</code> class which may contain a bunch of configurations such as API endpoints or simply a <code>debugMode</code> flag as in our simple example. And last but not least do we have a <code>ProductService</code> to retrieve products from and a <code>BasketService</code> to put products into a shopping basket.</p>
+<p>It’s a simple e-commerce example with four different classes working hand in hand. We have a <code class="highlighter-rouge">Product</code> class without any functionality because it’s sole purpose is to represent a product in this demo context. Then there’s a <code class="highlighter-rouge">Config</code> class which may contain a bunch of configurations such as API endpoints or simply a <code class="highlighter-rouge">debugMode</code> flag as in our simple example. And last but not least do we have a <code class="highlighter-rouge">ProductService</code> to retrieve products from and a <code class="highlighter-rouge">BasketService</code> to put products into a shopping basket.</p>
 
 <p>Let’s fokus on what follows after the definition of those classes.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">config</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Config</span> <span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">let</span> <span class="nx">config</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Config</span> <span class="p">(</span><span class="kc">true</span><span class="p">);</span>
 
 <span class="kd">let</span> <span class="nx">productService</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ProductService</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
 <span class="kd">let</span> <span class="nx">basketService</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BasketService</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
 
 <span class="kd">let</span> <span class="nx">product</span> <span class="o">=</span> <span class="nx">productService</span><span class="p">.</span><span class="nx">getProduct</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="nx">basketService</span><span class="p">.</span><span class="nx">addProduct</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span></code></pre></div>
+<span class="nx">basketService</span><span class="p">.</span><span class="nx">addProduct</span><span class="p">(</span><span class="nx">product</span><span class="p">);</span></code></pre></figure>
 
-<p>We create an instance of a <code>Config</code> and pass it to both services. The last two lines show how the two services are used. Easy enough, right?</p>
+<p>We create an instance of a <code class="highlighter-rouge">Config</code> and pass it to both services. The last two lines show how the two services are used. Easy enough, right?</p>
 
 <p>Let’s write the same thing in Rust but instead of directly jumping to the final version let me take you on a journey to illustrate the process of how to get there.</p>
 
-<p>We leave out the <code>getProduct</code> and <code>addProduct</code> methods for our first implementation as they are just a distraction at this point.</p>
+<p>We leave out the <code class="highlighter-rouge">getProduct</code> and <code class="highlighter-rouge">addProduct</code> methods for our first implementation as they are just a distraction at this point.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
     <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span>
@@ -220,27 +220,27 @@
     <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span> <span class="p">{</span> <span class="n">debug_mode</span><span class="p">:</span> <span class="k">true</span> <span class="p">};</span>
     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>The first thing to notice here is that Rust has no classes but instead has structs. It’s out of the scope of this article to discuss the differences though. The second thing to notice is that methods aren’t written in the struct definition but are attached to a struct through an <code>impl</code> block instead.</p>
+<p>The first thing to notice here is that Rust has no classes but instead has structs. It’s out of the scope of this article to discuss the differences though. The second thing to notice is that methods aren’t written in the struct definition but are attached to a struct through an <code class="highlighter-rouge">impl</code> block instead.</p>
 
-<p>Also does Rust not know any <code>constructor</code> concept. Instances of structs can simply be made by writing out the structs name followed by curly braces and a body that initializes all of the structs fields. However it’s a common pattern to add a “static” <code>new</code> method to the struct that wraps the initialization code. This <code>new</code> method is quite compareable to the <code>constructor</code> in our ES6 classes.</p>
+<p>Also does Rust not know any <code class="highlighter-rouge">constructor</code> concept. Instances of structs can simply be made by writing out the structs name followed by curly braces and a body that initializes all of the structs fields. However it’s a common pattern to add a “static” <code class="highlighter-rouge">new</code> method to the struct that wraps the initialization code. This <code class="highlighter-rouge">new</code> method is quite compareable to the <code class="highlighter-rouge">constructor</code> in our ES6 classes.</p>
 
-<p>To get things going we need to put the code that creates a config and both services in the <code>main</code> function.</p>
+<p>To get things going we need to put the code that creates a config and both services in the <code class="highlighter-rouge">main</code> function.</p>
 
 <p>Ok, so we have our first version to try. That wasn’t all that hard, was it? But no, what’s that? When we try to run the code the compiler tells us that something isn’t quite right.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">37</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="mi">37</span><span class="p">:</span><span class="mi">51</span> <span class="n">error</span><span class="p">:</span> <span class="k">use</span> <span class="n">of</span> <span class="n">moved</span> <span class="n">value</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">37</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="mi">37</span><span class="p">:</span><span class="mi">51</span> <span class="n">error</span><span class="p">:</span> <span class="k">use</span> <span class="n">of</span> <span class="n">moved</span> <span class="n">value</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span>
 <span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">37</span>     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
                                                            <span class="o">^~~~~~</span>
-<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">36</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span> <span class="mi">36</span><span class="p">:</span><span class="mi">53</span> <span class="n">note</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span> <span class="n">moved</span> <span class="n">here</span> <span class="n">because</span> <span class="n">it</span> <span class="n">has</span> <span class="k">type</span> <span class="err">`</span><span class="n">Config</span><span class="err">`</span><span class="p">,</span> <span class="n">which</span> <span class="n">is</span> <span class="n">non</span><span class="o">-</span><span class="n">copyable</span>
-<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">36</span>     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span></code></pre></div>
+<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">36</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span> <span class="mi">36</span><span class="p">:</span><span class="mi">53</span> <span class="n">note</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span> <span class="n">moved</span> <span class="n">here</span> <span class="n">because</span> <span class="n">it</span> <span class="n">has</span> <span class="k">type</span> <span class="err">`</span><span class="n">Config</span><span class="err">`</span><span class="p">,</span> <span class="n">which</span> <span class="n">is</span> <span class="n">non</span><span class="err">-</span><span class="n">copyable</span>
+<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">36</span>     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span></code></pre></figure>
 
-<p>The compiler disallows usage of <code>config</code> in line 37 because it moved in line 36. Uhm..what’s a move? Let’s go back to how this all started. We were talking about memory management and how Rust assures 100 % memory safety without the usage of a garbage collector.</p>
+<p>The compiler disallows usage of <code class="highlighter-rouge">config</code> in line 37 because it moved in line 36. Uhm..what’s a move? Let’s go back to how this all started. We were talking about memory management and how Rust assures 100 % memory safety without the usage of a garbage collector.</p>
 
-<p>When we look back at the JavaScript version we can see that there are three places in our program that hold a reference to the <code>config</code>. Each service holds a reference as well as the calling code that creates <code>config</code> in the first place.</p>
+<p>When we look back at the JavaScript version we can see that there are three places in our program that hold a reference to the <code class="highlighter-rouge">config</code>. Each service holds a reference as well as the calling code that creates <code class="highlighter-rouge">config</code> in the first place.</p>
 
-<p>Since JavaScript is garbage collected we don’t put much thought into that. A garbage collector will just regulary run checks and if it discovers that there is no reference anymore that points to the memory that was allocated for the <code>config</code>, it will free it up.</p>
+<p>Since JavaScript is garbage collected we don’t put much thought into that. A garbage collector will just regulary run checks and if it discovers that there is no reference anymore that points to the memory that was allocated for the <code class="highlighter-rouge">config</code>, it will free it up.</p>
 
 <p>Rust doesn’t have a garbage collector but it doesn’t force you to manage the memory manually either. Instead it creates new rules to enforce memory safety without garbage collection, namely “Ownership”.</p>
 
@@ -248,7 +248,7 @@
 
 <p>Let’s see what that really means in the context of our program. The comments explain what happens line by line.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span> <span class="p">{</span> <span class="n">debug_mode</span><span class="p">:</span> <span class="k">true</span> <span class="p">};</span>
     <span class="c">// at this point config is owned by the `main` function</span>
     <span class="c">// which also means the memory would be freed</span>
@@ -263,11 +263,11 @@
     <span class="c">// config can't be used here because `main` doesn't own</span>
     <span class="c">// it any more</span>
     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>You may be wondering why we can’t just continue to use <code>config</code> without being the owner. The point is that since the <code>new</code> method is now the new owner it may just decide to free up the memory. Keep in mind that the owner has the right to destroy the thing that it owns (either explicitly or implicity when it goes out of scope).</p>
+<p>You may be wondering why we can’t just continue to use <code class="highlighter-rouge">config</code> without being the owner. The point is that since the <code class="highlighter-rouge">new</code> method is now the new owner it may just decide to free up the memory. Keep in mind that the owner has the right to destroy the thing that it owns (either explicitly or implicity when it goes out of scope).</p>
 
-<p>If we were allowed to use <code>config</code> in the last line the memory may already be freed and hell breaks loose. The rust compiler prevents us from a potential runtime crash here.</p>
+<p>If we were allowed to use <code class="highlighter-rouge">config</code> in the last line the memory may already be freed and hell breaks loose. The rust compiler prevents us from a potential runtime crash here.</p>
 
 <p><strong>The concept of borrowing</strong></p>
 
@@ -275,7 +275,7 @@
 
 <p>Before we refactor our code to have the services borrow the config, we will temporarily simplify the code one last time to make it obvious why the move happens.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
     <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span>
@@ -302,25 +302,25 @@
     <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span> <span class="p">{</span> <span class="n">debug_mode</span><span class="p">:</span> <span class="k">true</span> <span class="p">};</span>
     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We removed the config from both services so that the <code>new</code> methods still takes the <code>config</code> as parameter but doesn’t use it at all. We are still running into the same error.</p>
+<p>We removed the config from both services so that the <code class="highlighter-rouge">new</code> methods still takes the <code class="highlighter-rouge">config</code> as parameter but doesn’t use it at all. We are still running into the same error.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="mi">27</span><span class="p">:</span><span class="mi">51</span> <span class="n">error</span><span class="p">:</span> <span class="k">use</span> <span class="n">of</span> <span class="n">moved</span> <span class="n">value</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="mi">27</span><span class="p">:</span><span class="mi">51</span> <span class="n">error</span><span class="p">:</span> <span class="k">use</span> <span class="n">of</span> <span class="n">moved</span> <span class="n">value</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span>
 <span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">27</span>     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
                                                            <span class="o">^~~~~~</span>
-<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">26</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span> <span class="mi">26</span><span class="p">:</span><span class="mi">53</span> <span class="n">note</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span> <span class="n">moved</span> <span class="n">here</span> <span class="n">because</span> <span class="n">it</span> <span class="n">has</span> <span class="k">type</span> <span class="err">`</span><span class="n">Config</span><span class="err">`</span><span class="p">,</span> <span class="n">which</span> <span class="n">is</span> <span class="n">non</span><span class="o">-</span><span class="n">copyable</span>
-<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">26</span>     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span></code></pre></div>
+<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">26</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span> <span class="mi">26</span><span class="p">:</span><span class="mi">53</span> <span class="n">note</span><span class="p">:</span> <span class="err">`</span><span class="n">config</span><span class="err">`</span> <span class="n">moved</span> <span class="n">here</span> <span class="n">because</span> <span class="n">it</span> <span class="n">has</span> <span class="k">type</span> <span class="err">`</span><span class="n">Config</span><span class="err">`</span><span class="p">,</span> <span class="n">which</span> <span class="n">is</span> <span class="n">non</span><span class="err">-</span><span class="n">copyable</span>
+<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">26</span>     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">config</span><span class="p">);</span></code></pre></figure>
 
-<p>The reason for that lies in the method signature of <code>new</code>.</p>
+<p>The reason for that lies in the method signature of <code class="highlighter-rouge">new</code>.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">new</span> <span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ProductService</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">new</span> <span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ProductService</span></code></pre></figure>
 
-<p>This method signature says: “I’m a method that takes ownership of a <code>Config</code> and returns a <code>ProductService</code>”.</p>
+<p>This method signature says: “I’m a method that takes ownership of a <code class="highlighter-rouge">Config</code> and returns a <code class="highlighter-rouge">ProductService</code>”.</p>
 
 <p>But we can change it to borrow a reference instead.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
     <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span>
@@ -347,20 +347,20 @@
     <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span> <span class="p">{</span> <span class="n">debug_mode</span><span class="p">:</span> <span class="k">true</span> <span class="p">};</span>
     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Whew, this compiles! The <code>&amp;Config</code> as the parameter type means that it now borrows a reference instead of taking ownership. The <code>main</code> method continues to be the owner with this change.</p>
+<p>Whew, this compiles! The <code class="highlighter-rouge">&amp;Config</code> as the parameter type means that it now borrows a reference instead of taking ownership. The <code class="highlighter-rouge">main</code> method continues to be the owner with this change.</p>
 
-<p>But there’s another thing that we changed. Because the <code>new</code> methods now expect a reference instead of the actual type, we need to change the call site, too.</p>
+<p>But there’s another thing that we changed. Because the <code class="highlighter-rouge">new</code> methods now expect a reference instead of the actual type, we need to change the call site, too.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
-<span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
+<span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span></code></pre></figure>
 
-<p>The leading <code>&amp;</code> before <code>config</code> means that we pass the memory address to the config instead of passing the actual data. And that brings us closer to our JavaScript version which also just passes a reference to <code>config</code> under the cover.</p>
+<p>The leading <code class="highlighter-rouge">&amp;</code> before <code class="highlighter-rouge">config</code> means that we pass the memory address to the config instead of passing the actual data. And that brings us closer to our JavaScript version which also just passes a reference to <code class="highlighter-rouge">config</code> under the cover.</p>
 
 <p>Let’s change our code back to store the config in the services so that the service methods can have access to it.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
     <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span>
@@ -395,34 +395,34 @@
     <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span> <span class="p">{</span> <span class="n">debug_mode</span><span class="p">:</span> <span class="k">true</span> <span class="p">};</span>
     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Unfortunately this gives us another error.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">8</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span> <span class="mi">8</span><span class="p">:</span><span class="mi">20</span> <span class="n">error</span><span class="p">:</span> <span class="n">missing</span> <span class="n">lifetime</span> <span class="n">specifier</span> <span class="p">[</span><span class="n">E0106</span><span class="p">]</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">8</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span> <span class="mi">8</span><span class="p">:</span><span class="mi">20</span> <span class="n">error</span><span class="p">:</span> <span class="n">missing</span> <span class="n">lifetime</span> <span class="n">specifier</span> <span class="p">[</span><span class="n">E0106</span><span class="p">]</span>
 <span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">8</span>     <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span>
                           <span class="o">^~~~~~~</span>
 <span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span> <span class="mi">11</span><span class="p">:</span><span class="mi">20</span> <span class="n">error</span><span class="p">:</span> <span class="n">missing</span> <span class="n">lifetime</span> <span class="n">specifier</span> <span class="p">[</span><span class="n">E0106</span><span class="p">]</span>
-<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">11</span>     <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span></code></pre></div>
+<span class="n">src</span><span class="err">/</span><span class="n">main</span><span class="py">.rs</span><span class="p">:</span><span class="mi">11</span>     <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span></code></pre></figure>
 
 <p>Rust’s memory management relies on a concept of lifetimes to track references. Most of the time you won’t even notice it because Rust lets us omit most lifetime annotations. But there are cases where Rust needs lifetime annotations such as when defining structs that hold references.</p>
 
-<p>Since we changed our services to store a reference to a <code>Config</code> instead of the <code>Config</code> itself rusts expect us to annotate our services with lifetime annotations.</p>
+<p>Since we changed our services to store a reference to a <code class="highlighter-rouge">Config</code> instead of the <code class="highlighter-rouge">Config</code> itself rusts expect us to annotate our services with lifetime annotations.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
     <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span>
 <span class="p">}</span>
 
-<span class="k">struct</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="err">'</span><span class="n">a</span> <span class="n">Config</span>
+<span class="k">struct</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">Config</span>
 <span class="p">}</span>
-<span class="k">struct</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="err">'</span><span class="n">a</span> <span class="n">Config</span>
+<span class="k">struct</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">Config</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
 
     <span class="k">fn</span> <span class="nf">new</span> <span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ProductService</span> <span class="p">{</span>
         <span class="n">ProductService</span> <span class="p">{</span>
@@ -431,7 +431,7 @@
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
 
     <span class="k">fn</span> <span class="nf">new</span> <span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">BasketService</span> <span class="p">{</span>
         <span class="n">BasketService</span> <span class="p">{</span>
@@ -444,35 +444,35 @@
     <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span> <span class="p">{</span> <span class="n">debug_mode</span><span class="p">:</span> <span class="k">true</span> <span class="p">};</span>
     <span class="k">let</span> <span class="n">product_service</span> <span class="o">=</span> <span class="nn">ProductService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">basket_service</span> <span class="o">=</span> <span class="nn">BasketService</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Whew, that’s a lot of new syntax that we haven’t seen yet.</p>
 
-<p>Basically what the <code>'a</code> lifetime annotation says is that the <code>ProductService</code> can’t live longer than the reference to the <code>Config</code> that it contains. Rust doesn’t infer that constrain for structs by itself so it needs us to bring clarity. The same helds true for the <code>BasketService</code> as it also keeps a reference to the <code>Config</code>.</p>
+<p>Basically what the <code class="highlighter-rouge">'a</code> lifetime annotation says is that the <code class="highlighter-rouge">ProductService</code> can’t live longer than the reference to the <code class="highlighter-rouge">Config</code> that it contains. Rust doesn’t infer that constrain for structs by itself so it needs us to bring clarity. The same helds true for the <code class="highlighter-rouge">BasketService</code> as it also keeps a reference to the <code class="highlighter-rouge">Config</code>.</p>
 
-<p>The <code>'a</code> is really only a name that we get to choose, we could have picked <code>'config</code> but short single letter names are mostly used among the Rust community.</p>
+<p>The <code class="highlighter-rouge">'a</code> is really only a name that we get to choose, we could have picked <code class="highlighter-rouge">'config</code> but short single letter names are mostly used among the Rust community.</p>
 
-<p>We need to use the life time annotation in the <code>impl</code> blocks as well as those are written for the <code>ProductService</code> and <code>BasketService</code> which introduce those lifetimes. Please note that the <code>'a</code> of the <code>ProductService</code> is independend of the <code>'a</code> of the <code>BasketService</code> we could have picked different names for both.</p>
+<p>We need to use the life time annotation in the <code class="highlighter-rouge">impl</code> blocks as well as those are written for the <code class="highlighter-rouge">ProductService</code> and <code class="highlighter-rouge">BasketService</code> which introduce those lifetimes. Please note that the <code class="highlighter-rouge">'a</code> of the <code class="highlighter-rouge">ProductService</code> is independend of the <code class="highlighter-rouge">'a</code> of the <code class="highlighter-rouge">BasketService</code> we could have picked different names for both.</p>
 
 <p>A deep dive into the topic of lifetimes is out of scope for this article but we’ll make sure to cover them in more detail with follow up posts.</p>
 
-<p>Now that we got things working with the minimal code needed let’s jump to the final version which introduces the <code>get_product</code> and <code>add_product</code> methods to the services.</p>
+<p>Now that we got things working with the minimal code needed let’s jump to the final version which introduces the <code class="highlighter-rouge">get_product</code> and <code class="highlighter-rouge">add_product</code> methods to the services.</p>
 
-<div class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
     <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span>
 <span class="p">}</span>
 
-<span class="cp">#[derive(Debug)]</span>
+<span class="nd">#[derive(Debug)]</span>
 <span class="k">struct</span> <span class="n">Product</span><span class="p">;</span>
 
-<span class="k">struct</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="err">'</span><span class="n">a</span> <span class="n">Config</span>
+<span class="k">struct</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">Config</span>
 <span class="p">}</span>
-<span class="k">struct</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="err">'</span><span class="n">a</span> <span class="n">Config</span>
+<span class="k">struct</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">Config</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">ProductService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
 
     <span class="k">fn</span> <span class="nf">new</span> <span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ProductService</span> <span class="p">{</span>
         <span class="n">ProductService</span> <span class="p">{</span>
@@ -489,7 +489,7 @@
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="err">'</span><span class="n">a</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">BasketService</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
 
     <span class="k">fn</span> <span class="nf">new</span> <span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">BasketService</span> <span class="p">{</span>
         <span class="n">BasketService</span> <span class="p">{</span>
@@ -512,9 +512,9 @@
 
     <span class="k">let</span> <span class="n">product</span> <span class="o">=</span> <span class="n">product_service</span><span class="nf">.get_product</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="n">basket_service</span><span class="nf">.add_product</span><span class="p">(</span><span class="n">product</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>The rest of the code shouldn’t be too scary with the <code>#[derive(Debug)]</code> annotation being the only exception. For now let’s just accept that those are needed in order to print out the product with the <code>println!</code> macro.</p>
+<p>The rest of the code shouldn’t be too scary with the <code class="highlighter-rouge">#[derive(Debug)]</code> annotation being the only exception. For now let’s just accept that those are needed in order to print out the product with the <code class="highlighter-rouge">println!</code> macro.</p>
 
 <p>The code is a bit more verbose than the JavaScript version which mostly boils down to the fact that JavaScript isn’t strongly typed. I still find the Rust code quite expressive and terse if we consider the benefits of safety, memory usage and performance.</p>
 
@@ -649,22 +649,22 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
               <div class="thtrm-article-card-content ">
-                <h3>Advanced caching with RxJS</h3>
-                <p>When building web applications, performance should always be a top priority. One very efficient way to optimize the performance of...</p>
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
               </div>
             </a>
           </li>
         
           
           <li>
-            <a class="thtrm-article-card" href="/machine-learning/2018/02/28/a-simple-guide-to-reinforcement-learning.html" title="A simple guide to Reinforcement Learning">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/a-simple-guide-to-reinforcement-learning.jpg);"></div>
+            <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
-                <h3>A simple guide to Reinforcement Learning</h3>
-                <p>This is part one in a series of articles on Reinforcement Learning that aim to explore this exciting Machine Learning...</p>
+                <h3>Advanced caching with RxJS</h3>
+                <p>When building web applications, performance should always be a top priority. One very efficient way to optimize the performance of...</p>
               </div>
             </a>
           </li>

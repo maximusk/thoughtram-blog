@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Forward references in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Sep 3, 2015, last updated on Dec 16, 2016<br>9 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Sep 3, 2015, last updated on Dec 16, 2016<br>10 minute read</span>
 
           </div>
         </hgroup>
@@ -105,82 +105,82 @@
 
 <h2 id="understanding-the-problem">Understanding the problem</h2>
 
-<p>As a small recap, here we have an <code>AppComponent</code> that relies on DI to get a <code>NameService</code> injected. As we are using TypeScript, all we need to do is to annotate our constructor parameter <code>nameService</code> with the <code>NameService</code> type. This gives Angular all the relevant info to correctly resolve the dependency at runtime.</p>
+<p>As a small recap, here we have an <code class="highlighter-rouge">AppComponent</code> that relies on DI to get a <code class="highlighter-rouge">NameService</code> injected. As we are using TypeScript, all we need to do is to annotate our constructor parameter <code class="highlighter-rouge">nameService</code> with the <code class="highlighter-rouge">NameService</code> type. This gives Angular all the relevant info to correctly resolve the dependency at runtime.</p>
 
 <p><strong>app.ts</strong></p>
 
-<div class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="k">import</span> <span class="p">{</span> <span class="nx">NameService</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./name.service'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;Favourite framework: {{ name }}&lt;/h1&gt;'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">name</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="nx">nameService</span><span class="err">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">nameService</span><span class="p">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">nameService</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p><strong>nameService.ts</strong></p>
 
-<div class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">export</span> <span class="kr">class</span> <span class="nx">NameService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">export</span> <span class="kd">class</span> <span class="nx">NameService</span> <span class="p">{</span>
   <span class="nx">getName</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s2">"Angular"</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>This works well, but let’s see what happens when we inline the contents of <code>nameService.ts</code> directly in <code>app.ts</code>. In this case, you probably wouldn’t want to do that but bear with me as I’m trying to make my point.</p>
+<p>This works well, but let’s see what happens when we inline the contents of <code class="highlighter-rouge">nameService.ts</code> directly in <code class="highlighter-rouge">app.ts</code>. In this case, you probably wouldn’t want to do that but bear with me as I’m trying to make my point.</p>
 
-<div class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;Favourite framework: {{ name }}&lt;/h1&gt;'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">name</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="nx">nameService</span><span class="err">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">nameService</span><span class="p">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">nameService</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">NameService</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">NameService</span> <span class="p">{</span>
   <span class="nx">getName</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s2">"Angular"</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>When we try to run this code we notice that it stopped working. In my case, I wasn’t even able to get an error reported to the console which I assume boils down to some glitch with debugging TypeScript code with source maps. Anyways, when we use the debuggers “Pause on exceptions” feature we can follow the rabbit into it’s hole somewhere deep down inside the Angular framework.</p>
 
-<p><code>Cannot resolve all parameters for AppComponent(undefined). Make sure they all have valid type or annotations</code>.</p>
+<p><code class="highlighter-rouge">Cannot resolve all parameters for AppComponent(undefined). Make sure they all have valid type or annotations</code>.</p>
 
-<p>Ok, this gives us a little hint. It seems <code>NameService</code> is undefined in the constructor of <code>AppComponent</code>. This makes sense if you look at the flow of the code because we already used <code>NameService</code> in the constructor of <code>AppComponent</code> before we actually declared it. But on the other hand, using regular ES5 constructor functions that would be totally valid because function declarations get hoisted to the top by the JavaScript interpreter behind the scenes. And then, aren’t ES2015 classes just sugar on top of regular ES5 functions after all?</p>
+<p>Ok, this gives us a little hint. It seems <code class="highlighter-rouge">NameService</code> is undefined in the constructor of <code class="highlighter-rouge">AppComponent</code>. This makes sense if you look at the flow of the code because we already used <code class="highlighter-rouge">NameService</code> in the constructor of <code class="highlighter-rouge">AppComponent</code> before we actually declared it. But on the other hand, using regular ES5 constructor functions that would be totally valid because function declarations get hoisted to the top by the JavaScript interpreter behind the scenes. And then, aren’t ES2015 classes just sugar on top of regular ES5 functions after all?</p>
 
-<p>Let’s see what happens when we move <code>NameService</code> to the top so that it’s declared before it’s first usage.</p>
+<p>Let’s see what happens when we move <code class="highlighter-rouge">NameService</code> to the top so that it’s declared before it’s first usage.</p>
 
-<div class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="kr">class</span> <span class="nx">NameService</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">NameService</span> <span class="p">{</span>
   <span class="nx">getName</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s2">"Angular"</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;Favourite framework: {{ name }}&lt;/h1&gt;'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">name</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="nx">nameService</span><span class="err">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">nameService</span><span class="p">:</span> <span class="nx">NameService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">nameService</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Ok, this seems to work just fine. But why doesn’t the JavaScript interpreter do that for us in the first place as it does for regular ES5 constructor functions?</p>
 
@@ -188,11 +188,11 @@
 
 <p>Let’s step back from Angular for a moment in order to understand the bare mechanics of the JavaScript language in this regard.</p>
 
-<p>The JavaScript interpreter doesn’t hoist class declarations because it may lead to unsound behavior when we have a class that uses the <code>extend</code> keyword to inherit from something. In particular, when it inherits from an expression which is absolutely valid.</p>
+<p>The JavaScript interpreter doesn’t hoist class declarations because it may lead to unsound behavior when we have a class that uses the <code class="highlighter-rouge">extend</code> keyword to inherit from something. In particular, when it inherits from an expression which is absolutely valid.</p>
 
 <p>Consider this ES6 code:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
@@ -205,11 +205,11 @@
 <span class="kd">var</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
-<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
+<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></figure>
 
-<p>This alerts <code>moving</code> just fine because what happens behind the scenes is that the JavaScript interpreter restructures the code to this.</p>
+<p>This alerts <code class="highlighter-rouge">moving</code> just fine because what happens behind the scenes is that the JavaScript interpreter restructures the code to this.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
 
 <span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
@@ -217,18 +217,18 @@
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
 <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
 <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
-<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
+<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></figure>
 
-<p>However, try making <code>Animal</code> an expression rather than a function declaration.</p>
+<p>However, try making <code class="highlighter-rouge">Animal</code> an expression rather than a function declaration.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
@@ -241,13 +241,13 @@
 <span class="kd">var</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
-<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
+<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></figure>
 
 <p>Again, this will be hoisted but now it becomes this.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
 
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
@@ -260,31 +260,31 @@
 <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
 <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
-<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
+<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></figure>
 
-<p>At the point where <code>class Dog extends Animal</code> is interpreted <code>Animal</code> is actually undefined and we get an error. We can easily fix that by moving the <code>Animal</code> expression before the declaration of <code>Dog</code>.</p>
+<p>At the point where <code class="highlighter-rouge">class Dog extends Animal</code> is interpreted <code class="highlighter-rouge">Animal</code> is actually undefined and we get an error. We can easily fix that by moving the <code class="highlighter-rouge">Animal</code> expression before the declaration of <code class="highlighter-rouge">Dog</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Animal</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">alert</span><span class="p">(</span><span class="nx">defaultMove</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
-<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
+<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></figure>
 
-<p>This works just fine again. Now think about what <em>would</em> actually happen if the JavaScript interpreter hoisted <code>Dog</code> just like a regular ES5 constructor function? We would end up with this code:</p>
+<p>This works just fine again. Now think about what <em>would</em> actually happen if the JavaScript interpreter hoisted <code class="highlighter-rouge">Dog</code> just like a regular ES5 constructor function? We would end up with this code:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">Animal</span><span class="p">,</span> <span class="nx">defaultMove</span><span class="p">,</span> <span class="nx">dog</span><span class="p">;</span>
 
 <span class="c1">// Dog is now hoisted above `Animal = function Anim...`</span>
-<span class="kr">class</span> <span class="nx">Dog</span> <span class="kr">extends</span> <span class="nx">Animal</span><span class="p">{</span>
+<span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Animal</span><span class="p">{</span>
 
 <span class="p">}</span>
 
@@ -297,37 +297,37 @@
 <span class="nx">defaultMove</span> <span class="o">=</span> <span class="s2">"moving"</span><span class="p">;</span>
 
 <span class="nx">dog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">();</span>
-<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></div>
+<span class="nx">dog</span><span class="p">.</span><span class="nx">move</span><span class="p">();</span></code></pre></figure>
 
-<p>Now that <code>Dog</code> is hoisted to the top the code breaks at the moment where the <code>extends Animal</code> is interpreted because <code>Animal</code> is <code>undefined</code> at that moment. The important thing to note here is that the <code>extends</code> part has to be evaluated at the right point in time. Therefore classes aren’t hoisted.</p>
+<p>Now that <code class="highlighter-rouge">Dog</code> is hoisted to the top the code breaks at the moment where the <code class="highlighter-rouge">extends Animal</code> is interpreted because <code class="highlighter-rouge">Animal</code> is <code class="highlighter-rouge">undefined</code> at that moment. The important thing to note here is that the <code class="highlighter-rouge">extends</code> part has to be evaluated at the right point in time. Therefore classes aren’t hoisted.</p>
 
 <h2 id="so-the-class-must-always-be-declared-before-its-usage">So the class must always be declared before it’s usage?</h2>
 
-<p>Ok, now that we understood <em>why</em> classes aren’t hoisted what does that mean for our earlier Angular example where we had to move the <code>NameService</code> to the very top? Is this the only way to get things working?</p>
+<p>Ok, now that we understood <em>why</em> classes aren’t hoisted what does that mean for our earlier Angular example where we had to move the <code class="highlighter-rouge">NameService</code> to the very top? Is this the only way to get things working?</p>
 
-<p>Turns out there is a solution we can reach for. Instead of annotating our <code>nameService</code> parameter with the <code>NameService</code> type which we learned evaluates to <code>undefined</code> at this point in time, we can use the <code>@Inject</code> annotation in conjunction with the <code>forwardRef</code> function as demonstrated here.</p>
+<p>Turns out there is a solution we can reach for. Instead of annotating our <code class="highlighter-rouge">nameService</code> parameter with the <code class="highlighter-rouge">NameService</code> type which we learned evaluates to <code class="highlighter-rouge">undefined</code> at this point in time, we can use the <code class="highlighter-rouge">@Inject</code> annotation in conjunction with the <code class="highlighter-rouge">forwardRef</code> function as demonstrated here.</p>
 
-<div class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span><span class="nx">Component</span><span class="p">,</span> <span class="nx">Inject</span><span class="p">,</span> <span class="nx">forwardRef</span><span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-ts" data-lang="ts"><span class="k">import</span> <span class="p">{</span><span class="nx">Component</span><span class="p">,</span> <span class="nx">Inject</span><span class="p">,</span> <span class="nx">forwardRef</span><span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;h1&gt;Favourite framework: {{ name }}&lt;/h1&gt;'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="nl">name</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+  <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">forwardRef</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">NameService</span><span class="p">))</span> <span class="nx">nameService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">forwardRef</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">NameService</span><span class="p">))</span> <span class="nx">nameService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">nameService</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">class</span> <span class="nx">NameService</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">NameService</span> <span class="p">{</span>
   <span class="nx">getName</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s2">"Angular"</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>What <code>forwardRef</code> does is, it takes a function as a parameter that returns a class. And because this function isn’t immediately called but instead is called <em>after</em> <code>NameService</code> is declared it is safe to return <code>NameService</code> from it. In other words: At the point where <code>() =&gt; NameService</code> runs <code>NameService</code> isn’t undefined anymore.</p>
+<p>What <code class="highlighter-rouge">forwardRef</code> does is, it takes a function as a parameter that returns a class. And because this function isn’t immediately called but instead is called <em>after</em> <code class="highlighter-rouge">NameService</code> is declared it is safe to return <code class="highlighter-rouge">NameService</code> from it. In other words: At the point where <code class="highlighter-rouge">() =&gt; NameService</code> runs <code class="highlighter-rouge">NameService</code> isn’t undefined anymore.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
@@ -420,6 +420,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -469,17 +480,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom themes with Angular Material</h3>
-                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

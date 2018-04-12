@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Understanding @Injectable in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Sep 17, 2015, last updated on Nov 8, 2016<br>9 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Sep 17, 2015, last updated on Nov 8, 2016<br>8 minute read</span>
 
           </div>
         </hgroup>
@@ -117,29 +117,29 @@
 
 <h2 id="injecting-service-dependencies">Injecting Service Dependencies</h2>
 
-<p>Let’s say we have a simple Angular component which has a <code>DataService</code> dependency. It could look something like this:</p>
+<p>Let’s say we have a simple Angular component which has a <code class="highlighter-rouge">DataService</code> dependency. It could look something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let item of items"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;ul&gt;
+      &lt;li *ngFor="let item of items"&gt;{{item.name}}&lt;/li&gt;
+    &lt;/ul&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
-  <span class="na">items</span><span class="p">:</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="na">dataService</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+  <span class="nl">items</span><span class="p">:</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">dataService</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">dataService</span><span class="p">.</span><span class="nx">getItems</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><code>DataService</code> on the other hand is a simple class (because that’s what a service in Angular is), that provides a method to return some items.</p>
+<p><code class="highlighter-rouge">DataService</code> on the other hand is a simple class (because that’s what a service in Angular is), that provides a method to return some items.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">DataService</span> <span class="p">{</span>
   <span class="nl">items</span><span class="p">:</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[</span>
       <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="s1">'Christoph Burgdorf'</span> <span class="p">},</span>
       <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="s1">'Pascal Precht'</span> <span class="p">},</span>
@@ -150,134 +150,133 @@
   <span class="nx">getItems</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Of course, in order to actually be able to ask for something of type <code>DataService</code>, we have to add a provider for our injector. We can do that by adding a provider to  our component.</p>
+<p>Of course, in order to actually be able to ask for something of type <code class="highlighter-rouge">DataService</code>, we have to add a provider for our injector. We can do that by adding a provider to  our component.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let item of items"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>  <span class="err">`</span><span class="p">,</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;ul&gt;
+      &lt;li *ngFor="let item of items"&gt;{{item.name}}&lt;/li&gt;
+    &lt;/ul&gt;
+  `</span><span class="p">,</span>
   <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">DataService</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
 <p>Until now there’s nothing new here. If this <em>is</em> new to you, you might want to read our article on <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">Dependency Injection in Angular</a> first.</p>
 
-<p>So where is the problem? Well, the problem occurs as soon as we try to inject a dependency into our service. We could for example use <code>Http</code> in our <code>DataService</code> to fetch our data from a remote server. Let’s quickly do that. First, we need  to import Angular’s <code>HttpModule</code> into our application module.</p>
+<p>So where is the problem? Well, the problem occurs as soon as we try to inject a dependency into our service. We could for example use <code class="highlighter-rouge">Http</code> in our <code class="highlighter-rouge">DataService</code> to fetch our data from a remote server. Let’s quickly do that. First, we need  to import Angular’s <code class="highlighter-rouge">HttpModule</code> into our application module.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">HttpModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">HttpModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">,</span> <span class="nx">HttpModule</span><span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>Angular’s http module comes with all the providers we need to hook up some http action in our service. Next, we need to inject an instance of <code>Http</code> in our service to actually use it.</p>
+<p>Angular’s http module comes with all the providers we need to hook up some http action in our service. Next, we need to inject an instance of <code class="highlighter-rouge">Http</code> in our service to actually use it.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Http</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Http</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 
-<span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">DataService</span> <span class="p">{</span>
   <span class="nl">items</span><span class="p">:</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">http</span><span class="err">:</span><span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">http</span><span class="p">:</span><span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p><strong>Boom</strong>. This thing is going to explode. As soon as we run this code in the browser, we’ll get the following error:</p>
 
-<p><code>
-Cannot resolve all parameters for DataService(?). Make sure they all have valid type or annotations.
-</code></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Cannot resolve all parameters for DataService(?). Make sure they all have valid type or annotations.
+</code></pre></div></div>
 
-<p>It basically says that it can’t resolve the <code>Http</code> dependency of <code>DataService</code> because Angular doesn’t know the type and therefore, no provider that can be used to resolve the dependency. Uhm.. wait what? Didn’t we put the type in the constructor?</p>
+<p>It basically says that it can’t resolve the <code class="highlighter-rouge">Http</code> dependency of <code class="highlighter-rouge">DataService</code> because Angular doesn’t know the type and therefore, no provider that can be used to resolve the dependency. Uhm.. wait what? Didn’t we put the type in the constructor?</p>
 
-<p>Yea, we did. Unfortunately it turns out this is not enough. However, obviously it <strong>does</strong> work when we inject <code>DataService</code> in our <code>AppComponent</code>. So what’s the problem here? Let’s take a step back and recap real quick where the metadata, that Angular’s DI need, comes from.</p>
+<p>Yea, we did. Unfortunately it turns out this is not enough. However, obviously it <strong>does</strong> work when we inject <code class="highlighter-rouge">DataService</code> in our <code class="highlighter-rouge">AppComponent</code>. So what’s the problem here? Let’s take a step back and recap real quick where the metadata, that Angular’s DI need, comes from.</p>
 
-<p>In our article on <a href="/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between decorators and annotations</a> we learned that decorators simply add metadata to our code. If we take our <code>AppComponent</code>, once decorated and transpiled, it looks something like this (simplified):</p>
+<p>In our article on <a href="/angular/2015/05/03/the-difference-between-annotations-and-decorators.html">the difference between decorators and annotations</a> we learned that decorators simply add metadata to our code. If we take our <code class="highlighter-rouge">AppComponent</code>, once decorated and transpiled, it looks something like this (simplified):</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">AppComponent</span><span class="p">(</span><span class="nx">myService</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">AppComponent</span><span class="p">(</span><span class="nx">myService</span><span class="p">)</span> <span class="p">{</span>
   <span class="p">...</span>
 <span class="p">}</span>
 
 <span class="nx">AppComponent</span> <span class="o">=</span> <span class="nx">__decorate</span><span class="p">([</span>
   <span class="nx">Component</span><span class="p">({...}),</span>
   <span class="nx">__metadata</span><span class="p">(</span><span class="s1">'design:paramtypes'</span><span class="p">,</span> <span class="p">[</span><span class="nx">DataService</span><span class="p">])</span>
-<span class="p">],</span> <span class="nx">AppComponent</span><span class="p">);</span></code></pre></div>
+<span class="p">],</span> <span class="nx">AppComponent</span><span class="p">);</span></code></pre></figure>
 
-<p>We can clearly see that <code>AppComponent</code> is decorated with <code>Component</code>, and some additional metadata for <code>paramtypes</code>. The <code>paramtypes</code> metadata is the one that is needed by Angular’s DI to figure out, for what type it has to return an instance.</p>
+<p>We can clearly see that <code class="highlighter-rouge">AppComponent</code> is decorated with <code class="highlighter-rouge">Component</code>, and some additional metadata for <code class="highlighter-rouge">paramtypes</code>. The <code class="highlighter-rouge">paramtypes</code> metadata is the one that is needed by Angular’s DI to figure out, for what type it has to return an instance.</p>
 
-<p>This looks good. Let’s take a look at the transpiled <code>DataService</code> and see what’s going on there (also simplified).</p>
+<p>This looks good. Let’s take a look at the transpiled <code class="highlighter-rouge">DataService</code> and see what’s going on there (also simplified).</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">DataService</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">DataService</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="kd">function</span> <span class="nx">DataService</span><span class="p">(</span><span class="nx">http</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">DataService</span><span class="p">;</span>
-<span class="p">})();</span></code></pre></div>
+<span class="p">})();</span></code></pre></figure>
 
 <p>Oops. Apparently we don’t have any metadata at all here. Why is that?</p>
 
-<p>TypeScript generates metadata when the <code>emitDecoratorMetadata</code> option is set. However, that doesn’t mean that it generates metadata blindly for each and every class or method of our code. TypeScript only generates metadata for a class, method, property or method/constructor parameter when a decorator is actually attached to that particular code. Otherwise, a huge amount of unused metadata code would be generated, which not only affects file size, but it’d also have an impact on our application runtime.</p>
+<p>TypeScript generates metadata when the <code class="highlighter-rouge">emitDecoratorMetadata</code> option is set. However, that doesn’t mean that it generates metadata blindly for each and every class or method of our code. TypeScript only generates metadata for a class, method, property or method/constructor parameter when a decorator is actually attached to that particular code. Otherwise, a huge amount of unused metadata code would be generated, which not only affects file size, but it’d also have an impact on our application runtime.</p>
 
-<p>That’s also why the metadata is generated for <code>AppComponent</code>, but not for <code>DataService</code>. Our <code>AppComponent</code> <strong>does</strong> have decorators, otherwhise it’s not a component.</p>
+<p>That’s also why the metadata is generated for <code class="highlighter-rouge">AppComponent</code>, but not for <code class="highlighter-rouge">DataService</code>. Our <code class="highlighter-rouge">AppComponent</code> <strong>does</strong> have decorators, otherwhise it’s not a component.</p>
 
 <h2 id="enforcing-metadata-generation">Enforcing Metadata Generation</h2>
 
-<p>So how can we enforce TypeScript to emit metadata for us accordingly? One thing we could do, is to use DI decorators provided by the framework. As we learned in our other articles on DI, the <code>@Inject</code> decorator is used to ask for a dependency of a certain type.</p>
+<p>So how can we enforce TypeScript to emit metadata for us accordingly? One thing we could do, is to use DI decorators provided by the framework. As we learned in our other articles on DI, the <code class="highlighter-rouge">@Inject</code> decorator is used to ask for a dependency of a certain type.</p>
 
-<p>We could change our <code>DataService</code> to something like this:</p>
+<p>We could change our <code class="highlighter-rouge">DataService</code> to something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">Http</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Inject</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Http</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 
-<span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">DataService</span> <span class="p">{</span>
   <span class="nl">items</span><span class="p">:</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">Http</span><span class="p">)</span> <span class="nx">http</span><span class="err">:</span><span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">Http</span><span class="p">)</span> <span class="nx">http</span><span class="p">:</span><span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><strong>Problem solved</strong>. In fact, this is exactly what <code>@Inject</code> is for when not transpiling with TypeScript. If we take a look at the transpiled code now, we see that all the needed metadata is generated (yeap simplified).</p>
+<p><strong>Problem solved</strong>. In fact, this is exactly what <code class="highlighter-rouge">@Inject</code> is for when not transpiling with TypeScript. If we take a look at the transpiled code now, we see that all the needed metadata is generated (yeap simplified).</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">DataService</span><span class="p">(</span><span class="nx">http</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">DataService</span><span class="p">(</span><span class="nx">http</span><span class="p">)</span> <span class="p">{</span>
 <span class="p">}</span>
 <span class="nx">DataService</span> <span class="o">=</span> <span class="nx">__decorate</span><span class="p">([</span>
   <span class="nx">__param</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">angular2_1</span><span class="p">.</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">Http</span><span class="p">)),</span> 
   <span class="nx">__metadata</span><span class="p">(</span><span class="s1">'design:paramtypes'</span><span class="p">,</span> <span class="p">[</span><span class="nx">Http</span><span class="p">])</span>
-<span class="p">],</span> <span class="nx">DataService</span><span class="p">);</span></code></pre></div>
+<span class="p">],</span> <span class="nx">DataService</span><span class="p">);</span></code></pre></figure>
 
 <p>However, now we have this Angular machinery in our code and unfortunately, we won’t entirely get rid of it. We can do a little bit better though. Remember that we said metadata is generated, if decorators are attached to our code?</p>
 
-<p>We can basically put <strong>any</strong> decorator on our code, as long as it’s either attached to the class declaration, or to the constructor parameter. In other words, we could remove <code>@Inject</code> again and use something else that we put on the class, because that will cause TypeScript to emit metadata for the constructor parameters too.</p>
+<p>We can basically put <strong>any</strong> decorator on our code, as long as it’s either attached to the class declaration, or to the constructor parameter. In other words, we could remove <code class="highlighter-rouge">@Inject</code> again and use something else that we put on the class, because that will cause TypeScript to emit metadata for the constructor parameters too.</p>
 
-<p>Of course, putting just anything that is a decorator on a class doesn’t sound really appropiate. Luckily, Angular comes with yet another decorator we can use. <code>@Injectable</code> is normally used for Dart metadata generation. It doesn’t have any special meaning in TypeScript-land, however, it turns out to be a perfect fit for our use case. We don’t have to build a new one ourselves, and the name also kind of makes sense.</p>
+<p>Of course, putting just anything that is a decorator on a class doesn’t sound really appropiate. Luckily, Angular comes with yet another decorator we can use. <code class="highlighter-rouge">@Injectable</code> is normally used for Dart metadata generation. It doesn’t have any special meaning in TypeScript-land, however, it turns out to be a perfect fit for our use case. We don’t have to build a new one ourselves, and the name also kind of makes sense.</p>
 
-<p>All we have to do is to import it and put it on our <code>DataService</code> like this:</p>
+<p>All we have to do is to import it and put it on our <code class="highlighter-rouge">DataService</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">Http</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Http</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
-<span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="kd">class</span> <span class="nx">DataService</span> <span class="p">{</span>
   <span class="nl">items</span><span class="p">:</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">http</span><span class="err">:</span><span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">http</span><span class="p">:</span><span class="nx">Http</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Again, this will just enforce TypeScript to emit the needed metadata, the decorator itself doesn’t have any special meaning here. This seems to be currently the best option we have to solve the illustrated problem.</p>
 
@@ -373,6 +372,17 @@ Cannot resolve all parameters for DataService(?). Make sure they all have valid 
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -422,17 +432,6 @@ Cannot resolve all parameters for DataService(?). Make sure they all have valid 
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom themes with Angular Material</h3>
-                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

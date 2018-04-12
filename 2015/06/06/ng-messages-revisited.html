@@ -96,50 +96,50 @@
 
 <p>In applications where more than just a single form exists, we might want to reuse message templates. E.g. if we have an input field that is required, we want to display an error message that says so, in case the user forgets to enter anything. Such required fields appear very often in forms, so it would be quite cumbersome if we would have to define the same error message in a template over and over again.</p>
 
-<p>To solve that issue, there was an <code>ngMessagesInclude</code> attribute, which we could use in combination with the <code>ngMessages</code> directive, to include existing templates in other <code>ngMessages</code> container.</p>
+<p>To solve that issue, there was an <code class="highlighter-rouge">ngMessagesInclude</code> attribute, which we could use in combination with the <code class="highlighter-rouge">ngMessages</code> directive, to include existing templates in other <code class="highlighter-rouge">ngMessages</code> container.</p>
 
 <p>To illustrate this scenario, here’s what such a template definition could look like:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"script/ng-template"</span> <span class="na">id=</span><span class="s">"required-message"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"script/ng-template"</span> <span class="na">id=</span><span class="s">"required-message"</span><span class="nt">&gt;</span>
   <span class="o">&lt;</span><span class="nx">ng</span><span class="o">-</span><span class="nx">message</span> <span class="nx">when</span><span class="o">=</span><span class="s2">"required"</span><span class="o">&gt;</span>
     <span class="nx">This</span> <span class="nx">field</span> <span class="nx">is</span> <span class="nx">required</span><span class="o">!</span>
   <span class="o">&lt;</span><span class="sr">/ng-message</span><span class="err">&gt;
-</span><span class="nt">&lt;/script&gt;</span></code></pre></div>
+</span><span class="nt">&lt;/script&gt;</span></code></pre></figure>
 
-<p>It’s an overloaded <code>script</code> tag that has an <code>id</code> attribute so we can refer to it later, and in that script we can just define a template. In order to (re)use that template, all we had to do, was to use the <code>ngMessagesInclude</code> attribute like this:</p>
+<p>It’s an overloaded <code class="highlighter-rouge">script</code> tag that has an <code class="highlighter-rouge">id</code> attribute so we can refer to it later, and in that script we can just define a template. In order to (re)use that template, all we had to do, was to use the <code class="highlighter-rouge">ngMessagesInclude</code> attribute like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">ng-messages-include=</span><span class="s">"required-message"</span> <span class="na">for=</span><span class="s">"otherForm.field.$error"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">ng-messages-include=</span><span class="s">"required-message"</span> <span class="na">for=</span><span class="s">"otherForm.field.$error"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/ng-messages&gt;</span></code></pre></div>
+<span class="nt">&lt;/ng-messages&gt;</span></code></pre></figure>
 
-<p>What happens here, is that we just have our <code>ngMessages</code> container to display messages, but in addition to that, an existing template will be automatically included and activated. Included templates have always been added to the <strong>bottom</strong> of the <code>ngMessages</code> container.</p>
+<p>What happens here, is that we just have our <code class="highlighter-rouge">ngMessages</code> container to display messages, but in addition to that, an existing template will be automatically included and activated. Included templates have always been added to the <strong>bottom</strong> of the <code class="highlighter-rouge">ngMessages</code> container.</p>
 
-<p><strong>In Angular 1.4, this has changed</strong>. <code>ngMessagesInclude</code> is no longer an attribute but a directive. Which means, if we want to use it the same way, instead of adding an attribute to the <code>ngMessages</code> container, we have to add the <code>ngMessagesInclude</code> directive as a child element to the container like this:</p>
+<p><strong>In Angular 1.4, this has changed</strong>. <code class="highlighter-rouge">ngMessagesInclude</code> is no longer an attribute but a directive. Which means, if we want to use it the same way, instead of adding an attribute to the <code class="highlighter-rouge">ngMessages</code> container, we have to add the <code class="highlighter-rouge">ngMessagesInclude</code> directive as a child element to the container like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"otherForm.field.$error"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"otherForm.field.$error"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">ng-message=</span><span class="s">"minlength"</span><span class="nt">&gt;</span>...<span class="nt">&lt;div&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">ng-messages-include=</span><span class="s">"required-message"</span><span class="nt">&gt;&lt;/div&gt;</span>
-<span class="nt">&lt;/ng-messages&gt;</span></code></pre></div>
+<span class="nt">&lt;/ng-messages&gt;</span></code></pre></figure>
 
-<p>Of course, this gives us much better control over what happens inside the <code>ngMessages</code> container. Don’t forget that the order of <code>ngMessage</code> directives inside a container configures the priority of each message.</p>
+<p>Of course, this gives us much better control over what happens inside the <code class="highlighter-rouge">ngMessages</code> container. Don’t forget that the order of <code class="highlighter-rouge">ngMessage</code> directives inside a container configures the priority of each message.</p>
 
 <h2 id="dynamic-message-resolution">Dynamic Message resolution</h2>
 
-<p>A better method to include existing message templates is already great, but the framework could do better. Even if <code>ngMessages</code> as a whole is a very nice and useful extension, it turns out that there was one issue with it, that should have been supported out of the box based on the nature of Angular.</p>
+<p>A better method to include existing message templates is already great, but the framework could do better. Even if <code class="highlighter-rouge">ngMessages</code> as a whole is a very nice and useful extension, it turns out that there was one issue with it, that should have been supported out of the box based on the nature of Angular.</p>
 
-<p>It was not possible to pass expressions to <code>ngMessage</code> directives, that evaluate to any kind of error type. This restricted us to only define static templates for each error message, which not only means we had to type more, it’s also not possible to render error messages dynamically that come from a server. In addition to that, it was not possible to use directives on ngMessages that do structure changes to the DOM (e.g. <code>ngIf</code>, <code>ngRepeat</code>).</p>
+<p>It was not possible to pass expressions to <code class="highlighter-rouge">ngMessage</code> directives, that evaluate to any kind of error type. This restricted us to only define static templates for each error message, which not only means we had to type more, it’s also not possible to render error messages dynamically that come from a server. In addition to that, it was not possible to use directives on ngMessages that do structure changes to the DOM (e.g. <code class="highlighter-rouge">ngIf</code>, <code class="highlighter-rouge">ngRepeat</code>).</p>
 
-<p><strong>Angular 1.4 fixes that issue</strong>. It introduces another directive called <code>ngMessageExp</code> which gets an expression that evaluates to an error type, so we can dynamically display messages. Combined with directives that do structural changes to the DOM, this can be very powerful. Just imagine you’d get a list of error messages back from a server due to asynchronous validation. With the new added features, this can easily be implemented like this:</p>
+<p><strong>Angular 1.4 fixes that issue</strong>. It introduces another directive called <code class="highlighter-rouge">ngMessageExp</code> which gets an expression that evaluates to an error type, so we can dynamically display messages. Combined with directives that do structural changes to the DOM, this can be very powerful. Just imagine you’d get a list of error messages back from a server due to asynchronous validation. With the new added features, this can easily be implemented like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"otherForm.field.$error"</span><span class="nt">&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-messages</span> <span class="na">for=</span><span class="s">"otherForm.field.$error"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">ng-repeat=</span><span class="s">"errorMessage in errorMessages"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;div</span> <span class="na">ng-message-exp=</span><span class="s">"errorMessage.type"</span><span class="nt">&gt;</span>
       {{errorMessage.text}}
     <span class="nt">&lt;/div&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/ng-messages&gt;</span></code></pre></div>
+<span class="nt">&lt;/ng-messages&gt;</span></code></pre></figure>
 
-<p>We can simply iterate over a collection of messages using <code>ngRepeat</code> and dynamically display error messages based on the collection’s message objects. Super powerful.</p>
+<p>We can simply iterate over a collection of messages using <code class="highlighter-rouge">ngRepeat</code> and dynamically display error messages based on the collection’s message objects. Super powerful.</p>
 
 
           

@@ -130,13 +130,13 @@
 
 <p>Now that we know what change detection is all about, we might wonder, when exactly can such a change happen? When does Angular know that it has to update the view? Well, let’s take a look at the following code:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">firstname</span><span class="p">}}</span> <span class="p">{{</span><span class="nx">lastname</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"changeName()"</span><span class="o">&gt;</span><span class="nx">Change</span> <span class="nx">name</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h1&gt;{{firstname}} {{lastname}}&lt;/h1&gt;
+    &lt;button (click)="changeName()"&gt;Change name&lt;/button&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">MyApp</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">MyApp</span> <span class="p">{</span>
 
   <span class="nl">firstname</span><span class="p">:</span><span class="nx">string</span> <span class="o">=</span> <span class="s1">'Pascal'</span><span class="p">;</span>
   <span class="nl">lastname</span><span class="p">:</span><span class="nx">string</span> <span class="o">=</span> <span class="s1">'Precht'</span><span class="p">;</span>
@@ -145,7 +145,7 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">firstname</span> <span class="o">=</span> <span class="s1">'Brad'</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">lastname</span> <span class="o">=</span> <span class="s1">'Green'</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>If this is the first time you’re seeing an Angular component, you might want to read our article on <a href="/angular/2015/04/09/developing-a-tabs-component-in-angular-2.html">building a tabs component</a>.</p>
 
@@ -153,28 +153,28 @@
 
 <p>Here’s another one:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
-<span class="kr">class</span> <span class="nx">ContactsApp</span> <span class="kr">implements</span> <span class="nx">OnInit</span><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">()</span>
+<span class="kd">class</span> <span class="nx">ContactsApp</span> <span class="kr">implements</span> <span class="nx">OnInit</span><span class="p">{</span>
 
   <span class="nl">contacts</span><span class="p">:</span><span class="nx">Contact</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">http</span><span class="err">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">http</span><span class="p">:</span> <span class="nx">Http</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/contacts'</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'/contacts'</span><span class="p">)</span>
       <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">res</span> <span class="o">=&gt;</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
       <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">contacts</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="nx">contacts</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>This component holds a list of contacts and when it initializes, it performs a http request. Once this request comes back, the list gets updated. Again, at this point, our application state has changed so we will want to update the view.</p>
 
 <p>Basically application state change can be caused by three things:</p>
 
 <ul>
-  <li><strong>Events</strong> - <code>click</code>, <code>submit</code>, …</li>
+  <li><strong>Events</strong> - <code class="highlighter-rouge">click</code>, <code class="highlighter-rouge">submit</code>, …</li>
   <li><strong>XHR</strong> - Fetching data from a remote server</li>
-  <li><strong>Timers</strong> - <code>setTimeout()</code>, <code>setInterval()</code></li>
+  <li><strong>Timers</strong> - <code class="highlighter-rouge">setTimeout()</code>, <code class="highlighter-rouge">setInterval()</code></li>
 </ul>
 
 <p>They are all asynchronous. Which brings us to the conclusion that, basically whenever some asynchronous operation has been performed, our application state might have changed. This is when someone needs to tell Angular to update the view.</p>
@@ -185,16 +185,16 @@
 
 <p>Angular allows us to use native APIs directly. There are no interceptor methods we have to call so Angular gets notified to update the DOM. Is that pure magic?</p>
 
-<p>If you’ve followed our latest articles, you know that <a href="/angular/2016/01/22/understanding-zones.html">Zones</a> take care of this. In fact, Angular comes with its own zone called <code>NgZone</code>, which we’ve written about in our article <a href="/angular/2016/02/01/zones-in-angular-2.html">Zones in Angular</a>. You might want to read that, too.</p>
+<p>If you’ve followed our latest articles, you know that <a href="/angular/2016/01/22/understanding-zones.html">Zones</a> take care of this. In fact, Angular comes with its own zone called <code class="highlighter-rouge">NgZone</code>, which we’ve written about in our article <a href="/angular/2016/02/01/zones-in-angular-2.html">Zones in Angular</a>. You might want to read that, too.</p>
 
-<p>The short version is, that somewhere in Angular’s source code, there’s this thing called <code>ApplicationRef</code>, which listens to <code>NgZones</code> <code>onTurnDone</code> event. Whenever this event is fired, it executes a <code>tick()</code> function which essentially performs change detection.</p>
+<p>The short version is, that somewhere in Angular’s source code, there’s this thing called <code class="highlighter-rouge">ApplicationRef</code>, which listens to <code class="highlighter-rouge">NgZones</code> <code class="highlighter-rouge">onTurnDone</code> event. Whenever this event is fired, it executes a <code class="highlighter-rouge">tick()</code> function which essentially performs change detection.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// very simplified version of actual source</span>
-<span class="kr">class</span> <span class="nx">ApplicationRef</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// very simplified version of actual source</span>
+<span class="kd">class</span> <span class="nx">ApplicationRef</span> <span class="p">{</span>
 
   <span class="nl">changeDetectorRefs</span><span class="p">:</span><span class="nx">ChangeDetectorRef</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">zone</span><span class="err">:</span> <span class="nx">NgZone</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">zone</span><span class="p">:</span> <span class="nx">NgZone</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">.</span><span class="nx">onTurnDone</span>
       <span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">.</span><span class="nx">run</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">tick</span><span class="p">());</span>
   <span class="p">}</span>
@@ -203,7 +203,7 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">changeDetectorRefs</span>
       <span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">ref</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">ref</span><span class="p">.</span><span class="nx">detectChanges</span><span class="p">());</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <h2 id="change-detection">Change Detection</h2>
 
@@ -245,12 +245,12 @@
 
 <p>In order to understand why and how e.g. immutable data structures can help, we need to understand what mutability means. Assume we have the following component:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'&lt;v-card [vData]="vData"&gt;&lt;/v-card&gt;'</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">VCardApp</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">VCardApp</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">vData</span> <span class="o">=</span> <span class="p">{</span>
       <span class="na">name</span><span class="p">:</span> <span class="s1">'Christoph Burgdorf'</span><span class="p">,</span>
       <span class="na">email</span><span class="p">:</span> <span class="s1">'christoph@thoughtram.io'</span>
@@ -260,13 +260,13 @@
   <span class="nx">changeData</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">vData</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'Pascal Precht'</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><code>VCardApp</code> uses <code>&lt;v-card&gt;</code> as a child component, which has an input property <code>vData</code>. We’re passing data to that component with <code>VCardApp</code>’s own <code>vData</code> property. <code>vData</code> is an object with two properties. In addition, there’s a method <code>changeData()</code>, which changes the name of <code>vData</code>. No magic going on here.</p>
+<p><code class="highlighter-rouge">VCardApp</code> uses <code class="highlighter-rouge">&lt;v-card&gt;</code> as a child component, which has an input property <code class="highlighter-rouge">vData</code>. We’re passing data to that component with <code class="highlighter-rouge">VCardApp</code>’s own <code class="highlighter-rouge">vData</code> property. <code class="highlighter-rouge">vData</code> is an object with two properties. In addition, there’s a method <code class="highlighter-rouge">changeData()</code>, which changes the name of <code class="highlighter-rouge">vData</code>. No magic going on here.</p>
 
-<p>The important part is that <code>changeData()</code> mutates <code>vData</code> by changing its <code>name</code> property. Even though that property is going to be changed, the <code>vData</code> reference itself stays the same.</p>
+<p>The important part is that <code class="highlighter-rouge">changeData()</code> mutates <code class="highlighter-rouge">vData</code> by changing its <code class="highlighter-rouge">name</code> property. Even though that property is going to be changed, the <code class="highlighter-rouge">vData</code> reference itself stays the same.</p>
 
-<p>What happens when change detection is performed, assuming that some event causes <code>changeData()</code> to be executed? First, <code>vData.name</code> gets changed, and then it’s passed to <code>&lt;v-card&gt;</code>. <code>&lt;v-card&gt;</code>’s change detector now checks if the given <code>vData</code> is still the same as before, and yes, it is. The reference hasn’t changed. However, the <code>name</code> property has changed, so Angular will perform change detection for that object nonetheless.</p>
+<p>What happens when change detection is performed, assuming that some event causes <code class="highlighter-rouge">changeData()</code> to be executed? First, <code class="highlighter-rouge">vData.name</code> gets changed, and then it’s passed to <code class="highlighter-rouge">&lt;v-card&gt;</code>. <code class="highlighter-rouge">&lt;v-card&gt;</code>’s change detector now checks if the given <code class="highlighter-rouge">vData</code> is still the same as before, and yes, it is. The reference hasn’t changed. However, the <code class="highlighter-rouge">name</code> property has changed, so Angular will perform change detection for that object nonetheless.</p>
 
 <p>Because objects are mutable by default in JavaScript (except for primitives), Angular has to be conservative and run change detection every single time for every component when an event happens.</p>
 
@@ -278,45 +278,45 @@
 
 <p>This pseudo code demonstrates it:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">vData</span> <span class="o">=</span> <span class="nx">someAPIForImmutables</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">vData</span> <span class="o">=</span> <span class="nx">someAPIForImmutables</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
               <span class="na">name</span><span class="p">:</span> <span class="s1">'Pascal Precht'</span>
             <span class="p">});</span>
 
-<span class="kd">var</span> <span class="nx">vData2</span> <span class="o">=</span> <span class="nx">vData</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'name'</span><span class="p">,</span> <span class="s1">'Christoph Burgdorf'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">vData2</span> <span class="o">=</span> <span class="nx">vData</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'name'</span><span class="p">,</span> <span class="s1">'Christoph Burgdorf'</span><span class="p">);</span>
 
-<span class="nx">vData</span> <span class="o">===</span> <span class="nx">vData2</span> <span class="c1">// false</span></code></pre></div>
+<span class="nx">vData</span> <span class="o">===</span> <span class="nx">vData2</span> <span class="c1">// false</span></code></pre></figure>
 
-<p><code>someAPIForImmutables</code> can be any API we want to use for immutable data structures. However, as we can see, we can’t simply change the <code>name</code> property. We’ll get a new object with that particular change and this object has a new reference.
+<p><code class="highlighter-rouge">someAPIForImmutables</code> can be any API we want to use for immutable data structures. However, as we can see, we can’t simply change the <code class="highlighter-rouge">name</code> property. We’ll get a new object with that particular change and this object has a new reference.
 Or in short: <strong>If there’s a change, we get a new reference</strong>.</p>
 
 <h2 id="reducing-the-number-of-checks">Reducing the number of checks</h2>
 
 <p>Angular can skip entire change detection subtrees when input properties don’t change. We just learned that a “change” means “new reference”. If we use immutable objects in our Angular app, all we need to do is tell Angular that a component can skip change detection, if its input hasn’t changed.</p>
 
-<p>Let’s see how that works by taking a look at <code>&lt;v-card&gt;</code>:</p>
+<p>Let’s see how that works by taking a look at <code class="highlighter-rouge">&lt;v-card&gt;</code>:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">vData</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">vData</span><span class="p">.</span><span class="nx">email</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;{{vData.name}}&lt;/h2&gt;
+    &lt;span&gt;{{vData.email}}&lt;/span&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">VCardCmp</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">vData</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="kd">class</span> <span class="nx">VCardCmp</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">vData</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
 
-<p>As we can see, <code>VCardCmp</code> only depends on its input properties. Great. We can tell Angular to skip change detection for this component’s subtree if none of its inputs changed by setting the change detection strategy to <code>OnPush</code> like this:</p>
+<p>As we can see, <code class="highlighter-rouge">VCardCmp</code> only depends on its input properties. Great. We can tell Angular to skip change detection for this component’s subtree if none of its inputs changed by setting the change detection strategy to <code class="highlighter-rouge">OnPush</code> like this:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">vData</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">vData</span><span class="p">.</span><span class="nx">email</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
-</span>  <span class="err">`</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;{{vData.name}}&lt;/h2&gt;
+    &lt;span&gt;{{vData.email}}&lt;/span&gt;
+  `</span><span class="p">,</span>
   <span class="na">changeDetection</span><span class="p">:</span> <span class="nx">ChangeDetectionStrategy</span><span class="p">.</span><span class="nx">OnPush</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">VCardCmp</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">vData</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="kd">class</span> <span class="nx">VCardCmp</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">vData</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>That’s it! Now imagine a bigger component tree. We can skip entire subtrees when immutable objects are used and Angular is informed accordingly.</p>
 
@@ -328,17 +328,17 @@ Or in short: <strong>If there’s a change, we get a new reference</strong>.</p>
 
 <p>As mentioned earlier, Observables also give us some certain guarantees of when a change has happened. Unlike immutable objects, they don’t give us new references when a change is made. Instead, they fire events we can subscribe to in order to react to them.</p>
 
-<p>So, if we use Observables and we want to use <code>OnPush</code> to skip change detector subtrees, but the reference of these objects will never change, how do we deal with that? It turns out Angular has a <strong>very smart</strong> way to enable paths in the component tree to be checked for certain events, which is exactly what we need in that case.</p>
+<p>So, if we use Observables and we want to use <code class="highlighter-rouge">OnPush</code> to skip change detector subtrees, but the reference of these objects will never change, how do we deal with that? It turns out Angular has a <strong>very smart</strong> way to enable paths in the component tree to be checked for certain events, which is exactly what we need in that case.</p>
 
 <p>To understand what that means, let’s take a look at this component:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">template</span><span class="p">:</span> <span class="s1">'{{counter}}'</span><span class="p">,</span>
   <span class="na">changeDetection</span><span class="p">:</span> <span class="nx">ChangeDetectionStrategy</span><span class="p">.</span><span class="nx">OnPush</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">CartBadgeCmp</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">CartBadgeCmp</span> <span class="p">{</span>
 
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">addItemStream</span><span class="err">:</span><span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">addItemStream</span><span class="p">:</span><span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
   <span class="nx">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
@@ -346,41 +346,41 @@ Or in short: <strong>If there’s a change, we get a new reference</strong>.</p>
       <span class="k">this</span><span class="p">.</span><span class="nx">counter</span><span class="o">++</span><span class="p">;</span> <span class="c1">// application state changed</span>
     <span class="p">})</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Let’s say we build an e-commerce application with a shopping cart. Whenever a user puts a product into the shopping cart, we want a little counter to show up in our UI, so the user can see the amount of products in the cart.</p>
 
-<p><code>CartBadgeCmp</code> does exactly that. It has a <code>counter</code> and an input property <code>addItemStream</code>, which is a stream of events that gets fired, whenever a product is added to the shopping cart.</p>
+<p><code class="highlighter-rouge">CartBadgeCmp</code> does exactly that. It has a <code class="highlighter-rouge">counter</code> and an input property <code class="highlighter-rouge">addItemStream</code>, which is a stream of events that gets fired, whenever a product is added to the shopping cart.</p>
 
 <p>We won’t go into much detail on how observables work in this article. If you want to learn more about observables, make sure to read our article on <a href="http://blog.thoughtram.io/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html">taking advantage of Observables in Angular</a>.</p>
 
-<p>In addition, we set the change detection strategy to <code>OnPush</code>, so change detection isn’t performed all the time, only when the component’s input properties change.</p>
+<p>In addition, we set the change detection strategy to <code class="highlighter-rouge">OnPush</code>, so change detection isn’t performed all the time, only when the component’s input properties change.</p>
 
-<p>However, as mentioned earlier, the reference of <code>addItemStream</code> will never change, so change detection is never performed for this component’s subtree. This is a problem because the component subscribes to that stream in its <code>ngOnInit</code> life cycle hook and increments the counter. This is application state change and we want to have this reflected in our view right?</p>
+<p>However, as mentioned earlier, the reference of <code class="highlighter-rouge">addItemStream</code> will never change, so change detection is never performed for this component’s subtree. This is a problem because the component subscribes to that stream in its <code class="highlighter-rouge">ngOnInit</code> life cycle hook and increments the counter. This is application state change and we want to have this reflected in our view right?</p>
 
-<p>Here’s what our change detector tree might look like (we’ve set <strong>all</strong> to <code>OnPush</code>). No change detection will be performed when an event happens:</p>
+<p>Here’s what our change detector tree might look like (we’ve set <strong>all</strong> to <code class="highlighter-rouge">OnPush</code>). No change detection will be performed when an event happens:</p>
 
 <p><img style="background: #0c4eb2; padding: 0 1em;" src="/images/cd-tree-10.svg" /></p>
 
-<p>How can we inform Angular about this change? How can we tell Angular that change detection <strong>needs</strong> to be performed for this component, even though the entire tree is set to <code>OnPush</code>?</p>
+<p>How can we inform Angular about this change? How can we tell Angular that change detection <strong>needs</strong> to be performed for this component, even though the entire tree is set to <code class="highlighter-rouge">OnPush</code>?</p>
 
 <p>No worries, Angular has us covered. As we’ve learned earlier, change detection is <strong>always</strong> performed from top to bottom. So what we need is a way to detect changes for the entire path of the tree to the component where the change happened. Angular can’t know which path it is, but we do.</p>
 
-<p>We can access a component’s <code>ChangeDetectorRef</code> via <a href="http://blog.thoughtram.io/angular/2015/05/18/dependency-injection-in-angular-2.html">dependency injection</a>, which comes with an API called <code>markForCheck()</code>. This method does exactly what we need! It marks the path from our component until root to be checked for the next change detection run.</p>
+<p>We can access a component’s <code class="highlighter-rouge">ChangeDetectorRef</code> via <a href="http://blog.thoughtram.io/angular/2015/05/18/dependency-injection-in-angular-2.html">dependency injection</a>, which comes with an API called <code class="highlighter-rouge">markForCheck()</code>. This method does exactly what we need! It marks the path from our component until root to be checked for the next change detection run.</p>
 
 <p>Let’s inject it into our component:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">cd</span><span class="err">:</span> <span class="nx">ChangeDetectorRef</span><span class="p">)</span> <span class="p">{}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">cd</span><span class="p">:</span> <span class="nx">ChangeDetectorRef</span><span class="p">)</span> <span class="p">{}</span></code></pre></figure>
 
 <p>Then, tell Angular to mark the path from this component until root to be checked:</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript">  <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">addItemStream</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">counter</span><span class="o">++</span><span class="p">;</span> <span class="c1">// application state changed</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">cd</span><span class="p">.</span><span class="nx">markForCheck</span><span class="p">();</span> <span class="c1">// marks path</span>
     <span class="p">})</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Boom, that’s it! Here’s what it looks like after the observable event is fired but before change detection kicked in:</p>
 
@@ -390,7 +390,7 @@ Or in short: <strong>If there’s a change, we get a new reference</strong>.</p>
 
 <p><img style="background: #0c4eb2; padding: 0 1em;" src="/images/cd-tree-13.svg" /></p>
 
-<p>How cool is that? Once the change detection run is over, it’ll restore the <code>OnPush</code> state for the entire tree.</p>
+<p>How cool is that? Once the change detection run is over, it’ll restore the <code class="highlighter-rouge">OnPush</code> state for the entire tree.</p>
 
 <h2 id="theres-more">There’s more…</h2>
 
@@ -493,6 +493,17 @@ Or in short: <strong>If there’s a change, we get a new reference</strong>.</p>
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -542,17 +553,6 @@ Or in short: <strong>If there’s a change, we get a new reference</strong>.</p>
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom themes with Angular Material</h3>
-                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

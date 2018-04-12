@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">A simple guide to Reinforcement Learning</h2>
-            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Feb 28, 2018<br>35 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Feb 28, 2018<br>36 minute read</span>
 
           </div>
         </hgroup>
@@ -244,7 +244,7 @@
 
 <p>Rest assured, the code is equally simple no matter whether we’ll be using TypeScript or Python!</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">Game</span><span class="p">():</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">Game</span><span class="p">():</span>
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -271,16 +271,16 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">turns</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">current_number</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_won</span><span class="p">()</span></code></pre></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_won</span><span class="p">()</span></code></pre></figure>
 
 <p>There are really only two basic requirements that we have for the API of the game:</p>
 
 <ul>
   <li>
-    <p><strong>A <code>play</code> method</strong> that takes an action and applies it to the current state. This is the most important API as it will control the game and move us from one state to another.</p>
+    <p><strong>A <code class="highlighter-rouge">play</code> method</strong> that takes an action and applies it to the current state. This is the most important API as it will control the game and move us from one state to another.</p>
   </li>
   <li>
-    <p><strong><code>has_won()</code>/<code>has_lost()</code> methods</strong> to figure out if we have won or lost the game. These APIs are important to gather feedback to learn from.</p>
+    <p><strong><code class="highlighter-rouge">has_won()</code>/<code class="highlighter-rouge">has_lost()</code> methods</strong> to figure out if we have won or lost the game. These APIs are important to gather feedback to learn from.</p>
   </li>
 </ul>
 
@@ -292,9 +292,9 @@
 
 <p>In order to play the game we need an <em>agent</em> that will perform actions in the game with the intention to figure out how to win the game over time.</p>
 
-<p>We’ll start with something really simple and implement two methods, namely <code>play</code> and <code>play_and_train</code>. The <code>play</code> method basically lets the agent play the game for a given number of times in a mode where we can follow the visual output.</p>
+<p>We’ll start with something really simple and implement two methods, namely <code class="highlighter-rouge">play</code> and <code class="highlighter-rouge">play_and_train</code>. The <code class="highlighter-rouge">play</code> method basically lets the agent play the game for a given number of times in a mode where we can follow the visual output.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># creating random actions</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># creating random actions</span>
 <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
   <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 
@@ -321,15 +321,15 @@
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_lost</span><span class="p">()):</span>
           <span class="k">print</span><span class="p">(</span><span class="s">'You lost'</span><span class="p">)</span>
 
-      <span class="k">print</span><span class="p">(</span><span class="s">'##############################################'</span><span class="p">)</span></code></pre></div>
+      <span class="k">print</span><span class="p">(</span><span class="s">'##############################################'</span><span class="p">)</span></code></pre></figure>
 
 <p>As you can see, there’s no rocket sience behind it. A simple loop for the number of times we want our agent to play and an inner loop for the game itself to make turns as long as the game isn’t either won or lost.</p>
 
-<p>Also notice that we are mapping the human readable answers (<code>+3, +2..-2, -3</code>) to zero based values (<code>0, 1..4, 5</code>) so that we can easily address them as indexes in an array to make our life much easier.</p>
+<p>Also notice that we are mapping the human readable answers (<code class="highlighter-rouge">+3, +2..-2, -3</code>) to zero based values (<code class="highlighter-rouge">0, 1..4, 5</code>) so that we can easily address them as indexes in an array to make our life much easier.</p>
 
 <p>Since our agent is just making random moves, we should’t expect super powers either. Here’s some output from it playing randomly. It even won game #4 by accident. Hooray! For this simple game though we’d really want our agent to win 100% of the games!</p>
 
-<div class="highlight"><pre><code class="language-shell" data-lang="shell">Starting game <span class="c">#1</span>
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">Starting game <span class="c">#1</span>
 Current number is 7
 Playing 1
 Current number is 8
@@ -344,35 +344,35 @@ Playing 1
 Current number is 11
 Playing 1
 Current number is 12
-Playing -2
+Playing <span class="nt">-2</span>
 You lost
 <span class="c">##############################################</span>
 Starting game <span class="c">#3</span>
 Current number is 1
 Playing 3
 Current number is 4
-Playing -2
+Playing <span class="nt">-2</span>
 Current number is 2
-Playing -2
+Playing <span class="nt">-2</span>
 You lost
 <span class="c">##############################################</span>
 Starting game <span class="c">#4</span>
 Current number is 7
-Playing -2
+Playing <span class="nt">-2</span>
 You won!
-<span class="c">##############################################</span></code></pre></div>
+<span class="c">##############################################</span></code></pre></figure>
 
 <p>Ok, great, feel free to checkout this embedded demo to familiarize yourself with the code at this point.</p>
 
 <iframe src="https://machinelabs.ai/embedded/catch-5/1519735417824-BJzFfAGdG?tab=console&amp;file=main.py?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>We’ll keep the <code>play</code> method to have an API that we can call that gives us visual feedback when the agent plays the game.</p>
+<p>We’ll keep the <code class="highlighter-rouge">play</code> method to have an API that we can call that gives us visual feedback when the agent plays the game.</p>
 
-<p>As we mentioned we’ll also implement a <code>play_and_train</code> method which will play in a <em>headless</em> mode, meaning we won’t be able to follow along the moves. Instead, we’ll get live metrics to follow along how the actual training is working out. For instance, we’d like to count the number of won or lost games.</p>
+<p>As we mentioned we’ll also implement a <code class="highlighter-rouge">play_and_train</code> method which will play in a <em>headless</em> mode, meaning we won’t be able to follow along the moves. Instead, we’ll get live metrics to follow along how the actual training is working out. For instance, we’d like to count the number of won or lost games.</p>
 
-<p>Let’s take a look how <code>play_and_train</code> is implemented.</p>
+<p>Let’s take a look how <code class="highlighter-rouge">play_and_train</code> is implemented.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">play_and_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">play_and_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
   <span class="n">stats</span> <span class="o">=</span> <span class="n">TrainStats</span><span class="p">()</span>
 
   <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">nb_epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
@@ -404,31 +404,31 @@ You won!
     <span class="n">stats</span><span class="o">.</span><span class="n">p_loss</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">epoch</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">nb_losses</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">print_every_n_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">print_epoch_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span></code></pre></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">print_epoch_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span></code></pre></figure>
 
-<p>It’s really not that much different. Instead of printing out each and every move, we’ll collect <code>stats</code> to print out at a given frequency. Also notice that we slightly changed the wording: From now on, we’ll be calling the number of times that our agent plays the game <strong>epochs</strong> which is the general term for a complete training cycle.</p>
+<p>It’s really not that much different. Instead of printing out each and every move, we’ll collect <code class="highlighter-rouge">stats</code> to print out at a given frequency. Also notice that we slightly changed the wording: From now on, we’ll be calling the number of times that our agent plays the game <strong>epochs</strong> which is the general term for a complete training cycle.</p>
 
 <h3 id="collecting-the-precious-bits">Collecting the precious bits</h3>
 
-<p>The eagle-eyed reader may have spotted that there are in fact some subtle changes that are quite important. We collect five important variables that we are passing to a new <code>train</code> method on our agent.</p>
+<p>The eagle-eyed reader may have spotted that there are in fact some subtle changes that are quite important. We collect five important variables that we are passing to a new <code class="highlighter-rouge">train</code> method on our agent.</p>
 
 <p>Let’s take a closer look at what these things are:</p>
 
 <ol>
   <li>
-    <p>The <code>state</code> is just the current number of the game <strong>before</strong> we take our action. For instance, this may be the number <code>9</code>.</p>
+    <p>The <code class="highlighter-rouge">state</code> is just the current number of the game <strong>before</strong> we take our action. For instance, this may be the number <code class="highlighter-rouge">9</code>.</p>
   </li>
   <li>
-    <p>The <code>action</code> is simply the move that our agent performed on the <code>state</code>. For instance, playing <code>-2</code> is an action in our game. Notice however that we internally represent these actions with the numbers <code>0</code> to <code>5</code> and just map them to their human readable values (3..-3) when we invoke <code>play</code> on the game.</p>
+    <p>The <code class="highlighter-rouge">action</code> is simply the move that our agent performed on the <code class="highlighter-rouge">state</code>. For instance, playing <code class="highlighter-rouge">-2</code> is an action in our game. Notice however that we internally represent these actions with the numbers <code class="highlighter-rouge">0</code> to <code class="highlighter-rouge">5</code> and just map them to their human readable values (3..-3) when we invoke <code class="highlighter-rouge">play</code> on the game.</p>
   </li>
   <li>
-    <p>The <code>next_state</code> is the current number of the game <strong>after</strong> we took our action. If the <code>state</code> was <code>9</code> and the action was <code>-2</code> the <code>next_state</code> will be <code>7</code>.</p>
+    <p>The <code class="highlighter-rouge">next_state</code> is the current number of the game <strong>after</strong> we took our action. If the <code class="highlighter-rouge">state</code> was <code class="highlighter-rouge">9</code> and the action was <code class="highlighter-rouge">-2</code> the <code class="highlighter-rouge">next_state</code> will be <code class="highlighter-rouge">7</code>.</p>
   </li>
   <li>
-    <p>The <code>final</code> variable is <code>True</code> when the game is either won or lost and <code>False</code> when the game is still active.</p>
+    <p>The <code class="highlighter-rouge">final</code> variable is <code class="highlighter-rouge">True</code> when the game is either won or lost and <code class="highlighter-rouge">False</code> when the game is still active.</p>
   </li>
   <li>
-    <p>The most important variable that we haven’t yet talked about is the <code>reward</code>. At the end of the day, this is what enables our agent to learn at all. We’ll get the reward by calling <code>self.get_reward()</code> and we’ll take a look at the implementation in the next section.</p>
+    <p>The most important variable that we haven’t yet talked about is the <code class="highlighter-rouge">reward</code>. At the end of the day, this is what enables our agent to learn at all. We’ll get the reward by calling <code class="highlighter-rouge">self.get_reward()</code> and we’ll take a look at the implementation in the next section.</p>
   </li>
 </ol>
 
@@ -440,35 +440,35 @@ You won!
 
 <p>Remember that this is the function we call <em>after</em> our agent performed an action.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
   <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_won</span><span class="p">():</span>
     <span class="k">return</span> <span class="mi">1</span>
   <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">has_lost</span><span class="p">():</span>
     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
   <span class="k">else</span><span class="p">:</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mf">0.1</span></code></pre></div>
+    <span class="k">return</span> <span class="o">-</span><span class="mf">0.1</span></code></pre></figure>
 
-<p>As we can see, we return a positive reward of <code>1</code> when our agent won the game, a negative reward of <code>-1</code> when it lost the game and a negative reward of <code>-0.1</code> for every action that didn’t <em>directly</em> lead to winning or losing the game. In other words, every action is penalized with a slightly negative reward of <code>-0.1</code>. This makes sense if we keep in mind that it is our goal to win the game in a maximum of three turns. So even if we consider that we have to make at least one turn per game, turns can be considered costly overall which is essentially what we price in here.</p>
+<p>As we can see, we return a positive reward of <code class="highlighter-rouge">1</code> when our agent won the game, a negative reward of <code class="highlighter-rouge">-1</code> when it lost the game and a negative reward of <code class="highlighter-rouge">-0.1</code> for every action that didn’t <em>directly</em> lead to winning or losing the game. In other words, every action is penalized with a slightly negative reward of <code class="highlighter-rouge">-0.1</code>. This makes sense if we keep in mind that it is our goal to win the game in a maximum of three turns. So even if we consider that we have to make at least one turn per game, turns can be considered costly overall which is essentially what we price in here.</p>
 
 <h3 id="updating-the-q-table">Updating the Q-Table</h3>
 
-<p>Ok, so let’s see how we can build up this <strong>Q-Table</strong> that we talked about before. Remember we are calling <code>self.train(state, action, reward, next_state, final)</code> and by now we should have a clear understanding what each parameter represents.</p>
+<p>Ok, so let’s see how we can build up this <strong>Q-Table</strong> that we talked about before. Remember we are calling <code class="highlighter-rouge">self.train(state, action, reward, next_state, final)</code> and by now we should have a clear understanding what each parameter represents.</p>
 
-<p>Before we move on, let’s create a new instance member on our agent called <code>qtable</code>. We’ll initialize it as an empty hash map. Remember that we said the Q-Table basically maps states to rated actions. Naturally these things can well be represented as hash maps.</p>
+<p>Before we move on, let’s create a new instance member on our agent called <code class="highlighter-rouge">qtable</code>. We’ll initialize it as an empty hash map. Remember that we said the Q-Table basically maps states to rated actions. Naturally these things can well be represented as hash maps.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span> <span class="o">=</span> <span class="p">{}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span> <span class="o">=</span> <span class="p">{}</span></code></pre></figure>
 
-<p>We will also create a new method <code>ensure_qtable_entry</code> which takes care of creating entries in our qtable in case they don’t exist yet.</p>
+<p>We will also create a new method <code class="highlighter-rouge">ensure_qtable_entry</code> which takes care of creating entries in our qtable in case they don’t exist yet.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">ensure_qtable_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">ensure_qtable_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
   <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">:</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span></code></pre></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span></code></pre></figure>
 
-<p>Notice that the key is the <code>state</code> itself and the value is a numpy array with six entries initialized to <code>0</code>, each representing one of our six possible actions. If the term <em>numpy array</em> is new to you, just think of an array with a <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html">super powerful API</a>.</p>
+<p>Notice that the key is the <code class="highlighter-rouge">state</code> itself and the value is a numpy array with six entries initialized to <code class="highlighter-rouge">0</code>, each representing one of our six possible actions. If the term <em>numpy array</em> is new to you, just think of an array with a <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html">super powerful API</a>.</p>
 
-<p>With that in place, let’s unveil what happens inside  the <code>train</code> method.</p>
+<p>With that in place, let’s unveil what happens inside  the <code class="highlighter-rouge">train</code> method.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">final</span><span class="p">):</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">final</span><span class="p">):</span>
 
   <span class="bp">self</span><span class="o">.</span><span class="n">ensure_qtable_entry</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
   <span class="bp">self</span><span class="o">.</span><span class="n">ensure_qtable_entry</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
@@ -481,54 +481,54 @@ You won!
 
     <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">next_state_max</span>
 
-  <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">q_value</span></code></pre></div>
+  <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">q_value</span></code></pre></figure>
 
-<p>The first two lines are just to ensure we have entries in the <code>qtable</code> for the values at <code>state</code> and <code>next_state</code> as we are about to work with them.</p>
+<p>The first two lines are just to ensure we have entries in the <code class="highlighter-rouge">qtable</code> for the values at <code class="highlighter-rouge">state</code> and <code class="highlighter-rouge">next_state</code> as we are about to work with them.</p>
 
-<p>The real hot sauce is in the very last line of the method. Here we can clearly see that we are mutating the rating of the action that we took on the state. This makes perfect sense because, again, we want to build up a map of rated actions for each state so that the agent can lookup the best possible action for each state when it plays the game. We call this value the <code>q_value</code>.</p>
+<p>The real hot sauce is in the very last line of the method. Here we can clearly see that we are mutating the rating of the action that we took on the state. This makes perfect sense because, again, we want to build up a map of rated actions for each state so that the agent can lookup the best possible action for each state when it plays the game. We call this value the <code class="highlighter-rouge">q_value</code>.</p>
 
-<p>This brings us to the question, how do we calculate the <code>q_value</code>? This is in fact a difficult question to answer because if we think back about our rewards we remember that only the final winning or losing state gives pretty clear rewards of <code>+1</code> or <code>-1</code>. All the other moves that don’t immediately cause the game to be won or lost, such as playing <code>-3</code> on a <code>9</code>, just yield us a negative reward of <code>-0.1</code>.</p>
+<p>This brings us to the question, how do we calculate the <code class="highlighter-rouge">q_value</code>? This is in fact a difficult question to answer because if we think back about our rewards we remember that only the final winning or losing state gives pretty clear rewards of <code class="highlighter-rouge">+1</code> or <code class="highlighter-rouge">-1</code>. All the other moves that don’t immediately cause the game to be won or lost, such as playing <code class="highlighter-rouge">-3</code> on a <code class="highlighter-rouge">9</code>, just yield us a negative reward of <code class="highlighter-rouge">-0.1</code>.</p>
 
-<p>We somehow have to find a way to consider that when we calculate the <code>q_value</code>. Remember that we want <code>-3</code> to become an action with a high q-value for state <code>9</code>. On the other hand we don’t want <code>-3</code> to get a strong q-value for state <code>6</code> as clearly playing <code>-1</code> would be better and make us win the game from here.</p>
+<p>We somehow have to find a way to consider that when we calculate the <code class="highlighter-rouge">q_value</code>. Remember that we want <code class="highlighter-rouge">-3</code> to become an action with a high q-value for state <code class="highlighter-rouge">9</code>. On the other hand we don’t want <code class="highlighter-rouge">-3</code> to get a strong q-value for state <code class="highlighter-rouge">6</code> as clearly playing <code class="highlighter-rouge">-1</code> would be better and make us win the game from here.</p>
 
 <p>In other words, what we need is a formular that not only takes the <strong>immediate reward</strong> into account but also the rewards that are <em>yet to follow</em> if we choose the given action from here. We call that the <strong>discounted future reward</strong>.</p>
 
-<p>The formular for that is hiding in this innocently looking <code>if</code> / <code>else</code> block.</p>
+<p>The formular for that is hiding in this innocently looking <code class="highlighter-rouge">if</code> / <code class="highlighter-rouge">else</code> block.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">if</span> <span class="n">final</span><span class="p">:</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">if</span> <span class="n">final</span><span class="p">:</span>
   <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span>
 <span class="k">else</span><span class="p">:</span>
   <span class="n">next_state_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span>
   <span class="n">next_state_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">next_state_actions</span><span class="p">)</span>
 
-  <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">next_state_max</span></code></pre></div>
+  <span class="n">q_value</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">next_state_max</span></code></pre></figure>
 
-<p>It says that if we reached a final state (won or lost) the <code>q_value</code> should simply be the <code>reward</code>. This makes a lot of sense because there is no future reward to expect from subsequent actions simply because there are no further actions possible from here.</p>
+<p>It says that if we reached a final state (won or lost) the <code class="highlighter-rouge">q_value</code> should simply be the <code class="highlighter-rouge">reward</code>. This makes a lot of sense because there is no future reward to expect from subsequent actions simply because there are no further actions possible from here.</p>
 
 <p>If, however, we aren’t in a final state we do the following:</p>
 
 <ol>
   <li>
-    <p>We get the the highest q-value for the <code>next_state</code>. Remember the <code>next_state</code> is the state that we shifted to as we applied the <code>action</code> to the <code>state</code>. In other words, if the state was <code>9</code> and the action was <code>-3</code> the <code>next_state</code> is <code>6</code>. We don’t care which action of the <code>next_state</code> has the highest q-value, we simply want get the value to use it in our formular.</p>
+    <p>We get the the highest q-value for the <code class="highlighter-rouge">next_state</code>. Remember the <code class="highlighter-rouge">next_state</code> is the state that we shifted to as we applied the <code class="highlighter-rouge">action</code> to the <code class="highlighter-rouge">state</code>. In other words, if the state was <code class="highlighter-rouge">9</code> and the action was <code class="highlighter-rouge">-3</code> the <code class="highlighter-rouge">next_state</code> is <code class="highlighter-rouge">6</code>. We don’t care which action of the <code class="highlighter-rouge">next_state</code> has the highest q-value, we simply want get the value to use it in our formular.</p>
   </li>
   <li>
-    <p>We calculate the new <code>q_value</code> for the <code>action</code> of the <code>state</code> as the <code>reward</code> plus the highest q-value of the <code>next_state</code> multiplied by some mysterious <code>discount_factor</code>. Let’s ignore the <code>discount_factor</code> for a moment and just think of it as being set to <code>1</code>. Replacing our variables with concrete numbers this may boild down to <code>q_value = -0.1 + 1 * 1</code>.</p>
+    <p>We calculate the new <code class="highlighter-rouge">q_value</code> for the <code class="highlighter-rouge">action</code> of the <code class="highlighter-rouge">state</code> as the <code class="highlighter-rouge">reward</code> plus the highest q-value of the <code class="highlighter-rouge">next_state</code> multiplied by some mysterious <code class="highlighter-rouge">discount_factor</code>. Let’s ignore the <code class="highlighter-rouge">discount_factor</code> for a moment and just think of it as being set to <code class="highlighter-rouge">1</code>. Replacing our variables with concrete numbers this may boild down to <code class="highlighter-rouge">q_value = -0.1 + 1 * 1</code>.</p>
   </li>
 </ol>
 
-<p>By now, you may be wondering: “But how does that achieve the learning? There’s no guarantee that the q-value for the <code>next_state</code> makes any sense?!”</p>
+<p>By now, you may be wondering: “But how does that achieve the learning? There’s no guarantee that the q-value for the <code class="highlighter-rouge">next_state</code> makes any sense?!”</p>
 
 <p>You’re kinda right, the q-values won’t be perfect from the beginning. In fact, they may start out completely wrong. What this formular achieves though is that the values <strong>approximate</strong> and get more and more accurate with every iteration.</p>
 
-<p>Getting back to the <code>discount_factor</code>, this thing is less scary than we may think. The <code>discount_factor</code> should be set between <code>0</code> and <code>1</code> and will influence how much we care about future rewards. A <code>discount_factor</code> of <code>0</code> means that we eleminate the righthand side of our formular entirely and don’t price in any future rewards. On the other hand, a <code>discount_factor</code> of <code>1</code> means that we strongly care about future rewards. A value of <code>0.9</code> is usually a good start but since our task is completely deterministic we can also set it to <code>1</code>.</p>
+<p>Getting back to the <code class="highlighter-rouge">discount_factor</code>, this thing is less scary than we may think. The <code class="highlighter-rouge">discount_factor</code> should be set between <code class="highlighter-rouge">0</code> and <code class="highlighter-rouge">1</code> and will influence how much we care about future rewards. A <code class="highlighter-rouge">discount_factor</code> of <code class="highlighter-rouge">0</code> means that we eleminate the righthand side of our formular entirely and don’t price in any future rewards. On the other hand, a <code class="highlighter-rouge">discount_factor</code> of <code class="highlighter-rouge">1</code> means that we strongly care about future rewards. A value of <code class="highlighter-rouge">0.9</code> is usually a good start but since our task is completely deterministic we can also set it to <code class="highlighter-rouge">1</code>.</p>
 
 <p>The nice thing about using such a terrible simple toy task is that we can make this process perfectly visible. We can simply print out the Q-Table at different stages of the learning.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">)</span></code></pre></figure>
 
 <p>This is what the Q-Table looks like after our agent played the game 10 times.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">{</span>
     <span class="c"># actions go from +3, +2, + 1, -1, -2, -3</span>
     <span class="mi">0</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
     <span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
@@ -548,13 +548,13 @@ You won!
     <span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
     <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
     <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Each line represents a state with the right-hand side being the array of q-values for each action starting at <code>3</code> and ending at <code>-3</code>. Notice how the machine “thinks” playing a <code>-2</code> on a six would be the best move. We need to give it some more training cycles!</p>
+<p>Each line represents a state with the right-hand side being the array of q-values for each action starting at <code class="highlighter-rouge">3</code> and ending at <code class="highlighter-rouge">-3</code>. Notice how the machine “thinks” playing a <code class="highlighter-rouge">-2</code> on a six would be the best move. We need to give it some more training cycles!</p>
 
-<p>And after 100 games the Q-Table looks like this. By now, the agent has figured out how to play <strong>perfectly</strong>. Also notice that the entire Q-Table grow a bit as it figured out how to get to exotic states such as <code>20</code> or <code>-7</code>.</p>
+<p>And after 100 games the Q-Table looks like this. By now, the agent has figured out how to play <strong>perfectly</strong>. Also notice that the entire Q-Table grow a bit as it figured out how to get to exotic states such as <code class="highlighter-rouge">20</code> or <code class="highlighter-rouge">-7</code>.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">{</span>
     <span class="c"># actions go from +3, +2, + 1, -1, -2, -3</span>
     <span class="mi">0</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">]),</span>
     <span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.7811</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
@@ -586,9 +586,9 @@ You won!
     <span class="o">-</span><span class="mi">4</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
     <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]),</span>
     <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.89</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.09</span><span class="p">])</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Notice that the Q-Table righfully favors playing <code>-1</code> on a <code>6</code> now. All the other moves seem to make sense as well.</p>
+<p>Notice that the Q-Table righfully favors playing <code class="highlighter-rouge">-1</code> on a <code class="highlighter-rouge">6</code> now. All the other moves seem to make sense as well.</p>
 
 <h2 id="playing-with-the-trained-agent">Playing with the trained agent</h2>
 
@@ -598,11 +598,11 @@ You won!
 
 <p>Still, to measure the performance of our agent, we have to be able to control wether it chooses actions randomly or based on Q-Table lookups.</p>
 
-<p>A simple condition would do the trick but we can do a litle better and introduce a <code>randomness_rate</code> to make fine grained adjustments so that, for instance, 70 % percent of the actions are choosen randomly and 30 % based on Q-Table lookups. This will already pave the way for other optimizations that we’ll be applying in a future post.</p>
+<p>A simple condition would do the trick but we can do a litle better and introduce a <code class="highlighter-rouge">randomness_rate</code> to make fine grained adjustments so that, for instance, 70 % percent of the actions are choosen randomly and 30 % based on Q-Table lookups. This will already pave the way for other optimizations that we’ll be applying in a future post.</p>
 
-<p>We just have to apply a tiny refactoring to our <code>get_action</code> method to pass in the <code>state</code> and then return an action randomly or based on a Q-Table lookup depending on the <code>randomness_rate</code>.</p>
+<p>We just have to apply a tiny refactoring to our <code class="highlighter-rouge">get_action</code> method to pass in the <code class="highlighter-rouge">state</code> and then return an action randomly or based on a Q-Table lookup depending on the <code class="highlighter-rouge">randomness_rate</code>.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
   <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_go_random</span><span class="p">()</span> <span class="ow">and</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_action</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
@@ -615,13 +615,13 @@ You won!
   <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">predict_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">])</span></code></pre></div>
+  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">])</span></code></pre></figure>
 
-<p>A <code>randomness_rate</code> of <code>0</code> means that all actions should be based on Q-Table lookups (unless the Q-Table is lacking the entry) whereas a value of <code>1</code> means that all actions should be choosen randomly. We can choose any value in between 0 and 1 such as <code>0.3</code> so that 30 % of the actions are picked randomly.</p>
+<p>A <code class="highlighter-rouge">randomness_rate</code> of <code class="highlighter-rouge">0</code> means that all actions should be based on Q-Table lookups (unless the Q-Table is lacking the entry) whereas a value of <code class="highlighter-rouge">1</code> means that all actions should be choosen randomly. We can choose any value in between 0 and 1 such as <code class="highlighter-rouge">0.3</code> so that 30 % of the actions are picked randomly.</p>
 
 <p>With that in place we can first perform 100 epochs of training and then have the trained agent play 1000 games.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">config</span> <span class="o">=</span> <span class="n">AgentConfig</span><span class="p">()</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">config</span> <span class="o">=</span> <span class="n">AgentConfig</span><span class="p">()</span>
 <span class="n">config</span><span class="o">.</span><span class="n">nb_epoch</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 <span class="n">agent</span><span class="o">.</span><span class="n">play_and_train</span><span class="p">()</span>
@@ -629,15 +629,15 @@ You won!
 <span class="c">#play 1000 games on the trained agent</span>
 <span class="n">config</span><span class="o">.</span><span class="n">nb_epoch</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">agent</span><span class="o">.</span><span class="n">randomness_rate</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">agent</span><span class="o">.</span><span class="n">play_and_train</span><span class="p">()</span></code></pre></div>
+<span class="n">agent</span><span class="o">.</span><span class="n">play_and_train</span><span class="p">()</span></code></pre></figure>
 
 <p>We can see that it really wins every single game out of 1000.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Epoch</span><span class="p">:</span> <span class="mi">1000</span> <span class="n">Wins</span><span class="p">:</span> <span class="mi">1000</span> <span class="p">(</span><span class="mf">100.00</span><span class="o">%</span><span class="p">)</span> <span class="n">Losses</span><span class="p">:</span> <span class="mi">0</span> <span class="p">(</span><span class="mf">0.00</span><span class="o">%</span><span class="p">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Epoch</span><span class="p">:</span> <span class="mi">1000</span> <span class="n">Wins</span><span class="p">:</span> <span class="mi">1000</span> <span class="p">(</span><span class="mf">100.00</span><span class="o">%</span><span class="p">)</span> <span class="n">Losses</span><span class="p">:</span> <span class="mi">0</span> <span class="p">(</span><span class="mf">0.00</span><span class="o">%</span><span class="p">)</span></code></pre></figure>
 
 <p>We can also see that it’s not always going for the straight path that we would expect it to take.</p>
 
-<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Starting</span> <span class="n">game</span> <span class="c">#2</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">Starting</span> <span class="n">game</span> <span class="c">#2</span>
 
 <span class="n">Current</span> <span class="n">number</span> <span class="ow">is</span> <span class="mi">10</span>
 <span class="n">Playing</span> <span class="o">-</span><span class="mi">1</span>
@@ -646,7 +646,7 @@ You won!
 <span class="n">Current</span> <span class="n">number</span> <span class="ow">is</span> <span class="mi">8</span>
 <span class="n">Playing</span> <span class="o">-</span><span class="mi">3</span>
 <span class="n">You</span> <span class="n">won</span><span class="err">!</span>
-<span class="c">##############################################</span></code></pre></div>
+<span class="c">##############################################</span></code></pre></figure>
 
 <p>However this is just becaue it was trained on 100 randomly played games. We could increase the number of games the agent performs for the training or fine tune our training strategy to fix that!</p>
 
@@ -780,6 +780,17 @@ You won!
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -796,17 +807,6 @@ You won!
               <div class="thtrm-article-card-content ">
                 <h3>Announcing Angular Master Class at Shopware</h3>
                 <p>It's that time again. Want to level up your Angular skills? Join us for a unique public training experience with...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/11/27/custom-overlays-with-angulars-cdk-part-two.html" title="Custom Overlays with Angular's CDK - Part 2">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom_overlays_2.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom Overlays with Angular's CDK - Part 2</h3>
-                <p>In this follow-up post we demonstrate how to use Angular's CDK to build a custom overlay that looks and feels...</p>
               </div>
             </a>
           </li>

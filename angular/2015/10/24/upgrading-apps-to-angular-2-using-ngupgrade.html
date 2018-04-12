@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Upgrading Angular apps using ngUpgrade</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Oct 24, 2015, last updated on Dec 18, 2016<br>20 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Oct 24, 2015, last updated on Dec 18, 2016<br>19 minute read</span>
 
           </div>
         </hgroup>
@@ -92,7 +92,7 @@
 
 <p>Earlier this year however, the Angular team has made an <a href="http://angularjs.blogspot.de/2015/08/angular-1-and-angular-2-coexistence.html">official announcement</a> in which they talk about what are the available upgrade strategies and what things of both frameworks have to interoperate in order to run them side-by-side on the same website. While the blog post is rather a kind of birds-eye view where no code is shown, a dedicated <a href="https://docs.google.com/document/d/1xvBZoFuNq9hsgRhPPZOJC-Z48AHEbIBPlOCBTSD8m0Y">design document</a> has been created that gives a more concrete idea on what the APIs will look like.</p>
 
-<p>Meanwhile, first implementations of <code>ngUpgrade</code> have landed in the code base and it’s time to start digging into it. In this article we’re going to explore what we can do to prepare for an upgrade, and of course how we eventually use <code>ngUpgrade</code> to upgrade our Angular application.</p>
+<p>Meanwhile, first implementations of <code class="highlighter-rouge">ngUpgrade</code> have landed in the code base and it’s time to start digging into it. In this article we’re going to explore what we can do to prepare for an upgrade, and of course how we eventually use <code class="highlighter-rouge">ngUpgrade</code> to upgrade our Angular application.</p>
 
 <div class="thtrm-toc is-sticky">
   <h3 class="no_toc" id="table-of-contents">TABLE OF CONTENTS</h3>
@@ -166,7 +166,7 @@
 
 <p><strong>Upgrade</strong></p>
 
-<p>The phase of running both frameworks side-by-side. This is where <code>ngUpgrade</code> comes into play to make A1 and A2 components interoperable. Keep in mind that the goal of this phase is to stay in it as little as possible, since running both frameworks on the same website is surely not ideal.</p>
+<p>The phase of running both frameworks side-by-side. This is where <code class="highlighter-rouge">ngUpgrade</code> comes into play to make A1 and A2 components interoperable. Keep in mind that the goal of this phase is to stay in it as little as possible, since running both frameworks on the same website is surely not ideal.</p>
 
 <h2 id="preparing-for-upgrade">Preparing for upgrade</h2>
 
@@ -174,11 +174,11 @@
 
 <p><strong>Layer application by feature or component</strong></p>
 
-<p>Oldie but goldie. We still see applications using a project structure where all directives go into <code>app/directives</code>, services go into <code>app/services</code>, controllers into <code>app/controllers</code> and so on and so forth. You get the idea. While this totally works in smaller applications, it doesn’t really take us far when it comes to upgrading. We might want to upgrade component by component. Having an application layered by type rather than by feature/component, makes it harder to extract parts of the code base to upgrade it.</p>
+<p>Oldie but goldie. We still see applications using a project structure where all directives go into <code class="highlighter-rouge">app/directives</code>, services go into <code class="highlighter-rouge">app/services</code>, controllers into <code class="highlighter-rouge">app/controllers</code> and so on and so forth. You get the idea. While this totally works in smaller applications, it doesn’t really take us far when it comes to upgrading. We might want to upgrade component by component. Having an application layered by type rather than by feature/component, makes it harder to extract parts of the code base to upgrade it.</p>
 
 <p>We should rather go with something like:</p>
 
-<div class="highlight"><pre><code class="language-sh" data-lang="sh">app
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">app
 |- components
   |- productDetail
   | |- productDetail.js
@@ -187,13 +187,13 @@
   | |- productDetail.spec.js
   |- productList
   |- checkout
-  |- wishlist</code></pre></div>
+  |- wishlist</code></pre></figure>
 
-<p>This structure allows us to take e.g. <code>productDetail</code> and upgrade it to Angular &gt;= 2.x to integrate it back into the application later on. We don’t have to worry if there’s anything else related to <code>productDetail</code> in the code base that we might forget, because everything is in one place.</p>
+<p>This structure allows us to take e.g. <code class="highlighter-rouge">productDetail</code> and upgrade it to Angular &gt;= 2.x to integrate it back into the application later on. We don’t have to worry if there’s anything else related to <code class="highlighter-rouge">productDetail</code> in the code base that we might forget, because everything is in one place.</p>
 
 <p><strong>Use .service() instead of .factory()</strong></p>
 
-<p>If we plan to not only upgrade the framework, but also the language in which we’re writing our application, we should definitely consider to use <code>.service()</code> instead of <code>.factory()</code> in all the cases where a service can be potentially a class. In Angular, a service is also just a class, so this seems like a logical thing to do. For more information on why <code>.service()</code> might be a better fit, read <a href="/angular/2015/07/07/service-vs-factory-once-and-for-all.html">this article</a>.</p>
+<p>If we plan to not only upgrade the framework, but also the language in which we’re writing our application, we should definitely consider to use <code class="highlighter-rouge">.service()</code> instead of <code class="highlighter-rouge">.factory()</code> in all the cases where a service can be potentially a class. In Angular, a service is also just a class, so this seems like a logical thing to do. For more information on why <code class="highlighter-rouge">.service()</code> might be a better fit, read <a href="/angular/2015/07/07/service-vs-factory-once-and-for-all.html">this article</a>.</p>
 
 <p><strong>Write new components in ES2015 or TypeScript</strong></p>
 
@@ -234,7 +234,7 @@
 
 <h2 id="upgrading-using-ngupgrade">Upgrading using ngUpgrade</h2>
 
-<p>In order to run both frameworks side-by-side and make components interoperable, the Angular projects comes with a module <code>ngUpgrade</code>. The module basically acts as an adapter facade, so we don’t really feel that there are two frameworks running side-by-side.</p>
+<p>In order to run both frameworks side-by-side and make components interoperable, the Angular projects comes with a module <code class="highlighter-rouge">ngUpgrade</code>. The module basically acts as an adapter facade, so we don’t really feel that there are two frameworks running side-by-side.</p>
 
 <p>For this to work, four things need to interoperate:</p>
 
@@ -260,61 +260,61 @@
   <li>Replace Angular 1 bootstrap with Angular 2.x bootstrap</li>
 </ul>
 
-<p>Let’s use <code>ngUpgrade</code> to upgrade our components to Angular 2.x!</p>
+<p>Let’s use <code class="highlighter-rouge">ngUpgrade</code> to upgrade our components to Angular 2.x!</p>
 
 <p><strong>Bootstrapping with ngUpgrade</strong></p>
 
-<p>The first thing we need to do is to upgrade our Angular 1 application with <code>ngUpgrade</code>. Whenever we upgrade an Agular app, we <strong>always</strong> have an Angular 1.x module being bootstrap at root level. This means, during the process of upgrade, Angular components are always bootstrap inside Angular 1.x components.</p>
+<p>The first thing we need to do is to upgrade our Angular 1 application with <code class="highlighter-rouge">ngUpgrade</code>. Whenever we upgrade an Agular app, we <strong>always</strong> have an Angular 1.x module being bootstrap at root level. This means, during the process of upgrade, Angular components are always bootstrap inside Angular 1.x components.</p>
 
 <p>Let’s start with an app we want to upgrade;</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]);</span></code></pre></figure>
 
-<p>Plain old Angular 1 module. Usually, this module is bootstrapped using the <code>ng-app</code> attribute, but now we want to bootstrap our module using <code>ngUpgrade</code>. We do that by removing the <code>ng-app</code> attribute from the HTML, create an <code>ngUpgrade</code> adapter from the upgrade module, and call <code>bootstrap()</code> on it with <code>myApp</code> as module dependency:</p>
+<p>Plain old Angular 1 module. Usually, this module is bootstrapped using the <code class="highlighter-rouge">ng-app</code> attribute, but now we want to bootstrap our module using <code class="highlighter-rouge">ngUpgrade</code>. We do that by removing the <code class="highlighter-rouge">ng-app</code> attribute from the HTML, create an <code class="highlighter-rouge">ngUpgrade</code> adapter from the upgrade module, and call <code class="highlighter-rouge">bootstrap()</code> on it with <code class="highlighter-rouge">myApp</code> as module dependency:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">UpgradeAdapter</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/upgrade'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">UpgradeAdapter</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/upgrade'</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">UpgradeAdapter</span><span class="p">();</span>
 <span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[]);</span>
 
-<span class="nx">adapter</span><span class="p">.</span><span class="nx">bootstrap</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span> <span class="p">[</span><span class="s1">'myApp'</span><span class="p">]);</span></code></pre></div>
+<span class="nx">adapter</span><span class="p">.</span><span class="nx">bootstrap</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span> <span class="p">[</span><span class="s1">'myApp'</span><span class="p">]);</span></code></pre></figure>
 
-<p>Cool, our app is now bootstrapped using <code>ngUpgrade</code> and we can start mixing Angular 1.x components with Angular 2.x components. However, in a real world application, you want to create an instance of <code>UpgradeAdapter</code> in a separate module and import it where you need it. This leads to cleaner code when upgrading across your application.</p>
+<p>Cool, our app is now bootstrapped using <code class="highlighter-rouge">ngUpgrade</code> and we can start mixing Angular 1.x components with Angular 2.x components. However, in a real world application, you want to create an instance of <code class="highlighter-rouge">UpgradeAdapter</code> in a separate module and import it where you need it. This leads to cleaner code when upgrading across your application.</p>
 
 <h2 id="downgrading-angular-2x-components">Downgrading Angular 2.x components</h2>
 
-<p>Let’s upgrade our first component to Angular 2.x and use it in our Angular 1.x application. Here we have a <code>productDetail</code> component that needs to be upgraded:</p>
+<p>Let’s upgrade our first component to Angular 2.x and use it in our Angular 1.x application. Here we have a <code class="highlighter-rouge">productDetail</code> component that needs to be upgraded:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'productDetail'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'productDetail'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="na">bindings</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">product</span><span class="p">:</span> <span class="s1">'='</span>
   <span class="p">},</span>
   <span class="na">controller</span><span class="p">:</span> <span class="s1">'ProductDetailController'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">$ctrl</span><span class="p">.</span><span class="nx">product</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">$ctrl</span><span class="p">.</span><span class="nx">product</span><span class="p">.</span><span class="nx">description</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
-</span>  <span class="err">`</span>
-<span class="p">});</span></code></pre></div>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;{{$ctrl.product.name}}&lt;/h2&gt;
+    &lt;p&gt;{{$ctrl.product.description}}&lt;/p&gt;
+  `</span>
+<span class="p">});</span></code></pre></figure>
 
 <p>Upgrading this to Angular 2.x looks something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'product-detail'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">product</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">product</span><span class="p">.</span><span class="nx">description</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;{{product.name}}&lt;/h2&gt;
+    &lt;p&gt;{{product.description}}&lt;/p&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">ProductDetail</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="na">product</span><span class="p">:</span> <span class="nx">Product</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<span class="kd">class</span> <span class="nx">ProductDetail</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">product</span><span class="p">:</span> <span class="nx">Product</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
 
 <p><strong>Note</strong>: You might want to define this component in a separate file, for simplicity sake we defined it in place.</p>
 
-<p>Perfect! But how do we get this Angular component into our Angular 1.x application? The <code>UpgradeAdapter</code> we’ve created comes with a method <code>downgradeNg2Component()</code>, which takes an Angular component and creates an Angular 1.x directive from it. Let’s use our Angular component in Angular 1.x world.</p>
+<p>Perfect! But how do we get this Angular component into our Angular 1.x application? The <code class="highlighter-rouge">UpgradeAdapter</code> we’ve created comes with a method <code class="highlighter-rouge">downgradeNg2Component()</code>, which takes an Angular component and creates an Angular 1.x directive from it. Let’s use our Angular component in Angular 1.x world.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'productDetail'</span><span class="p">,</span>
-  <span class="nx">adapter</span><span class="p">.</span><span class="nx">downgradeNg2Component</span><span class="p">(</span><span class="nx">ProductDetail</span><span class="p">));</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">'productDetail'</span><span class="p">,</span>
+  <span class="nx">adapter</span><span class="p">.</span><span class="nx">downgradeNg2Component</span><span class="p">(</span><span class="nx">ProductDetail</span><span class="p">));</span></code></pre></figure>
 
 <p>Yay! That’s it! The adapter will bootstrap this component from within the Angular 1 template where it’s used.</p>
 
@@ -322,32 +322,32 @@
 
 <h2 id="upgrading-angular-1-components">Upgrading Angular 1 components</h2>
 
-<p>There might be cases where one component has already been upgraded to Angular &gt;= 2.x, but it still uses Angular 1.x directives in its template. <code>ngUpgrade</code> allows us to use Angular 1.x directives in Angular 2.x components by upgrading them using <code>upgradeNg1Component()</code>.</p>
+<p>There might be cases where one component has already been upgraded to Angular &gt;= 2.x, but it still uses Angular 1.x directives in its template. <code class="highlighter-rouge">ngUpgrade</code> allows us to use Angular 1.x directives in Angular 2.x components by upgrading them using <code class="highlighter-rouge">upgradeNg1Component()</code>.</p>
 
-<p>Let’s say we continued upgrading our application and have a <code>ProductList</code> component like this:</p>
+<p>Let’s say we continued upgrading our application and have a <code class="highlighter-rouge">ProductList</code> component like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'product-list'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Product</span> <span class="nx">List</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">ol</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let product of products"</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">product</span><span class="o">-</span><span class="nx">list</span><span class="o">-</span><span class="nx">item</span> <span class="p">[</span><span class="nx">product</span><span class="p">]</span><span class="o">=</span><span class="s2">"product"</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="sr">/product-list-item</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/ol</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;Product List&lt;/h2&gt;
+    &lt;ol&gt;
+      &lt;li *ngFor="let product of products"&gt;
+        &lt;product-list-item [product]="product"&gt;
+        &lt;/product-list-item&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">class</span> <span class="nx">ProductList</span> <span class="p">{</span>
-  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">products</span><span class="err">:</span> <span class="nx">Product</span><span class="p">[];</span>
+<span class="kd">class</span> <span class="nx">ProductList</span> <span class="p">{</span>
+  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">products</span><span class="p">:</span> <span class="nx">Product</span><span class="p">[];</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><code>&lt;product-list-item&gt;</code> is a component that hasn’t been ported to Angular 2.x yet and maybe can’t even for some reason. It needs to be upgraded but how do we get there? As you can see, there’s a <code>directives</code> property in the <code>@Component()</code> metadata. This property defines which directives are used in the component’s template. What we need is a way to add <code>&lt;product-list-item&gt;</code> there too.</p>
+<p><code class="highlighter-rouge">&lt;product-list-item&gt;</code> is a component that hasn’t been ported to Angular 2.x yet and maybe can’t even for some reason. It needs to be upgraded but how do we get there? As you can see, there’s a <code class="highlighter-rouge">directives</code> property in the <code class="highlighter-rouge">@Component()</code> metadata. This property defines which directives are used in the component’s template. What we need is a way to add <code class="highlighter-rouge">&lt;product-list-item&gt;</code> there too.</p>
 
-<p><code>upgradeNg1Component()</code> enables us to do exactly that. It takes the name of a directive that has been registered somewhere on our Angular 1 module and upgrades it to an Angular 2.x component. Here’s what it looks like:</p>
+<p><code class="highlighter-rouge">upgradeNg1Component()</code> enables us to do exactly that. It takes the name of a directive that has been registered somewhere on our Angular 1 module and upgrades it to an Angular 2.x component. Here’s what it looks like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">AppComponent</span><span class="p">,</span>
@@ -356,88 +356,88 @@
   <span class="p">],</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
 
-<p>All we need to do is to downgrade <code>ProductList</code> item and we can use it right away!</p>
+<p>All we need to do is to downgrade <code class="highlighter-rouge">ProductList</code> item and we can use it right away!</p>
 
 <h2 id="adding-angular-providers">Adding Angular Providers</h2>
 
-<p>Upgrading components is probably the most crucial part in the entire upgrade process. Sometimes however, components have service dependencies which need to work in both worlds too. Luckily, <code>ngUpgrade</code> provides APIs for that.</p>
+<p>Upgrading components is probably the most crucial part in the entire upgrade process. Sometimes however, components have service dependencies which need to work in both worlds too. Luckily, <code class="highlighter-rouge">ngUpgrade</code> provides APIs for that.</p>
 
-<p>Let’s say our <code>ProductDetail</code> component, already upgraded to Angular &gt;= 2.x, has a <code>ProductService</code> dependency.</p>
+<p>Let’s say our <code class="highlighter-rouge">ProductDetail</code> component, already upgraded to Angular &gt;= 2.x, has a <code class="highlighter-rouge">ProductService</code> dependency.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
-<span class="kr">class</span> <span class="nx">ProductDetail</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">productService</span><span class="err">:</span> <span class="nx">ProductService</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">()</span>
+<span class="kd">class</span> <span class="nx">ProductDetail</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">productService</span><span class="p">:</span> <span class="nx">ProductService</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>In Angular &gt;= 2.x, we have to add a provider configuration for the component’s injector, but since we don’t bootstrap using Angular 2.x, there’s no way to do so. <code>ngUpgrade</code> allows us to add a provider using the <code>addProvider()</code> method to solve this scenario.</p>
+<p>In Angular &gt;= 2.x, we have to add a provider configuration for the component’s injector, but since we don’t bootstrap using Angular 2.x, there’s no way to do so. <code class="highlighter-rouge">ngUpgrade</code> allows us to add a provider using the <code class="highlighter-rouge">addProvider()</code> method to solve this scenario.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">adapter</span><span class="p">.</span><span class="nx">addProvider</span><span class="p">(</span><span class="nx">ProductService</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">adapter</span><span class="p">.</span><span class="nx">addProvider</span><span class="p">(</span><span class="nx">ProductService</span><span class="p">);</span></code></pre></figure>
 
 <p>That’s all we need to do!</p>
 
 <h2 id="upgrading-angular-1-providers">Upgrading Angular 1 Providers</h2>
 
-<p>Let’s say our <code>ProductService</code> depends on another lower level <code>DataService</code> to communicate with a remote server. <code>DataService</code> is already implemented in our Angular 1 application but not yet upgraded to Angular 2.x.</p>
+<p>Let’s say our <code class="highlighter-rouge">ProductService</code> depends on another lower level <code class="highlighter-rouge">DataService</code> to communicate with a remote server. <code class="highlighter-rouge">DataService</code> is already implemented in our Angular 1 application but not yet upgraded to Angular 2.x.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">)</span> <span class="nx">dataService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(@</span><span class="nd">Inject</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">)</span> <span class="nx">dataService</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span></code></pre></figure>
 
-<p>As you can see, we’re using <code>@Inject</code> to specify the provider token for <code>DataService</code>, since we don’t have a <code>DataService</code> type. If this is unclear, you might want to read our articles on <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">DI in Angular</a>.</p>
+<p>As you can see, we’re using <code class="highlighter-rouge">@Inject</code> to specify the provider token for <code class="highlighter-rouge">DataService</code>, since we don’t have a <code class="highlighter-rouge">DataService</code> type. If this is unclear, you might want to read our articles on <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">DI in Angular</a>.</p>
 
-<p>However, there’s no provider for <code>'DataService'</code> in Angular 2.x world yet. Let’s make it available using <code>upgradeNg1Provider()</code>.</p>
+<p>However, there’s no provider for <code class="highlighter-rouge">'DataService'</code> in Angular 2.x world yet. Let’s make it available using <code class="highlighter-rouge">upgradeNg1Provider()</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">adapter</span><span class="p">.</span><span class="nx">upgradeNg1Provider</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">);</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">adapter</span><span class="p">.</span><span class="nx">upgradeNg1Provider</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">);</span></code></pre></figure>
 
 <p>Boom! We can make it even better. Let’s assume our Angular 1 service has already been written as class.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">DataService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">DataService</span> <span class="p">{</span>
 
 <span class="p">}</span>
 
-<span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">,</span> <span class="nx">DataService</span><span class="p">);</span></code></pre></div>
+<span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">,</span> <span class="nx">DataService</span><span class="p">);</span></code></pre></figure>
 
 <p>We can use that class as type and token for dependency injection in Angular 2.x. All we have to do, is to upgrade our service with that token.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">adapter</span><span class="p">.</span><span class="nx">upgradeNg1Provider</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">,</span> <span class="p">{</span><span class="na">asToken</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">});</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">adapter</span><span class="p">.</span><span class="nx">upgradeNg1Provider</span><span class="p">(</span><span class="s1">'DataService'</span><span class="p">,</span> <span class="p">{</span><span class="na">asToken</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">});</span></code></pre></figure>
 
 <p>Now we can inject it using plain old type annotations.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
-<span class="kr">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="kd">class</span> <span class="nx">ProductService</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="nx">dataService</span><span class="err">:</span> <span class="nx">DataService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">dataService</span><span class="p">:</span> <span class="nx">DataService</span><span class="p">)</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><strong>Note</strong>: We added <code>@Injectable()</code> to our service because TypeScript needs at least one decorator to emit metadata for it. Learn more in our article on <a href="/angular/2015/09/17/resolve-service-dependencies-in-angular-2.html">Injecting Services in Services in Angular</a>.</p>
+<p><strong>Note</strong>: We added <code class="highlighter-rouge">@Injectable()</code> to our service because TypeScript needs at least one decorator to emit metadata for it. Learn more in our article on <a href="/angular/2015/09/17/resolve-service-dependencies-in-angular-2.html">Injecting Services in Services in Angular</a>.</p>
 
 <h2 id="downgrading-angular-2x-providers">Downgrading Angular 2.x Providers</h2>
 
-<p>Last but not least, we might need to be able to use Angular 2.x services in Angular 1.x components. Guess what, <code>ngUpgrade</code> comes with a <code>downgradeNg2Provider()</code> method.</p>
+<p>Last but not least, we might need to be able to use Angular 2.x services in Angular 1.x components. Guess what, <code class="highlighter-rouge">ngUpgrade</code> comes with a <code class="highlighter-rouge">downgradeNg2Provider()</code> method.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'ProductService'</span><span class="p">,</span>
-  <span class="nx">adapter</span><span class="p">.</span><span class="nx">downgradeNg2Provider</span><span class="p">(</span><span class="nx">ProductService</span><span class="p">));</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">'ProductService'</span><span class="p">,</span>
+  <span class="nx">adapter</span><span class="p">.</span><span class="nx">downgradeNg2Provider</span><span class="p">(</span><span class="nx">ProductService</span><span class="p">));</span></code></pre></figure>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p><code>ngUpgrade</code> provides many useful APIs and is a big step forward when it comes to truly upgrading an application from Angular 1 to Angular &gt;= 2.x. At <a href="http://angularconnect.com">AngularConnect</a> we gave a workshop on upgrading and we’ve open sourced a <a href="https://github.com/thoughtram/angular-upgrade-demo">repository</a> that shows all the steps we’ve been through, from preparation to upgrade. Make sure to check out the <code>steps</code> branch.</p>
+<p><code class="highlighter-rouge">ngUpgrade</code> provides many useful APIs and is a big step forward when it comes to truly upgrading an application from Angular 1 to Angular &gt;= 2.x. At <a href="http://angularconnect.com">AngularConnect</a> we gave a workshop on upgrading and we’ve open sourced a <a href="https://github.com/thoughtram/angular-upgrade-demo">repository</a> that shows all the steps we’ve been through, from preparation to upgrade. Make sure to check out the <code class="highlighter-rouge">steps</code> branch.</p>
 
 <p>Hopefully this article made a bit more clear what this whole upgrade story is all about!</p>
 
@@ -528,6 +528,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -577,17 +588,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Custom themes with Angular Material</h3>
-                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

@@ -141,7 +141,7 @@
 
 <h2 id="the-new-i18n-story-in-angular">The new i18n story in Angular</h2>
 
-<p>Internationalization support in Angular has been very poor so far. You might know that there’s an <code>ngLocale</code> module you need to include, which is used by a couple components, like <code>ngPluralize</code>, <code>date</code> and <code>currency</code> filter to name a few, and that’s pretty much it. As we’ve already discussed, there’s so much more that comes into play when internationalizing an application, which is why there’s finally a new solution evolving that will bring first-class i18n support to the Angular framework.</p>
+<p>Internationalization support in Angular has been very poor so far. You might know that there’s an <code class="highlighter-rouge">ngLocale</code> module you need to include, which is used by a couple components, like <code class="highlighter-rouge">ngPluralize</code>, <code class="highlighter-rouge">date</code> and <code class="highlighter-rouge">currency</code> filter to name a few, and that’s pretty much it. As we’ve already discussed, there’s so much more that comes into play when internationalizing an application, which is why there’s finally a new solution evolving that will bring first-class i18n support to the Angular framework.</p>
 
 <p>Here’s a what the new solution will cover:</p>
 
@@ -171,64 +171,64 @@
 
 <p>One of the most important things when it comes to i18n, is to provide our translators context along the messages that get extracted from our templates. Imagine we have a simple template as the following one:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Limit is 255 characters.<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p&gt;</span>Limit is 255 characters.<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
 <p>There’s nothing special about this template. In fact, a simple HTML template that just contains plain text is content to be extracted by the message extraction tool. However, if this particular message gets extracted and handed to our translator, how does he or she ever know what this message is about? In the end, all the translator gets is this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">Limit is 255 characters.</code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html">Limit is 255 characters.</code></pre></figure>
 
 <p>What is the “Limit” we are talking about? Also, “characters” can have different meaning depending on the context of the message. In case this example doesn’t make it clear enough, just think about the word “crane”. Without context it could be the bird, or the machine, right?</p>
 
-<p>In order to get high quality translations back, we need to provide enough information to the translator and this is where HTML Annotations come in. The message extraction tool knows about annotatoins via an <code>i18n</code> attribute which we can use to annotate existing templates with meta information.</p>
+<p>In order to get high quality translations back, we need to provide enough information to the translator and this is where HTML Annotations come in. The message extraction tool knows about annotatoins via an <code class="highlighter-rouge">i18n</code> attribute which we can use to annotate existing templates with meta information.</p>
 
-<p>Coming back to our example, what is the information we want to provide to the translator? Let’s say it’s a message to show the maximum length of characters allowed in a comment. With the <code>i18n</code> attribute we can add this information to our message:</p>
+<p>Coming back to our example, what is the information we want to provide to the translator? Let’s say it’s a message to show the maximum length of characters allowed in a comment. With the <code class="highlighter-rouge">i18n</code> attribute we can add this information to our message:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">i18n=</span><span class="s">"Label to show the maximum length of characters
-   allowed in comments."</span><span class="nt">&gt;</span>Limit is 255 characters.<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">i18n=</span><span class="s">"Label to show the maximum length of characters
+   allowed in comments."</span><span class="nt">&gt;</span>Limit is 255 characters.<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
 <p>Now when the message gets extracted, the description is extracted as well which ends up at our translator’s software and would look something like this (Note that translator’s usually have a proper graphical user interface):</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">Limit is 255 characters.
+<figure class="highlight"><pre><code class="language-html" data-lang="html">Limit is 255 characters.
 
 DESCRIPTION: Label to show the maximum length of 
-             characters allowed in comments.</code></pre></div>
+             characters allowed in comments.</code></pre></figure>
 
-<p>Now it makes much more sense to our translator and he or she can actually reason about the given messages. The cool thing about the annotation is, that it doesn’t require a DOM element with an <code>i18n</code> attribute. There’s another comment based syntax annotation we can use if we don’t have that surrounding DOM element.</p>
+<p>Now it makes much more sense to our translator and he or she can actually reason about the given messages. The cool thing about the annotation is, that it doesn’t require a DOM element with an <code class="highlighter-rouge">i18n</code> attribute. There’s another comment based syntax annotation we can use if we don’t have that surrounding DOM element.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!--i18n: Label to show the maximum length of
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!--i18n: Label to show the maximum length of
           characters allowed in comments.--&gt;</span>
 Limit is 255 characters.
-<span class="c">&lt;!--/i18n--&gt;</span></code></pre></div>
+<span class="c">&lt;!--/i18n--&gt;</span></code></pre></figure>
 
 <p>Another use case were messages are extracted and meta information needed is when HTML attributes are used. Just take a look at this simple snippet:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">placeholder=</span><span class="s">"Firstname Lastname"</span><span class="nt">&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">placeholder=</span><span class="s">"Firstname Lastname"</span><span class="nt">&gt;</span></code></pre></figure>
 
-<p><code>placeholder</code> is a standard HTML attribute for input elements. For attributes like this, our new tools will provide our translator with a default description in case none is provided.</p>
+<p><code class="highlighter-rouge">placeholder</code> is a standard HTML attribute for input elements. For attributes like this, our new tools will provide our translator with a default description in case none is provided.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">Firstname Lastname
+<figure class="highlight"><pre><code class="language-html" data-lang="html">Firstname Lastname
 
-DESCRIPTION: HTML input control placeholder text</code></pre></div>
+DESCRIPTION: HTML input control placeholder text</code></pre></figure>
 
-<p>However, in case we <strong>do</strong> want to be more specific, all we need to do is to introduce a new <code>i18n-[ATTRNAME]</code> attribute that gets the description:</p>
+<p>However, in case we <strong>do</strong> want to be more specific, all we need to do is to introduce a new <code class="highlighter-rouge">i18n-[ATTRNAME]</code> attribute that gets the description:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> 
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> 
   <span class="na">placeholder=</span><span class="s">"Firstname Lastname"</span>
   <span class="na">i18n-placeholder=</span><span class="s">"Text input placeholder for the full
-                    name of a friend."</span><span class="nt">&gt;</span></code></pre></div>
+                    name of a friend."</span><span class="nt">&gt;</span></code></pre></figure>
 
-<p>Yes, this works with all attributes! It doesn’t matter if you have a directive that introduces it’s own attribute APIs or even a Web Component, as long as you prefix your attribute with <code>i18n-</code> the message extractor will take care of extracting the message together with it’s description.</p>
+<p>Yes, this works with all attributes! It doesn’t matter if you have a directive that introduces it’s own attribute APIs or even a Web Component, as long as you prefix your attribute with <code class="highlighter-rouge">i18n-</code> the message extractor will take care of extracting the message together with it’s description.</p>
 
 <h2 id="placeholders">Placeholders</h2>
 
 <p>Even if what we’ve seen so far is pretty powerful, you might have noticed that we’ve only seen simple text messages that get extracted. But usually, in an Angular application, we have interpolation directives in our messages. Let’s say we replace the limit value in our example with something dynamic that is interpolated later at runtime.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">i18n=</span><span class="s">"Label to show the maximum length of characters
-   allowed in comments."</span><span class="nt">&gt;</span>Limit is {{count}} characters.<span class="nt">&lt;/p&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;p</span> <span class="na">i18n=</span><span class="s">"Label to show the maximum length of characters
+   allowed in comments."</span><span class="nt">&gt;</span>Limit is {{count}} characters.<span class="nt">&lt;/p&gt;</span></code></pre></figure>
 
 <p>What will the translator see now? Well, it turns out that the Message Extraction tool will extract those messages as so called <em>Placeholders</em>. Our translator would see something like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">Limit is EXPRESSION characters.
+<figure class="highlight"><pre><code class="language-html" data-lang="html">Limit is EXPRESSION characters.
 
 DESCRIPTION: Label to show the maximum length of 
              characters allowed in comments.
@@ -236,15 +236,15 @@ DESCRIPTION: Label to show the maximum length of
 PLACEHOLDERS
 
 - EXPRESSION
-    Description: Angular Expression</code></pre></div>
+    Description: Angular Expression</code></pre></figure>
 
-<p>A placeholder cannot be changed by a translator. However, they are able to move them around inside the message in case it’s needed for the locale messages are translated to. We also notice that we get some meta information on what the placeholder <code>EXPRESSION</code> is about.</p>
+<p>A placeholder cannot be changed by a translator. However, they are able to move them around inside the message in case it’s needed for the locale messages are translated to. We also notice that we get some meta information on what the placeholder <code class="highlighter-rouge">EXPRESSION</code> is about.</p>
 
-<p>Of course, our translator probably doesn’t know about Angular at all and even <code>EXPRESSION</code> doesn’t really tell anything. In such cases we can explicitly define the name of a placeholder that ends up in a message and we’re even able to provide and example to give even more information.</p>
+<p>Of course, our translator probably doesn’t know about Angular at all and even <code class="highlighter-rouge">EXPRESSION</code> doesn’t really tell anything. In such cases we can explicitly define the name of a placeholder that ends up in a message and we’re even able to provide and example to give even more information.</p>
 
 <p>Something like this would be more useful to the translator:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">Limit is MAXCHARS characters.
+<figure class="highlight"><pre><code class="language-html" data-lang="html">Limit is MAXCHARS characters.
 
 DESCRIPTION: Label to show the maximum length of 
              characters allowed in comments.
@@ -253,7 +253,7 @@ PLACEHOLDERS
 
 - MAXCHARS
     Description: Angular Expression
-    Example: 255</code></pre></div>
+    Example: 255</code></pre></figure>
 
 <p>The annotation syntax to override default placeholder names and add examples is still in discussion.</p>
 
@@ -263,37 +263,37 @@ PLACEHOLDERS
 
 <p>However, there’s one topic that we haven’t talked about yet, which is Pruralization and Gender selection. Pluralization and Gender selection is rather decoupled from the actual i18n process, even if it can be part of it though. But we don’t have to internationalize our applications in order to implement plural and gender selection in the first place. The new i18n solution will come with a nicer and easier to use story for plural and gender, that works seamlessly with the rest of the process.</p>
 
-<p>Wait, don’t we have <code>ngPluralize</code> for this? Yes we do and it will always be there. It turns out that there are some issues with <code>ngPluralize</code> though. For instance, how would you implement pluralization with that directive if you want to pass a pluralized message into an attribute? Right, it’s not possible. Also, with different locales, different plural categories might be needed and added by our translator, since they vary dramatically across languages.</p>
+<p>Wait, don’t we have <code class="highlighter-rouge">ngPluralize</code> for this? Yes we do and it will always be there. It turns out that there are some issues with <code class="highlighter-rouge">ngPluralize</code> though. For instance, how would you implement pluralization with that directive if you want to pass a pluralized message into an attribute? Right, it’s not possible. Also, with different locales, different plural categories might be needed and added by our translator, since they vary dramatically across languages.</p>
 
 <p>With the new i18n solution, Angular’s interpolation syntax gets extended with the <a href="http://userguide.icu-project.org/formatparse/messages">ICU Messageformat</a> syntax. There are many Messageformat implementations for different programming languages and libraries out there (even angular-translate supports it) and in fact, it’s used by <strong>a lot</strong> people.</p>
 
 <p>Alright, but how can we pluralize declaratively with that support? Well, take a look at the following snippet.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">{{numMessages, plural,
+<figure class="highlight"><pre><code class="language-html" data-lang="html">{{numMessages, plural,
      =0 { You have no new messages }
      =1 { You have one new message }
   other { You have # new messages }
-}}</code></pre></div>
+}}</code></pre></figure>
 
-<p>It’s that easy. If you’re familiar with Messageformat then you know this syntax already. We’re able to overload a simple Angular interpolation by defining the selection type (<code>plural</code> or <code>gender</code>) as second parameter and a “list” of categories to match the selection based on the given expression <code>numMessages</code>. The <code>#</code> symbol is a placeholder for value that the expression returns.</p>
+<p>It’s that easy. If you’re familiar with Messageformat then you know this syntax already. We’re able to overload a simple Angular interpolation by defining the selection type (<code class="highlighter-rouge">plural</code> or <code class="highlighter-rouge">gender</code>) as second parameter and a “list” of categories to match the selection based on the given expression <code class="highlighter-rouge">numMessages</code>. The <code class="highlighter-rouge">#</code> symbol is a placeholder for value that the expression returns.</p>
 
 <p>Why is that cool? We can use that syntax inside HTML attributes, we can use all interpolations inside selection messages (incl. filters), and even more important, our translators are likely to know this syntax. Because what ends up in their software, once extracted, is a message that looks something like this:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">{numMessages, plural,
+<figure class="highlight"><pre><code class="language-html" data-lang="html">{numMessages, plural,
      =0 { You have no new messages }
      =1 { You have one new message }
   other { You have # new messages }
-}</code></pre></div>
+}</code></pre></figure>
 
-<p>Yeap. It’s pretty much the same, except that they see single curlies instead of double curlies. Now, if a language has different categories than <code>0</code>, <code>1</code> and <code>other</code>, maybe <code>few</code>, <code>many</code> and <code>more</code>, translators can easily at those and it gets especially easy if their software comes up with corresponding suggestions based on the locale.</p>
+<p>Yeap. It’s pretty much the same, except that they see single curlies instead of double curlies. Now, if a language has different categories than <code class="highlighter-rouge">0</code>, <code class="highlighter-rouge">1</code> and <code class="highlighter-rouge">other</code>, maybe <code class="highlighter-rouge">few</code>, <code class="highlighter-rouge">many</code> and <code class="highlighter-rouge">more</code>, translators can easily at those and it gets especially easy if their software comes up with corresponding suggestions based on the locale.</p>
 
 <p>Just to give you an idea what the gender selection syntax looks like, here’s an example.</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html">{{friendGender, gender,
+<figure class="highlight"><pre><code class="language-html" data-lang="html">{{friendGender, gender,
     male { Invite him }
   female { Invite her }
    other { Invite them }
-}}</code></pre></div>
+}}</code></pre></figure>
 
 <p>We can nest plural and gender messages as well, which makes this feature super powerful.</p>
 

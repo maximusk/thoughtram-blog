@@ -74,7 +74,7 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Routing in Angular revisited</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Jun 14, 2016, last updated on Dec 18, 2016<br>14 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Jun 14, 2016, last updated on Dec 18, 2016<br>13 minute read</span>
 
           </div>
         </hgroup>
@@ -121,81 +121,81 @@
 
 <h2 id="defining-routes">Defining Routes</h2>
 
-<p>Let’s say we want to build a contacts application (in fact, this is what we do in our <a href="http://thoughtram.io/angular2-master-class.html">Angular Master Class</a>). Our contacts application shows a list of contacts, which is our <code>ContactsListComponent</code> and when we click on a contact, we navigate to the <code>ContactsDetailComponent</code>, which gives us a detailed view of the selected contact.</p>
+<p>Let’s say we want to build a contacts application (in fact, this is what we do in our <a href="http://thoughtram.io/angular2-master-class.html">Angular Master Class</a>). Our contacts application shows a list of contacts, which is our <code class="highlighter-rouge">ContactsListComponent</code> and when we click on a contact, we navigate to the <code class="highlighter-rouge">ContactsDetailComponent</code>, which gives us a detailed view of the selected contact.</p>
 
-<p>A simplified version of <code>ContactsListComponent</code> could look something like this:</p>
+<p>A simplified version of <code class="highlighter-rouge">ContactsListComponent</code> could look something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'contacts-list'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Contacts</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let contact of contacts | async"</span><span class="o">&gt;</span>
-        <span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span>
-      <span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;Contacts&lt;/h2&gt;
+    &lt;ul&gt;
+      &lt;li *ngFor="let contact of contacts | async"&gt;
+        {{contact.name}}
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsListComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ContactsListComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Let’s not worry about how <code>ContactsListComponent</code> gets hold of the contact data. We just assume it’s there and we generate a list using <code>ngFor</code> in the template.</p>
+<p>Let’s not worry about how <code class="highlighter-rouge">ContactsListComponent</code> gets hold of the contact data. We just assume it’s there and we generate a list using <code class="highlighter-rouge">ngFor</code> in the template.</p>
 
-<p><code>ContactsDetailComponent</code> displays a single contact. Again, we don’t want to worry too much about how this component is implemented yet, but a simplified version could look something like this:</p>
+<p><code class="highlighter-rouge">ContactsDetailComponent</code> displays a single contact. Again, we don’t want to worry too much about how this component is implemented yet, but a simplified version could look something like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'contacts-detail'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>
-    <span class="o">&lt;</span><span class="nx">address</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">street</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">zip</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">city</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">country</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/address</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;{{contact.name}}&lt;/h2&gt;
+
+    &lt;address&gt;
+      &lt;span&gt;{{contact.street}}&lt;/span&gt;
+      &lt;span&gt;{{contact.zip}}&lt;/span&gt;
+      &lt;span&gt;{{contact.city}}&lt;/span&gt;
+      &lt;span&gt;{{contact.country}}&lt;/span&gt;
+    &lt;/address&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsDetailComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ContactsDetailComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Especially in <code>ContactsDetailComponent</code> there are a couple more things we need to consider when it comes to routing (e.g. how to link to that component, how to get access to URL parameters), but for now, the first thing we want to do is defining routes for our application.</p>
+<p>Especially in <code class="highlighter-rouge">ContactsDetailComponent</code> there are a couple more things we need to consider when it comes to routing (e.g. how to link to that component, how to get access to URL parameters), but for now, the first thing we want to do is defining routes for our application.</p>
 
-<p>Defining routes is easy. All we have to do is to create a collection of <code>Route</code> which simply follows an object structure that looks like this:</p>
+<p>Defining routes is easy. All we have to do is to create a collection of <code class="highlighter-rouge">Route</code> which simply follows an object structure that looks like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">interface</span> <span class="nx">Route</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">interface</span> <span class="nx">Route</span> <span class="p">{</span>
   <span class="nx">path</span><span class="p">?:</span> <span class="nx">string</span><span class="p">;</span>
   <span class="nx">component</span><span class="p">?:</span> <span class="nx">Type</span><span class="o">|</span><span class="nx">string</span><span class="p">;</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>As we can see, there are actually a couple more properties than just the three we show here. We’ll get to them later but this is all we need for now.</p>
 
-<p>Routes are best defined in a separate module to keep our application easy to test and also to make them easier to reuse. Let’s define routes for our components in a new module (maybe <code>contacts.routes.ts</code>?) so we can add them to our application in the next step:</p>
+<p>Routes are best defined in a separate module to keep our application easy to test and also to make them easier to reuse. Let’s define routes for our components in a new module (maybe <code class="highlighter-rouge">contacts.routes.ts</code>?) so we can add them to our application in the next step:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsListComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./contacts-list'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsDetailComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./contacts-detail'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">ContactsListComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./contacts-list'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ContactsDetailComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./contacts-detail'</span><span class="p">;</span>
 
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">ContactsAppRoutes</span> <span class="o">=</span> <span class="p">[</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">ContactsAppRoutes</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">ContactsListComponent</span> <span class="p">},</span>
   <span class="p">{</span> <span class="na">path</span><span class="p">:</span> <span class="s1">'contacts/:id'</span><span class="p">,</span> <span class="na">component</span><span class="p">:</span> <span class="nx">ContactsDetailComponent</span> <span class="p">}</span>
-<span class="p">];</span></code></pre></div>
+<span class="p">];</span></code></pre></figure>
 
-<p>Pretty straight forward right? You might notice that the <code>path</code> property on our first <code>Route</code> definition is empty. This simply tells the router that this component should be loaded into the view by default (this is especially useful when dealing with child routes). The second route has a placeholder in its path called <code>id</code>. This allows us to have some dynamic value in our path which can later be accessed in the component we route to. Think of a contact id in our case, so we can fetch the contact object we want to display the details for.</p>
+<p>Pretty straight forward right? You might notice that the <code class="highlighter-rouge">path</code> property on our first <code class="highlighter-rouge">Route</code> definition is empty. This simply tells the router that this component should be loaded into the view by default (this is especially useful when dealing with child routes). The second route has a placeholder in its path called <code class="highlighter-rouge">id</code>. This allows us to have some dynamic value in our path which can later be accessed in the component we route to. Think of a contact id in our case, so we can fetch the contact object we want to display the details for.</p>
 
-<p>The next thing we need to do is to make these routes available to our application. In fact, we first need to make sure there’s a router in our application at all. We do that by importing Angular <code>RouterModule</code> into our application module. But not only that, we also configure it with our routes using <code>RouterModule.forRoot()</code>.</p>
+<p>The next thing we need to do is to make these routes available to our application. In fact, we first need to make sure there’s a router in our application at all. We do that by importing Angular <code class="highlighter-rouge">RouterModule</code> into our application module. But not only that, we also configure it with our routes using <code class="highlighter-rouge">RouterModule.forRoot()</code>.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">RouterModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsListComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./contacts-list'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsDetailComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./contacts-detail'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsAppComponent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./app.component'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsAppRoutes</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./app.routes'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/platform-browser'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">RouterModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ContactsListComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./contacts-list'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ContactsDetailComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./contacts-detail'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ContactsAppComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./app.component'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ContactsAppRoutes</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./app.routes'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">BrowserModule</span><span class="p">,</span>
     <span class="nx">RouterModule</span><span class="p">.</span><span class="nx">forRoot</span><span class="p">(</span><span class="nx">ContactsAppRoutes</span><span class="p">)</span>
@@ -206,123 +206,123 @@
     <span class="nx">ContactsDetailComponent</span>
   <span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">ContactsAppComponent</span><span class="p">]</span>
-<span class="p">})</span></code></pre></div>
+<span class="p">})</span></code></pre></figure>
 
-<p>You might wonder where <code>ContactsAppComponent</code> comes from. Well, this is just the root component we use to bootstrap our application. In fact, it doesn’t really know anything about our <code>ContactsListComponent</code> and <code>ContactsDetailComponent</code>. We’re going to take a look at <code>ContactsAppComponent</code> in the next step though.</p>
+<p>You might wonder where <code class="highlighter-rouge">ContactsAppComponent</code> comes from. Well, this is just the root component we use to bootstrap our application. In fact, it doesn’t really know anything about our <code class="highlighter-rouge">ContactsListComponent</code> and <code class="highlighter-rouge">ContactsDetailComponent</code>. We’re going to take a look at <code class="highlighter-rouge">ContactsAppComponent</code> in the next step though.</p>
 
 <h2 id="displaying-loaded-components">Displaying loaded components</h2>
 
 <p>Okay cool, our application now knows about these routes. The next thing we want to do is to make sure that the component we route to, is also displayed in our application. We still need to tell Angular “Hey, here’s where we want to display the thing that is loaded!”.</p>
 
-<p>For that, we take a look at <code>ContactsAppComponent</code>:</p>
+<p>For that, we take a look at <code class="highlighter-rouge">ContactsAppComponent</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'contacts-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Contacts</span> <span class="nx">App</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
-</span>
-    <span class="c">&lt;!--</span> <span class="nx">here</span><span class="err">'</span><span class="nx">s</span> <span class="nx">where</span> <span class="nx">we</span> <span class="nx">want</span> <span class="nx">to</span> <span class="nx">load</span>
-      <span class="nx">the</span> <span class="nx">detail</span> <span class="nx">and</span> <span class="nx">the</span> <span class="nx">list</span> <span class="nx">view</span> <span class="o">--&gt;</span>
-  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h1&gt;Contacts App&lt;/h1&gt;
+
+    &lt;!-- here's where we want to load
+      the detail and the list view --&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsAppComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ContactsAppComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Nothing special going on there. However, we need to change that. In order to tell Angular where to load the component we route to, we need to use a directive called <code>RouterOutlet</code>. Since we’ve imported <code>RouterModule</code> into our application module, this directive is automatically available to us. Let’s add a <code>&lt;router-outlet&gt;</code> tag to our component’s template so that loaded components are displayed accordingly.</p>
+<p>Nothing special going on there. However, we need to change that. In order to tell Angular where to load the component we route to, we need to use a directive called <code class="highlighter-rouge">RouterOutlet</code>. Since we’ve imported <code class="highlighter-rouge">RouterModule</code> into our application module, this directive is automatically available to us. Let’s add a <code class="highlighter-rouge">&lt;router-outlet&gt;</code> tag to our component’s template so that loaded components are displayed accordingly.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="p">...</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Contacts</span> <span class="nx">App</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">router</span><span class="o">-</span><span class="nx">outlet</span><span class="o">&gt;&lt;</span><span class="sr">/router-outlet</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h1&gt;Contacts App&lt;/h1&gt;
+    &lt;router-outlet&gt;&lt;/router-outlet&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsAppComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ContactsAppComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Bootstrapping that app now displays a list of contacts! Awesome! The next thing we want to do is to link to <code>ContactsDetailComponent</code> when someone clicks on a contact.</p>
+<p>Bootstrapping that app now displays a list of contacts! Awesome! The next thing we want to do is to link to <code class="highlighter-rouge">ContactsDetailComponent</code> when someone clicks on a contact.</p>
 
 <h2 id="linking-to-other-routes">Linking to other routes</h2>
 
-<p>With the new router, there are different ways to route to other components and routes. The most straight forward way is to simply use strings, that represent the path we want to route to. We can use a directive called <code>RouterLink</code> for that. For instance, if we want to route to <code>ContactsDetailComponent</code> and pass the contact id <code>3</code>, we can do that by simply writing:</p>
+<p>With the new router, there are different ways to route to other components and routes. The most straight forward way is to simply use strings, that represent the path we want to route to. We can use a directive called <code class="highlighter-rouge">RouterLink</code> for that. For instance, if we want to route to <code class="highlighter-rouge">ContactsDetailComponent</code> and pass the contact id <code class="highlighter-rouge">3</code>, we can do that by simply writing:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;a</span> <span class="na">routerLink=</span><span class="s">"/contacts/3"</span><span class="nt">&gt;</span>Details<span class="nt">&lt;/a&gt;</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;a</span> <span class="na">routerLink=</span><span class="s">"/contacts/3"</span><span class="nt">&gt;</span>Details<span class="nt">&lt;/a&gt;</span></code></pre></figure>
 
-<p>This works perfectly fine. <code>RouterLink</code> takes care of generating an <code>href</code> attribute for us that the browser needs to make linking to other sites work. And since we’ve already imported <code>RouterModule</code>, we can simply go ahead and use that directive without further things to do.</p>
+<p>This works perfectly fine. <code class="highlighter-rouge">RouterLink</code> takes care of generating an <code class="highlighter-rouge">href</code> attribute for us that the browser needs to make linking to other sites work. And since we’ve already imported <code class="highlighter-rouge">RouterModule</code>, we can simply go ahead and use that directive without further things to do.</p>
 
-<p>While this is great we realise very quickly that this isn’t the optimal way to handle links, especially if we have dynamic values that we can only represent as expressions in our template. Taking a look at our <code>ContactsListComponent</code> template, we see that we’re iterating over a list of contacts:</p>
+<p>While this is great we realise very quickly that this isn’t the optimal way to handle links, especially if we have dynamic values that we can only represent as expressions in our template. Taking a look at our <code class="highlighter-rouge">ContactsListComponent</code> template, we see that we’re iterating over a list of contacts:</p>
 
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
   <span class="nt">&lt;li</span> <span class="err">*</span><span class="na">ngFor=</span><span class="s">"let contact of contacts | async"</span><span class="nt">&gt;</span>
     {{contact.name}}
   <span class="nt">&lt;/li&gt;</span>
-<span class="nt">&lt;/ul&gt;</span></code></pre></div>
+<span class="nt">&lt;/ul&gt;</span></code></pre></figure>
 
-<p>We need a way to evaluate something like <code>{{contact.id}}</code> to generate a link in our template. Luckily, <code>RouterLink</code> supports not only strings, but also expressions! As soon as we want to use expressions to generate our links, we have to use an array literal syntax in <code>RouterLink</code>.</p>
+<p>We need a way to evaluate something like <code class="highlighter-rouge">{{contact.id}}</code> to generate a link in our template. Luckily, <code class="highlighter-rouge">RouterLink</code> supports not only strings, but also expressions! As soon as we want to use expressions to generate our links, we have to use an array literal syntax in <code class="highlighter-rouge">RouterLink</code>.</p>
 
-<p>Here’s how we could extend <code>ContactsListComponent</code> to link to <code>ContactsDetailComponent</code>:</p>
+<p>Here’s how we could extend <code class="highlighter-rouge">ContactsListComponent</code> to link to <code class="highlighter-rouge">ContactsDetailComponent</code>:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'contacts-list'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Contacts</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let contact of contacts | async"</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">a</span> <span class="p">[</span><span class="nx">routerLink</span><span class="p">]</span><span class="o">=</span><span class="s2">"['/contacts', contact.id]"</span><span class="o">&gt;</span>
-          <span class="p">{{</span><span class="nx">contact</span><span class="p">.</span><span class="nx">name</span><span class="p">}}</span>
-        <span class="o">&lt;</span><span class="sr">/a</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;h2&gt;Contacts&lt;/h2&gt;
+    &lt;ul&gt;
+      &lt;li *ngFor="let contact of contacts | async"&gt;
+        &lt;a [routerLink]="['/contacts', contact.id]"&gt;
+          {{contact.name}}
+        &lt;/a&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsListComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ContactsListComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>There are a couple of things to note here:</p>
 
 <ul>
-  <li>We use the bracket-syntax for <code>RouterLink</code> to make expressions work (if this doesn’t make sense to you, you might want to read out article on <a href="/angular/2015/08/11/angular-2-template-syntax-demystified-part-1.html">Angular’s Template Syntax Demystified</a></li>
+  <li>We use the bracket-syntax for <code class="highlighter-rouge">RouterLink</code> to make expressions work (if this doesn’t make sense to you, you might want to read out article on <a href="/angular/2015/08/11/angular-2-template-syntax-demystified-part-1.html">Angular’s Template Syntax Demystified</a></li>
   <li>The expression takes an array where the first field is the segment that describes the path we want to route to and the second a dynamic value which ends up as route parameter</li>
 </ul>
 
-<p>Cool! We can now link to <code>ContactsDetailComponent</code>. However, this is only half of the story. We still need to teach <code>ContactsDetailComponent</code> how to access the route parameters so it can use them to load a contact object.</p>
+<p>Cool! We can now link to <code class="highlighter-rouge">ContactsDetailComponent</code>. However, this is only half of the story. We still need to teach <code class="highlighter-rouge">ContactsDetailComponent</code> how to access the route parameters so it can use them to load a contact object.</p>
 
 <h2 id="access-route-parameters">Access Route Parameters</h2>
 
-<p>A component that we route to has access to something that Angular calls the <code>ActivatedRoute</code>. An <code>ActivatedRoute</code> is an object that contains information about route parameters, query parameters and URL fragments. <code>ContactsDetailComponent</code> needs exactly that to get the id of a contact. We can inject the <code>ActivatedRoute</code> into <code>ContactsDetailComponent</code>, by using Angular’s DI like this:</p>
+<p>A component that we route to has access to something that Angular calls the <code class="highlighter-rouge">ActivatedRoute</code>. An <code class="highlighter-rouge">ActivatedRoute</code> is an object that contains information about route parameters, query parameters and URL fragments. <code class="highlighter-rouge">ContactsDetailComponent</code> needs exactly that to get the id of a contact. We can inject the <code class="highlighter-rouge">ActivatedRoute</code> into <code class="highlighter-rouge">ContactsDetailComponent</code>, by using Angular’s DI like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ActivatedRoute</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">ActivatedRoute</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'contacts-detail'</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsDetailComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ContactsDetailComponent</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">route</span><span class="err">:</span> <span class="nx">ActivatedRoute</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">route</span><span class="p">:</span> <span class="nx">ActivatedRoute</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p><code>ActivatedRoute</code> comes with a <code>params</code> property which is an <code>Observable</code>. To access the contact id, all we have to do is to subscribe to the parameters <code>Observable</code> changes. Let’s say we have a <code>ContactsService</code> that takes a number and returns an observable that emits a contact object. Here’s what that could look like:</p>
+<p><code class="highlighter-rouge">ActivatedRoute</code> comes with a <code class="highlighter-rouge">params</code> property which is an <code class="highlighter-rouge">Observable</code>. To access the contact id, all we have to do is to subscribe to the parameters <code class="highlighter-rouge">Observable</code> changes. Let’s say we have a <code class="highlighter-rouge">ContactsService</code> that takes a number and returns an observable that emits a contact object. Here’s what that could look like:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ActivatedRoute</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ContactsService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'../contacts.service'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">ActivatedRoute</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/router'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ContactsService</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'../contacts.service'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'contacts-detail'</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ContactsDetailComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ContactsDetailComponent</span> <span class="p">{</span>
 
   <span class="nl">contact</span><span class="p">:</span> <span class="nx">Contact</span><span class="p">;</span>
 
-  <span class="nx">constructor</span><span class="p">(</span>
-    <span class="kr">private</span> <span class="nx">route</span><span class="err">:</span> <span class="nx">ActivatedRoute</span><span class="p">,</span>
-    <span class="kr">private</span> <span class="nx">contactsService</span><span class="err">:</span> <span class="nx">ContactsService</span>
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="kr">private</span> <span class="nx">route</span><span class="p">:</span> <span class="nx">ActivatedRoute</span><span class="p">,</span>
+    <span class="kr">private</span> <span class="nx">contactsService</span><span class="p">:</span> <span class="nx">ContactsService</span>
   <span class="p">)</span> <span class="p">{</span>
 
   <span class="p">}</span>
@@ -336,50 +336,50 @@
           <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">contact</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contact</span> <span class="o">=</span> <span class="nx">contact</span><span class="p">);</span>
       <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Oh, look what we have here! Notice that we’re nesting two <code>subscribe()</code> calls? This is usually an indicator that we can refactor our code using <code>flatMap()</code>, or even better <code>switchMap()</code>, as we’re calling an asynchronous API and want to deal with out-of-order responses.</p>
+<p>Oh, look what we have here! Notice that we’re nesting two <code class="highlighter-rouge">subscribe()</code> calls? This is usually an indicator that we can refactor our code using <code class="highlighter-rouge">flatMap()</code>, or even better <code class="highlighter-rouge">switchMap()</code>, as we’re calling an asynchronous API and want to deal with out-of-order responses.</p>
 
 <p>Let’s refactor our code:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span>
     <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">params</span> <span class="o">=&gt;</span> <span class="nx">params</span><span class="p">[</span><span class="s1">'id'</span><span class="p">])</span>
     <span class="p">.</span><span class="nx">switchMap</span><span class="p">(</span><span class="nx">id</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contactsService</span><span class="p">.</span><span class="nx">getContact</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span>
     <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">contact</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contact</span> <span class="o">=</span> <span class="nx">contact</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Much better! But are observables really required to get hold of our <code>id</code> parameter?</p>
+<p>Much better! But are observables really required to get hold of our <code class="highlighter-rouge">id</code> parameter?</p>
 
 <h2 id="using-router-snapshots">Using Router Snapshots</h2>
 
-<p>Sometimes we’re not interested in future changes of a route parameter. All we need is this contact id and once we have it, we can provide the data we want to provide. In this case, an Observable can bit a bit of an overkill, which is why the router supports snapshots. A snapshot is simply a snapshot representation of the activated route. We can access the <code>id</code> parameter of the route using snapshots like this:</p>
+<p>Sometimes we’re not interested in future changes of a route parameter. All we need is this contact id and once we have it, we can provide the data we want to provide. In this case, an Observable can bit a bit of an overkill, which is why the router supports snapshots. A snapshot is simply a snapshot representation of the activated route. We can access the <code class="highlighter-rouge">id</code> parameter of the route using snapshots like this:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">contactsService</span>
         <span class="p">.</span><span class="nx">getContacts</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">snapshot</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="s1">'id'</span><span class="p">])</span>
         <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">contact</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contact</span> <span class="o">=</span> <span class="nx">contact</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
 <p>Check out the running example <a href="http://plnkr.co/edit/I9qFkO?p=preview">right here</a>!</p>
 
 <h2 id="parammap-since-angular-version-4x">ParamMap since Angular version 4.x</h2>
 
-<p>Because router parameters can either have single or multiple values, the params type should actually be <code>{ [key: string]: string | string[] }</code>. We as developers usually know if we expect a single or multiple values. That’s why since Angular version 4.x, there’s a new <code>ParamMap</code> interface that we can use to decide whether we we’re interested in a single value (<code>ParamMap.get()</code>) or multiple values (<code>ParamMap.getAll()</code>).</p>
+<p>Because router parameters can either have single or multiple values, the params type should actually be <code class="highlighter-rouge">{ [key: string]: string | string[] }</code>. We as developers usually know if we expect a single or multiple values. That’s why since Angular version 4.x, there’s a new <code class="highlighter-rouge">ParamMap</code> interface that we can use to decide whether we we’re interested in a single value (<code class="highlighter-rouge">ParamMap.get()</code>) or multiple values (<code class="highlighter-rouge">ParamMap.getAll()</code>).</p>
 
 <p>The above code can therefore be rewritten as:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">contactsService</span>
-        <span class="p">.</span><span class="nx">getContacts</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">snapshot</span><span class="p">.</span><span class="nx">paramMap</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'id'</span><span class="p">))</span>
+        <span class="p">.</span><span class="nx">getContacts</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">snapshot</span><span class="p">.</span><span class="nx">paramMap</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'id'</span><span class="p">))</span>
         <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">contact</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">contact</span> <span class="o">=</span> <span class="nx">contact</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">...</span></code></pre></div>
+<span class="p">...</span></code></pre></figure>
 
 <p>This feature has been introduce in <a href="https://github.com/angular/angular/commit/a755b71">this commit</a>, go ahead and take a look for more information.</p>
 
@@ -535,22 +535,22 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
               <div class="thtrm-article-card-content ">
-                <h3>Advanced caching with RxJS</h3>
-                <p>When building web applications, performance should always be a top priority. One very efficient way to optimize the performance of...</p>
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
               </div>
             </a>
           </li>
         
           
           <li>
-            <a class="thtrm-article-card" href="/angular/2017/11/27/custom-overlays-with-angulars-cdk-part-two.html" title="Custom Overlays with Angular's CDK - Part 2">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom_overlays_2.jpg);"></div>
+            <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
-                <h3>Custom Overlays with Angular's CDK - Part 2</h3>
-                <p>In this follow-up post we demonstrate how to use Angular's CDK to build a custom overlay that looks and feels...</p>
+                <h3>Advanced caching with RxJS</h3>
+                <p>When building web applications, performance should always be a top priority. One very efficient way to optimize the performance of...</p>
               </div>
             </a>
           </li>

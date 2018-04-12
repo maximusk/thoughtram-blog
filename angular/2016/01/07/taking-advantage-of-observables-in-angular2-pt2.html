@@ -102,47 +102,47 @@
 
 </p>
 
-<p>As a recap, we built a simple Wikipedia search demo consisting of a <code>WikipediaService</code> to query a JSONP API.</p>
+<p>As a recap, we built a simple Wikipedia search demo consisting of a <code class="highlighter-rouge">WikipediaService</code> to query a JSONP API.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">URLSearchParams</span><span class="p">,</span> <span class="nx">Jsonp</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Injectable</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">URLSearchParams</span><span class="p">,</span> <span class="nx">Jsonp</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/http'</span><span class="p">;</span>
 
-<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">WikipediaService</span> <span class="p">{</span>
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">WikipediaService</span> <span class="p">{</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jsonp</span><span class="err">:</span> <span class="nx">Jsonp</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jsonp</span><span class="p">:</span> <span class="nx">Jsonp</span><span class="p">)</span> <span class="p">{}</span>
 
-  <span class="nx">search</span> <span class="p">(</span><span class="nx">term</span><span class="err">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">search</span> <span class="p">(</span><span class="nx">term</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">()</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jsonp</span>
-                <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
+                <span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
                 <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()[</span><span class="mi">1</span><span class="p">]);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>We also built an <code>App</code> component that uses this service and applies some Rx gymnastics to tame the user input, prevent duplicate requests and deal with out-of-order responses.</p>
+<p>We also built an <code class="highlighter-rouge">App</code> component that uses this service and applies some Rx gymnastics to tame the user input, prevent duplicate requests and deal with out-of-order responses.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Wikipedia</span> <span class="nx">Search</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="p">[</span><span class="nx">formControl</span><span class="p">]</span><span class="o">=</span><span class="s2">"term"</span><span class="o">/&gt;</span>
-      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let item of items | async"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">item</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;div&gt;
+      &lt;h2&gt;Wikipedia Search&lt;/h2&gt;
+      &lt;input type="text" [formControl]="term"/&gt;
+      &lt;ul&gt;
+        &lt;li *ngFor="let item of items | async"&gt;{{item}}&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">App</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">App</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
-  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span>
@@ -150,7 +150,7 @@
                  <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
                  <span class="p">.</span><span class="nx">switchMap</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">term</span><span class="p">));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Thinking ahead we can refactor our code even further and let our API design leverage from the power of Observables.</p>
 
@@ -162,60 +162,60 @@
 
 <p>Well, with Observables you can. You get the power of first class objects but without the limitations of singularity.</p>
 
-<p>In fact, in a modern .NET language such as F#, which embraces Observables all the way down, every <code>IEvent&lt;T&gt;</code> inherits from <code>IObservable&lt;T&gt;</code>. Angular also went down this path and made <code>EventEmiter&lt;T&gt;</code> implement <code>Observable&lt;T&gt;</code>.</p>
+<p>In fact, in a modern .NET language such as F#, which embraces Observables all the way down, every <code class="highlighter-rouge">IEvent&lt;T&gt;</code> inherits from <code class="highlighter-rouge">IObservable&lt;T&gt;</code>. Angular also went down this path and made <code class="highlighter-rouge">EventEmiter&lt;T&gt;</code> implement <code class="highlighter-rouge">Observable&lt;T&gt;</code>.</p>
 
 <h2 id="smart-service-dumb-component">Smart service, dumb component</h2>
 
-<p>With that in mind: wouldn’t it be actually nice if we could save the component from dealing with all these edge cases? What if we just make the debounce duration configureable but let the rest of the complexity be handled by our <code>WikipediaService</code>?</p>
+<p>With that in mind: wouldn’t it be actually nice if we could save the component from dealing with all these edge cases? What if we just make the debounce duration configureable but let the rest of the complexity be handled by our <code class="highlighter-rouge">WikipediaService</code>?</p>
 
-<p>To let code speak we can transform our <code>WikipediaService</code> into this.</p>
+<p>To let code speak we can transform our <code class="highlighter-rouge">WikipediaService</code> into this.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">WikipediaService</span> <span class="p">{</span>
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jsonp</span><span class="err">:</span> <span class="nx">Jsonp</span><span class="p">)</span> <span class="p">{}</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">WikipediaService</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">jsonp</span><span class="p">:</span> <span class="nx">Jsonp</span><span class="p">)</span> <span class="p">{}</span>
 
-  <span class="nx">search</span><span class="p">(</span><span class="nx">terms</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">debounceDuration</span> <span class="o">=</span> <span class="mi">400</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">search</span><span class="p">(</span><span class="nx">terms</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">debounceDuration</span> <span class="o">=</span> <span class="mi">400</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">terms</span><span class="p">.</span><span class="nx">debounceTime</span><span class="p">(</span><span class="nx">debounceDuration</span><span class="p">)</span>
                 <span class="p">.</span><span class="nx">distinctUntilChanged</span><span class="p">()</span>
                 <span class="p">.</span><span class="nx">switchMap</span><span class="p">(</span><span class="nx">term</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">rawSearch</span><span class="p">(</span><span class="nx">term</span><span class="p">));</span>
   <span class="p">}</span>
 
-  <span class="nx">rawSearch</span> <span class="p">(</span><span class="nx">term</span><span class="err">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">rawSearch</span> <span class="p">(</span><span class="nx">term</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URLSearchParams</span><span class="p">()</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
-    <span class="nx">search</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'action'</span><span class="p">,</span> <span class="s1">'opensearch'</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'search'</span><span class="p">,</span> <span class="nx">term</span><span class="p">);</span>
+    <span class="nx">search</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="s1">'format'</span><span class="p">,</span> <span class="s1">'json'</span><span class="p">);</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">jsonp</span>
-                <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
+                <span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">search</span> <span class="p">})</span>
                 <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()[</span><span class="mi">1</span><span class="p">]);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
-<p>Notice that the service still exposes the previous api as <code>rawSearch</code> and builds a more clever <code>search</code> API on top of it.</p>
+<p>Notice that the service still exposes the previous api as <code class="highlighter-rouge">rawSearch</code> and builds a more clever <code class="highlighter-rouge">search</code> API on top of it.</p>
 
-<p>This dramatically simplifies our <code>App</code> component.</p>
+<p>This dramatically simplifies our <code class="highlighter-rouge">App</code> component.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
-    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Wikipedia</span> <span class="nx">Search</span><span class="o">&lt;</span><span class="sr">/h2</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="p">[</span><span class="nx">formControl</span><span class="p">]</span><span class="o">=</span><span class="s2">"term"</span><span class="o">/&gt;</span>
-      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let item of items | async"</span><span class="o">&gt;</span><span class="p">{{</span><span class="nx">item</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span>  <span class="err">`</span>
+  <span class="na">template</span><span class="p">:</span> <span class="s2">`
+    &lt;div&gt;
+      &lt;h2&gt;Wikipedia Search&lt;/h2&gt;
+      &lt;input type="text" [formControl]="term"/&gt;
+      &lt;ul&gt;
+        &lt;li *ngFor="let item of items | async"&gt;{{item}}&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  `</span>
 <span class="p">})</span>
-<span class="kr">export</span> <span class="kr">class</span> <span class="nx">App</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">App</span> <span class="p">{</span>
 
-  <span class="na">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+  <span class="nl">items</span><span class="p">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nb">Array</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;&gt;</span><span class="p">;</span>
   <span class="nx">term</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
 
-  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="na">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">wikipediaService</span><span class="p">:</span> <span class="nx">WikipediaService</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">wikipediaService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">term</span><span class="p">.</span><span class="nx">valueChanges</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>See what happened? We just wire together event streams like lego blocks!</p>
 
@@ -338,6 +338,17 @@
         
           
           <li>
+            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>RxJS Master Class and courseware updates</h3>
+                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
             <a class="thtrm-article-card" href="/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html" title="Taking advantage of Observables in Angular">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/taking-advantage-of-observables.png);"></div>
               <div class="thtrm-article-card-content ">
@@ -365,17 +376,6 @@
               <div class="thtrm-article-card-content ">
                 <h3>Cold vs Hot Observables</h3>
                 <p>In this article we are going to demystify what the term hot vs cold means when it comes to Observables....</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
-            <a class="thtrm-article-card" href="/angular/2016/05/16/exploring-rx-operators-map.html" title="Exploring Rx Operators: map">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rx-map.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>Exploring Rx Operators: map</h3>
-                <p>This is the first article that is part of a new series where we take a look at different operators...</p>
               </div>
             </a>
           </li>
