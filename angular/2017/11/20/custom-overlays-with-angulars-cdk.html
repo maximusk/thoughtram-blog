@@ -81,16 +81,18 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>You have probably heared of <a href="https://material.angular.io/">Angular Material</a> haven’t you? If you haven’t, it’s a library that provides you with high-quality Material Design components for Angular. Material Design itself is a visual design language that aims for consistency of user experience across all platforms and device sizes. That’s cool but what if your company has its own opinions about styles and the overall look and feel of the UI? How do we get the best of Angular Material without adopting the Material Design visual language?</p>
 
-<p>Tada 🎉! That’s where Angular Material’s Component Dev Kit (CDK for short) comes into play. The CDK provides us with tools to build awesome and high-quality Angular components without adopting the Material Design visual language. Its goal is to make our life as developers easier and extract common behaviors and patterns shared between multiple Angular Material components. For instance, the datepicker, snackbar, or tooltip have something in common; they need to dynamically open up some floating panel on the screen. But that’s just the tip of the ice berg. There are many different packages for all sorts of things such as <code class="highlighter-rouge">a11y</code> that helps us improve the accessibility of our UI components. There’s even a <code class="highlighter-rouge">layout</code> package with utilities to build responsive UIs that react to screen-size changes. For a more complete list, please check out the official <a href="https://material.angular.io/cdk/categories/component-composition">documentation</a>.</p>
+<p>Tada 🎉! That’s where Angular Material’s Component Dev Kit (CDK for short) comes into play. The CDK provides us with tools to build awesome and high-quality Angular components without adopting the Material Design visual language. Its goal is to make our life as developers easier and extract common behaviors and patterns shared between multiple Angular Material components. For instance, the datepicker, snackbar, or tooltip have something in common; they need to dynamically open up some floating panel on the screen. But that’s just the tip of the ice berg. There are many different packages for all sorts of things such as <code>a11y</code> that helps us improve the accessibility of our UI components. There’s even a <code>layout</code> package with utilities to build responsive UIs that react to screen-size changes. For a more complete list, please check out the official <a href="https://material.angular.io/cdk/categories/component-composition">documentation</a>.</p>
 
 <p>Over at <a href="https://www.machinelabs.ai">MachineLabs</a>, we thought it would be useful to provide a way to preview generated output files (mostly images), so users don’t have to download it every single time just to take a quick look. So we sat down to build a Google Drive like overlay with the CDK. This post is meant to share our knowledge with the community and to make you comfortable using the CDK for your own purposes.</p>
 
@@ -119,19 +121,19 @@
 
 <h2 id="the-building-blocks">The building blocks</h2>
 
-<p>Let’s start simple and work our way up to the final, fully-fledged solution which will have a very similar API as the <code class="highlighter-rouge">MatDialog</code> service provided by Angular Material. It’s not important to know exactly how the <code class="highlighter-rouge">MatDialog</code> works but it’s definitely helpful. If this is new to you, we recommend to check out our post on <a href="/angular/2017/11/13/easy-dialogs-with-angular-material.html">Easy Dialogs with Angular Material</a>.</p>
+<p>Let’s start simple and work our way up to the final, fully-fledged solution which will have a very similar API as the <code>MatDialog</code> service provided by Angular Material. It’s not important to know exactly how the <code>MatDialog</code> works but it’s definitely helpful. If this is new to you, we recommend to check out our post on <a href="/angular/2017/11/13/easy-dialogs-with-angular-material.html">Easy Dialogs with Angular Material</a>.</p>
 
 <p>Our solution will be a little less flexible but specifically made for showing a file preview inspired by Google Drive. That said, we’d like to have a nice toolbar at the top and the image being rendered in the middle of the screen.</p>
 
-<p>In general, the <code class="highlighter-rouge">MatDialog</code> is great for showing content in a dialog box but as soon as we want a little bit of a custom look and feel, something that does not look like a white box with content inside, we would need to roll our own overlay. Luckily, we can use the <code class="highlighter-rouge">overlay</code> package from the CDK that has most of the core logic for opening floating panels already baked in. More on that in just a second.</p>
+<p>In general, the <code>MatDialog</code> is great for showing content in a dialog box but as soon as we want a little bit of a custom look and feel, something that does not look like a white box with content inside, we would need to roll our own overlay. Luckily, we can use the <code>overlay</code> package from the CDK that has most of the core logic for opening floating panels already baked in. More on that in just a second.</p>
 
 <p>Here are the core building blocks of our application:</p>
 
 <p><img src="/images/custom_overlays_architecture.png" width="100%" alt="application architecture" /></p>
 
-<p>As we can see, we have two components, one service and a class that represents a remote control to an opened overlay. The <code class="highlighter-rouge">AppComponent</code> is the root (or entry point) of our application. This component contains a toolbar and the list of files that we can preview. In addition, it has access to a <code class="highlighter-rouge">FilePreviewOverlayService</code> which provides us with the core logic for opening an overlay. At the same time it’s an abstraction for some “heavy” lifting that should be implemented in a resuable manner. Don’t be scared, it’s not going to be super heavy and we’ll break it down into comprehensible chunks. Last but not least, there’s a <code class="highlighter-rouge">FilePreviewOverlayRef</code> which, as mentioned, is a <em>handle</em> used to control (e.g. close) a particular overlay.</p>
+<p>As we can see, we have two components, one service and a class that represents a remote control to an opened overlay. The <code>AppComponent</code> is the root (or entry point) of our application. This component contains a toolbar and the list of files that we can preview. In addition, it has access to a <code>FilePreviewOverlayService</code> which provides us with the core logic for opening an overlay. At the same time it’s an abstraction for some “heavy” lifting that should be implemented in a resuable manner. Don’t be scared, it’s not going to be super heavy and we’ll break it down into comprehensible chunks. Last but not least, there’s a <code>FilePreviewOverlayRef</code> which, as mentioned, is a <em>handle</em> used to control (e.g. close) a particular overlay.</p>
 
-<p>For the overlay we choose to render a component, so we can attach some logic and also add animations to our overlay to engage our users and make them happy. We call this component <code class="highlighter-rouge">FilePreviewOverlayComponent</code>.</p>
+<p>For the overlay we choose to render a component, so we can attach some logic and also add animations to our overlay to engage our users and make them happy. We call this component <code>FilePreviewOverlayComponent</code>.</p>
 
 <p>That’s about it. Now that we have the basic structure in place, we’re ready to look at some code.</p>
 
@@ -139,18 +141,18 @@
 
 <h2 id="setup">Setup</h2>
 
-<p>Before we can start implementing the custom overlay we need to install the CDK. Simply run <code class="highlighter-rouge">npm install @angular/cdk</code> and we’re all set!</p>
+<p>Before we can start implementing the custom overlay we need to install the CDK. Simply run <code>npm install @angular/cdk</code> and we’re all set!</p>
 
 <h2 id="our-first-overlay">Our first overlay</h2>
 
-<p>From the <code class="highlighter-rouge">MatDialog</code> we know that when we open an overlay we must specify a component type that is then created dynamically at runtime. This means it is not created by using the component tags inside an HTML template. Also, we know that whenever a component is created at runtime, we <strong>must add it to our application module’s <code class="highlighter-rouge">entryComponents</code></strong>.</p>
+<p>From the <code>MatDialog</code> we know that when we open an overlay we must specify a component type that is then created dynamically at runtime. This means it is not created by using the component tags inside an HTML template. Also, we know that whenever a component is created at runtime, we <strong>must add it to our application module’s <code>entryComponents</code></strong>.</p>
 
-<p>Let’s do that and add the <code class="highlighter-rouge">FilePreviewOverlayComponent</code> to the array of <code class="highlighter-rouge">entryComponents</code>. In addition, we need to add the <code class="highlighter-rouge">OverlayModule</code> to the <code class="highlighter-rouge">imports</code> list of the root <code class="highlighter-rouge">AppModule</code>:</p>
+<p>Let’s do that and add the <code>FilePreviewOverlayComponent</code> to the array of <code>entryComponents</code>. In addition, we need to add the <code>OverlayModule</code> to the <code>imports</code> list of the root <code>AppModule</code>:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">OverlayModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/cdk/overlay'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">OverlayModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/cdk/overlay'</span><span class="p">;</span>
 <span class="p">...</span>
 
-<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span> <span class="p">...</span> <span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span> <span class="p">...,</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span> <span class="nx">AppComponent</span> <span class="p">],</span>
@@ -161,103 +163,103 @@
     <span class="nx">FilePreviewOverlayComponent</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span></code></pre></div>
 
-<p>From there, creating an overlay is easy. First, we inject the <code class="highlighter-rouge">Overlay</code> service. This service has a <code class="highlighter-rouge">create()</code> function that we need to call in order to create a <code class="highlighter-rouge">PortalHost</code> for our <code class="highlighter-rouge">FilePreviewOverlayComponent</code>. Finally we need to create a <code class="highlighter-rouge">ComponentPortal</code> from this component and attach it to the <code class="highlighter-rouge">PortalHost</code>. Wait, what? Let’s give it a moment and look at some code before taking it apart:</p>
+<p>From there, creating an overlay is easy. First, we inject the <code>Overlay</code> service. This service has a <code>create()</code> function that we need to call in order to create a <code>PortalHost</code> for our <code>FilePreviewOverlayComponent</code>. Finally we need to create a <code>ComponentPortal</code> from this component and attach it to the <code>PortalHost</code>. Wait, what? Let’s give it a moment and look at some code before taking it apart:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
 
   <span class="c1">// Inject overlay service</span>
-  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">overlay</span><span class="p">:</span> <span class="nx">Overlay</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">overlay</span><span class="err">:</span> <span class="nx">Overlay</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
   <span class="nx">open</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// Returns an OverlayRef (which is a PortalHost)</span>
-    <span class="kd">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+    <span class="kr">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
 
     <span class="c1">// Create ComponentPortal that can be attached to a PortalHost</span>
-    <span class="kd">const</span> <span class="nx">filePreviewPortal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ComponentPortal</span><span class="p">(</span><span class="nx">FilePreviewOverlayComponent</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">filePreviewPortal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ComponentPortal</span><span class="p">(</span><span class="nx">FilePreviewOverlayComponent</span><span class="p">);</span>
 
     <span class="c1">// Attach ComponentPortal to PortalHost</span>
     <span class="nx">overlayRef</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">filePreviewPortal</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>The first step is to create a <code class="highlighter-rouge">PortalHost</code>. We do that by calling <code class="highlighter-rouge">create()</code> on the <code class="highlighter-rouge">Overlay</code> service. This will return an <code class="highlighter-rouge">OverlayRef</code> instance which is basically a remote control for the overlay. One unique attribute of this <code class="highlighter-rouge">OverlayRef</code> is that it’s a <code class="highlighter-rouge">PortalHost</code>, and once created, we can attach or detach <code class="highlighter-rouge">Portal</code>s. We can think of a <code class="highlighter-rouge">PortalHost</code> as a placeholder for a component or template. So in our scenario, we are creating a <code class="highlighter-rouge">ComponentPortal</code> that takes a component type as its fist argument. In order to actually display this component we need to attach the portal to the host.</p>
+<p>The first step is to create a <code>PortalHost</code>. We do that by calling <code>create()</code> on the <code>Overlay</code> service. This will return an <code>OverlayRef</code> instance which is basically a remote control for the overlay. One unique attribute of this <code>OverlayRef</code> is that it’s a <code>PortalHost</code>, and once created, we can attach or detach <code>Portal</code>s. We can think of a <code>PortalHost</code> as a placeholder for a component or template. So in our scenario, we are creating a <code>ComponentPortal</code> that takes a component type as its fist argument. In order to actually display this component we need to attach the portal to the host.</p>
 
 <blockquote>
   <p>Ok, but where does the overlay get rendered?</p>
 </blockquote>
 
-<p>Good question. There’s an <code class="highlighter-rouge">OverlayContainer</code> service which creates a container <code class="highlighter-rouge">div</code> under the hood that gets appended to the <code class="highlighter-rouge">body</code> of the HTML Document. There are a few more wrapper elements created but our component eventually ends up in a <code class="highlighter-rouge">div</code> with a class of <code class="highlighter-rouge">cdk-overlay-pane</code>. Here’s what the DOM structure looks like:</p>
+<p>Good question. There’s an <code>OverlayContainer</code> service which creates a container <code>div</code> under the hood that gets appended to the <code>body</code> of the HTML Document. There are a few more wrapper elements created but our component eventually ends up in a <code>div</code> with a class of <code>cdk-overlay-pane</code>. Here’s what the DOM structure looks like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"cdk-overlay-container"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"cdk-overlay-container"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"cdk-overlay-0"</span> <span class="na">class=</span><span class="s">"cdk-overlay-pane"</span> <span class="na">dir=</span><span class="s">"ltr"</span><span class="nt">&gt;</span>
     <span class="c">&lt;!-- Component goes here --&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
 <p>Done. That’s all we need to create our very first custom overlay using the CDK. Let’s try it out and see what we got so far:</p>
 
 <iframe style="height: 500px" src="https://stackblitz.com/edit/custom-overlay-step-1?embed=1&amp;file=app/file-preview-overlay.service.ts&amp;ctl=1" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>Our service only exposes <strong>one</strong> public method <code class="highlighter-rouge">open()</code> that will take care of creating a custom overlay. For now, the service is quite simple but it gets more complicated as we implement a more sophisticated and complete (functional-wise) overlay. Therefore it’s a good idea to extract the common logic into a service to stay <strong>DRY</strong>. Imagine we would have the same logic defined in each component we want to show an overlay. No good, right?</p>
+<p>Our service only exposes <strong>one</strong> public method <code>open()</code> that will take care of creating a custom overlay. For now, the service is quite simple but it gets more complicated as we implement a more sophisticated and complete (functional-wise) overlay. Therefore it’s a good idea to extract the common logic into a service to stay <strong>DRY</strong>. Imagine we would have the same logic defined in each component we want to show an overlay. No good, right?</p>
 
 <p>Now that we have layed the foundation for our custom overlay, let’s take it one step further and improve on what we have so far. Let’s add a backdrop and specify a scroll and position strategy. Don’t worry if it’s unclear what scroll and position strategy is all about. We’ll cover that in a second.</p>
 
 <h2 id="configuring-the-overlay">Configuring the overlay</h2>
 
-<p>When creating an overlay, we can pass an optional configuration object to <code class="highlighter-rouge">create()</code> to set the desired options, e.g. whether it has backdrop, the position or scroll strategy, width, height and many more. Here’s an example:</p>
+<p>When creating an overlay, we can pass an optional configuration object to <code>create()</code> to set the desired options, e.g. whether it has backdrop, the position or scroll strategy, width, height and many more. Here’s an example:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Example configuration</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Example configuration</span>
 <span class="nx">overlay</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
   <span class="na">width</span><span class="p">:</span> <span class="s1">'400px'</span><span class="p">,</span>
   <span class="na">height</span><span class="p">:</span> <span class="s1">'600px'</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>First of all, we allow the consumer of our API to override certain options. Therefore, we update the signature for <code class="highlighter-rouge">open()</code> to also take a configuration object. In addition, we define an interface that describes the shape of the configuration from a consumer perspective:</p>
+<p>First of all, we allow the consumer of our API to override certain options. Therefore, we update the signature for <code>open()</code> to also take a configuration object. In addition, we define an interface that describes the shape of the configuration from a consumer perspective:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Each property can be overridden by the consumer</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Each property can be overridden by the consumer</span>
 <span class="kr">interface</span> <span class="nx">FilePreviewDialogConfig</span> <span class="p">{</span>
   <span class="nx">panelClass</span><span class="p">?:</span> <span class="nx">string</span><span class="p">;</span>
   <span class="nx">hasBackdrop</span><span class="p">?:</span> <span class="kr">boolean</span><span class="p">;</span>
   <span class="nx">backdropClass</span><span class="p">?:</span> <span class="nx">string</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
-  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Next, we define some initial values for the config, so that, by default, every overlay has a backdrop alongside a <code class="highlighter-rouge">backdropClass</code> and <code class="highlighter-rouge">panelClass</code>:</p>
+<p>Next, we define some initial values for the config, so that, by default, every overlay has a backdrop alongside a <code>backdropClass</code> and <code>panelClass</code>:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">DEFAULT_CONFIG</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">DEFAULT_CONFIG</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">hasBackdrop</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
   <span class="na">backdropClass</span><span class="p">:</span> <span class="s1">'dark-backdrop'</span><span class="p">,</span>
   <span class="na">panelClass</span><span class="p">:</span> <span class="s1">'tm-file-preview-dialog-panel'</span>
 <span class="p">}</span>
 
-<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>With that in place, we can define a new method <code class="highlighter-rouge">getOverlayConfig()</code> which takes care of creating a new <code class="highlighter-rouge">OverlayConfig</code> for the custom overlay. Remember, it’s better to break down the logic into smaller parts instead of implementing everything in one giant function. This ensures better maintainability but also readability of our code.</p>
+<p>With that in place, we can define a new method <code>getOverlayConfig()</code> which takes care of creating a new <code>OverlayConfig</code> for the custom overlay. Remember, it’s better to break down the logic into smaller parts instead of implementing everything in one giant function. This ensures better maintainability but also readability of our code.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
 
   <span class="p">...</span>
 
-  <span class="kr">private</span> <span class="nx">getOverlayConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">):</span> <span class="nx">OverlayConfig</span> <span class="p">{</span>
-    <span class="kd">const</span> <span class="nx">positionStrategy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">position</span><span class="p">()</span>
-      <span class="p">.</span><span class="nb">global</span><span class="p">()</span>
+  <span class="kr">private</span> <span class="nx">getOverlayConfig</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">)</span><span class="err">:</span> <span class="nx">OverlayConfig</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">positionStrategy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">position</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">global</span><span class="p">()</span>
       <span class="p">.</span><span class="nx">centerHorizontally</span><span class="p">()</span>
       <span class="p">.</span><span class="nx">centerVertically</span><span class="p">();</span>
 
-    <span class="kd">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OverlayConfig</span><span class="p">({</span>
+    <span class="kr">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OverlayConfig</span><span class="p">({</span>
       <span class="na">hasBackdrop</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">hasBackdrop</span><span class="p">,</span>
       <span class="na">backdropClass</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">backdropClass</span><span class="p">,</span>
       <span class="na">panelClass</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">panelClass</span><span class="p">,</span>
@@ -267,82 +269,82 @@
 
     <span class="k">return</span> <span class="nx">overlayConfig</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Our method is quite simple. It takes a <code class="highlighter-rouge">FilePreviewDialogConfig</code> and creates a new <code class="highlighter-rouge">OverlayConfig</code> with the values from the given configuration. However, there are two important things to mention. One is the <code class="highlighter-rouge">scrollStrategy</code> and the other one is the <code class="highlighter-rouge">positionStrategy</code>.</p>
+<p>Our method is quite simple. It takes a <code>FilePreviewDialogConfig</code> and creates a new <code>OverlayConfig</code> with the values from the given configuration. However, there are two important things to mention. One is the <code>scrollStrategy</code> and the other one is the <code>positionStrategy</code>.</p>
 
 <h3 id="scroll-strategy">Scroll strategy</h3>
 
 <p>The scroll strategy is a way of defining how our overlay should behave if the user scrolls while the overlay is open. There are several strategies available as part of the CDK, such as</p>
 
 <ul>
-  <li><code class="highlighter-rouge">NoopScrollStrategy</code>: does nothing</li>
-  <li><code class="highlighter-rouge">CloseScrollStrategy</code>: automatically closes the overlay when scrolling</li>
-  <li><code class="highlighter-rouge">BlockScrollStrategy</code>: blocks page scrolling</li>
-  <li><code class="highlighter-rouge">RepositionScrollStrategy</code>: will reposition the overlay element on scroll</li>
+  <li><code>NoopScrollStrategy</code>: does nothing</li>
+  <li><code>CloseScrollStrategy</code>: automatically closes the overlay when scrolling</li>
+  <li><code>BlockScrollStrategy</code>: blocks page scrolling</li>
+  <li><code>RepositionScrollStrategy</code>: will reposition the overlay element on scroll</li>
 </ul>
 
-<p>For our file preview overlay, we are going to use the <code class="highlighter-rouge">BlockScrollStrategy</code> because we don’t want the user to be scrolling in the background while the overlay is open.</p>
+<p>For our file preview overlay, we are going to use the <code>BlockScrollStrategy</code> because we don’t want the user to be scrolling in the background while the overlay is open.</p>
 
-<p>The <code class="highlighter-rouge">scrollStrategy</code> takes a function that returns a scroll strategy. All strategies are provided by the <code class="highlighter-rouge">Overlay</code> service and can be accessed via the <code class="highlighter-rouge">scrollStrategies</code> property:</p>
+<p>The <code>scrollStrategy</code> takes a function that returns a scroll strategy. All strategies are provided by the <code>Overlay</code> service and can be accessed via the <code>scrollStrategies</code> property:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OverlayConfig</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OverlayConfig</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="c1">// Other strategies are .noop(), .reposition(), or .close()</span>
   <span class="na">scrollStrategy</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">scrollStrategies</span><span class="p">.</span><span class="nx">block</span><span class="p">()</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>If we don’t specify a strategy explicitly, all overlays will use the <code class="highlighter-rouge">NoopScrollStrategy</code>.</p>
+<p>If we don’t specify a strategy explicitly, all overlays will use the <code>NoopScrollStrategy</code>.</p>
 
 <h3 id="position-strategy">Position strategy</h3>
 
 <p>The position strategy allows us to configure how our overlay is positioned on the screen. There are two position strategies available as part of the CDK:</p>
 
 <ul>
-  <li><code class="highlighter-rouge">GlobalPositionStrategy</code>: used for overlays that need to be positioned unrelated to other elements on the screen. This strategy is mostly used for modals or root-level notifications.</li>
-  <li><code class="highlighter-rouge">ConnectedPositionStrategy</code>: used for overlays that are positioned relative to other elements. This is commonly used for menus or tooltips.</li>
+  <li><code>GlobalPositionStrategy</code>: used for overlays that need to be positioned unrelated to other elements on the screen. This strategy is mostly used for modals or root-level notifications.</li>
+  <li><code>ConnectedPositionStrategy</code>: used for overlays that are positioned relative to other elements. This is commonly used for menus or tooltips.</li>
 </ul>
 
-<p>We’ll be using the <code class="highlighter-rouge">GlobalPositionStrategy</code> for our overlay because it’s supposed to be positioned globally on screen, unrelated to other elements.</p>
+<p>We’ll be using the <code>GlobalPositionStrategy</code> for our overlay because it’s supposed to be positioned globally on screen, unrelated to other elements.</p>
 
-<p>Similar to the <code class="highlighter-rouge">scrollStrategy</code> we can access all position strategies through the <code class="highlighter-rouge">Overlay</code> service like so:</p>
+<p>Similar to the <code>scrollStrategy</code> we can access all position strategies through the <code>Overlay</code> service like so:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">positionStrategy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">position</span><span class="p">()</span>
-  <span class="p">.</span><span class="nb">global</span><span class="p">()</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">const</span> <span class="nx">positionStrategy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">position</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">global</span><span class="p">()</span>
   <span class="p">.</span><span class="nx">centerHorizontally</span><span class="p">()</span>
   <span class="p">.</span><span class="nx">centerVertically</span><span class="p">();</span>
 
-<span class="kd">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OverlayConfig</span><span class="p">({</span>
+<span class="kr">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OverlayConfig</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="nx">positionStrategy</span>
-<span class="p">});</span></code></pre></figure>
+<span class="p">});</span></code></pre></div>
 
-<p>With the configuration in place, we go ahead and define another method <code class="highlighter-rouge">createOverlay()</code> that hides the complexity of creating an overlay with a given configuration:</p>
+<p>With the configuration in place, we go ahead and define another method <code>createOverlay()</code> that hides the complexity of creating an overlay with a given configuration:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="kr">private</span> <span class="nx">createOverlay</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">private</span> <span class="nx">createOverlay</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Returns an OverlayConfig</span>
-    <span class="kd">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getOverlayConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">overlayConfig</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getOverlayConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
 
     <span class="c1">// Returns an OverlayRef</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">overlayConfig</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We now refactor our <code class="highlighter-rouge">open()</code> method to generate a default config and utilize <code class="highlighter-rouge">createOverlay()</code>:</p>
+<p>We now refactor our <code>open()</code> method to generate a default config and utilize <code>createOverlay()</code>:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
+  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
     <span class="c1">// Override default configuration</span>
-    <span class="kd">const</span> <span class="nx">dialogConfig</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span><span class="nx">DEFAULT_CONFIG</span><span class="p">,</span> <span class="p">...</span><span class="nx">config</span> <span class="p">};</span>
+    <span class="kr">const</span> <span class="nx">dialogConfig</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span><span class="nx">DEFAULT_CONFIG</span><span class="p">,</span> <span class="p">...</span><span class="nx">config</span> <span class="p">};</span>
 
-    <span class="kd">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createOverlay</span><span class="p">(</span><span class="nx">dialogConfig</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createOverlay</span><span class="p">(</span><span class="nx">dialogConfig</span><span class="p">);</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Here’s what it looks like in action:</p>
 
@@ -356,54 +358,54 @@
 
 <p>Just like we use remote controls to snap between television channels, we want a remote control to close our overlays. It will provide an API for modifying, closing, and listening to events on the overlay instance. Especially if we want to be able to close the dialog from within the overlay component, and optionally return a value to the consumer.</p>
 
-<p>Our remote control will be a simple class that exposes only one public method - <code class="highlighter-rouge">close()</code>. For now we keep simple and extend it as we introduce more features. Here’s what it looks like:</p>
+<p>Our remote control will be a simple class that exposes only one public method - <code>close()</code>. For now we keep simple and extend it as we introduce more features. Here’s what it looks like:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">OverlayRef</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/cdk/overlay'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">OverlayRef</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/cdk/overlay'</span><span class="p">;</span>
 
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">overlayRef</span><span class="p">:</span> <span class="nx">OverlayRef</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">overlayRef</span><span class="err">:</span> <span class="nx">OverlayRef</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-  <span class="nx">close</span><span class="p">():</span> <span class="k">void</span> <span class="p">{</span>
+  <span class="nx">close</span><span class="p">()</span><span class="err">:</span> <span class="k">void</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">overlayRef</span><span class="p">.</span><span class="nx">dispose</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>When implementing the remote control, the only thing we have to make sure is that we need access to the <code class="highlighter-rouge">OverlayRef</code>. It’s a reference to the overlay (portal host) that allows us to detach the portal. Note that, there’s no <code class="highlighter-rouge">@Injectable</code> decorator attached to the class which means that we can’t leverage the DI system for this service. This, however, is no big deal because we will manually create an instance for every overlay and therefore we don’t need to register a provider either. Theoretically, we could open multiple overlays stacked on top of each other where each overlay has its own remote control. The DI system creates singletons by default. That’s not what we want in this case.</p>
+<p>When implementing the remote control, the only thing we have to make sure is that we need access to the <code>OverlayRef</code>. It’s a reference to the overlay (portal host) that allows us to detach the portal. Note that, there’s no <code>@Injectable</code> decorator attached to the class which means that we can’t leverage the DI system for this service. This, however, is no big deal because we will manually create an instance for every overlay and therefore we don’t need to register a provider either. Theoretically, we could open multiple overlays stacked on top of each other where each overlay has its own remote control. The DI system creates singletons by default. That’s not what we want in this case.</p>
 
-<p>What’s left to do is to update our <code class="highlighter-rouge">open()</code> method to create a remote control and return it to the consumer of our API:</p>
+<p>What’s left to do is to update our <code>open()</code> method to create a remote control and return it to the consumer of our API:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
+  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
     <span class="p">...</span>
-    <span class="kd">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createOverlay</span><span class="p">(</span><span class="nx">dialogConfig</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createOverlay</span><span class="p">(</span><span class="nx">dialogConfig</span><span class="p">);</span>
 
     <span class="c1">// Instantiate remote control</span>
-    <span class="kd">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">);</span>
     <span class="p">...</span>
     <span class="c1">// Return remote control</span>
     <span class="k">return</span> <span class="nx">dialogRef</span><span class="p">;</span>
-  <span class="p">}</span></code></pre></figure>
+  <span class="p">}</span></code></pre></div>
 
-<p>Notice how we pass in the <code class="highlighter-rouge">overlayRef</code> when creating a new <code class="highlighter-rouge">FilePreviewOverlayRef</code>? That’s how we get a hold of the <code class="highlighter-rouge">PortalHost</code> inside the remote. Instead of implementing a class that represents a reference to the open overlay, we could have returned the <code class="highlighter-rouge">OverlayRef</code> directly. However, it’s not a good idea to expose lower-level APIs because users could mess with the overlay and detach the backdrop for instance. Also, we need a little bit more logic later on when we introduce animations. A remote control is a good way of limiting the access to the underlying APIs and expose only those that we want to be publicly available.</p>
+<p>Notice how we pass in the <code>overlayRef</code> when creating a new <code>FilePreviewOverlayRef</code>? That’s how we get a hold of the <code>PortalHost</code> inside the remote. Instead of implementing a class that represents a reference to the open overlay, we could have returned the <code>OverlayRef</code> directly. However, it’s not a good idea to expose lower-level APIs because users could mess with the overlay and detach the backdrop for instance. Also, we need a little bit more logic later on when we introduce animations. A remote control is a good way of limiting the access to the underlying APIs and expose only those that we want to be publicly available.</p>
 
-<p>From a consumer perspective we now get a handle to the overlay that allows us to programatically close it at some point. Let’s go ahead and update <code class="highlighter-rouge">AppComponent</code> accordingly:</p>
+<p>From a consumer perspective we now get a handle to the overlay that allows us to programatically close it at some point. Let’s go ahead and update <code>AppComponent</code> accordingly:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({...})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span>  <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({...})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span>  <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">showPreview</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// Returns a handle to the open overlay</span>
-    <span class="kd">let</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">FilePreviewOverlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">previewDialog</span><span class="p">.</span><span class="nx">open</span><span class="p">();</span>
+    <span class="kd">let</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">previewDialog</span><span class="p">.</span><span class="nx">open</span><span class="p">();</span>
 
     <span class="c1">// Close overlay after 2 seconds</span>
     <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">dialogRef</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
     <span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Here’s our code in action. Remember, once we open an overlay it will automatically close after 2 seconds:</p>
 
@@ -417,22 +419,22 @@
 
 <p>Turns out that the backdrop logic is extremely easy with the CDK. All we have to do is to subscribe to a stream that emits a value when the backdrop was clicked:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
-  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
     <span class="p">...</span>
     <span class="c1">// Subscribe to a stream that emits when the backdrop was clicked</span>
     <span class="nx">overlayRef</span><span class="p">.</span><span class="nx">backdropClick</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">_</span> <span class="o">=&gt;</span> <span class="nx">dialogRef</span><span class="p">.</span><span class="nx">close</span><span class="p">());</span>
 
     <span class="k">return</span> <span class="nx">dialogRef</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>That’s it! Imagine how much work this would be without the CDK.</p>
 
 <iframe style="height: 500px" src="https://stackblitz.com/edit/custom-overlay-step-4?embed=1&amp;file=app/file-preview-overlay.service.ts&amp;ctl=1" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
-<p>From here we could take it one step further and also close the overlay when a user naviagtes back in the browser history. For our application, however, this doesn’t make much sense because we are not using the router and there’s only one page that we render out to the screen. But feel free to give it a shot! Hint: use the <code class="highlighter-rouge">Location</code> service and subscribe to the browser’s <code class="highlighter-rouge">popState</code> events.</p>
+<p>From here we could take it one step further and also close the overlay when a user naviagtes back in the browser history. For our application, however, this doesn’t make much sense because we are not using the router and there’s only one page that we render out to the screen. But feel free to give it a shot! Hint: use the <code>Location</code> service and subscribe to the browser’s <code>popState</code> events.</p>
 
 <h2 id="sharing-data-with-the-overlay-component">Sharing data with the overlay component</h2>
 
@@ -442,38 +444,38 @@
 
 <p>In a nutshell, the DI system is flexible enough that we can reconfigure the injectors at any level of the component tree. That said, there is no such thing as <em>the injector</em>. An application may have multiple injectors and each component instance has its own injector. You hear the bells ring? Right, we can create our own <strong>custom injector</strong> and provide it with a list of <strong>custom injection tokens</strong>. It sounds more complicated than it actually is.</p>
 
-<p>Turns out, the CDK already has a class <code class="highlighter-rouge">PortalInjector</code> that that we can use to provide custom injection tokens to components inside a portal. This is exactly what we need. Let’s break ground and implement a function <code class="highlighter-rouge">createInjector()</code> that creates a new <code class="highlighter-rouge">PortalInjector</code> and defines a list of custom injection tokens.</p>
+<p>Turns out, the CDK already has a class <code>PortalInjector</code> that that we can use to provide custom injection tokens to components inside a portal. This is exactly what we need. Let’s break ground and implement a function <code>createInjector()</code> that creates a new <code>PortalInjector</code> and defines a list of custom injection tokens.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="kr">private</span> <span class="nx">createInjector</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">):</span> <span class="nx">PortalInjector</span> <span class="p">{</span>
+  <span class="kr">private</span> <span class="nx">createInjector</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">)</span><span class="err">:</span> <span class="nx">PortalInjector</span> <span class="p">{</span>
     <span class="c1">// Instantiate new WeakMap for our custom injection tokens</span>
-    <span class="kd">const</span> <span class="nx">injectionTokens</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">WeakMap</span><span class="p">();</span>
+    <span class="kr">const</span> <span class="nx">injectionTokens</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WeakMap</span><span class="p">();</span>
 
     <span class="c1">// Set custom injection tokens</span>
-    <span class="nx">injectionTokens</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">FilePreviewOverlayRef</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">);</span>
-    <span class="nx">injectionTokens</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">FILE_PREVIEW_DIALOG_DATA</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="nx">injectionTokens</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">FilePreviewOverlayRef</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">);</span>
+    <span class="nx">injectionTokens</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">FILE_PREVIEW_DIALOG_DATA</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
 
     <span class="c1">// Instantiate new PortalInjector</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">PortalInjector</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">,</span> <span class="nx">injectionTokens</span><span class="p">);</span>
-  <span class="p">}</span></code></pre></figure>
+  <span class="p">}</span></code></pre></div>
 
-<p>In the code above we create a new <code class="highlighter-rouge">WeakMap</code>, set our custom injection tokens that we want to be available (injectable) in the overlay component, and finally instantiate a new <code class="highlighter-rouge">PortalInjector</code>. The important part though is that we also specify a parent injector (first argument) which is mandatory. Also notice the second argument where we pass in our injection tokens.</p>
+<p>In the code above we create a new <code>WeakMap</code>, set our custom injection tokens that we want to be available (injectable) in the overlay component, and finally instantiate a new <code>PortalInjector</code>. The important part though is that we also specify a parent injector (first argument) which is mandatory. Also notice the second argument where we pass in our injection tokens.</p>
 
-<p>There are two things that we are providing. The first token is the <code class="highlighter-rouge">FilePreviewDialogRef</code>. Having the remote control at hand, allows the overlay component to close itself. This is very useful because there will definitely be a close button somewhere. The second token is a custom <code class="highlighter-rouge">InjectionToken</code> that stores the data that we want to share with the component.</p>
+<p>There are two things that we are providing. The first token is the <code>FilePreviewDialogRef</code>. Having the remote control at hand, allows the overlay component to close itself. This is very useful because there will definitely be a close button somewhere. The second token is a custom <code>InjectionToken</code> that stores the data that we want to share with the component.</p>
 
-<p>For the <code class="highlighter-rouge">InjectionToken</code> we create new file <code class="highlighter-rouge">file-preview-overlay.tokens</code> and instantiate a new <code class="highlighter-rouge">InjectionToken</code>:</p>
+<p>For the <code>InjectionToken</code> we create new file <code>file-preview-overlay.tokens</code> and instantiate a new <code>InjectionToken</code>:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">InjectionToken</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">InjectionToken</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
-<span class="k">import</span> <span class="p">{</span> <span class="nx">Image</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./file-preview-overlay.service'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Image</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./file-preview-overlay.service'</span><span class="p">;</span>
 
-<span class="k">export</span> <span class="kd">const</span> <span class="nx">FILE_PREVIEW_DIALOG_DATA</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InjectionToken</span><span class="o">&lt;</span><span class="nx">Image</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'FILE_PREVIEW_DIALOG_DATA'</span><span class="p">);</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">FILE_PREVIEW_DIALOG_DATA</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InjectionToken</span><span class="o">&lt;</span><span class="nx">Image</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'FILE_PREVIEW_DIALOG_DATA'</span><span class="p">);</span></code></pre></div>
 
-<p>Next, let’s update our <code class="highlighter-rouge">FilePreviewDialogConfig</code> so that the user can specify an image that will be used by the overlay component:</p>
+<p>Next, let’s update our <code>FilePreviewDialogConfig</code> so that the user can specify an image that will be used by the overlay component:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">interface</span> <span class="nx">Image</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">interface</span> <span class="nx">Image</span> <span class="p">{</span>
   <span class="nl">name</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
   <span class="nl">url</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
 <span class="p">}</span>
@@ -485,46 +487,46 @@
   <span class="nx">data</span><span class="p">?:</span> <span class="nx">Image</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>For better readability we’ll also refactor our <code class="highlighter-rouge">open()</code> method and create a new <code class="highlighter-rouge">attachDialogContainer()</code> function that now takes care of creating the injector and component portal, as well as attaching the portal to the host.</p>
+<p>For better readability we’ll also refactor our <code>open()</code> method and create a new <code>attachDialogContainer()</code> function that now takes care of creating the injector and component portal, as well as attaching the portal to the host.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="kr">private</span> <span class="nx">attachDialogContainer</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">:</span> <span class="nx">OverlayRef</span><span class="p">,</span> <span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">const</span> <span class="nx">injector</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createInjector</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">);</span>
+  <span class="kr">private</span> <span class="nx">attachDialogContainer</span><span class="p">(</span><span class="nx">overlayRef</span><span class="err">:</span> <span class="nx">OverlayRef</span><span class="p">,</span> <span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">injector</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createInjector</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">);</span>
 
-    <span class="kd">const</span> <span class="nx">containerPortal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ComponentPortal</span><span class="p">(</span><span class="nx">FilePreviewOverlayComponent</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">injector</span><span class="p">);</span>
-    <span class="kd">const</span> <span class="nx">containerRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">FilePreviewOverlayComponent</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">overlayRef</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">containerPortal</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">containerPortal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ComponentPortal</span><span class="p">(</span><span class="nx">FilePreviewOverlayComponent</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">injector</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">containerRef</span><span class="err">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">FilePreviewOverlayComponent</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">overlayRef</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="nx">containerPortal</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="nx">containerRef</span><span class="p">.</span><span class="nx">instance</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>With that in place, we can now update our <code class="highlighter-rouge">FilePreviewOverlayComponent</code> and inject the tokens that we have defined on a component level with the help of a custom injector.</p>
+<p>With that in place, we can now update our <code>FilePreviewOverlayComponent</code> and inject the tokens that we have defined on a component level with the help of a custom injector.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
-  <span class="kd">constructor</span><span class="p">(</span>
-    <span class="kr">public</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">,</span>
-    <span class="p">@</span><span class="nd">Inject</span><span class="p">(</span><span class="nx">FILE_PREVIEW_DIALOG_DATA</span><span class="p">)</span> <span class="kr">public</span> <span class="nx">image</span><span class="p">:</span> <span class="nx">any</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span>
+    <span class="kr">public</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">,</span>
+    <span class="err">@</span><span class="nx">Inject</span><span class="p">(</span><span class="nx">FILE_PREVIEW_DIALOG_DATA</span><span class="p">)</span> <span class="kr">public</span> <span class="nx">image</span><span class="err">:</span> <span class="nx">any</span>
   <span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>We can now define data that will be passed to the overlay component and render an image onto the screen. Here’s an example of how we can pass in data:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({...})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span>  <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({...})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span>  <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">showPreview</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">FilePreviewOverlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">previewDialog</span><span class="p">.</span><span class="nx">open</span><span class="p">({</span>
+    <span class="kd">let</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">previewDialog</span><span class="p">.</span><span class="nx">open</span><span class="p">({</span>
       <span class="na">image</span><span class="p">:</span> <span class="nx">file</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Finally with a little bit of styling we come much closer to what we’re trying to achieve.</p>
 
@@ -542,24 +544,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -656,17 +658,6 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -683,6 +674,17 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/08/angular-master-class-redux-and-ngrx.html" title="Angular Master Class - Redux and ngrx">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/ngrx_slide_logo.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Angular Master Class - Redux and ngrx</h3>
+                <p>Today we're super excited to announce that we finished working on our new Angular Master Class courseware. Read on for...</p>
               </div>
             </a>
           </li>

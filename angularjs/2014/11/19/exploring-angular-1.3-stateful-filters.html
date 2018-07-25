@@ -81,12 +81,14 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>Angular 1.3 comes with a lot of cool features and improvements. We already covered a couple of them. You can for example read about <a href="http://blog.thoughtram.io/angularjs/2014/10/14/exploring-angular-1.3-one-time-bindings.html">one-time bindings</a>, <a href="http://blog.thoughtram.io/angularjs/2014/10/19/exploring-angular-1.3-ng-model-options.html">ngModelOptions</a> or the newly introduced <a href="http://blog.thoughtram.io/angularjs/2014/11/06/exploring-angular-1.3-angular-hint.html">Angular-hint</a> module that helps you out writing better Angular code.</p>
 
@@ -94,27 +96,27 @@
 
 <h2 id="the-filter-behaviour-you-know">The filter behaviour you know</h2>
 
-<p>I think I don’t have to go into much detail when it comes to how to use filters in general. We apply them with a <code class="highlighter-rouge">|</code> symbol in our interpolation expressions and are able to pass additional parameters by chaining them with a <code class="highlighter-rouge">:</code> symbol.</p>
+<p>I think I don’t have to go into much detail when it comes to how to use filters in general. We apply them with a <code>|</code> symbol in our interpolation expressions and are able to pass additional parameters by chaining them with a <code>:</code> symbol.</p>
 
-<p>For instance, in the following example, we use the <code class="highlighter-rouge">json</code> filter to convert a JavaScript object into a JSON string:</p>
+<p>For instance, in the following example, we use the <code>json</code> filter to convert a JavaScript object into a JSON string:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">{{ jsonExpression | json }}</code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html">{{ jsonExpression | json }}</code></pre></div>
 
-<p>Expecting <code class="highlighter-rouge">jsonExpression</code> to look something like: <code class="highlighter-rouge">{'name':'value'}</code>, the filter would return a string that looks something like this:</p>
+<p>Expecting <code>jsonExpression</code> to look something like: <code>{'name':'value'}</code>, the filter would return a string that looks something like this:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value"</span><span class="w">
-</span><span class="p">}</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value"</span><span class="w">
+</span><span class="p">}</span></code></pre></div>
 
-<p>If we use a filter that can be configured with additional parameters, we can pass them to the filter by chaining them with a <code class="highlighter-rouge">:</code> symbol right in the expression. The following example uses the <code class="highlighter-rouge">currency</code> filter to format the given expression accordingly and uses an optional <code class="highlighter-rouge">symbol</code> parameter to change the default currency symbol for this particular use case.</p>
+<p>If we use a filter that can be configured with additional parameters, we can pass them to the filter by chaining them with a <code>:</code> symbol right in the expression. The following example uses the <code>currency</code> filter to format the given expression accordingly and uses an optional <code>symbol</code> parameter to change the default currency symbol for this particular use case.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">{{ amount | currency:'€' }}</code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html">{{ amount | currency:'€' }}</code></pre></div>
 
 <p>Okay, so this is pretty straight forward right? A filter takes an expression and uses it as input to manipulate the expressions value and returns (ideally) a string, so it can be used in our HTML right away.</p>
 
 <p>We can go even further and build a custom filter that depends on another service to manipulate the given input. Let’s assume we have a filter like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
 
 <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="s1">'customFilter'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'someService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">someService</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="kd">function</span> <span class="nx">customFilter</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
@@ -122,9 +124,9 @@
     <span class="nx">input</span> <span class="o">+=</span> <span class="nx">someService</span><span class="p">.</span><span class="nx">getData</span><span class="p">();</span>
     <span class="k">return</span> <span class="nx">input</span><span class="p">;</span>
   <span class="p">};</span>
-<span class="p">}]);</span></code></pre></figure>
+<span class="p">}]);</span></code></pre></div>
 
-<p>In this example we have a filter that depends on <code class="highlighter-rouge">someService</code> and this particular service apparently comes with a method <code class="highlighter-rouge">getData()</code>, which is used to change the value of <code class="highlighter-rouge">input</code> that gets returned.</p>
+<p>In this example we have a filter that depends on <code>someService</code> and this particular service apparently comes with a method <code>getData()</code>, which is used to change the value of <code>input</code> that gets returned.</p>
 
 <p>Again, this is pretty straight forward. Filters in Angular follow the same rules as other component types like services, factories etc, when it comes to dependency injection. So basically it’s totally fine and valid to have dependencies in filter components. However, <strong>filters that have dependencies are usually stateful</strong>. And this is where the code might break.</p>
 
@@ -132,7 +134,7 @@
 
 <h2 id="filters-in-13">Filters in 1.3</h2>
 
-<p>In order to make Angular faster, a lot of changes landed in the 1.3 release that come with performance improvements. One of them is how filters behave by default. We talked about what filters do and how we can use them, but we didn’t talk about the fact, that they always came with a relatively big drawback. Each filter creates a new watcher. Having to many watchers registered can slow down our app, since the more watchers are registered, the more work has to be done during the <code class="highlighter-rouge">$digest</code> cycle. That’s why we usually should avoid using too many filters.</p>
+<p>In order to make Angular faster, a lot of changes landed in the 1.3 release that come with performance improvements. One of them is how filters behave by default. We talked about what filters do and how we can use them, but we didn’t talk about the fact, that they always came with a relatively big drawback. Each filter creates a new watcher. Having to many watchers registered can slow down our app, since the more watchers are registered, the more work has to be done during the <code>$digest</code> cycle. That’s why we usually should avoid using too many filters.</p>
 
 <p>However, there’s a reason why <a href="http://twitter.com/IgorMinar">Igor Minar</a> said that:</p>
 
@@ -140,21 +142,21 @@
   <p>“Angular 1.3 is the best Angular yet!”</p>
 </blockquote>
 
-<p>In version 1.3, filters are much smarter. By default, they cache the evaluated value so they don’t have to be re-evaluated all the time. Getting back to our simple <code class="highlighter-rouge">{{ jsonExpression | json}}</code> example, the expression only gets re-evaluated when <code class="highlighter-rouge">jsonExpression</code> changes, which makes our code execution much faster.</p>
+<p>In version 1.3, filters are much smarter. By default, they cache the evaluated value so they don’t have to be re-evaluated all the time. Getting back to our simple <code>{{ jsonExpression | json}}</code> example, the expression only gets re-evaluated when <code>jsonExpression</code> changes, which makes our code execution much faster.</p>
 
-<p>To make it work like this, Angular assumes that, as long as the passed expression doesn’t change, the result of the expression doesn’t change either. It’s <strong>stateless</strong>. And this is where our code might break. Think about what that means in cases where your filter depends on other services, like our <code class="highlighter-rouge">customFilter</code>.</p>
+<p>To make it work like this, Angular assumes that, as long as the passed expression doesn’t change, the result of the expression doesn’t change either. It’s <strong>stateless</strong>. And this is where our code might break. Think about what that means in cases where your filter depends on other services, like our <code>customFilter</code>.</p>
 
-<p>But to get a better picture, let’s take a look at the <code class="highlighter-rouge">translate</code> filter that comes with the <a href="http://angular-translate.github.io">angular-translate</a> module. It consumes translation ids to look them up in a registered translation table, using the <code class="highlighter-rouge">$translate</code> service and returns the dedicated translation. <strong>It is stateful</strong>.</p>
+<p>But to get a better picture, let’s take a look at the <code>translate</code> filter that comes with the <a href="http://angular-translate.github.io">angular-translate</a> module. It consumes translation ids to look them up in a registered translation table, using the <code>$translate</code> service and returns the dedicated translation. <strong>It is stateful</strong>.</p>
 
 <p>Here’s what it looks like:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{{</span> <span class="s1">'TRANSLATIONID'</span> <span class="o">|</span> <span class="nx">translate</span> <span class="p">}}</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{{</span> <span class="s1">'TRANSLATIONID'</span> <span class="o">|</span> <span class="nx">translate</span> <span class="p">}}</span></code></pre></div>
 
-<p>As we already discussed, Angular caches the value of this expression and won’t re-evaluate it unless <code class="highlighter-rouge">'TRANSLATIONID'</code> changes. This is actually a problem, because <code class="highlighter-rouge">'TRANSLATIONID'</code> never changes. When the user changes the language, the given translation id again, is looked up by the filter in a translation table, but the expression stays the exact same.</p>
+<p>As we already discussed, Angular caches the value of this expression and won’t re-evaluate it unless <code>'TRANSLATIONID'</code> changes. This is actually a problem, because <code>'TRANSLATIONID'</code> never changes. When the user changes the language, the given translation id again, is looked up by the filter in a translation table, but the expression stays the exact same.</p>
 
-<p>So how do we tell Angular, that expressions that are stateful  <em>have</em> to be re-evaluated? It’s easy. All we have to do is to add a <code class="highlighter-rouge">$stateful</code> property to our filter that flags it as stateful. Here we see our <code class="highlighter-rouge">customFilter</code> being flagged accordingly:</p>
+<p>So how do we tell Angular, that expressions that are stateful  <em>have</em> to be re-evaluated? It’s easy. All we have to do is to add a <code>$stateful</code> property to our filter that flags it as stateful. Here we see our <code>customFilter</code> being flagged accordingly:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[])</span>
 
 <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="s1">'customFilter'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'someService'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">someService</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">function</span> <span class="nx">customFilter</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
@@ -166,9 +168,9 @@
   <span class="nx">customFilter</span><span class="p">.</span><span class="nx">$stateful</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
   <span class="k">return</span> <span class="nx">customFilter</span><span class="p">;</span>
-<span class="p">}]);</span></code></pre></figure>
+<span class="p">}]);</span></code></pre></div>
 
-<p>That’s it. Setting the <code class="highlighter-rouge">$stateful</code> property to <code class="highlighter-rouge">true</code> does the trick (angular-translate’s filter comes with that flag already). Keep in mind that it’s in general recommended to avoid building stateful filters, because the execution of those can’t be optimized by Angular. Better build stateless filters that get all needed information as parameters.</p>
+<p>That’s it. Setting the <code>$stateful</code> property to <code>true</code> does the trick (angular-translate’s filter comes with that flag already). Keep in mind that it’s in general recommended to avoid building stateful filters, because the execution of those can’t be optimized by Angular. Better build stateless filters that get all needed information as parameters.</p>
 
 <p>To sum it up, make sure to flag your stateful filters as stateful in order to make them work with Angular 1.3. Hopefully this article made clear why these changes are a requirement.</p>
 
@@ -178,24 +180,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 

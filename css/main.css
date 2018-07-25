@@ -1393,6 +1393,18 @@ green     #859900  operators, other keywords
     margin-bottom: 1.5em;
     margin-top: 0;
     font-size: 15px; }
+  .thtrm-subscriber .thtrm-form__info-text {
+    font-size: 0.8em;
+    font-weight: normal;
+    max-width: 500px;
+    color: #aaa;
+    margin: auto;
+    margin-top: 1em; }
+    .thtrm-subscriber .thtrm-form__info-text a {
+      text-decoration: underline;
+      color: #aaa; }
+      .thtrm-subscriber .thtrm-form__info-text a:after {
+        display: none; }
   .thtrm-subscriber .thtrm-cta {
     margin-top: 0; }
   .thtrm-subscriber input[type="email"] {

@@ -81,12 +81,14 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>Just a couple days ago, we’ve updated our article on <a href="/angular/2016/03/21/template-driven-forms-in-angular-2.html">Template-driven Forms in Angular</a>, as the APIs have changed for the better in the second release candidate. We think it’s time to talk about <strong>model-driven</strong> and <strong>reactive forms</strong> on our blog. This article builds on top of the knowledge we’ve gained in our previous article, so you might want to take a look at it in case you haven’t yet.</p>
 
@@ -113,7 +115,7 @@
 
 <p>Let’s start off again with the same form we used in our previous article, a form to register a new user on a platform:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>
 
@@ -130,20 +132,20 @@
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">"submit"</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+<span class="nt">&lt;/form&gt;</span></code></pre></div>
 
-<p>Nothing special going on here. We simply ask for a firstname, a lastname and some address information. Now, to make this form model-driven, what we need to do is to create a form model that represents that DOM structure in our component. One way to do that is to use the low level APIs for <code class="highlighter-rouge">FormGroup</code> and <code class="highlighter-rouge">FormControl</code>.</p>
+<p>Nothing special going on here. We simply ask for a firstname, a lastname and some address information. Now, to make this form model-driven, what we need to do is to create a form model that represents that DOM structure in our component. One way to do that is to use the low level APIs for <code>FormGroup</code> and <code>FormControl</code>.</p>
 
-<p><code class="highlighter-rouge">FormGroup</code> always represents a set of <code class="highlighter-rouge">FormControl</code>s. In fact, a form is always a <code class="highlighter-rouge">FormGroup</code>. Let’s create the corresponding form model for our template:</p>
+<p><code>FormGroup</code> always represents a set of <code>FormControl</code>s. In fact, a form is always a <code>FormGroup</code>. Let’s create the corresponding form model for our template:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">FormGroup</span><span class="p">,</span> <span class="nx">FormControl</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">FormGroup</span><span class="p">,</span> <span class="nx">FormControl</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="p">{</span>
 
   <span class="nx">registerForm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormGroup</span><span class="p">({</span>
     <span class="na">firstname</span><span class="p">:</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">(),</span>
@@ -154,42 +156,42 @@
       <span class="na">city</span><span class="p">:</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">()</span>
     <span class="p">})</span>
   <span class="p">});</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Uff, that looks quite wordy! We’ll fix that in a second but let’s first discuss what happened. We created a component property <code class="highlighter-rouge">registerForm</code> which represents the <code class="highlighter-rouge">FormGroup</code>, which is our form. For each field in the form, we’ve created a <code class="highlighter-rouge">FormControl</code> and what we can’t see here, is that a <code class="highlighter-rouge">FormControl</code> takes a string as first argument in case we want to prefill the form control with a default value.</p>
+<p>Uff, that looks quite wordy! We’ll fix that in a second but let’s first discuss what happened. We created a component property <code>registerForm</code> which represents the <code>FormGroup</code>, which is our form. For each field in the form, we’ve created a <code>FormControl</code> and what we can’t see here, is that a <code>FormControl</code> takes a string as first argument in case we want to prefill the form control with a default value.</p>
 
-<p>Another nice thing to notice is that <code class="highlighter-rouge">FormGroup</code>’s can be nested. <code class="highlighter-rouge">address</code> is also a collection of form controls, even though it doesn’t show up in the DOM (yet). We’ll see in a second why that is.</p>
+<p>Another nice thing to notice is that <code>FormGroup</code>’s can be nested. <code>address</code> is also a collection of form controls, even though it doesn’t show up in the DOM (yet). We’ll see in a second why that is.</p>
 
 <p>Okay, now that we’ve created our first form model, let’s associate it to our template.</p>
 
 <h2 id="binding-forms-using-formgroup-formgroupname-and-formcontrolname">Binding forms using formGroup, formGroupName and formControlName</h2>
 
-<p>Currently, there’s nothing in our code that tells Angular that our form model is responsible for the form template. We need to associate the model to our form, and we can do that using the <code class="highlighter-rouge">formGroup</code> directive, which takes an expression that evaluates to a <code class="highlighter-rouge">FormGroup</code> instance.</p>
+<p>Currently, there’s nothing in our code that tells Angular that our form model is responsible for the form template. We need to associate the model to our form, and we can do that using the <code>formGroup</code> directive, which takes an expression that evaluates to a <code>FormGroup</code> instance.</p>
 
-<p>In order to use that directive we need to import the <code class="highlighter-rouge">ReactiveFormsModule</code> into our application module:</p>
+<p>In order to use that directive we need to import the <code>ReactiveFormsModule</code> into our application module:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@anglar/platform-browser'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">ReactiveFormsModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@anglar/platform-browser'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">ReactiveFormsModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">,</span> <span class="nx">ReactiveFormsModule</span><span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
 
-<p>Now we can go ahead and use <code class="highlighter-rouge">formGroup</code> to connect the model with the form template:</p>
+<p>Now we can go ahead and use <code>formGroup</code> to connect the model with the form template:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">[</span><span class="na">formGroup</span><span class="err">]="</span><span class="na">registerForm</span><span class="err">"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">[</span><span class="na">formGroup</span><span class="err">]="</span><span class="na">registerForm</span><span class="err">"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+<span class="nt">&lt;/form&gt;</span></code></pre></div>
 
 <p>Great, the next thing we need to do is to associate the form controls to the model as well, because there’s nothing that tells Angular “Hey these form controls here belong to your form control models!”.</p>
 
-<p>This is where the <code class="highlighter-rouge">formControlName</code> directive comes into play. It’s pretty much the equivalent of an <code class="highlighter-rouge">ngModel</code> and <code class="highlighter-rouge">name</code> attribute combination in template-driven forms. Each form control gets a <code class="highlighter-rouge">formControlName</code> directive applied so we can register the controls on the outer form:</p>
+<p>This is where the <code>formControlName</code> directive comes into play. It’s pretty much the equivalent of an <code>ngModel</code> and <code>name</code> attribute combination in template-driven forms. Each form control gets a <code>formControlName</code> directive applied so we can register the controls on the outer form:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">[</span><span class="na">formGroup</span><span class="err">]="</span><span class="na">registerForm</span><span class="err">"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">[</span><span class="na">formGroup</span><span class="err">]="</span><span class="na">registerForm</span><span class="err">"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">formControlName=</span><span class="s">"firstname"</span><span class="nt">&gt;</span>
 
@@ -206,11 +208,11 @@
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">formControlName=</span><span class="s">"city"</span><span class="nt">&gt;</span>
 
   <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">"submit"</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
-<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+<span class="nt">&lt;/form&gt;</span></code></pre></div>
 
-<p>And last but not least, since <code class="highlighter-rouge">address</code> is created as a <code class="highlighter-rouge">FormGroup</code> as well, we can associate a group of form controls to that model using <code class="highlighter-rouge">formGroupName</code>. However, we need a surrounding element for that, otherwise there’s no place where we can apply that directive. Let’s surround the address fields with a <code class="highlighter-rouge">&lt;fieldset&gt;</code> element and apply <code class="highlighter-rouge">formGroupName</code> there.</p>
+<p>And last but not least, since <code>address</code> is created as a <code>FormGroup</code> as well, we can associate a group of form controls to that model using <code>formGroupName</code>. However, we need a surrounding element for that, otherwise there’s no place where we can apply that directive. Let’s surround the address fields with a <code>&lt;fieldset&gt;</code> element and apply <code>formGroupName</code> there.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">formGroupName=</span><span class="s">"address"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;fieldset</span> <span class="na">formGroupName=</span><span class="s">"address"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Street:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">formControlName=</span><span class="s">"street"</span><span class="nt">&gt;</span>
 
@@ -219,27 +221,27 @@
 
   <span class="nt">&lt;label&gt;</span>City:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">formControlName=</span><span class="s">"city"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/fieldset&gt;</span></code></pre></figure>
+<span class="nt">&lt;/fieldset&gt;</span></code></pre></div>
 
-<p>It’s time to make our code a bit more readable and replace <code class="highlighter-rouge">FormGroup</code> and <code class="highlighter-rouge">FormControl</code> with <code class="highlighter-rouge">FormBuilder</code>.</p>
+<p>It’s time to make our code a bit more readable and replace <code>FormGroup</code> and <code>FormControl</code> with <code>FormBuilder</code>.</p>
 
 <h2 id="formbuilder">FormBuilder</h2>
 
-<p>As mentioned earlier, the creation of our form model looks quite wordy as we have to call <code class="highlighter-rouge">new FormGroup()</code> and <code class="highlighter-rouge">new FormControl</code> several times to construct the model. Luckily, we’ve used rather low level APIs and we can use a higher level API that makes this task a bit more pleasant.</p>
+<p>As mentioned earlier, the creation of our form model looks quite wordy as we have to call <code>new FormGroup()</code> and <code>new FormControl</code> several times to construct the model. Luckily, we’ve used rather low level APIs and we can use a higher level API that makes this task a bit more pleasant.</p>
 
-<p><code class="highlighter-rouge">FormBuilder</code> is like a factory that creates <code class="highlighter-rouge">FormGroup</code>’s and <code class="highlighter-rouge">FormControl</code>’s for us. All we need to do is to import it and us its <code class="highlighter-rouge">.group()</code> method like this:</p>
+<p><code>FormBuilder</code> is like a factory that creates <code>FormGroup</code>’s and <code>FormControl</code>’s for us. All we need to do is to import it and us its <code>.group()</code> method like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">FormBuilder</span><span class="p">,</span> <span class="nx">FormGroup</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">FormBuilder</span><span class="p">,</span> <span class="nx">FormGroup</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
-<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
   <span class="nl">registerForm</span><span class="p">:</span> <span class="nx">FormGroup</span><span class="p">;</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">formBuilder</span><span class="p">:</span> <span class="nx">FormBuilder</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">formBuilder</span><span class="err">:</span> <span class="nx">FormBuilder</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">registerForm</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">formBuilder</span><span class="p">.</span><span class="nx">group</span><span class="p">({</span>
@@ -252,28 +254,28 @@
       <span class="p">})</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>This looks way better! Let’s recap really quick what happened:</p>
 
 <ul>
-  <li>We imported <code class="highlighter-rouge">FormBuilder</code></li>
-  <li>We injected it into <code class="highlighter-rouge">AppComponent</code></li>
-  <li>We created the form model using <code class="highlighter-rouge">FormBuilder.group()</code> in <code class="highlighter-rouge">ngOnInit()</code> lifecycle</li>
+  <li>We imported <code>FormBuilder</code></li>
+  <li>We injected it into <code>AppComponent</code></li>
+  <li>We created the form model using <code>FormBuilder.group()</code> in <code>ngOnInit()</code> lifecycle</li>
   <li>We haven’t done any changes on the template</li>
 </ul>
 
 <h2 id="adding-validators">Adding Validators</h2>
 
-<p>Now that we have the form model set up, we can start adding validators to our form controls. There are different ways to add them, we can either add then as directives to the template or to the <code class="highlighter-rouge">FormControl</code> instance in our model.</p>
+<p>Now that we have the form model set up, we can start adding validators to our form controls. There are different ways to add them, we can either add then as directives to the template or to the <code>FormControl</code> instance in our model.</p>
 
-<p>Let’s say we want to add a validators that makes sure that <code class="highlighter-rouge">firstname</code> and <code class="highlighter-rouge">lastname</code> is set. Angular comes with a <code class="highlighter-rouge">Validators</code> class that has some common validators built-in. We can import and apply them right away:</p>
+<p>Let’s say we want to add a validators that makes sure that <code>firstname</code> and <code>lastname</code> is set. Angular comes with a <code>Validators</code> class that has some common validators built-in. We can import and apply them right away:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> 
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> 
   <span class="nx">FormBuilder</span><span class="p">,</span>
   <span class="nx">FormGroup</span><span class="p">,</span>
   <span class="nx">Validators</span>
-<span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
+<span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/forms'</span><span class="p">;</span>
 
 <span class="p">...</span>
 
@@ -287,35 +289,35 @@
       <span class="na">city</span><span class="p">:</span> <span class="p">[]</span>
     <span class="p">})</span>
   <span class="p">});</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>A <code class="highlighter-rouge">FormControl</code> takes a value as first, a synchronous validator as second and an asynchronous validator as third parameter. We can also pass a collection of validators which causes Angular to compose them for us. And all we do here is applying a synchronous validator (<code class="highlighter-rouge">Validators.required</code>) to our form controls.</p>
+<p>A <code>FormControl</code> takes a value as first, a synchronous validator as second and an asynchronous validator as third parameter. We can also pass a collection of validators which causes Angular to compose them for us. And all we do here is applying a synchronous validator (<code>Validators.required</code>) to our form controls.</p>
 
 <p>We can access the validity state of a form control like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">[</span><span class="na">formGroup</span><span class="err">]="</span><span class="na">registerForm</span><span class="err">"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="err">[</span><span class="na">formGroup</span><span class="err">]="</span><span class="na">registerForm</span><span class="err">"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;label&gt;</span>Firstname:<span class="nt">&lt;/label&gt;</span>
   <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">formControlName=</span><span class="s">"firstname"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;p</span> <span class="err">*</span><span class="na">ngIf=</span><span class="s">"registerForm.controls.firstname.errors"</span><span class="nt">&gt;</span>This field is required!<span class="nt">&lt;/p&gt;</span>
 
   ...
-<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+<span class="nt">&lt;/form&gt;</span></code></pre></div>
 
-<p>We get a reference to the form control by traversing the <code class="highlighter-rouge">registerForm</code> instance. If you’re interested in learning how to build a custom validator, you might want to read our article on <a href="/angular/2016/03/14/custom-validators-in-angular-2.html">Custom Validators in Angular</a>.</p>
+<p>We get a reference to the form control by traversing the <code>registerForm</code> instance. If you’re interested in learning how to build a custom validator, you might want to read our article on <a href="/angular/2016/03/14/custom-validators-in-angular-2.html">Custom Validators in Angular</a>.</p>
 
 <h2 id="forms-with-a-single-control">Forms with a single control</h2>
 
-<p>Sometimes, we don’t need a <code class="highlighter-rouge">FormGroup</code>, as our form might only consist of a single form control. Think of a search field that let’s you search for products in an e-commerce application. Technically, we don’t even need a <code class="highlighter-rouge">&lt;form&gt;</code> element for that.</p>
+<p>Sometimes, we don’t need a <code>FormGroup</code>, as our form might only consist of a single form control. Think of a search field that let’s you search for products in an e-commerce application. Technically, we don’t even need a <code>&lt;form&gt;</code> element for that.</p>
 
-<p>Angular comes with a directive <code class="highlighter-rouge">formControl</code> which doesn’t have to be inside a <code class="highlighter-rouge">formGroup</code>. We can simply add it to a single form control and are ready to go:</p>
+<p>Angular comes with a directive <code>formControl</code> which doesn’t have to be inside a <code>formGroup</code>. We can simply add it to a single form control and are ready to go:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- no surrounding form --&gt;</span>
-<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"search"</span> <span class="err">[</span><span class="na">formControl</span><span class="err">]="</span><span class="na">seachControl</span><span class="err">"</span><span class="nt">&gt;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- no surrounding form --&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"search"</span> <span class="err">[</span><span class="na">formControl</span><span class="err">]="</span><span class="na">seachControl</span><span class="err">"</span><span class="nt">&gt;</span></code></pre></div>
 
-<p>The cool thing about form controls in Angular is, that we can listen reactively for changes that are happening to that control. Every form controls exposes an Observable propery <code class="highlighter-rouge">valuesChanges()</code> that we can subscribe to. So in order to get notified about changes in the example above, all we have to do is:</p>
+<p>The cool thing about form controls in Angular is, that we can listen reactively for changes that are happening to that control. Every form controls exposes an Observable propery <code>valuesChanges()</code> that we can subscribe to. So in order to get notified about changes in the example above, all we have to do is:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">SearchComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">SearchComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
   <span class="nx">searchControl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormControl</span><span class="p">();</span>
 
@@ -324,7 +326,7 @@
       <span class="c1">// do something with value here</span>
     <span class="p">});</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Hopefully this one gave you a better idea of how reactive/model-driven and template-driven forms relate to each other.</p>
 
@@ -334,24 +336,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -470,11 +472,11 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
+            <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
+                <h3>Advanced caching with RxJS</h3>
+                <p>When building web applications, performance should always be a top priority. One very efficient way to optimize the performance of...</p>
               </div>
             </a>
           </li>

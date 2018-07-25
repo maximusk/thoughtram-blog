@@ -81,12 +81,14 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>This isn’t our typical kind of blog post. In fact this one is very special. It’s the beginning of our journey with a new shiny toy.</p>
 
@@ -165,20 +167,20 @@ You may want to skip the hassle. Signup for a private beta account at <a href="h
 
 <p><strong>1. Create a directory on your machine where you want to put your code.</strong></p>
 
-<figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span class="nb">mkdir</span> ~/ml-fun</code></pre></figure>
+<div class="highlight"><pre><code class="language-shell" data-lang="shell">mkdir ~/ml-fun</code></pre></div>
 
 <p><strong>2. Create a docker container from our existing image</strong></p>
 
-<p>When we create a container from an image we can map a local directory (e.g <code class="highlighter-rouge">/Users/cburgdorf/ml-fun</code> to a directory inside our container (e.g <code class="highlighter-rouge">/ml-fun</code>). That way we can simply use our favourite editor from our host system to work on the code.</p>
+<p>When we create a container from an image we can map a local directory (e.g <code>/Users/cburgdorf/ml-fun</code> to a directory inside our container (e.g <code>/ml-fun</code>). That way we can simply use our favourite editor from our host system to work on the code.</p>
 
-<p>We use the <code class="highlighter-rouge">--name</code> parameter to assign a name to our container that we can easily remember (e.g. <code class="highlighter-rouge">keras-playground</code>).</p>
+<p>We use the <code>--name</code> parameter to assign a name to our container that we can easily remember (e.g. <code>keras-playground</code>).</p>
 
-<figure class="highlight"><pre><code class="language-shell" data-lang="shell">docker create <span class="nt">-it</span> <span class="nt">-v</span> ~/ml-fun:/projects/ml-fun
-              <span class="nt">--name</span> keras-playground thoughtram/keras</code></pre></figure>
+<div class="highlight"><pre><code class="language-shell" data-lang="shell">docker create -it -v ~/ml-fun:/projects/ml-fun
+              --name keras-playground thoughtram/keras</code></pre></div>
 
 <p><strong>3. The last thing left to do is to <em>start</em> the container</strong></p>
 
-<figure class="highlight"><pre><code class="language-shell" data-lang="shell">docker start keras-playground</code></pre></figure>
+<div class="highlight"><pre><code class="language-shell" data-lang="shell">docker start keras-playground</code></pre></div>
 
 <h2 id="lets-build-our-first-neural-network">Let’s build our first neural network.</h2>
 
@@ -186,18 +188,18 @@ You may want to skip the hassle. Signup for a private beta account at <a href="h
 
 <p>Many people say that hand-writing recognition would be the <em>hello world</em> of machine learning but for now, let’s go even simpler than that. Let’s teach a neural network to understand the XOR gate. XOR represents the inequality function, i.e., the output is true if the inputs are not alike otherwise the output is false.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></code></pre></figure>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></code></pre></div>
 
 <p>Our job is to build a neural network that will predict the correct output for any of the four different inputs. Obviously, that isn’t a real world use case to throw a neural network at. This task is actually much simpler to solve with traditional programming techniques. Simply put all four states into a HashMap and map them to the desired result.</p>
 
 <p>That said, it’s pretty much the simplest thing we can put together in just a couple of lines to demonstrate how a neural network works.</p>
 
-<p>Let’s go and create a new file <code class="highlighter-rouge">keras_xor.py</code> in the directory that we mapped from our host machine into the container. We’ll put in the following code.</p>
+<p>Let’s go and create a new file <code>keras_xor.py</code> in the directory that we mapped from our host machine into the container. We’ll put in the following code.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
 <span class="kn">from</span> <span class="nn">keras.layers.core</span> <span class="kn">import</span> <span class="n">Activation</span><span class="p">,</span> <span class="n">Dense</span>
 
@@ -217,25 +219,25 @@ You may want to skip the hassle. Signup for a private beta account at <a href="h
 
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></figure>
+<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="nb">round</span><span class="p">()</span></code></pre></div>
 
 <p>We don’t have to understand the code entirely just yet. The most important part is that we set up <em>training data</em> and <em>target data</em> according to how the XOR gate is supposed to work.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># the four samples, each with two inputs</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="c"># the four samples, each with two inputs</span>
 <span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span>
 
 <span class="c"># the four expected results, each with one output</span>
-<span class="n">target_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></figure>
+<span class="n">target_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></div>
 
-<p>To run our code we have to use <code class="highlighter-rouge">docker exec</code>, pass the name of the container and the command which we want to run <em>inside</em> the container.</p>
+<p>To run our code we have to use <code>docker exec</code>, pass the name of the container and the command which we want to run <em>inside</em> the container.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">keras</span><span class="o">-</span><span class="n">playground</span> <span class="n">python</span> <span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="n">ml</span><span class="o">-</span><span class="n">fun</span><span class="o">/</span><span class="n">keras_xor</span><span class="o">.</span><span class="n">py</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">keras</span><span class="o">-</span><span class="n">playground</span> <span class="n">python</span> <span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="n">ml</span><span class="o">-</span><span class="n">fun</span><span class="o">/</span><span class="n">keras_xor</span><span class="o">.</span><span class="n">py</span></code></pre></div>
 
-<p>Alternatively we could execute a <code class="highlighter-rouge">bash</code> session in the container and then invoke the script from there. Doesn’t matter much.</p>
+<p>Alternatively we could execute a <code>bash</code> session in the container and then invoke the script from there. Doesn’t matter much.</p>
 
 <p>Our output for this command should look somewhat like this.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">...</span>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">...</span>
 <span class="n">Epoch</span> <span class="mi">14</span><span class="o">/</span><span class="mi">500</span>
 <span class="mi">0</span><span class="n">s</span> <span class="o">-</span> <span class="n">loss</span><span class="p">:</span> <span class="mf">0.2376</span> <span class="o">-</span> <span class="n">binary_accuracy</span><span class="p">:</span> <span class="mf">0.5000</span>
 <span class="n">Epoch</span> <span class="mi">15</span><span class="o">/</span><span class="mi">500</span>
@@ -249,23 +251,23 @@ You may want to skip the hassle. Signup for a private beta account at <a href="h
 <span class="p">[[</span> <span class="mf">0.</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">1.</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">1.</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.</span><span class="p">]]</span></code></pre></figure>
+ <span class="p">[</span> <span class="mf">0.</span><span class="p">]]</span></code></pre></div>
 
 <p>The last four lines are the prediction for our input which was</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="s">"float32"</span><span class="p">)</span></code></pre></div>
 
-<p>If you paid attention you’ll notice that <code class="highlighter-rouge">0, 1, 1, 0</code> is actually the correct result for our input according to how the XOR gate is defined.</p>
+<p>If you paid attention you’ll notice that <code>0, 1, 1, 0</code> is actually the correct result for our input according to how the XOR gate is defined.</p>
 
 <p>But what do all these lines above the prediction actually mean? Training a neural network happens in iterations so called <em>epochs</em>. After each epoch the neural network calculates how bad it performs, the so called <em>loss</em>. By adjusting the <em>weights</em> of the neurons the neural network tries to reduce the loss to effectively get better after each epoch.</p>
 
-<p>Because we’ve set <code class="highlighter-rouge">verbose=2</code> when we called <code class="highlighter-rouge">model.fit(...)</code> we log some info about how our neural network is doing after each epoch. Notice that there’s also a value called <code class="highlighter-rouge">binary_accuracy</code> in these logs. The accuracy tells us how good the predictions of our neural network are after each epoch. In that sense it’s like the opposite of the loss with the main difference being that the accuracy is a percentage based number where 0.75 means 75 % and 1.00 means 100 %. However, while the loss is actually used as a feedback mechanism to the network itself to learn, the accuracy is really just a metric for us to observe.</p>
+<p>Because we’ve set <code>verbose=2</code> when we called <code>model.fit(...)</code> we log some info about how our neural network is doing after each epoch. Notice that there’s also a value called <code>binary_accuracy</code> in these logs. The accuracy tells us how good the predictions of our neural network are after each epoch. In that sense it’s like the opposite of the loss with the main difference being that the accuracy is a percentage based number where 0.75 means 75 % and 1.00 means 100 %. However, while the loss is actually used as a feedback mechanism to the network itself to learn, the accuracy is really just a metric for us to observe.</p>
 
 <p>From the accuracy that is logged after each epoch we can see that the predictions weren’t correct right from the beginning. That’s because our neural network starts off pretty dumb and keeps learning with each epoch.</p>
 
-<p>If you want to see what the prediction is like after the first epoch just change the value of <code class="highlighter-rouge">ng_epoch</code> to <code class="highlighter-rouge">1</code>.</p>
+<p>If you want to see what the prediction is like after the first epoch just change the value of <code>ng_epoch</code> to <code>1</code>.</p>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">target_data</span><span class="p">,</span> <span class="n">nb_epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></code></pre></div>
 
 <p>Run again and you’ll see the predictions are really bad in the beginning.</p>
 
@@ -281,24 +283,24 @@ You may want to skip the hassle. Signup for a private beta account at <a href="h
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -395,17 +397,6 @@ You may want to skip the hassle. Signup for a private beta account at <a href="h
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -422,6 +413,17 @@ You may want to skip the hassle. Signup for a private beta account at <a href="h
               <div class="thtrm-article-card-content ">
                 <h3>Announcing Angular Master Class at Shopware</h3>
                 <p>It's that time again. Want to level up your Angular skills? Join us for a unique public training experience with...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/11/27/custom-overlays-with-angulars-cdk-part-two.html" title="Custom Overlays with Angular's CDK - Part 2">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom_overlays_2.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom Overlays with Angular's CDK - Part 2</h3>
+                <p>In this follow-up post we demonstrate how to use Angular's CDK to build a custom overlay that looks and feels...</p>
               </div>
             </a>
           </li>

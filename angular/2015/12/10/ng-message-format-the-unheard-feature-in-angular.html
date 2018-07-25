@@ -74,19 +74,21 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">ngMessageFormat - Angular's unheard feature</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Dec 10, 2015<br>5 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Dec 10, 2015<br>4 minute read</span>
 
           </div>
         </hgroup>
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>Angular 1.5 is pretty much around the corner and with a new release, new fixes, improvements and features are added to the framework. While this is awesome and we’re all excited about it, it seems like we’re forgetting about all the nice things we already have.</p>
 
@@ -104,73 +106,73 @@
 
 <p>One thing that is an essential part of i18n, but also a sort of isolated topic at the same time, is <strong>pluralization</strong> and <strong>gender selection</strong>. We probably all ran into this at a some point. For example, displaying a notification that says:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">You have {{numberOfMessages}} new messages.</code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html">You have {{numberOfMessages}} new messages.</code></pre></div>
 
-<p>While this works as long as <code class="highlighter-rouge">numberOfMessages</code> evaluates to something <code class="highlighter-rouge">&gt; 1</code>, it doesn’t fit anymore as soon as we have just a single message. Our template would look something like this:</p>
+<p>While this works as long as <code>numberOfMessages</code> evaluates to something <code>&gt; 1</code>, it doesn’t fit anymore as soon as we have just a single message. Our template would look something like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">You have 1 new messages.</code></pre></figure>
+<div class="highlight"><pre><code class="language-html" data-lang="html">You have 1 new messages.</code></pre></div>
 
-<p>This can easily be solved with the <code class="highlighter-rouge">ngSwitch</code> directive, or, in fact Angular comes with an <code class="highlighter-rouge">ngPluralize</code> directive that introduces a couple more features (like <code class="highlighter-rouge">offset</code>) to make pluralization easy. Here’s an <code class="highlighter-rouge">ngPluralize</code> solution for the scenario above:</p>
+<p>This can easily be solved with the <code>ngSwitch</code> directive, or, in fact Angular comes with an <code>ngPluralize</code> directive that introduces a couple more features (like <code>offset</code>) to make pluralization easy. Here’s an <code>ngPluralize</code> solution for the scenario above:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-pluralize</span> <span class="na">count=</span><span class="s">"numberOfMessages"</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ng-pluralize</span> <span class="na">count=</span><span class="s">"numberOfMessages"</span>
               <span class="na">when=</span><span class="s">"{'1': 'You have one new message.',
                      'other': 'You have {} new messages.'}"</span><span class="nt">&gt;</span>
-<span class="nt">&lt;/ng-pluralize&gt;</span></code></pre></figure>
+<span class="nt">&lt;/ng-pluralize&gt;</span></code></pre></div>
 
 <p>Pluralization can be hard, especially if we consider that it can vary heavily depending on the language we’re using. While we have “one” and “more” in most of the european language rules, other languages have “one”, “few” and “more”.</p>
 
 <p>Another thing that comes into play is <strong>gender selection</strong>. Depending on a persons gender, we might need to output different text.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">Send him an invite.
+<div class="highlight"><pre><code class="language-html" data-lang="html">Send him an invite.
 Send her an invite.
-Send them an invite.</code></pre></figure>
+Send them an invite.</code></pre></div>
 
-<p>This can not be solved with <code class="highlighter-rouge">ngPluralize</code> today. Also, what if we have text in HTML attributes that needs to be pluralized as well?</p>
+<p>This can not be solved with <code>ngPluralize</code> today. Also, what if we have text in HTML attributes that needs to be pluralized as well?</p>
 
 <h2 id="introducing-ngmessageformat">Introducing ngMessageFormat</h2>
 
 <p>Luckily, there’s a standard called <a href="http://userguide.icu-project.org/formatparse/messages">ICU Messageformat</a> which tackles pluralization and gender selection properly. In fact, with Messageformat, we can even nest gender selection rules and pluralization rules and vice-versa. But what has this to do with Angular?</p>
 
-<p>Well, as part of the effort for the new i18n solution, Angular’s interplation syntax got extended <strong>in Angular 1.4</strong>. In other words, we can basically overload the expression syntax with ICU Messageformat expressions. All we have to do is to include the <code class="highlighter-rouge">ngMessageFormat</code> module.</p>
+<p>Well, as part of the effort for the new i18n solution, Angular’s interplation syntax got extended <strong>in Angular 1.4</strong>. In other words, we can basically overload the expression syntax with ICU Messageformat expressions. All we have to do is to include the <code>ngMessageFormat</code> module.</p>
 
-<p><code class="highlighter-rouge">ngMessageFormat</code> can be installed via npm using the following command:</p>
+<p><code>ngMessageFormat</code> can be installed via npm using the following command:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nv">$ </span>npm <span class="nb">install </span>angular-message-format</code></pre></figure>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="gp">$ </span>npm install angular-message-format</code></pre></div>
 
 <p>Once installed and included in our HTML document, we can add it as a module dependency and start using it right away!</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'ngMessageFormat'</span><span class="p">]);</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'myApp'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'ngMessageFormat'</span><span class="p">]);</span></code></pre></div>
 
 <p><strong>Pluralization with ngMessageFormat</strong></p>
 
-<p>With <code class="highlighter-rouge">ngMessageFormat</code> included, we can overload Angular expressions using a comma like this:</p>
+<p>With <code>ngMessageFormat</code> included, we can overload Angular expressions using a comma like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">{{EXPRESSION, TYPE,
+<div class="highlight"><pre><code class="language-html" data-lang="html">{{EXPRESSION, TYPE,
      =VALUE { MESSAGE }
      ...
-}}</code></pre></figure>
+}}</code></pre></div>
 
-<p>Whereas <code class="highlighter-rouge">EXPRESSION</code> is the expression that needs to be evaluated, <code class="highlighter-rouge">TYPE</code> specifies what we want to do <code class="highlighter-rouge">plural</code> or <code class="highlighter-rouge">select</code> for pluralization and gender selection respectively. Let’s use this syntax to output our notification, based on <code class="highlighter-rouge">numberOfMessages</code>.</p>
+<p>Whereas <code>EXPRESSION</code> is the expression that needs to be evaluated, <code>TYPE</code> specifies what we want to do <code>plural</code> or <code>select</code> for pluralization and gender selection respectively. Let’s use this syntax to output our notification, based on <code>numberOfMessages</code>.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">{{numberOfMessages, plural,
+<div class="highlight"><pre><code class="language-html" data-lang="html">{{numberOfMessages, plural,
     =0 { You have no new messages }
     =1 { You have one new message }
     other { You have # new messages }
-}}</code></pre></figure>
+}}</code></pre></div>
 
-<p>As we can see, <code class="highlighter-rouge">#</code> can be used as a placeholder that gets replaced with the actual evaluated value. Another nice thing to notice: We can use still use Angular expressions and filters <strong>inside</strong> those messages!</p>
+<p>As we can see, <code>#</code> can be used as a placeholder that gets replaced with the actual evaluated value. Another nice thing to notice: We can use still use Angular expressions and filters <strong>inside</strong> those messages!</p>
 
 <p><strong>Gender selection with ngMessageFormat</strong></p>
 
 <p>Gender selection uses the exact same syntax. All we have to do is to change the selection type and define messages for each gender:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">{{genderExpression, select,
+<div class="highlight"><pre><code class="language-html" data-lang="html">{{genderExpression, select,
     male { Send him a message. }
     female { Send her a message. }
     other { Send them a message. }
-}}</code></pre></figure>
+}}</code></pre></div>
 
-<p>Here’s <code class="highlighter-rouge">ngMessageFormat</code> in action:</p>
+<p>Here’s <code>ngMessageFormat</code> in action:</p>
 
 <iframe src="http://embed.plnkr.co/UYyBFyafomFllh5ZcP0s/?deferRun" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
 
@@ -184,24 +186,24 @@ Send them an invite.</code></pre></figure>
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 

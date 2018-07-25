@@ -74,19 +74,21 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Custom Overlays with Angular's CDK - Part 2</h2>
-            <span>by <a href="http://twitter.com/" title="Dominic Elm on Twitter">Dominic Elm</a> on Nov 27, 2017<br>18 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Dominic Elm on Twitter">Dominic Elm</a> on Nov 27, 2017<br>19 minute read</span>
 
           </div>
         </hgroup>
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>In a <a href="/angular/2017/11/20/custom-overlays-with-angulars-cdk.html">previous post</a> we have layed the foundation for our custom overlay. To recap, we wanted to build a Google Drive-like custom overlay that looks and feels much like the one built for <a href="https://machinelabs.ai/editor/rJQrQ5wjZ/1506415557004-HkTTQ5Dob?file=ml.yaml&amp;tab=outputs&amp;preview=-KuyslgjIn7kSpuc6pDZ">MachineLabs</a>. Let’s have a look at a preview:</p>
 
@@ -111,30 +113,30 @@
 
 <h2 id="adding-keyboard-support">Adding keyboard support</h2>
 
-<p>Adding keyboard support is easy. All we need to do is to use the <code class="highlighter-rouge">@HostListener()</code> decorator. This decorator is a <strong>function decorator</strong> that accepts an <strong>event name</strong> as an argument. Let’s use it inside our <code class="highlighter-rouge">FilePreviewOverlayComponent</code> to listen to <code class="highlighter-rouge">keydown</code> events on the HTML Document, so that we can close the overlay whenever the escape button was pressed.</p>
+<p>Adding keyboard support is easy. All we need to do is to use the <code>@HostListener()</code> decorator. This decorator is a <strong>function decorator</strong> that accepts an <strong>event name</strong> as an argument. Let’s use it inside our <code>FilePreviewOverlayComponent</code> to listen to <code>keydown</code> events on the HTML Document, so that we can close the overlay whenever the escape button was pressed.</p>
 
-<p>Closing the dialog from within the overlay component is only possible because the <code class="highlighter-rouge">FilePreviewOverlayRef</code> is now available via the DI system. Remember that we created our own custom injector and defined custom injection tokens for the remote control and the data that we want to share with the component.</p>
+<p>Closing the dialog from within the overlay component is only possible because the <code>FilePreviewOverlayRef</code> is now available via the DI system. Remember that we created our own custom injector and defined custom injection tokens for the remote control and the data that we want to share with the component.</p>
 
 <p>Let’s have a look at the code:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="p">...,</span> <span class="nx">HostListener</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="p">...,</span> <span class="nx">HostListener</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="c1">// Keycode for ESCAPE</span>
-<span class="kd">const</span> <span class="nx">ESCAPE</span> <span class="o">=</span> <span class="mi">27</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">ESCAPE</span> <span class="o">=</span> <span class="mi">27</span><span class="p">;</span>
 
-<span class="p">@</span><span class="nd">Component</span><span class="p">({...})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<span class="err">@</span><span class="nx">Component</span><span class="p">({...})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
 <span class="p">...</span>
 <span class="c1">// Listen on keydown events on a document level</span>
-<span class="p">@</span><span class="nd">HostListener</span><span class="p">(</span><span class="s1">'document:keydown'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'$event'</span><span class="p">])</span> <span class="kr">private</span> <span class="nx">handleKeydown</span><span class="p">(</span><span class="nx">event</span><span class="p">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="p">{</span>
+<span class="err">@</span><span class="nx">HostListener</span><span class="p">(</span><span class="s1">'document:keydown'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'$event'</span><span class="p">])</span> <span class="kr">private</span> <span class="nx">handleKeydown</span><span class="p">(</span><span class="nx">event</span><span class="err">:</span> <span class="nx">KeyboardEvent</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="nx">ESCAPE</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">,</span> <span class="p">...)</span> <span class="p">{</span> <span class="p">}</span></code></pre></figure>
+<span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">,</span> <span class="p">...)</span> <span class="p">{</span> <span class="p">}</span></code></pre></div>
 
-<p>Using the host listener we decorate a class method that is called on every <code class="highlighter-rouge">keydown</code> event. The function itself gets the <code class="highlighter-rouge">KeyboardEvent</code> that we can use to check whether it’s the <strong>escape</strong> key and only then call <code class="highlighter-rouge">close()</code> on the <code class="highlighter-rouge">dialogRef</code>.</p>
+<p>Using the host listener we decorate a class method that is called on every <code>keydown</code> event. The function itself gets the <code>KeyboardEvent</code> that we can use to check whether it’s the <strong>escape</strong> key and only then call <code>close()</code> on the <code>dialogRef</code>.</p>
 
 <p>That’s it already for adding keyboard support. Go ahead and try it out. Open a file preview and then press the escape button.</p>
 
@@ -146,51 +148,51 @@
 
 <p>Looking at our overlay, we are facing the exact same problems. When we click to preview an image, depending on the internet connection, the image is fetched by the browser and progressively rendered onto the screen. If the connection is really bad it may take a while. Also, it doesn’t really look that nice if we display image data as it is received, resulting in a top-down filling in of the image.</p>
 
-<p>To solve this, we can use a progress indicator. The good thing is we don’t need to write one from scratch because Angular Material already provides a nice set of loading indicators, one of which is the <code class="highlighter-rouge">&lt;mat-spinner&gt;</code>. In order to use it, we need to add the <code class="highlighter-rouge">MatProgressSpinnerModule</code> from <code class="highlighter-rouge">@angular/material</code> to the imports of our application:</p>
+<p>To solve this, we can use a progress indicator. The good thing is we don’t need to write one from scratch because Angular Material already provides a nice set of loading indicators, one of which is the <code>&lt;mat-spinner&gt;</code>. In order to use it, we need to add the <code>MatProgressSpinnerModule</code> from <code>@angular/material</code> to the imports of our application:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="p">...,</span> <span class="nx">MatProgressSpinnerModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="p">...,</span> <span class="nx">MatProgressSpinnerModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/material'</span><span class="p">;</span>
 
-<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...,</span>
     <span class="nx">MatProgressSpinnerModule</span>
   <span class="p">],</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span></code></pre></div>
 
-<p>Note that the <code class="highlighter-rouge">&lt;mat-spinner&gt;</code> component is an alias for <code class="highlighter-rouge">&lt;mat-progress-spinner mode="indeterminate"&gt;</code>. As we can see, the progress-spinner supports different modes, <strong>determinate</strong> and <strong>indeterminate</strong>.</p>
+<p>Note that the <code>&lt;mat-spinner&gt;</code> component is an alias for <code>&lt;mat-progress-spinner mode="indeterminate"&gt;</code>. As we can see, the progress-spinner supports different modes, <strong>determinate</strong> and <strong>indeterminate</strong>.</p>
 
 <p>The difference is that determinate progress indicators are used to indicate how long an operation will take, whereas indeterminate indicators request that the user needs to wait while something finishes. The latter is used when it’s not necessary to indicate how long it will take or to convey a discrete progress. This is perfect for preloading images because we have no idea how long it may take to fetch the image.</p>
 
-<p>Ok, now that we have added the respective module to our imports we can go ahead and update the template of the <code class="highlighter-rouge">FilePreviewOverlayComponent</code> as well as the component class:</p>
+<p>Ok, now that we have added the respective module to our imports we can go ahead and update the template of the <code>FilePreviewOverlayComponent</code> as well as the component class:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;div class="overlay-content"&gt;
-      &lt;div class="spinner-wrapper" *ngIf="loading"&gt;
-        &lt;mat-spinner&gt;&lt;/mat-spinner&gt;
-      &lt;/div&gt;
-
-      &lt;img (load)="onLoad($event)" [style.opacity]="loading ? 0 : 1" [src]="image.url"&gt;
-    &lt;/div&gt;
-  `</span><span class="p">,</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"overlay-content"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"spinner-wrapper"</span> <span class="o">*</span><span class="nx">ngIf</span><span class="o">=</span><span class="s2">"loading"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">mat</span><span class="o">-</span><span class="nx">spinner</span><span class="o">&gt;&lt;</span><span class="sr">/mat-spinner</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>
+      <span class="o">&lt;</span><span class="nx">img</span> <span class="p">(</span><span class="nx">load</span><span class="p">)</span><span class="o">=</span><span class="s2">"onLoad($event)"</span> <span class="p">[</span><span class="nx">style</span><span class="p">.</span><span class="nx">opacity</span><span class="p">]</span><span class="o">=</span><span class="s2">"loading ? 0 : 1"</span> <span class="p">[</span><span class="nx">src</span><span class="p">]</span><span class="o">=</span><span class="s2">"image.url"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
 
   <span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
   <span class="p">...</span>
 
-  <span class="nx">onLoad</span><span class="p">(</span><span class="nx">event</span><span class="p">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">onLoad</span><span class="p">(</span><span class="nx">event</span><span class="err">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>First off, we introduce a new property <code class="highlighter-rouge">loading</code> and initialize it with a meaningful value, e.g. <code class="highlighter-rouge">false</code>. This will show our spinner until the image is loaded. Also note that we are using a property binding to set the <code class="highlighter-rouge">opacity</code> of the <code class="highlighter-rouge">&lt;img&gt;</code> element to 0 when it’s loading and 1 when it’s finished. If we didn’t do this, we’d still see the image being rendered or filled in from top to bottom. This is just a temporary solution that we will replace with a proper solution using Angular’s Animation DSL in just a moment. Last but not least, we define a success callback as a method on our class that is called when the image is loaded. The callback is hooked up in the template via an event binding. In this particular case we are listening for the <code class="highlighter-rouge">load</code> event and when fired, we call the <code class="highlighter-rouge">onLoad()</code> method.</p>
+<p>First off, we introduce a new property <code>loading</code> and initialize it with a meaningful value, e.g. <code>false</code>. This will show our spinner until the image is loaded. Also note that we are using a property binding to set the <code>opacity</code> of the <code>&lt;img&gt;</code> element to 0 when it’s loading and 1 when it’s finished. If we didn’t do this, we’d still see the image being rendered or filled in from top to bottom. This is just a temporary solution that we will replace with a proper solution using Angular’s Animation DSL in just a moment. Last but not least, we define a success callback as a method on our class that is called when the image is loaded. The callback is hooked up in the template via an event binding. In this particular case we are listening for the <code>load</code> event and when fired, we call the <code>onLoad()</code> method.</p>
 
-<p>One more thing to mention is that we needed to wrap the spinner in another element. The reason for this is that we want the spinner to be vertically and horizontally centered. To achieve this we would leverage the CSS <code class="highlighter-rouge">transform</code> property to apply a transformation to the spinner element. The problem is that the <code class="highlighter-rouge">&lt;mat-spinner&gt;</code> component is animated with CSS transforms meaning every transformation we set on the element is overridden. Therefore we use a container that wraps the spinner, so that we can savely apply transformation and center it on the screen.</p>
+<p>One more thing to mention is that we needed to wrap the spinner in another element. The reason for this is that we want the spinner to be vertically and horizontally centered. To achieve this we would leverage the CSS <code>transform</code> property to apply a transformation to the spinner element. The problem is that the <code>&lt;mat-spinner&gt;</code> component is animated with CSS transforms meaning every transformation we set on the element is overridden. Therefore we use a container that wraps the spinner, so that we can savely apply transformation and center it on the screen.</p>
 
 <p>Here’s the image preloading in action. To better demonstrate the loading, you can throttle your connection in the “Network” tab of Chrome’s DevTools.</p>
 
@@ -204,25 +206,25 @@
 
 <p>If you are completely new to animations in Angular, please check out our post on the <a href="/angular/2016/09/16/angular-2-animation-important-concepts.html">Foundation Concepts</a> or have a look at our <a href="angular/2017/07/26/a-web-animations-deep-dive-with-angular.html">Web Animations Deep Dive with Angular</a>.</p>
 
-<p>Let’s start off by importing the <code class="highlighter-rouge">BrowserAnimationsModule</code> into our application’s <code class="highlighter-rouge">NgModule</code> like this:</p>
+<p>Let’s start off by importing the <code>BrowserAnimationsModule</code> into our application’s <code>NgModule</code> like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">BrowserAnimationsModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/platform-browser/animations'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">BrowserAnimationsModule</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/platform-browser/animations'</span><span class="p">;</span>
 
-<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">...,</span>
     <span class="nx">BrowserAnimationsModule</span>
   <span class="p">],</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span></code></pre></div>
 
-<p>With this in place, we can go ahead and define our animations with Angular’s Animation DSL and add it to the component via the <code class="highlighter-rouge">animations</code> metadata property in the <code class="highlighter-rouge">@Component()</code> decorator:</p>
+<p>With this in place, we can go ahead and define our animations with Angular’s Animation DSL and add it to the component via the <code>animations</code> metadata property in the <code>@Component()</code> decorator:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Reusable animation timings</span>
-<span class="kd">const</span> <span class="nx">ANIMATION_TIMINGS</span> <span class="o">=</span> <span class="s1">'400ms cubic-bezier(0.25, 0.8, 0.25, 1)'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Reusable animation timings</span>
+<span class="kr">const</span> <span class="nx">ANIMATION_TIMINGS</span> <span class="o">=</span> <span class="s1">'400ms cubic-bezier(0.25, 0.8, 0.25, 1)'</span><span class="p">;</span>
 
-<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
   <span class="na">animations</span><span class="p">:</span> <span class="p">[</span>
     <span class="nx">trigger</span><span class="p">(</span><span class="s1">'fade'</span><span class="p">,</span> <span class="p">[</span>
@@ -238,39 +240,39 @@
     <span class="p">])</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>As you can see we created two animations, one for fading in the image (<code class="highlighter-rouge">fade</code>) and the other one to slide up the content (<code class="highlighter-rouge">slideContent</code>). The fade animation will mostly be visible in combination with a spinner. Remember how we used the property binding to temporarily make the image invisible while loading? With the fade animation we can now replace our temporary solution with proper one that leverages the animation DSL.</p>
+<p>As you can see we created two animations, one for fading in the image (<code>fade</code>) and the other one to slide up the content (<code>slideContent</code>). The fade animation will mostly be visible in combination with a spinner. Remember how we used the property binding to temporarily make the image invisible while loading? With the fade animation we can now replace our temporary solution with proper one that leverages the animation DSL.</p>
 
-<p>Next, we define an <code class="highlighter-rouge">animationState</code> property that represents the current animation state, e.g. <code class="highlighter-rouge">void</code>, <code class="highlighter-rouge">enter</code> or <code class="highlighter-rouge">leave</code>. By default it’s set to <code class="highlighter-rouge">enter</code> that will cause the content of the file preview to always slide up when it’s opened.</p>
+<p>Next, we define an <code>animationState</code> property that represents the current animation state, e.g. <code>void</code>, <code>enter</code> or <code>leave</code>. By default it’s set to <code>enter</code> that will cause the content of the file preview to always slide up when it’s opened.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({...})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({...})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">animationState</span><span class="p">:</span> <span class="s1">'void'</span> <span class="o">|</span> <span class="s1">'enter'</span> <span class="o">|</span> <span class="s1">'leave'</span> <span class="o">=</span> <span class="s1">'enter'</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+  <span class="nl">animationState</span><span class="p">:</span> <span class="s1">'void'</span> <span class="o">|</span> <span class="s1">'enter'</span> <span class="o">|</span> <span class="s1">'leave'</span> <span class="o">=</span> <span class="s1">'enter'</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 
 <p>Now we can connect the pieces and set it up in the template:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;div class="overlay-content" [@slideContent]="animationState"&gt;
-      &lt;div class="spinner-wrapper" *ngIf="loading"&gt;
-        &lt;mat-spinner&gt;&lt;/mat-spinner&gt;
-      &lt;/div&gt;
-
-      &lt;img [@fade]="loading ? 'fadeOut' : 'fadeIn'" (load)="onLoad($event)" [src]="image.url"&gt;
-    &lt;/div&gt;
-  `</span><span class="p">,</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"overlay-content"</span> <span class="p">[</span><span class="err">@</span><span class="nx">slideContent</span><span class="p">]</span><span class="o">=</span><span class="s2">"animationState"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"spinner-wrapper"</span> <span class="o">*</span><span class="nx">ngIf</span><span class="o">=</span><span class="s2">"loading"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">mat</span><span class="o">-</span><span class="nx">spinner</span><span class="o">&gt;&lt;</span><span class="sr">/mat-spinner</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>
+      <span class="o">&lt;</span><span class="nx">img</span> <span class="p">[</span><span class="err">@</span><span class="nx">fade</span><span class="p">]</span><span class="o">=</span><span class="s2">"loading ? 'fadeOut' : 'fadeIn'"</span> <span class="p">(</span><span class="nx">load</span><span class="p">)</span><span class="o">=</span><span class="s2">"onLoad($event)"</span> <span class="p">[</span><span class="nx">src</span><span class="p">]</span><span class="o">=</span><span class="s2">"image.url"</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We can see that the entire content, including the spinner as well as the image, is wrapped in a container <code class="highlighter-rouge">div</code>. That’s because we only want the content to slide up. Later we’ll introduce a toolbar component which comes with its own set of animations. This also implies that it wouldn’t make any sense to use a <code class="highlighter-rouge">@HostBinding()</code> and apply the animation to the host element.</p>
+<p>We can see that the entire content, including the spinner as well as the image, is wrapped in a container <code>div</code>. That’s because we only want the content to slide up. Later we’ll introduce a toolbar component which comes with its own set of animations. This also implies that it wouldn’t make any sense to use a <code>@HostBinding()</code> and apply the animation to the host element.</p>
 
 <p>Done! Here’s a live demo with all the code above:</p>
 
@@ -278,108 +280,108 @@
 
 <p>Animations guide our users and the overlay smoothly animates in. This is already much more engaging compared to what we had before but we can do even better. What about closing it? That’s right, we also want it to animate out.</p>
 
-<p>At the moment we simply call <code class="highlighter-rouge">this.overlayRef.dispose()</code> which will detach the portal from the host, eventually removing it from the DOM. With this straightforward approach there’s no way we can execute animations before it is disposed.</p>
+<p>At the moment we simply call <code>this.overlayRef.dispose()</code> which will detach the portal from the host, eventually removing it from the DOM. With this straightforward approach there’s no way we can execute animations before it is disposed.</p>
 
 <p>What we can do instead is to leverage <strong>animation callbacks</strong> and introduce event streams that we can subscribe to. Angular provides animation callbacks that are fired when an animation is started and also when it is done.</p>
 
-<p>Let’s start with the animation callbacks and hook them in the template of our <code class="highlighter-rouge">FilePreviewOverlayComponent</code>:</p>
+<p>Let’s start with the animation callbacks and hook them in the template of our <code>FilePreviewOverlayComponent</code>:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;div class="overlay-content"
-      [@slideContent]="animationState"
-      (@slideContent.start)="onAnimationStart($event)"
-      (@slideContent.done)="onAnimationDone($event)"&gt;
-      ...
-    &lt;/div&gt;
-  `</span><span class="p">,</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"overlay-content"</span>
+      <span class="p">[</span><span class="err">@</span><span class="nx">slideContent</span><span class="p">]</span><span class="o">=</span><span class="s2">"animationState"</span>
+      <span class="p">(</span><span class="err">@</span><span class="nx">slideContent</span><span class="p">.</span><span class="nx">start</span><span class="p">)</span><span class="o">=</span><span class="s2">"onAnimationStart($event)"</span>
+      <span class="p">(</span><span class="err">@</span><span class="nx">slideContent</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span><span class="o">=</span><span class="s2">"onAnimationDone($event)"</span><span class="o">&gt;</span>
+      <span class="p">...</span>
+    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>The animation callbacks alone are not very useful, at least not for animating the overlay out. What’s missing is an event bus that we can use to broadcast animation events. That’s needed because when we close an overlay, we have to wait until the <em>leaving</em> animation is done before we can dispose the overlay. We’ll see in just a second how to use this but first let’s define a new <code class="highlighter-rouge">EventEmitter</code> inside the overlay component class:</p>
+<p>The animation callbacks alone are not very useful, at least not for animating the overlay out. What’s missing is an event bus that we can use to broadcast animation events. That’s needed because when we close an overlay, we have to wait until the <em>leaving</em> animation is done before we can dispose the overlay. We’ll see in just a second how to use this but first let’s define a new <code>EventEmitter</code> inside the overlay component class:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="p">...,</span> <span class="nx">EventEmitter</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="p">...,</span> <span class="nx">EventEmitter</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 <span class="p">...</span>
-<span class="p">@</span><span class="nd">Component</span><span class="p">({...})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<span class="err">@</span><span class="nx">Component</span><span class="p">({...})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="nx">animationStateChanged</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventEmitter</span><span class="o">&lt;</span><span class="nx">AnimationEvent</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>The <code class="highlighter-rouge">EventEmitter</code> is an abstraction around a the <code class="highlighter-rouge">Subject</code> type from RxJS.</p>
+<p>The <code>EventEmitter</code> is an abstraction around a the <code>Subject</code> type from RxJS.</p>
 
-<p>Cool, now let’s wire up the animation callbacks. To do this, we’ll define the two missing methods <code class="highlighter-rouge">onAnimationStart()</code> and <code class="highlighter-rouge">onAnimationDone()</code>. Every time one of the animation callbacks is fired, we broadcast the animation event using <code class="highlighter-rouge">animationStateChanged</code>. Moreover, we need a way to start the <code class="highlighter-rouge">leave</code> animation once we close an overlay. Therefore we’ll also add a method called <code class="highlighter-rouge">startExitAnimation()</code> that sets the <code class="highlighter-rouge">animationState</code> to <code class="highlighter-rouge">leave</code>. This will then trigger the corresponding animation.</p>
+<p>Cool, now let’s wire up the animation callbacks. To do this, we’ll define the two missing methods <code>onAnimationStart()</code> and <code>onAnimationDone()</code>. Every time one of the animation callbacks is fired, we broadcast the animation event using <code>animationStateChanged</code>. Moreover, we need a way to start the <code>leave</code> animation once we close an overlay. Therefore we’ll also add a method called <code>startExitAnimation()</code> that sets the <code>animationState</code> to <code>leave</code>. This will then trigger the corresponding animation.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({...})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({...})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">onAnimationStart</span><span class="p">(</span><span class="nx">event</span><span class="p">:</span> <span class="nx">AnimationEvent</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">onAnimationStart</span><span class="p">(</span><span class="nx">event</span><span class="err">:</span> <span class="nx">AnimationEvent</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">animationStateChanged</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
   <span class="p">}</span>
 
-  <span class="nx">onAnimationDone</span><span class="p">(</span><span class="nx">event</span><span class="p">:</span> <span class="nx">AnimationEvent</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">onAnimationDone</span><span class="p">(</span><span class="nx">event</span><span class="err">:</span> <span class="nx">AnimationEvent</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">animationStateChanged</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
   <span class="p">}</span>
 
   <span class="nx">startExitAnimation</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">animationState</span> <span class="o">=</span> <span class="s1">'leave'</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We know that we programatically close an overlay using the remote control aka <code class="highlighter-rouge">FilePreviewOverlayRef</code>. So far we have no access to the overlay component from within the <code class="highlighter-rouge">FilePreviewOverlayRef</code>. To fix this we define a property <code class="highlighter-rouge">componentInstance</code> on the remote control.</p>
+<p>We know that we programatically close an overlay using the remote control aka <code>FilePreviewOverlayRef</code>. So far we have no access to the overlay component from within the <code>FilePreviewOverlayRef</code>. To fix this we define a property <code>componentInstance</code> on the remote control.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">componentInstance</span><span class="p">:</span> <span class="nx">FilePreviewOverlayComponent</span><span class="p">;</span>
+  <span class="nl">componentInstance</span><span class="p">:</span> <span class="nx">FilePreviewOverlayComponent</span><span class="p">;</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We simply set the <code class="highlighter-rouge">componentInstance</code> when an overlay is opened.</p>
+<p>We simply set the <code>componentInstance</code> when an overlay is opened.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayService</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
+  <span class="nx">open</span><span class="p">(</span><span class="nx">config</span><span class="err">:</span> <span class="nx">FilePreviewDialogConfig</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
     <span class="p">...</span>
     <span class="c1">// Instantiate remote control</span>
-    <span class="kd">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">);</span>
 
-    <span class="kd">const</span> <span class="nx">overlayComponent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">attachDialogContainer</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">,</span> <span class="nx">dialogConfig</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">overlayComponent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">attachDialogContainer</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">,</span> <span class="nx">dialogConfig</span><span class="p">,</span> <span class="nx">dialogRef</span><span class="p">);</span>
 
     <span class="c1">// Pass the instance of the overlay component to the remote control</span>
     <span class="nx">dialogRef</span><span class="p">.</span><span class="nx">componentInstance</span> <span class="o">=</span> <span class="nx">overlayComponent</span><span class="p">;</span>
     <span class="p">...</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Now we can go ahead and introduce two event streams on the <code class="highlighter-rouge">FilePreviewOverlayRef</code>. The first one emits values <strong>before</strong> the overlay is closed and the other one <strong>after</strong> is was closed. For the streams we’ll use the <code class="highlighter-rouge">Subject</code> type from RxJS and also expose public methods for each of the event streams.</p>
+<p>Now we can go ahead and introduce two event streams on the <code>FilePreviewOverlayRef</code>. The first one emits values <strong>before</strong> the overlay is closed and the other one <strong>after</strong> is was closed. For the streams we’ll use the <code>Subject</code> type from RxJS and also expose public methods for each of the event streams.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
 
   <span class="kr">private</span> <span class="nx">_beforeClose</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
   <span class="kr">private</span> <span class="nx">_afterClosed</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span><span class="p">();</span>
 
   <span class="p">...</span>
 
-  <span class="nx">afterClosed</span><span class="p">():</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="nx">afterClosed</span><span class="p">()</span><span class="err">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterClosed</span><span class="p">.</span><span class="nx">asObservable</span><span class="p">();</span>
   <span class="p">}</span>
 
   <span class="nx">beforeClose</span><span class="p">():</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="k">void</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_beforeClose</span><span class="p">.</span><span class="nx">asObservable</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>From there we can use the component instance and subscribe to the animation events and act accordingly. This means that when an animation was started we detach the backdrop and call <code class="highlighter-rouge">next()</code> on <code class="highlighter-rouge">_beforeClose</code>. When an animation is finished we broadcast on <code class="highlighter-rouge">_afterClosed</code>. This also means we can dispose the overlay and remove it from the DOM.</p>
+<p>From there we can use the component instance and subscribe to the animation events and act accordingly. This means that when an animation was started we detach the backdrop and call <code>next()</code> on <code>_beforeClose</code>. When an animation is finished we broadcast on <code>_afterClosed</code>. This also means we can dispose the overlay and remove it from the DOM.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">import</span> <span class="p">{</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">take</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="p">{</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">take</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'rxjs/operators'</span><span class="p">;</span>
 <span class="p">...</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayRef</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">close</span><span class="p">():</span> <span class="k">void</span> <span class="p">{</span>
+  <span class="nx">close</span><span class="p">()</span><span class="err">:</span> <span class="k">void</span> <span class="p">{</span>
     <span class="c1">// Listen for animation 'start' events</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">componentInstance</span><span class="p">.</span><span class="nx">animationStateChanged</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span>
       <span class="nx">filter</span><span class="p">(</span><span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">phaseName</span> <span class="o">===</span> <span class="s1">'start'</span><span class="p">),</span>
@@ -407,7 +409,7 @@
     <span class="c1">// Start exit animation</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">componentInstance</span><span class="p">.</span><span class="nx">startExitAnimation</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>That’s it. Here’s a live demo:</p>
 
@@ -417,7 +419,7 @@
 
 <p>To finish this up we will create a toolbar component, add animations and also make use of the events streams exposed by the remote control to animate the toolbar out <strong>before</strong> the overlay is closed.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'tm-file-preview-overlay-toolbar'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'./file-preview-overlay-toolbar.component.html'</span><span class="p">,</span>
   <span class="na">styleUrls</span><span class="p">:</span> <span class="p">[</span><span class="s1">'./file-preview-overlay-toolbar.component.scss'</span><span class="p">],</span>
@@ -430,45 +432,45 @@
     <span class="p">])</span>
   <span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayToolbarComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayToolbarComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
   <span class="c1">// Apply animation to the host element</span>
-  <span class="p">@</span><span class="nd">HostBinding</span><span class="p">(</span><span class="s1">'@slideDown'</span><span class="p">)</span> <span class="nx">slideDown</span> <span class="o">=</span> <span class="s1">'enter'</span><span class="p">;</span>
+  <span class="err">@</span><span class="nx">HostBinding</span><span class="p">(</span><span class="s1">'@slideDown'</span><span class="p">)</span> <span class="nx">slideDown</span> <span class="o">=</span> <span class="s1">'enter'</span><span class="p">;</span>
 
   <span class="c1">// Inject remote control</span>
-  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">dialogRef</span><span class="err">:</span> <span class="nx">FilePreviewOverlayRef</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
   <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// Animate toolbar out before overlay is closed</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">beforeClose</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">slideDown</span> <span class="o">=</span> <span class="s1">'leave'</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>The template is very straightforward and leverages content projection to project content into the template of the toolbar component.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- file-preview-overlay-toolbar.component.html --&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- file-preview-overlay-toolbar.component.html --&gt;</span>
 <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"toolbar-wrapper"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;ng-content&gt;&lt;/ng-content&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
 <p>Finally we have to use the toolbar inside the template of the overlay component:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;tm-file-preview-overlay-toolbar&gt;
-      &lt;mat-icon&gt;description&lt;/mat-icon&gt;
-      {{ image.name }}
-    &lt;/tm-file-preview-overlay-toolbar&gt;
-
-    &lt;div class="overlay-content"
-      ...
-    &lt;/div&gt;
-  `</span><span class="p">,</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">tm</span><span class="o">-</span><span class="nx">file</span><span class="o">-</span><span class="nx">preview</span><span class="o">-</span><span class="nx">overlay</span><span class="o">-</span><span class="nx">toolbar</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">mat</span><span class="o">-</span><span class="nx">icon</span><span class="o">&gt;</span><span class="nx">description</span><span class="o">&lt;</span><span class="sr">/mat-icon</span><span class="err">&gt;
+</span>      <span class="p">{{</span> <span class="nx">image</span><span class="p">.</span><span class="nx">name</span> <span class="p">}}</span>
+    <span class="o">&lt;</span><span class="sr">/tm-file-preview-overlay-toolbar</span><span class="err">&gt;
+</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"overlay-content"</span>
+      <span class="p">...</span>
+    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span><span class="p">,</span>
   <span class="p">...</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FilePreviewOverlayComponent</span> <span class="p">{</span>
   <span class="p">...</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>That’s pretty much! Let’s have a look at our final solution:</p>
 
@@ -480,24 +482,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -594,17 +596,6 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -621,6 +612,17 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/08/angular-master-class-redux-and-ngrx.html" title="Angular Master Class - Redux and ngrx">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/ngrx_slide_logo.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Angular Master Class - Redux and ngrx</h3>
+                <p>Today we're super excited to announce that we finished working on our new Angular Master Class courseware. Read on for...</p>
               </div>
             </a>
           </li>

@@ -81,12 +81,14 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>Until now, we mostly talked about how to create simple components in Angular, like a <a href="/angular/2015/03/27/building-a-zippy-component-in-angular-2.html">zippy</a> or a <a href="/angular/2015/04/09/developing-a-tabs-component-in-angular-2.html">tabs</a> component, and we also covered some isolated parts of the framework like the new <a href="/angular/2015/05/18/dependency-injection-in-angular-2.html">dependency injection</a>. In this article we are going to discuss another essential part when it comes to building components: <strong>Styling</strong>.</p>
 
@@ -98,27 +100,27 @@
 
 <h2 id="component-inline-styles">Component inline styles</h2>
 
-<p>The easiest way to add styles to a component is taking advantage of the <code class="highlighter-rouge">@Component</code> decorators that allow us to define component inline styles. All we need to do is to add a <code class="highlighter-rouge">styles</code> property to the decorator and define the styles. To see what that looks like, here’s a snippet of our zippy component that we’ve built a while ago.</p>
+<p>The easiest way to add styles to a component is taking advantage of the <code>@Component</code> decorators that allow us to define component inline styles. All we need to do is to add a <code>styles</code> property to the decorator and define the styles. To see what that looks like, here’s a snippet of our zippy component that we’ve built a while ago.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
-  <span class="na">styles</span><span class="p">:</span> <span class="p">[</span><span class="s2">`
-    .zippy {
-      background: green;
-    }
-  `</span><span class="p">]</span>
+  <span class="na">styles</span><span class="p">:</span> <span class="p">[</span><span class="err">`</span>
+    <span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
+      <span class="nl">background</span><span class="p">:</span> <span class="nx">green</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="err">`</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
-  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">title</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="err">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 
 <p>This is pretty straight forward. You might wonder though, why the value of that property is a list and not just a (multi-line) string. Well, I wonder too. That’s why I asked the <a href="https://github.com/angular/angular/issues/2730">question</a> right away.</p>
 
 <p>Okay, so defining styles on the component is pretty clear, but where did those end up in the DOM? If we run this code in our browser, we see that there’s something very interesting happening. It turns out that Angular takes the defined styles, and writes them into the head of the HTML document. Here’s what that looks like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;style&gt;</span>
@@ -130,60 +132,60 @@
   <span class="nt">&lt;body&gt;</span>
   ...
   <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
 
 <p>What’s going on there? The reason why Angular takes our styles and puts them up there, is because of the <strong>View Encapsulation</strong> that we are using. Since Angular 2.x, it comes with three different view encapsulation types in order to support both, browsers that don’t support Shadow DOM, and also the ones that do support it. The view encapsulations <s>will be explored in another article</s> are covered in <a href="/angular/2015/06/29/shadow-dom-strategies-in-angular2.html">this article</a>, but we have to touch on this though in order to understand why this is happening.</p>
 
-<p>Angular currently uses the <code class="highlighter-rouge">Emulated View Encapsulation</code> by default. Which basically means, there’s no usage of any Shadow DOM at all. One of the nice features of Shadow DOM is style encapsulation. It allows us to scope styles to a specific component without affecting the outer world.</p>
+<p>Angular currently uses the <code>Emulated View Encapsulation</code> by default. Which basically means, there’s no usage of any Shadow DOM at all. One of the nice features of Shadow DOM is style encapsulation. It allows us to scope styles to a specific component without affecting the outer world.</p>
 
-<p>To take advantage of style encapsulation, styles have to be put into the <code class="highlighter-rouge">shadowRoot</code> of a component. Due to the Shadow DOM strategy that is used, there is no <code class="highlighter-rouge">shadowRoot</code> to put our styles into. That’s why Angular writes them into the head. But as mentioned, there’s another article that explains all three view encapsulations.</p>
+<p>To take advantage of style encapsulation, styles have to be put into the <code>shadowRoot</code> of a component. Due to the Shadow DOM strategy that is used, there is no <code>shadowRoot</code> to put our styles into. That’s why Angular writes them into the head. But as mentioned, there’s another article that explains all three view encapsulations.</p>
 
 <p>Let’s take a look at another way of adding styles to our component.</p>
 
 <h2 id="styles-urls">Styles urls</h2>
 
-<p>In an ideal world, we don’t have to mix our styles with our application code. That’s why we have the <code class="highlighter-rouge">&lt;link&gt;</code> tag, that allows us to fetch and embed a stylesheet from a server. Angular components allow us to define <code class="highlighter-rouge">styleUrls</code>, so that styles don’t have to be written into the component. Pretty straight forward, here’s an example:</p>
+<p>In an ideal world, we don’t have to mix our styles with our application code. That’s why we have the <code>&lt;link&gt;</code> tag, that allows us to fetch and embed a stylesheet from a server. Angular components allow us to define <code>styleUrls</code>, so that styles don’t have to be written into the component. Pretty straight forward, here’s an example:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
   <span class="na">styleUrls</span><span class="p">:</span> <span class="p">[</span><span class="s1">'my-zippy.component.css'</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
-  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">title</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="err">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 
 <p>Where do <strong>those</strong> end up in the DOM? Well, for the same reason as explained earlier, they are written into the head of the document. But not only that, when Angular fetches the style resources, it takes the text response, inlines and appends them after all component inline styles. So if we would have a configuration like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">moduleId</span><span class="p">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-zippy'</span><span class="p">,</span>
   <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'my-zippy.component.html'</span><span class="p">,</span>
   <span class="na">styles</span><span class="p">:</span> <span class="p">[</span><span class="s1">'.zippy { background: green; }'</span><span class="p">],</span>
   <span class="na">styleUrls</span><span class="p">:</span> <span class="p">[</span><span class="s1">'my-zippy.component.css'</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="kd">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
-  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">title</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="kr">class</span> <span class="nx">ZippyComponent</span> <span class="p">{</span>
+  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">title</span><span class="err">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 
-<p>And the <code class="highlighter-rouge">my-zippy.component.css</code> content would look like this:</p>
+<p>And the <code>my-zippy.component.css</code> content would look like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">.</span><span class="nx">zippy</span> <span class="p">{</span>
   <span class="nl">background</span><span class="p">:</span> <span class="nx">blue</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>We will end up with a document head that looks something like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;style&gt;</span>
       <span class="nc">.zippy</span> <span class="p">{</span> 
         <span class="nl">background</span><span class="p">:</span> <span class="no">green</span><span class="p">;</span>
       <span class="p">}</span>
-    <span class="nt">&lt;/style&gt;</span>
-    <span class="nt">&lt;style&gt;</span><span class="nc">.zippy</span> <span class="p">{</span>
+    <span class="o">&lt;/</span><span class="nt">style</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nt">style</span><span class="o">&gt;</span><span class="nc">.zippy</span> <span class="p">{</span>
       <span class="nl">background</span><span class="p">:</span> <span class="no">blue</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="nt">&lt;/style&gt;</span>
@@ -191,7 +193,7 @@
   <span class="nt">&lt;body&gt;</span>
   ...
   <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+<span class="nt">&lt;/html&gt;</span></code></pre></div>
 
 <p>This also brings us to the next conclusion that styles defined in style urls will always be appended and therefore override styles defined in the component, unless the inline styles don’t have a higher specificity.</p>
 
@@ -203,7 +205,7 @@
 
 <p>Translating the styles used above to template inline styles would look something like this (in case of our zippy component):</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;style&gt;</span>
   <span class="nc">.zippy</span> <span class="p">{</span>
     <span class="nl">background</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span>
   <span class="p">}</span>
@@ -215,7 +217,7 @@
   <span class="nt">&lt;div</span> <span class="err">[</span><span class="na">hidden</span><span class="err">]="!</span><span class="na">visible</span><span class="err">"</span> <span class="na">class=</span><span class="s">"zippy__content"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
 
 <p>Guess what, also those will be appended in the head of our document, after the ones defined in the component or as style urls. Template inline styles always have the highest priority, which sounds pretty straight forward to me.</p>
 
@@ -225,24 +227,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -306,17 +308,6 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -366,6 +357,17 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom themes with Angular Material</h3>
+                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

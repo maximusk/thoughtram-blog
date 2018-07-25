@@ -81,12 +81,14 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>In <a href="/angular/2016/01/22/understanding-zones.html">Understanding Zones</a>, we explored the power of Zones by building a profiling zone that profiles asynchronous operations in our code. We learned that Zones are a sort of execution context that allows us to hook into our asynchronous tasks. If you haven’t read that article, we highly recommend checking it out as this one is based on it. In this article we’re going to take a closer look at what role Zones play in Angular.</p>
 
@@ -121,44 +123,44 @@
 <p>Before we dive into these questions, let’s first think about what actually causes this change in our applications. Or rather, what <strong>can</strong> change state in our applications. Application state change is caused by three things:</p>
 
 <ul>
-  <li><strong>Events</strong> - User events like <code class="highlighter-rouge">click</code>, <code class="highlighter-rouge">change</code>, <code class="highlighter-rouge">input</code>, <code class="highlighter-rouge">submit</code>, …</li>
+  <li><strong>Events</strong> - User events like <code>click</code>, <code>change</code>, <code>input</code>, <code>submit</code>, …</li>
   <li><strong>XMLHttpRequests</strong> - E.g. when fetching data from a remote service</li>
-  <li><strong>Timers</strong> - <code class="highlighter-rouge">setTimeout()</code>, <code class="highlighter-rouge">setInterval()</code>, because JavaScript</li>
+  <li><strong>Timers</strong> - <code>setTimeout()</code>, <code>setInterval()</code>, because JavaScript</li>
 </ul>
 
 <p>It turns out that these three things have something in common. Can you name it? … Correct! <strong>They are all asynchronous</strong>.</p>
 
 <p>Why do you think is this important? Well … because it turns out that these are the only cases when Angular is actually interested in updating the view. Let’s say we have an Angular component that executes a handler when a button is clicked:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-component'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;h3&gt;We love {{name}}&lt;/h3&gt;
-    &lt;button (click)="changeName()"&gt;Change name&lt;/button&gt;
-  `</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">h3</span><span class="o">&gt;</span><span class="nx">We</span> <span class="nx">love</span> <span class="p">{{</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h3</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"changeName()"</span><span class="o">&gt;</span><span class="nx">Change</span> <span class="nx">name</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>  <span class="err">`</span>
 <span class="p">})</span>
-<span class="kd">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
+<span class="kr">class</span> <span class="nx">MyComponent</span> <span class="p">{</span>
 
   <span class="nl">name</span><span class="p">:</span><span class="nx">string</span> <span class="o">=</span> <span class="s1">'thoughtram'</span><span class="p">;</span>
 
   <span class="nx">changeName</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'Angular'</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>If you’re not familiar with the <code class="highlighter-rouge">(click)</code> syntax, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/08/11/angular-2-template-syntax-demystified-part-1.html">Angular’s Template Syntax Demystified</a>. The short version is, that this sets up an event handler for the <code class="highlighter-rouge">click</code> event on the <code class="highlighter-rouge">&lt;button&gt;</code> element.</p>
+<p>If you’re not familiar with the <code>(click)</code> syntax, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2015/08/11/angular-2-template-syntax-demystified-part-1.html">Angular’s Template Syntax Demystified</a>. The short version is, that this sets up an event handler for the <code>click</code> event on the <code>&lt;button&gt;</code> element.</p>
 
-<p>When the component’s button is clicked, <code class="highlighter-rouge">changeName()</code> is executed, which in turn will change the <code class="highlighter-rouge">name</code> property of the component. Since we want this change to be reflected in the DOM as well, Angular is going to update the view binding <code class="highlighter-rouge">{{name}}</code> accordingly. Nice, that seems to magically work.</p>
+<p>When the component’s button is clicked, <code>changeName()</code> is executed, which in turn will change the <code>name</code> property of the component. Since we want this change to be reflected in the DOM as well, Angular is going to update the view binding <code>{{name}}</code> accordingly. Nice, that seems to magically work.</p>
 
-<p>Another example would be to update the <code class="highlighter-rouge">name</code> property using <code class="highlighter-rouge">setTimeout()</code>. Note that we removed the button.</p>
+<p>Another example would be to update the <code>name</code> property using <code>setTimeout()</code>. Note that we removed the button.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-component'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;h3&gt;We love {{name}}&lt;/h3&gt;
-  `</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">h3</span><span class="o">&gt;</span><span class="nx">We</span> <span class="nx">love</span> <span class="p">{{</span><span class="nx">name</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h3</span><span class="err">&gt;
+</span>  <span class="err">`</span>
 <span class="p">})</span>
-<span class="kd">class</span> <span class="nx">MyComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+<span class="kr">class</span> <span class="nx">MyComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
 
   <span class="nl">name</span><span class="p">:</span><span class="nx">string</span> <span class="o">=</span> <span class="s1">'thoughtram'</span><span class="p">;</span>
 
@@ -167,15 +169,15 @@
       <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">'Angular'</span><span class="p">;</span>
     <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>We don’t have to do anything special to tell the framework that a change has happened. <strong>No <code class="highlighter-rouge">ng-click</code>, no <code class="highlighter-rouge">$timeout</code>, <code class="highlighter-rouge">$scope.$apply()</code></strong>.</p>
+<p>We don’t have to do anything special to tell the framework that a change has happened. <strong>No <code>ng-click</code>, no <code>$timeout</code>, <code>$scope.$apply()</code></strong>.</p>
 
-<p>If you’ve read our article on <a href="http://blog.thoughtram.io/angular/2016/01/22/understanding-zones.html">understanding Zones</a>, you know that this works obviously because Angular takes advantage of Zones. Zones monkey-patches global asynchronous operations such as <code class="highlighter-rouge">setTimeout()</code> and <code class="highlighter-rouge">addEventListener()</code>, which is why Angular can easily find out, when to update the DOM.</p>
+<p>If you’ve read our article on <a href="http://blog.thoughtram.io/angular/2016/01/22/understanding-zones.html">understanding Zones</a>, you know that this works obviously because Angular takes advantage of Zones. Zones monkey-patches global asynchronous operations such as <code>setTimeout()</code> and <code>addEventListener()</code>, which is why Angular can easily find out, when to update the DOM.</p>
 
 <p>In fact, the code that tells Angular to perform change detection whenever the VM turn is done, is as simple as this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">ObservableWrapper</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">.</span><span class="nx">onTurnDone</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">ObservableWrapper</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">.</span><span class="nx">onTurnDone</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">.</span><span class="nx">run</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">tick</span><span class="p">();</span>
   <span class="p">});</span>
@@ -186,62 +188,62 @@
   <span class="k">this</span><span class="p">.</span><span class="nx">changeDetectorRefs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">detector</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="nx">detector</span><span class="p">.</span><span class="nx">detectChanges</span><span class="p">();</span>
   <span class="p">});</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Whenever Angular’s zone emits an <code class="highlighter-rouge">onTurnDone</code> event, it runs a task that performs change detection for the entire application. If you’re interested in how change detection in Angular works, <s>watch out, we're going to publish another article on that soon</s> go ahead and read <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">this article</a>.</p>
+<p>Whenever Angular’s zone emits an <code>onTurnDone</code> event, it runs a task that performs change detection for the entire application. If you’re interested in how change detection in Angular works, <s>watch out, we're going to publish another article on that soon</s> go ahead and read <a href="/angular/2016/02/22/angular-2-change-detection-explained.html">this article</a>.</p>
 
-<p>But wait, where does the <code class="highlighter-rouge">onTurnDone</code> event emitter come from? This is not part of the default <code class="highlighter-rouge">Zone</code> API, right? It turns out that Angular introduces its own zone called <code class="highlighter-rouge">NgZone</code>.</p>
+<p>But wait, where does the <code>onTurnDone</code> event emitter come from? This is not part of the default <code>Zone</code> API, right? It turns out that Angular introduces its own zone called <code>NgZone</code>.</p>
 
 <h2 id="ngzone-in-angular">NgZone in Angular</h2>
 
-<p><code class="highlighter-rouge">NgZone</code> is basically a forked zone that extends its API and adds some additional functionality to its execution context. One of the things it adds to the API is the following set of custom events we can subscribe to, as they are observable streams:</p>
+<p><code>NgZone</code> is basically a forked zone that extends its API and adds some additional functionality to its execution context. One of the things it adds to the API is the following set of custom events we can subscribe to, as they are observable streams:</p>
 
 <ul>
-  <li><code class="highlighter-rouge">onTurnStart()</code> - Notifies subscribers just before Angular’s event turn starts. Emits an event once per browser task that is handled by Angular.</li>
-  <li><code class="highlighter-rouge">onTurnDone()</code> - Notifies subscribers immediately after Angular’s zone is done processing the current turn and any micro tasks scheduled from that turn.</li>
-  <li><code class="highlighter-rouge">onEventDone()</code> - Notifies subscribers immediately after the final <code class="highlighter-rouge">onTurnDone()</code> callback before ending VM event. Useful for testing to validate application state.</li>
+  <li><code>onTurnStart()</code> - Notifies subscribers just before Angular’s event turn starts. Emits an event once per browser task that is handled by Angular.</li>
+  <li><code>onTurnDone()</code> - Notifies subscribers immediately after Angular’s zone is done processing the current turn and any micro tasks scheduled from that turn.</li>
+  <li><code>onEventDone()</code> - Notifies subscribers immediately after the final <code>onTurnDone()</code> callback before ending VM event. Useful for testing to validate application state.</li>
 </ul>
 
 <p>If “Observables” and “Streams” are super new to you, you might want to read our article on <a href="http://blog.thoughtram.io/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html">Taking advantage of Observables in Angular</a>.</p>
 
-<p>The main reason Angular adds its own event emitters instead of relying on <code class="highlighter-rouge">beforeTask</code> and <code class="highlighter-rouge">afterTask</code> callbacks, is that it has to keep track of timers and other micro tasks. It’s also nice that Observables are used as an API to handle these events.</p>
+<p>The main reason Angular adds its own event emitters instead of relying on <code>beforeTask</code> and <code>afterTask</code> callbacks, is that it has to keep track of timers and other micro tasks. It’s also nice that Observables are used as an API to handle these events.</p>
 
 <h2 id="running-code-outside-angulars-zone">Running code outside Angular’s zone</h2>
 
-<p>Since <code class="highlighter-rouge">NgZone</code> is really just a fork of the global zone, Angular has full control over when to run something inside its zone to perform change detection and when not. Why is that useful? Well, it turns out that we don’t always want Angular to magically perform change detection.</p>
+<p>Since <code>NgZone</code> is really just a fork of the global zone, Angular has full control over when to run something inside its zone to perform change detection and when not. Why is that useful? Well, it turns out that we don’t always want Angular to magically perform change detection.</p>
 
-<p>As mentioned a couple of times, Zones monkey-patches pretty much any global asynchronous operations by the browser. And since <code class="highlighter-rouge">NgZone</code> is just a fork of that zone which notifies the framework to perform change detection when an asynchronous operation has happened, it would also trigger change detection when things like <code class="highlighter-rouge">mousemove</code> events fire.</p>
+<p>As mentioned a couple of times, Zones monkey-patches pretty much any global asynchronous operations by the browser. And since <code>NgZone</code> is just a fork of that zone which notifies the framework to perform change detection when an asynchronous operation has happened, it would also trigger change detection when things like <code>mousemove</code> events fire.</p>
 
-<p>We probably don’t want to perform change detection every time <code class="highlighter-rouge">mousemove</code> is fired as it would slow down our application and results in very bad user experience.</p>
+<p>We probably don’t want to perform change detection every time <code>mousemove</code> is fired as it would slow down our application and results in very bad user experience.</p>
 
-<p>That’s why <code class="highlighter-rouge">NgZone</code> comes with an API <code class="highlighter-rouge">runOutsideAngular()</code> which performs a given task in <code class="highlighter-rouge">NgZone</code>’s parent zone, which <strong>does not</strong> emit an <code class="highlighter-rouge">onTurnDone</code> event, hence no change detection is performed. To demonstrate this useful feature, let’s take look at the following code:</p>
+<p>That’s why <code>NgZone</code> comes with an API <code>runOutsideAngular()</code> which performs a given task in <code>NgZone</code>’s parent zone, which <strong>does not</strong> emit an <code>onTurnDone</code> event, hence no change detection is performed. To demonstrate this useful feature, let’s take look at the following code:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'progress-bar'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;h3&gt;Progress: {{progress}}&lt;/h3&gt;
-    &lt;button (click)="processWithinAngularZone()"&gt;
-      Process within Angular zone
-    &lt;/button&gt;
-  `</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">h3</span><span class="o">&gt;</span><span class="na">Progress</span><span class="p">:</span> <span class="p">{{</span><span class="nx">progress</span><span class="p">}}</span><span class="o">&lt;</span><span class="sr">/h3</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="nx">button</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"processWithinAngularZone()"</span><span class="o">&gt;</span>
+      <span class="nx">Process</span> <span class="nx">within</span> <span class="nx">Angular</span> <span class="nx">zone</span>
+    <span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>  <span class="err">`</span>
 <span class="p">})</span>
-<span class="kd">class</span> <span class="nx">ProgressBar</span> <span class="p">{</span>
+<span class="kr">class</span> <span class="nx">ProgressBar</span> <span class="p">{</span>
 
   <span class="nl">progress</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">zone</span><span class="p">:</span> <span class="nx">NgZone</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">zone</span><span class="err">:</span> <span class="nx">NgZone</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="nx">processWithinAngularZone</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">progress</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">increaseProgress</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Done!'</span><span class="p">));</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Nothing special going on here. We have component that calls <code class="highlighter-rouge">processWithinAngularZone()</code> when the button in the template is clicked. However, that method calls <code class="highlighter-rouge">increaseProgress()</code>. Let’s take a closer look at this one:</p>
+<p>Nothing special going on here. We have component that calls <code>processWithinAngularZone()</code> when the button in the template is clicked. However, that method calls <code>increaseProgress()</code>. Let’s take a closer look at this one:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">increaseProgress</span><span class="p">(</span><span class="nx">doneCallback</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">increaseProgress</span><span class="p">(</span><span class="nx">doneCallback</span><span class="err">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">progress</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Current progress: </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">progress</span><span class="p">}</span><span class="s2">%`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">`</span><span class="nx">Current</span> <span class="nx">progress</span><span class="err">:</span> <span class="nx">$</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">progress</span><span class="p">}</span><span class="o">%</span><span class="err">`</span><span class="p">);</span>
 
   <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">progress</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">window</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -250,13 +252,13 @@
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="nx">doneCallback</span><span class="p">();</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p><code class="highlighter-rouge">increaseProgress()</code> calls itself every 10 milliseconds until <code class="highlighter-rouge">progress</code> equals <code class="highlighter-rouge">100</code>. Once it’s done, the given <code class="highlighter-rouge">doneCallback</code> will execute. Notice how we use <code class="highlighter-rouge">setTimeout()</code> to increase the progress.</p>
+<p><code>increaseProgress()</code> calls itself every 10 milliseconds until <code>progress</code> equals <code>100</code>. Once it’s done, the given <code>doneCallback</code> will execute. Notice how we use <code>setTimeout()</code> to increase the progress.</p>
 
-<p>Running this code in the browser, basically demonstrates what we already know. After each <code class="highlighter-rouge">setTimeout()</code> call, Angular performs change detection and updates the view, which allows us to see how <code class="highlighter-rouge">progress</code> is increased every 10 milliseconds. It gets more interesting when we run this code outside Angular’s zone. Let’s add a method that does exactly that.</p>
+<p>Running this code in the browser, basically demonstrates what we already know. After each <code>setTimeout()</code> call, Angular performs change detection and updates the view, which allows us to see how <code>progress</code> is increased every 10 milliseconds. It gets more interesting when we run this code outside Angular’s zone. Let’s add a method that does exactly that.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">processOutsideAngularZone</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">processOutsideAngularZone</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">progress</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">.</span><span class="nx">runOutsideAngular</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">increaseProgress</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -265,11 +267,11 @@
       <span class="p">});</span>
     <span class="p">});</span>
   <span class="p">});</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p><code class="highlighter-rouge">processOutsideAngularZone()</code> also calls <code class="highlighter-rouge">increaseProgress()</code> but this time using <code class="highlighter-rouge">runOutsideAngularZone()</code> which causes Angular not to be notified after each timeout. We access Angular’s zone by injecting it into our component using the <code class="highlighter-rouge">NgZone</code> token.</p>
+<p><code>processOutsideAngularZone()</code> also calls <code>increaseProgress()</code> but this time using <code>runOutsideAngularZone()</code> which causes Angular not to be notified after each timeout. We access Angular’s zone by injecting it into our component using the <code>NgZone</code> token.</p>
 
-<p>The UI is not updated as <code class="highlighter-rouge">progress</code> increases. However, once <code class="highlighter-rouge">increaseProgress()</code> is done, we run another task inside Angular’s zone again using <code class="highlighter-rouge">zone.run()</code> which in turn causes Angular to perform change detection which will update the view. In other words, instead of seeing <code class="highlighter-rouge">progress</code> increasing, all we see is the final value once it’s done. Check out the running code in action below.</p>
+<p>The UI is not updated as <code>progress</code> increases. However, once <code>increaseProgress()</code> is done, we run another task inside Angular’s zone again using <code>zone.run()</code> which in turn causes Angular to perform change detection which will update the view. In other words, instead of seeing <code>progress</code> increasing, all we see is the final value once it’s done. Check out the running code in action below.</p>
 
 <p>Zones have now also been proposed as a standard at TC39, maybe another reason to take a closer look at them.</p>
 
@@ -287,24 +289,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -368,17 +370,6 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -428,6 +419,17 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom themes with Angular Material</h3>
+                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

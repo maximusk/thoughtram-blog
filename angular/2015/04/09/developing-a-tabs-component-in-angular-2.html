@@ -74,19 +74,21 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">Developing a tabs component in Angular</h2>
-            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Apr 9, 2015, last updated on Dec 16, 2016<br>14 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Pascal Precht on Twitter">Pascal Precht</a> on Apr 9, 2015, last updated on Dec 16, 2016<br>15 minute read</span>
 
           </div>
         </hgroup>
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>Just recently, we wrote about how to <a href="/angular/2015/03/27/building-a-zippy-component-in-angular-2.html">build a zippy component</a> in Angular. We explored how to get started with the framework and learned about some concepts that it comes with to build a very simple component. If you haven’t read the article, you might want to check it out.</p>
 
@@ -125,226 +127,226 @@
 
 <p>Of course, in Angular, those implementation details are hidden behind some nice readable and declarative elements that we all know as directives. Having a tool like Angular (and also Web Components) allows us to create custom elements, so that a consumer could use something like the following snippet to add tabs to an application:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tabs&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tabs&gt;</span>
   <span class="nt">&lt;tab</span> <span class="na">tabTitle=</span><span class="s">"Tab 1"</span><span class="nt">&gt;</span>
     Here's some content.
   <span class="nt">&lt;/tab&gt;</span>
   <span class="nt">&lt;tab</span> <span class="na">tabTitle=</span><span class="s">"Tab 2"</span><span class="nt">&gt;</span>
     And here's more in another tab.
   <span class="nt">&lt;/tab&gt;</span>
-<span class="nt">&lt;/tabs&gt;</span></code></pre></figure>
+<span class="nt">&lt;/tabs&gt;</span></code></pre></div>
 
-<p>We have a <code class="highlighter-rouge">&lt;tab&gt;</code> element that simply represents a single tab which has a title, and we have a <code class="highlighter-rouge">&lt;tabs&gt;</code> element that takes care of making those <code class="highlighter-rouge">&lt;tab&gt;</code> elements actually “tabbable”.</p>
+<p>We have a <code>&lt;tab&gt;</code> element that simply represents a single tab which has a title, and we have a <code>&lt;tabs&gt;</code> element that takes care of making those <code>&lt;tab&gt;</code> elements actually “tabbable”.</p>
 
 <p>If you’ve been following the development and concepts of Angular, you probably learned that, since Angular 2.x, the <strong>consumer</strong> of a component is in charge of deciding how a value is passed to a component. Whereas in Angular 1.x, the directive defines how a value is bound to it’s scope, so the consumer needs to know about the inner workings of a directive.</p>
 
-<p>This means, talking about the <code class="highlighter-rouge">tabTitle</code> attribute that we have in the code above, consumers can either write to the component attribute (if it exists), or to the component property. The latter would allow the consumer to pass expressions to the component that first get evaluated. Here’s what it could look like:</p>
+<p>This means, talking about the <code>tabTitle</code> attribute that we have in the code above, consumers can either write to the component attribute (if it exists), or to the component property. The latter would allow the consumer to pass expressions to the component that first get evaluated. Here’s what it could look like:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tab</span> <span class="na">tabTitle=</span><span class="s">"This is just a String"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tab</span> <span class="na">tabTitle=</span><span class="s">"This is just a String"</span><span class="nt">&gt;</span>
   ...
 <span class="nt">&lt;/tab&gt;</span>
 <span class="nt">&lt;tab</span> <span class="err">[</span><span class="na">tabTitle</span><span class="err">]="</span><span class="na">thisIsAnExpression</span><span class="err">"</span><span class="nt">&gt;</span>
   ...
-<span class="nt">&lt;/tab&gt;</span></code></pre></figure>
+<span class="nt">&lt;/tab&gt;</span></code></pre></div>
 
 <p>Alright, now that we know what we want to build, let’s get our hands dirty with some Angular code.</p>
 
 <h2 id="building-the-components">Building the components</h2>
 
-<p>We start off by implementing a rather static version of the <code class="highlighter-rouge">&lt;tabs&gt;</code> element. If you’ve read our article on <a href="/angular/2015/03/27/building-a-zippy-component-in-angular-2.html">building a zippy component in Angular</a>,
-you know that we need the <code class="highlighter-rouge">@Component()</code> decorator to tell Angular what the selector and template for our component should be.</p>
+<p>We start off by implementing a rather static version of the <code>&lt;tabs&gt;</code> element. If you’ve read our article on <a href="/angular/2015/03/27/building-a-zippy-component-in-angular-2.html">building a zippy component in Angular</a>,
+you know that we need the <code>@Component()</code> decorator to tell Angular what the selector and template for our component should be.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'tabs'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;ul&gt;
-      &lt;li&gt;Tab 1&lt;/li&gt;
-      &lt;li&gt;Tab 2&lt;/li&gt;
-    &lt;/ul&gt;
-  `</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="nx">Tab</span> <span class="mi">1</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="nx">Tab</span> <span class="mi">2</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>  <span class="err">`</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
 
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>When using the <code class="highlighter-rouge">Component</code> decorator, we can specify the template using the <code class="highlighter-rouge">template</code> property. The back tick syntax comes with ES2015 and allows us to do multi-line string definition without using concatenation operators like <code class="highlighter-rouge">+</code>.</p>
+<p>When using the <code>Component</code> decorator, we can specify the template using the <code>template</code> property. The back tick syntax comes with ES2015 and allows us to do multi-line string definition without using concatenation operators like <code>+</code>.</p>
 
 <p>As you can see, the component template already comes with a static list of tabs. This list will be replaced with a dynamic directive later, for now we keep it like this so we get a better picture of the direction we’re going. We also need a place where the tab contents will go. Let’s add an insertion point to our template. This will project the outer light DOM into the Shadow DOM (Emulation).</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'tabs'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;ul&gt;
-      &lt;li&gt;Tab 1&lt;/li&gt;
-      &lt;li&gt;Tab 2&lt;/li&gt;
-    &lt;/ul&gt;
-    &lt;ng-content&gt;&lt;/ng-content&gt;
-  `</span>
-<span class="p">})</span></code></pre></figure>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="nx">Tab</span> <span class="mi">1</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="nx">Tab</span> <span class="mi">2</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="nx">ng</span><span class="o">-</span><span class="nx">content</span><span class="o">&gt;&lt;</span><span class="sr">/ng-content</span><span class="err">&gt;
+</span>  <span class="err">`</span>
+<span class="p">})</span></code></pre></div>
 
-<p>Cool, we can already start using our <code class="highlighter-rouge">&lt;tabs&gt;</code> component and write HTML into it like this:</p>
+<p>Cool, we can already start using our <code>&lt;tabs&gt;</code> component and write HTML into it like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tabs&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tabs&gt;</span>
   <span class="nt">&lt;p&gt;</span>Some random HTML with some random content<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/tabs&gt;</span></code></pre></figure>
+<span class="nt">&lt;/tabs&gt;</span></code></pre></div>
 
-<p>Of course, we do want to use <code class="highlighter-rouge">&lt;tab&gt;</code> elements inside our <code class="highlighter-rouge">&lt;tabs&gt;</code> component, so let’s build that one. It turns out that the <code class="highlighter-rouge">&lt;tab&gt;</code> element is actually quite primitive. It’s basically just a container element that has an insertion point to project light DOM. We shouldn’t forget the configurable <code class="highlighter-rouge">tabTitle</code>. Here’s how we do it.</p>
+<p>Of course, we do want to use <code>&lt;tab&gt;</code> elements inside our <code>&lt;tabs&gt;</code> component, so let’s build that one. It turns out that the <code>&lt;tab&gt;</code> element is actually quite primitive. It’s basically just a container element that has an insertion point to project light DOM. We shouldn’t forget the configurable <code>tabTitle</code>. Here’s how we do it.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'tab'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;div&gt;
-      &lt;ng-content&gt;&lt;/ng-content&gt;
-    &lt;/div&gt;
-  `</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">ng</span><span class="o">-</span><span class="nx">content</span><span class="o">&gt;&lt;</span><span class="sr">/ng-content</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">Tab</span> <span class="p">{</span>
-  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="nx">tabTitle</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tab</span> <span class="p">{</span>
+  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="nx">tabTitle</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
 
-<p>The element should be named <code class="highlighter-rouge">&lt;tab&gt;</code> so we set the <code class="highlighter-rouge">selector</code> property accordingly. We bind the <code class="highlighter-rouge">tabTitle</code> <strong>input</strong> to the component’s <code class="highlighter-rouge">tabTitle</code> <strong>property</strong>. Last but not least we add a template that is just a div with an insertion point.</p>
+<p>The element should be named <code>&lt;tab&gt;</code> so we set the <code>selector</code> property accordingly. We bind the <code>tabTitle</code> <strong>input</strong> to the component’s <code>tabTitle</code> <strong>property</strong>. Last but not least we add a template that is just a div with an insertion point.</p>
 
-<p>Wait, that’s it? Well, sort of. There’s a tiny bit more we need to do, but let’s just use our new <code class="highlighter-rouge">&lt;tab&gt;</code> component in our <code class="highlighter-rouge">&lt;tabs&gt;</code> component.</p>
+<p>Wait, that’s it? Well, sort of. There’s a tiny bit more we need to do, but let’s just use our new <code>&lt;tab&gt;</code> component in our <code>&lt;tabs&gt;</code> component.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tabs&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tabs&gt;</span>
   <span class="nt">&lt;tab</span> <span class="na">tabTitle=</span><span class="s">"Foo"</span><span class="nt">&gt;</span>
     Content of tab Foo
   <span class="nt">&lt;/tab&gt;</span>
   <span class="nt">&lt;tab</span> <span class="na">tabTitle=</span><span class="s">"Bar"</span><span class="nt">&gt;</span>
     Content of tab Bar
   <span class="nt">&lt;/tab&gt;</span>
-<span class="nt">&lt;/tabs&gt;</span></code></pre></figure>
+<span class="nt">&lt;/tabs&gt;</span></code></pre></div>
 
-<p>Executing this in the browser, we notice that we still get a list with <code class="highlighter-rouge">Tab 1</code> and <code class="highlighter-rouge">Tab 2</code> and in addition, we see the projected contents of both tabs at the same time. That’s not quite a tabs component, right?</p>
+<p>Executing this in the browser, we notice that we still get a list with <code>Tab 1</code> and <code>Tab 2</code> and in addition, we see the projected contents of both tabs at the same time. That’s not quite a tabs component, right?</p>
 
 <h2 id="making-the-components-dynamic">Making the components dynamic</h2>
 
-<p>We’re getting there. Let’s first make our <code class="highlighter-rouge">&lt;tabs&gt;</code> component to actually use the correct titles instead of a hard-coded list. In order to generate a dynamic list, we need a collection. We can use our component’s constructor to initialize a collection that holds all tabs like this:</p>
+<p>We’re getting there. Let’s first make our <code>&lt;tabs&gt;</code> component to actually use the correct titles instead of a hard-coded list. In order to generate a dynamic list, we need a collection. We can use our component’s constructor to initialize a collection that holds all tabs like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
 
   <span class="c1">// typescript needs to know what properties will exist on class instances</span>
   <span class="nl">tabs</span><span class="p">:</span> <span class="nx">Tab</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Okay cool, but how do we get our tab titles into that collection? This is where, in Angular 1, directive controllers come in. However, since Angular 2.x it’s much easier. First we need an interface so that the outside world can actually add items to our internal collection. Let’s add a method <code class="highlighter-rouge">addTab(tab: Tab)</code>, that takes a <code class="highlighter-rouge">Tab</code> object and does exactly what we need.</p>
+<p>Okay cool, but how do we get our tab titles into that collection? This is where, in Angular 1, directive controllers come in. However, since Angular 2.x it’s much easier. First we need an interface so that the outside world can actually add items to our internal collection. Let’s add a method <code>addTab(tab: Tab)</code>, that takes a <code>Tab</code> object and does exactly what we need.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">addTab</span><span class="p">(</span><span class="nx">tab</span><span class="p">:</span><span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">addTab</span><span class="p">(</span><span class="nx">tab</span><span class="err">:</span><span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tab</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>The method just simply pushes the given object into our collection and we’re good. Next we update the template so that the list is generated dynamically based on our collection. In Angular 1 we have a <code class="highlighter-rouge">ngRepeat</code> directive that lets us iterate over a collection to repeat DOM. Since Angular 2.x there a a <code class="highlighter-rouge">ngFor</code> directive that pretty much solves the exact same problem. We use the directive to iterate over our tabs collection to generate a dynamic list of tab titles in the component’s template.</p>
+<p>The method just simply pushes the given object into our collection and we’re good. Next we update the template so that the list is generated dynamically based on our collection. In Angular 1 we have a <code>ngRepeat</code> directive that lets us iterate over a collection to repeat DOM. Since Angular 2.x there a a <code>ngFor</code> directive that pretty much solves the exact same problem. We use the directive to iterate over our tabs collection to generate a dynamic list of tab titles in the component’s template.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;ul&gt;
-      &lt;li *ngFor="let tab of tabs"&gt;{{ tab.tabTitle }}&lt;/li&gt;
-    &lt;/ul&gt;
-  `</span>
-<span class="p">})</span></code></pre></figure>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let tab of tabs"</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">tabTitle</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>  <span class="err">`</span>
+<span class="p">})</span></code></pre></div>
 
 <p>If the templating syntax doesn’t make sense to you at all, you might want to check out <a href="https://docs.google.com/document/d/1HHy_zPLGqJj0bHMiWPzPCxn1pO5GlOYwmv-qGgl4f_s/edit">this design doc</a>.</p>
 
-<p>Alright, we have a collection, we have an API to extend the collection and we have a list in our template that is generated dynamically based on that collection. Since the collection is empty by default, the generated list is empty and no tab title is shown. Somebody needs to call this <code class="highlighter-rouge">addTab()</code> method!</p>
+<p>Alright, we have a collection, we have an API to extend the collection and we have a list in our template that is generated dynamically based on that collection. Since the collection is empty by default, the generated list is empty and no tab title is shown. Somebody needs to call this <code>addTab()</code> method!</p>
 
-<p>That’s where the <code class="highlighter-rouge">&lt;tab&gt;</code> component comes into play (again). Inside the component we can simply ask for a <strong>parent</strong> <code class="highlighter-rouge">Tabs</code> dependency by using the new, much more powerful dependency injection system and get an instance of it. This allows us to simply use given APIs inside a child component. Let’s take a look at what that looks like.</p>
+<p>That’s where the <code>&lt;tab&gt;</code> component comes into play (again). Inside the component we can simply ask for a <strong>parent</strong> <code>Tabs</code> dependency by using the new, much more powerful dependency injection system and get an instance of it. This allows us to simply use given APIs inside a child component. Let’s take a look at what that looks like.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">class</span> <span class="nx">Tab</span> <span class="p">{</span>
-  <span class="kd">constructor</span><span class="p">(</span><span class="nx">tabs</span><span class="p">:</span> <span class="nx">Tabs</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">class</span> <span class="nx">Tab</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">tabs</span><span class="err">:</span> <span class="nx">Tabs</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">tabs</span><span class="p">.</span><span class="nx">addTab</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Wait, what happens here? <code class="highlighter-rouge">tabs: Tabs</code> is just Typescript type annotation which Angular uses for Dependency Injection.
+<p>Wait, what happens here? <code>tabs: Tabs</code> is just Typescript type annotation which Angular uses for Dependency Injection.
 Please check out our article where we go deeper inside <a href="/angular/2015/05/18/dependency-injection-in-angular-2">Angular DI</a></p>
 
 <p><strong>tl;dr</strong></p>
 
 <blockquote>
-  <p>Angular Hierarchical Injector knows, that we want first <code class="highlighter-rouge">Tabs</code> instance that it can get,
-when traversing upwards from current host. In our case the actual host is our  <code class="highlighter-rouge">&lt;tab&gt;</code> component.
-Injector ask on tab for Tabs, if there is none, Injector will ask Parent Injector for <code class="highlighter-rouge">Tabs</code>. In our case parent Injector is on <code class="highlighter-rouge">&lt;tabs&gt;</code> component
-and it has indeed <code class="highlighter-rouge">Tabs</code> instance, so it will return the correct instance of <code class="highlighter-rouge">Tabs</code>.</p>
+  <p>Angular Hierarchical Injector knows, that we want first <code>Tabs</code> instance that it can get,
+when traversing upwards from current host. In our case the actual host is our  <code>&lt;tab&gt;</code> component.
+Injector ask on tab for Tabs, if there is none, Injector will ask Parent Injector for <code>Tabs</code>. In our case parent Injector is on <code>&lt;tabs&gt;</code> component
+and it has indeed <code>Tabs</code> instance, so it will return the correct instance of <code>Tabs</code>.</p>
 </blockquote>
 
-<p>For now it’s just important to understand that this particular type annotation gives you access to a <strong>parent</strong> component dependency, which in our case is <code class="highlighter-rouge">&lt;tabs&gt;</code>.
-Using that instance, we can simply call the <code class="highlighter-rouge">addTab()</code> method with a <code class="highlighter-rouge">Tab</code> object and we are good to go.</p>
+<p>For now it’s just important to understand that this particular type annotation gives you access to a <strong>parent</strong> component dependency, which in our case is <code>&lt;tabs&gt;</code>.
+Using that instance, we can simply call the <code>addTab()</code> method with a <code>Tab</code> object and we are good to go.</p>
 
 <h2 id="making-it-tabbable">Making it tabbable</h2>
 
 <p>Using the components as they are right now, we <strong>do</strong> get a tabs list generated by our tab titles, but we still see all the contents of each tab at the same time. What we want, is to make that component actually “tabbable”, so that only one tab content is shown. How do we achieve that?</p>
 
-<p>Well, first we need a property that activates or deactivates a tab and depending on that value, we either show or hide it. We can simply extend our <code class="highlighter-rouge">&lt;tab&gt;</code> template accordingly like this:</p>
+<p>Well, first we need a property that activates or deactivates a tab and depending on that value, we either show or hide it. We can simply extend our <code>&lt;tab&gt;</code> template accordingly like this:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;div [hidden]="!active"&gt;
-      &lt;ng-content&gt;&lt;/ng-content&gt;
-    &lt;/div&gt;
-  `</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="p">[</span><span class="nx">hidden</span><span class="p">]</span><span class="o">=</span><span class="s2">"!active"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">ng</span><span class="o">-</span><span class="nx">content</span><span class="o">&gt;&lt;</span><span class="sr">/ng-content</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span>
 <span class="p">})</span>
-<span class="kd">class</span> <span class="nx">Tab</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">class</span> <span class="nx">Tab</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span></code></pre></div>
 
-<p>If a tab is not active, we simply hide it. We haven’t specified this property anywhere, which means it’s <code class="highlighter-rouge">undefined</code> which evaluates to <code class="highlighter-rouge">false</code> in that condition. So every tab is deactivated by default. In order to have at least one tab active, we can extend the <code class="highlighter-rouge">addTab()</code> method accordingly. The following code for instance, activates the very first tab that is added to the collection.</p>
+<p>If a tab is not active, we simply hide it. We haven’t specified this property anywhere, which means it’s <code>undefined</code> which evaluates to <code>false</code> in that condition. So every tab is deactivated by default. In order to have at least one tab active, we can extend the <code>addTab()</code> method accordingly. The following code for instance, activates the very first tab that is added to the collection.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">addTab</span><span class="p">(</span><span class="nx">tab</span><span class="p">:</span><span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">addTab</span><span class="p">(</span><span class="nx">tab</span><span class="err">:</span><span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">tab</span><span class="p">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tab</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
-<p>Awesome! The only thing that is missing, is to activate other tabs when a user clicks on a tab. In order to make this possible, we just need a function that sets the <code class="highlighter-rouge">activate</code> property when a tab is clicked. Here’s what such a function could look like.</p>
+<p>Awesome! The only thing that is missing, is to activate other tabs when a user clicks on a tab. In order to make this possible, we just need a function that sets the <code>activate</code> property when a tab is clicked. Here’s what such a function could look like.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="k">export</span> <span class="kd">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
   <span class="p">...</span>
-  <span class="nx">selectTab</span><span class="p">(</span><span class="nx">tab</span><span class="p">:</span><span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">selectTab</span><span class="p">(</span><span class="nx">tab</span><span class="err">:</span><span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">tab</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">tab</span><span class="p">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">});</span>
     <span class="nx">tab</span><span class="p">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">true</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>We simply iterate over all tabs we have, deactivate them, and activate the one that is passed to that function. Then we just add this function to the template, so it is executed whenever a user clicks a tab, like this.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="p">...</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;ul&gt;
-      &lt;li *ngFor="let tab of tabs" (click)="selectTab(tab)"&gt;
-        {{tab.tabTitle}}
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  `</span>
-<span class="p">})</span></code></pre></figure>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let tab of tabs"</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"selectTab(tab)"</span><span class="o">&gt;</span>
+        <span class="p">{{</span><span class="nx">tab</span><span class="p">.</span><span class="nx">tabTitle</span><span class="p">}}</span>
+      <span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>  <span class="err">`</span>
+<span class="p">})</span></code></pre></div>
 
-<p>Again, if this template syntax is new to you, check out the mentioned design document. What happens here is, whenever a <code class="highlighter-rouge">click</code> event is fired <code class="highlighter-rouge">selectTab()</code> is executed with the iterator tab instance. Try it out!</p>
+<p>Again, if this template syntax is new to you, check out the mentioned design document. What happens here is, whenever a <code>click</code> event is fired <code>selectTab()</code> is executed with the iterator tab instance. Try it out!</p>
 
 <p>Here’s the complete source in case you ran into any problems.</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'tabs'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;ul&gt;
-      &lt;li *ngFor="let tab of tabs" (click)="selectTab(tab)"&gt;
-        {{tab.tabTitle}}
-      &lt;/li&gt;
-    &lt;/ul&gt;
-    &lt;ng-content&gt;&lt;/ng-content&gt;
-  `</span><span class="p">,</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">li</span> <span class="o">*</span><span class="nx">ngFor</span><span class="o">=</span><span class="s2">"let tab of tabs"</span> <span class="p">(</span><span class="nx">click</span><span class="p">)</span><span class="o">=</span><span class="s2">"selectTab(tab)"</span><span class="o">&gt;</span>
+        <span class="p">{{</span><span class="nx">tab</span><span class="p">.</span><span class="nx">tabTitle</span><span class="p">}}</span>
+      <span class="o">&lt;</span><span class="sr">/li</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/ul</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="nx">ng</span><span class="o">-</span><span class="nx">content</span><span class="o">&gt;&lt;</span><span class="sr">/ng-content</span><span class="err">&gt;
+</span>  <span class="err">`</span><span class="p">,</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tabs</span> <span class="p">{</span>
   <span class="nl">tabs</span><span class="p">:</span> <span class="nx">Tab</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
 
-  <span class="nx">selectTab</span><span class="p">(</span><span class="nx">tab</span><span class="p">:</span> <span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">selectTab</span><span class="p">(</span><span class="nx">tab</span><span class="err">:</span> <span class="nx">Tab</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">tab</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">tab</span><span class="p">.</span><span class="nx">active</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">});</span>
@@ -359,31 +361,31 @@ Using that instance, we can simply call the <code class="highlighter-rouge">addT
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+<span class="err">@</span><span class="nx">Component</span><span class="p">({</span>
   <span class="na">selector</span><span class="p">:</span> <span class="s1">'tab'</span><span class="p">,</span>
-  <span class="na">template</span><span class="p">:</span> <span class="s2">`
-    &lt;div [hidden]="!active"&gt;
-      &lt;ng-content&gt;&lt;/ng-content&gt;
-    &lt;/div&gt;
-  `</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="p">[</span><span class="nx">hidden</span><span class="p">]</span><span class="o">=</span><span class="s2">"!active"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">ng</span><span class="o">-</span><span class="nx">content</span><span class="o">&gt;&lt;</span><span class="sr">/ng-content</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">Tab</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">Tab</span> <span class="p">{</span>
 
-  <span class="p">@</span><span class="nd">Input</span><span class="p">()</span> <span class="na">tabTitle</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+  <span class="err">@</span><span class="nx">Input</span><span class="p">()</span> <span class="na">tabTitle</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
 
-  <span class="kd">constructor</span><span class="p">(</span><span class="na">tabs</span><span class="p">:</span><span class="nx">Tabs</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="na">tabs</span><span class="p">:</span><span class="nx">Tabs</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">tabs</span><span class="p">.</span><span class="nx">addTab</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>And we shouldn’t forget that these components need to be declared on our application module:</p>
 
-<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="err">@</span><span class="nx">NgModule</span><span class="p">({</span>
   <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">BrowserModule</span><span class="p">],</span>
   <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">Tab</span><span class="p">,</span> <span class="nx">Tabs</span><span class="p">,</span> <span class="nx">AppComponent</span><span class="p">],</span>
   <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></figure>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">AppModule</span> <span class="p">{}</span></code></pre></div>
 
 <h2 id="where-to-go-from-here">Where to go from here</h2>
 
@@ -394,7 +396,7 @@ Using that instance, we can simply call the <code class="highlighter-rouge">addT
 <p>Angular is so awesome that there is not just one way how to do things!</p>
 
 <p>We can take a totally different approach how to implement our simple tabs ( which isn’t so easily possible in Angular 1.x ),
-leveraging special Angular <code class="highlighter-rouge">@ContentChildren</code> property decorator with <code class="highlighter-rouge">QueryList</code> type and <code class="highlighter-rouge">AfterContentInit</code> life cycle hook.
+leveraging special Angular <code>@ContentChildren</code> property decorator with <code>QueryList</code> type and <code>AfterContentInit</code> life cycle hook.
 Those are more advanced concepts, which are covered in more details by <a href="https://twitter.com/juristr">Juri Strumpflohner</a> in <a href="http://juristr.com/blog/2016/02/learning-ng2-creating-tab-component">his follow-up article</a>.</p>
 
 <p>If you’re just curious what it looks like, check out the demos below!</p>
@@ -418,24 +420,24 @@ Those are more advanced concepts, which are covered in more details by <a href="
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -499,17 +501,6 @@ Those are more advanced concepts, which are covered in more details by <a href="
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -559,6 +550,17 @@ Those are more advanced concepts, which are covered in more details by <a href="
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom themes with Angular Material</h3>
+                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

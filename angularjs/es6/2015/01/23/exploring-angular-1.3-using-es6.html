@@ -81,12 +81,14 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>One of the most exciting upcoming changes for Angular 2.0 is that it’s entirely written in ES2015 - the next version of JavaScript. There’s no need to wait until Angular 2.0 though. You can start writing your Angular apps with ES2015 today - even with Angular 1.x.</p>
 
@@ -96,15 +98,15 @@
 
 <p>Modules are one of the most exciting features of ES2015. They enable us to decouple our code easier than ever before. The concept isn’t all that new as most programming languages have some kind of module system. Using JavaScript, your best bet so far was to use one of the community projects such as <a href="http://requirejs.org/">requirejs</a>. With ES2015 a proper module standard is coming right into your browser, natively. With modules code can be structured to explicitly import all dependencies that are used in a file. Before a module can imported it first needs to be exported as a module.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">MainController</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">MainController</span> <span class="p">()</span> <span class="p">{</span>
   
 <span class="p">}</span>
 
-<span class="k">export</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span></code></pre></div>
 
 <p>Once a module has been exported it can easily be imported from another file.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./path/to/MainController'</span><span class="p">;</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./path/to/MainController'</span><span class="p">;</span></code></pre></div>
 
 <h2 id="inheritance">Inheritance</h2>
 
@@ -114,35 +116,35 @@
 
 <p>With ES2015 we don’t need to rely on such non standard abstractions anymore. ES2015 defines a few new keywords and syntax additions that allow for easier inheritance. What’s important to know is that it’s really only sugar on top of the good old prototypal inheritance model that we’ve been using for years.</p>
 
-<p>To use inheritance we need to make use of the new <code class="highlighter-rouge">class</code> keyword.</p>
+<p>To use inheritance we need to make use of the new <code>class</code> keyword.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">class</span> <span class="nx">Vehicle</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">class</span> <span class="nx">Vehicle</span> <span class="p">{</span>
 
-    <span class="kd">constructor</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">constructor</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kd">get</span> <span class="nx">name</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">get</span> <span class="nx">name</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_name</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">export</span> <span class="p">{</span> <span class="nx">Vehicle</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">Vehicle</span> <span class="p">}</span></code></pre></div>
 
-<p>In the example above we construct a simple <code class="highlighter-rouge">Vehicle</code> class which isn’t different from a simple constructor function in ES5. Where the new class syntax really shines is when you want to inherit from another constructor function. Let’s write a <code class="highlighter-rouge">Car</code> class that inherits from <code class="highlighter-rouge">Vehicle</code>.</p>
+<p>In the example above we construct a simple <code>Vehicle</code> class which isn’t different from a simple constructor function in ES5. Where the new class syntax really shines is when you want to inherit from another constructor function. Let’s write a <code>Car</code> class that inherits from <code>Vehicle</code>.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">Vehicle</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./Vehicle'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Vehicle</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./Vehicle'</span><span class="p">;</span>
 
-<span class="kd">class</span> <span class="nx">Car</span> <span class="kd">extends</span> <span class="nx">Vehicle</span> <span class="p">{</span>
+<span class="kr">class</span> <span class="nx">Car</span> <span class="kr">extends</span> <span class="nx">Vehicle</span> <span class="p">{</span>
 
     <span class="nx">move</span> <span class="p">()</span> <span class="p">{</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">' is spinning wheels...'</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">export</span> <span class="p">{</span> <span class="nx">Car</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">Car</span> <span class="p">}</span></code></pre></div>
 
-<p>Seen that? We import <code class="highlighter-rouge">Vehicle</code> as a module and extend it by using the new <code class="highlighter-rouge">extends</code> keyword. We could have done the same with ES5 but it’s much more boilerplate code. Let’s forget about the nice module seperation for a moment and put both <code class="highlighter-rouge">Vehicle</code> and <code class="highlighter-rouge">Car</code> into one file for the ES5 version.</p>
+<p>Seen that? We import <code>Vehicle</code> as a module and extend it by using the new <code>extends</code> keyword. We could have done the same with ES5 but it’s much more boilerplate code. Let’s forget about the nice module seperation for a moment and put both <code>Vehicle</code> and <code>Car</code> into one file for the ES5 version.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//Vehicle</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">//Vehicle</span>
 <span class="kd">function</span> <span class="nx">Vehicle</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
 <span class="p">}</span>
@@ -159,11 +161,11 @@
 <span class="p">}</span>
 
 <span class="nx">Car</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">Vehicle</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
-<span class="nx">Car</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="kd">constructor</span> <span class="o">=</span> <span class="nx">Car</span><span class="p">;</span>
+<span class="nx">Car</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Car</span><span class="p">;</span>
 
 <span class="nx">Car</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">move</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">' is spinning wheels...'</span><span class="p">);</span>
-<span class="p">}</span></code></pre></figure>
+<span class="p">}</span></code></pre></div>
 
 <p>Oh wow, things really got a lot easier with ES2015, no?</p>
 
@@ -173,9 +175,9 @@
 
 <p>Let’s first look at ES2015 modules in the context of Angular 1.x.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">class</span> <span class="nx">MainController</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">class</span> <span class="nx">MainController</span> <span class="p">{</span>
 
-    <span class="kd">constructor</span><span class="p">(</span><span class="nx">searchService</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">constructor</span><span class="p">(</span><span class="nx">searchService</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">searchService</span> <span class="o">=</span> <span class="nx">searchService</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -187,7 +189,7 @@
             <span class="p">});</span>
     <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">export</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span></code></pre></div>
 
 <p>Notice something? There’s no Angular in our controller definition at all. It’s plain old JavaScript code that happens to be in control of something.</p>
 
@@ -195,23 +197,23 @@
 
 <p>At some point though, we need to make Angular aware of the controller. Otherwise it just won’t play any role in our Angular application.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./MainController'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">SearchService</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./SearchService'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">MainController</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./MainController'</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">SearchService</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./SearchService'</span><span class="p">;</span>
 
 <span class="nx">angular</span>
     <span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'app'</span><span class="p">,</span> <span class="p">[])</span>
     <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'mainController'</span><span class="p">,</span> <span class="nx">MainController</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'searchService'</span><span class="p">,</span> <span class="nx">SearchService</span><span class="p">);</span></code></pre></figure>
+    <span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">'searchService'</span><span class="p">,</span> <span class="nx">SearchService</span><span class="p">);</span></code></pre></div>
 
-<p>We simply import the <code class="highlighter-rouge">MainController</code> in our <code class="highlighter-rouge">app.js</code> file that we use to bootstrap our application. In order to register it as a controller, we pass it on to Angular’s <code class="highlighter-rouge">controller()</code> method.</p>
+<p>We simply import the <code>MainController</code> in our <code>app.js</code> file that we use to bootstrap our application. In order to register it as a controller, we pass it on to Angular’s <code>controller()</code> method.</p>
 
 <h2 id="angular-and-es2015-inheritance">Angular and ES2015 inheritance</h2>
 
-<p>The good news is, you already know how to use it! We’ve already seen how easy inheritance becomes with ES2015 in our earlier example. Let’s create a <code class="highlighter-rouge">PageController</code> and a <code class="highlighter-rouge">ProductPageController</code> whereas the <code class="highlighter-rouge">PageController</code> simply defines a <code class="highlighter-rouge">title()</code> function that should be available in all controllers that derive from <code class="highlighter-rouge">PageController</code>. All it does is that it prepends the string <code class="highlighter-rouge">Title: </code> to the instance variable <code class="highlighter-rouge">_title</code>.</p>
+<p>The good news is, you already know how to use it! We’ve already seen how easy inheritance becomes with ES2015 in our earlier example. Let’s create a <code>PageController</code> and a <code>ProductPageController</code> whereas the <code>PageController</code> simply defines a <code>title()</code> function that should be available in all controllers that derive from <code>PageController</code>. All it does is that it prepends the string <code>Title: </code> to the instance variable <code>_title</code>.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">class</span> <span class="nx">PageController</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">class</span> <span class="nx">PageController</span> <span class="p">{</span>
 
-    <span class="kd">constructor</span><span class="p">(</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">constructor</span><span class="p">(</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_title</span> <span class="o">=</span> <span class="nx">title</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -219,30 +221,30 @@
         <span class="k">return</span> <span class="s1">'Title: '</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">_title</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">export</span> <span class="p">{</span> <span class="nx">PageController</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">PageController</span> <span class="p">}</span></code></pre></div>
 
-<p>While it’s possible to just set <code class="highlighter-rouge">_title</code> to a string from within the constructor of our <code class="highlighter-rouge">ProductPageController</code> we are aiming for the cleaner way and instead pass it to the constructor of our <code class="highlighter-rouge">PageController</code> by calling <code class="highlighter-rouge">super('ES2015 inheritance with Angular');</code></p>
+<p>While it’s possible to just set <code>_title</code> to a string from within the constructor of our <code>ProductPageController</code> we are aiming for the cleaner way and instead pass it to the constructor of our <code>PageController</code> by calling <code>super('ES2015 inheritance with Angular');</code></p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">PageController</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./PageController'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">PageController</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./PageController'</span><span class="p">;</span>
 
-<span class="kd">class</span> <span class="nx">ProductPageController</span> <span class="kd">extends</span> <span class="nx">PageController</span> <span class="p">{</span>
+<span class="kr">class</span> <span class="nx">ProductPageController</span> <span class="kr">extends</span> <span class="nx">PageController</span> <span class="p">{</span>
 
-    <span class="kd">constructor</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">super</span><span class="p">(</span><span class="s1">'ES2015 inheritance with Angular'</span><span class="p">);</span>
+    <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kr">super</span><span class="p">(</span><span class="s1">'ES2015 inheritance with Angular'</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">export</span> <span class="p">{</span> <span class="nx">ProductPageController</span> <span class="p">}</span></code></pre></figure>
+<span class="kr">export</span> <span class="p">{</span> <span class="nx">ProductPageController</span> <span class="p">}</span></code></pre></div>
 
-<p>That’s probably not the most exciting example in the world but it works! All there’s left to do is to angularize the <code class="highlighter-rouge">ProductPageController</code>.</p>
+<p>That’s probably not the most exciting example in the world but it works! All there’s left to do is to angularize the <code>ProductPageController</code>.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="p">{</span> <span class="nx">ProductPageController</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./ProductPageController'</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ProductPageController</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'./ProductPageController'</span><span class="p">;</span>
 
 <span class="nx">angular</span>
     <span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'app'</span><span class="p">,</span> <span class="p">[])</span>
-    <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ProductPageController'</span><span class="p">,</span> <span class="nx">ProductPageController</span><span class="p">);</span></code></pre></figure>
+    <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ProductPageController'</span><span class="p">,</span> <span class="nx">ProductPageController</span><span class="p">);</span></code></pre></div>
 
-<p>Please note that we don’t have to do the same with the <code class="highlighter-rouge">PageController</code> as long as it’s not <em>explicitly</em> used as an Angular controller. In our case, it’s only used <em>implicitly</em> by the <code class="highlighter-rouge">ProductPageController</code>.</p>
+<p>Please note that we don’t have to do the same with the <code>PageController</code> as long as it’s not <em>explicitly</em> used as an Angular controller. In our case, it’s only used <em>implicitly</em> by the <code>ProductPageController</code>.</p>
 
 <p><strong>Edit:</strong> Evgeniy <a href="https://plus.google.com/+PascalPrecht/posts/Jre92W8GnJQ">asked on G+</a>:</p>
 
@@ -250,15 +252,15 @@
   <p>“how can be ‘title’ argument in constructor of next controller be legit? It doesn’t look like the name of service”.﻿</p>
 </blockquote>
 
-<p><em>The parameters in our constructor <strong>do</strong> work together with Angulars DI. In fact, the constructor is not different from a traditional constructor function. But how can <code class="highlighter-rouge">title</code> be legit then? The reason for that to work is that the <code class="highlighter-rouge">title</code> parameter is only used by the <code class="highlighter-rouge">PageController</code> which isn’t registered with <code class="highlighter-rouge">myModule.controller(fn)</code>. The <code class="highlighter-rouge">PageController</code> is only used implicitly by the <code class="highlighter-rouge">ProductPageController</code>.</em></p>
+<p><em>The parameters in our constructor <strong>do</strong> work together with Angulars DI. In fact, the constructor is not different from a traditional constructor function. But how can <code>title</code> be legit then? The reason for that to work is that the <code>title</code> parameter is only used by the <code>PageController</code> which isn’t registered with <code>myModule.controller(fn)</code>. The <code>PageController</code> is only used implicitly by the <code>ProductPageController</code>.</em></p>
 
-<p>Easy isn’t it? Can we use that for services, too? Yes, we can but there’s a small gotcha. It doesn’t work with services that are defined using the <code class="highlighter-rouge">myModule.factory(fn)</code> API but only for those that are defined using <code class="highlighter-rouge">myModule.service(fn)</code>. That’s because services that are defined using the <code class="highlighter-rouge">myModule.service(fn)</code> API are instantiated with the <code class="highlighter-rouge">new</code> operator under the hood whereas the others are not. For inheritance to work it’s important that our constructor function is instantiated with <code class="highlighter-rouge">new</code> though.</p>
+<p>Easy isn’t it? Can we use that for services, too? Yes, we can but there’s a small gotcha. It doesn’t work with services that are defined using the <code>myModule.factory(fn)</code> API but only for those that are defined using <code>myModule.service(fn)</code>. That’s because services that are defined using the <code>myModule.service(fn)</code> API are instantiated with the <code>new</code> operator under the hood whereas the others are not. For inheritance to work it’s important that our constructor function is instantiated with <code>new</code> though.</p>
 
 <p>There’s one more gotcha <a href="https://plus.google.com/+PascalPrecht/posts/Jre92W8GnJQ">pointed out by Evgeniy</a>: When we use ES2015 classes we lose the ability to use explicit dependency annotation with the inline array notation.</p>
 
-<p>In order to preserve dependency annotations for minification, we need to use the <code class="highlighter-rouge">$inject</code> property notation now:</p>
+<p>In order to preserve dependency annotations for minification, we need to use the <code>$inject</code> property notation now:</p>
 
-<p><code class="highlighter-rouge">MainController.$inject = ['SearchService'];</code></p>
+<p><code>MainController.$inject = ['SearchService'];</code></p>
 
 <h2 id="getting-started-with-our-boilerplate">Getting started with our boilerplate</h2>
 
@@ -270,24 +272,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 

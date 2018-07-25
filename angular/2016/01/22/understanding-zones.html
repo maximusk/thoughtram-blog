@@ -81,12 +81,14 @@
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>At NG-Conf 2014, <a href="http://twitter.com/briantford">Brian</a> gave an excellent <a href="https://www.youtube.com/watch?v=3IqtmUscE_U">talk on zones</a> and how they can change the way we deal with asynchronous code. If you haven’t watched this talk yet, give it a shot, it’s just ~15 minutes long. APIs might be different nowadays, but the semantics and underlying concepts are the same. In this article we’d like to dive a bit deeper into how zones work.</p>
 
@@ -107,17 +109,17 @@
 
 <p>In order to understand the execution context part of it, we need to get a better picture of what the problem is that zones are trying to solve. Let’s first take a look at the following JavaScript code.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">foo</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">foo</span><span class="p">();</span>
 <span class="nx">bar</span><span class="p">();</span>
 <span class="nx">baz</span><span class="p">();</span>
 
 <span class="kd">function</span> <span class="nx">foo</span><span class="p">()</span> <span class="p">{...}</span>
 <span class="kd">function</span> <span class="nx">bar</span><span class="p">()</span> <span class="p">{...}</span>
-<span class="kd">function</span> <span class="nx">baz</span><span class="p">()</span> <span class="p">{...}</span></code></pre></figure>
+<span class="kd">function</span> <span class="nx">baz</span><span class="p">()</span> <span class="p">{...}</span></code></pre></div>
 
-<p>Nothing special going on here. We have three functions <code class="highlighter-rouge">foo</code>, <code class="highlighter-rouge">bar</code> and <code class="highlighter-rouge">baz</code> that are executed in sequence. Let’s say we want to measure the execution time of this code. We could easily extend the snippet with some profiling bits like this:</p>
+<p>Nothing special going on here. We have three functions <code>foo</code>, <code>bar</code> and <code>baz</code> that are executed in sequence. Let’s say we want to measure the execution time of this code. We could easily extend the snippet with some profiling bits like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">start</span><span class="p">,</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">start</span><span class="p">,</span>
     <span class="nx">time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="nx">timer</span> <span class="o">=</span> <span class="nx">performance</span> <span class="p">?</span> <span class="nx">performance</span><span class="p">.</span><span class="nx">now</span> <span class="p">:</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">;</span>
 
@@ -129,11 +131,11 @@
 <span class="c1">// stop timer</span>
 <span class="nx">time</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">;</span>
 <span class="c1">// log time in ms</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">time</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">+</span> <span class="s1">'ms'</span><span class="p">);</span></code></pre></figure>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">time</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">+</span> <span class="s1">'ms'</span><span class="p">);</span></code></pre></div>
 
 <p>However, often we have asynchronous work todo. This can be an AJAX request to fetch some data from a remote server, or a maybe we just want to schedule some work for the next frame. Whatever this asynchronous work is, it happens, as the name claims, asynchronously. Which basically means, those operations won’t be considered by our profiler. Take a look at this snippet:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">doSomething</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">doSomething</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Async task'</span><span class="p">);</span>
 <span class="p">}</span>
 
@@ -144,11 +146,11 @@
 <span class="nx">bar</span><span class="p">();</span>
 <span class="nx">baz</span><span class="p">();</span>
 <span class="c1">// stop timer</span>
-<span class="nx">time</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">;</span></code></pre></figure>
+<span class="nx">time</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">;</span></code></pre></div>
 
 <p>We extended the code sequence with another operation, but this time it’s asynchronous. What effect does that have on our profiling? Well, we’ll see that there’s not such a big difference.</p>
 
-<p>There is in fact one more operation, so it takes slightly longer to execute this code, however, the actual execution time of when the <code class="highlighter-rouge">setTimeout()</code> call returns is not part of the overall profiling. This is because asynchronous operations are added to the browser’s <strong>event queue</strong>, which eventually gets cleaned up by the <strong>event loop</strong> once there’s time for that.</p>
+<p>There is in fact one more operation, so it takes slightly longer to execute this code, however, the actual execution time of when the <code>setTimeout()</code> call returns is not part of the overall profiling. This is because asynchronous operations are added to the browser’s <strong>event queue</strong>, which eventually gets cleaned up by the <strong>event loop</strong> once there’s time for that.</p>
 
 <p>If this is entirely new to you, you might want to watch this <a href="https://www.youtube.com/watch?v=8aGhZQkoFbQ">great talk</a> on how the browser event loops works.</p>
 
@@ -160,37 +162,37 @@
 
 <p>Zones are actually a language feature in Dart. However, since Dart also just compiles to JavaScript, we can implement the same functionality in JavaScript too. Brian (the guy I’ve mentioned earlier) has done exactly that. He created <a href="https://github.com/angular/zone.js">zone.js</a> as a port of Zones to JavaScript, which is also a dependency of Angular. Before we take a look at how we can profile our code samples with Zones, let’s first discuss how zones are created.</p>
 
-<p>Once we’ve embedded zone.js into our website, we have access to the global <code class="highlighter-rouge">zone</code> object. <code class="highlighter-rouge">zone</code> comes with a method <code class="highlighter-rouge">run()</code> that takes a function which should be executed in that zone. In other words, if we’d like to run our code in a zone, we can already do it likes this:</p>
+<p>Once we’ve embedded zone.js into our website, we have access to the global <code>zone</code> object. <code>zone</code> comes with a method <code>run()</code> that takes a function which should be executed in that zone. In other words, if we’d like to run our code in a zone, we can already do it likes this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">foo</span><span class="p">();</span>
   <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">doSomething</span><span class="p">,</span> <span class="mi">2000</span><span class="p">);</span>
   <span class="nx">bar</span><span class="p">();</span>
   <span class="nx">baz</span><span class="p">();</span>
 <span class="p">}</span>
 
-<span class="nx">zone</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">main</span><span class="p">);</span></code></pre></figure>
+<span class="nx">zone</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">main</span><span class="p">);</span></code></pre></div>
 
 <p>Okay cool. But what’s the point of this? Well… currently there’s in fact no difference in the outcome, except that we had to write slightly more code. However, at this point, our code runs in a zone (another execution context) and as we learned earlier, Zones can perform an operation each time our code enters or exits a zone.</p>
 
-<p>In order to set up these hooks, we need to <strong>fork</strong> the current zone. Forking a zone returns a new zone, which basically inherits from the “parent” zone. However, forking a zone also allows us to extend the returning zone’s behaviour. We can fork a zone by calling <code class="highlighter-rouge">.fork()</code> on the <code class="highlighter-rouge">zone</code> object. Here’s what that could look like:</p>
+<p>In order to set up these hooks, we need to <strong>fork</strong> the current zone. Forking a zone returns a new zone, which basically inherits from the “parent” zone. However, forking a zone also allows us to extend the returning zone’s behaviour. We can fork a zone by calling <code>.fork()</code> on the <code>zone</code> object. Here’s what that could look like:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">myZone</span> <span class="o">=</span> <span class="nx">zone</span><span class="p">.</span><span class="nx">fork</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">myZone</span> <span class="o">=</span> <span class="nx">zone</span><span class="p">.</span><span class="nx">fork</span><span class="p">();</span>
 
-<span class="nx">myZone</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">main</span><span class="p">);</span></code></pre></figure>
+<span class="nx">myZone</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">main</span><span class="p">);</span></code></pre></div>
 
-<p>This really just gives us a new zone with the same power of the original zone (which we haven’t discussed just yet). Let’s try out these hooks we’ve mentioned and extend our new zone. Hooks are defined using a <code class="highlighter-rouge">ZoneSpecification</code> that we can pass to <code class="highlighter-rouge">fork()</code>. We can take advantage of the following hooks:</p>
+<p>This really just gives us a new zone with the same power of the original zone (which we haven’t discussed just yet). Let’s try out these hooks we’ve mentioned and extend our new zone. Hooks are defined using a <code>ZoneSpecification</code> that we can pass to <code>fork()</code>. We can take advantage of the following hooks:</p>
 
 <ul>
   <li><strong>onZoneCreated</strong> - Runs when zone is forked</li>
-  <li><strong>beforeTask</strong> - Runs before a function called with <code class="highlighter-rouge">zone.run</code> is executed</li>
+  <li><strong>beforeTask</strong> - Runs before a function called with <code>zone.run</code> is executed</li>
   <li><strong>afterTask</strong> - Runs after a function in the zone runs</li>
-  <li><strong>onError</strong> - Runs when a function passed to <code class="highlighter-rouge">zone.run</code> will throw</li>
+  <li><strong>onError</strong> - Runs when a function passed to <code>zone.run</code> will throw</li>
 </ul>
 
 <p>Here’s our code sample with an extended zone that logs before and after each task is executed:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">myZoneSpec</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">myZoneSpec</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">beforeTask</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Before task'</span><span class="p">);</span>
   <span class="p">},</span>
@@ -207,38 +209,38 @@
 <span class="c1">// After task</span>
 <span class="c1">// Before task</span>
 <span class="c1">// Async task</span>
-<span class="c1">// After task</span></code></pre></figure>
+<span class="c1">// After task</span></code></pre></div>
 
-<p>Oh wait! What’s that? Both hooks are executed twice? Why is that? Sure, we’ve learned that <code class="highlighter-rouge">zone.run</code> is obviously considered a “task” which is why the first two messages are logged. But it seems like the <code class="highlighter-rouge">setTimeout()</code> call is treated as a task too. How is that possible?</p>
+<p>Oh wait! What’s that? Both hooks are executed twice? Why is that? Sure, we’ve learned that <code>zone.run</code> is obviously considered a “task” which is why the first two messages are logged. But it seems like the <code>setTimeout()</code> call is treated as a task too. How is that possible?</p>
 
 <h2 id="monkey-patched-hooks">Monkey-patched Hooks</h2>
 
-<p>It turns out that there are a few other hooks. In fact, those aren’t just hooks, but monkey-patched methods on the global scope. As soon as we embed <code class="highlighter-rouge">zone.js</code> in our site, pretty much all methods that cause asynchronous operations are monkey-patched to run in a new zone.</p>
+<p>It turns out that there are a few other hooks. In fact, those aren’t just hooks, but monkey-patched methods on the global scope. As soon as we embed <code>zone.js</code> in our site, pretty much all methods that cause asynchronous operations are monkey-patched to run in a new zone.</p>
 
-<p>For example, when we call <code class="highlighter-rouge">setTimeout()</code> we actually call <code class="highlighter-rouge">Zone.setTimeout()</code>, which in turn creates a new zone using <code class="highlighter-rouge">zone.fork()</code> in which the given handler is executed. And that’s why our hooks are executed as well, because the forked zone in which the handler will be executed, simply inherits from the parent zone.</p>
+<p>For example, when we call <code>setTimeout()</code> we actually call <code>Zone.setTimeout()</code>, which in turn creates a new zone using <code>zone.fork()</code> in which the given handler is executed. And that’s why our hooks are executed as well, because the forked zone in which the handler will be executed, simply inherits from the parent zone.</p>
 
-<p>There are some other methods that <code class="highlighter-rouge">zone.js</code> overrides by default and provides us as hooks:</p>
+<p>There are some other methods that <code>zone.js</code> overrides by default and provides us as hooks:</p>
 
 <ul>
-  <li><code class="highlighter-rouge">Zone.setInterval()</code></li>
-  <li><code class="highlighter-rouge">Zone.alert()</code></li>
-  <li><code class="highlighter-rouge">Zone.prompt()</code></li>
-  <li><code class="highlighter-rouge">Zone.requestAnimationFrame()</code></li>
-  <li><code class="highlighter-rouge">Zone.addEventListener()</code></li>
-  <li><code class="highlighter-rouge">Zone.removeEventListener()</code></li>
+  <li><code>Zone.setInterval()</code></li>
+  <li><code>Zone.alert()</code></li>
+  <li><code>Zone.prompt()</code></li>
+  <li><code>Zone.requestAnimationFrame()</code></li>
+  <li><code>Zone.addEventListener()</code></li>
+  <li><code>Zone.removeEventListener()</code></li>
 </ul>
 
-<p>We might wonder why methods like <code class="highlighter-rouge">alert()</code> and <code class="highlighter-rouge">prompt()</code> are patched as well. As mentioned earlier, those patched methods are hooks at the same time. We can change and extend them by forking a zone exactly the same way we did with <code class="highlighter-rouge">beforeTask</code> and <code class="highlighter-rouge">afterTask</code>. This turns out to be super powerful, because we can intercept calls to <code class="highlighter-rouge">alert()</code> and <code class="highlighter-rouge">prompt()</code> and change their behaviour when we write tests.</p>
+<p>We might wonder why methods like <code>alert()</code> and <code>prompt()</code> are patched as well. As mentioned earlier, those patched methods are hooks at the same time. We can change and extend them by forking a zone exactly the same way we did with <code>beforeTask</code> and <code>afterTask</code>. This turns out to be super powerful, because we can intercept calls to <code>alert()</code> and <code>prompt()</code> and change their behaviour when we write tests.</p>
 
-<p><code class="highlighter-rouge">zone.js</code> comes with a tiny DSL that allows you to augment zone hooks. The project’s <a href="https://github.com/angular/zone.js#augmenting-a-zones-hook">readme</a> is probably the best place to take a look at, if you’re interested in this particular thing.</p>
+<p><code>zone.js</code> comes with a tiny DSL that allows you to augment zone hooks. The project’s <a href="https://github.com/angular/zone.js#augmenting-a-zones-hook">readme</a> is probably the best place to take a look at, if you’re interested in this particular thing.</p>
 
 <h2 id="creating-a-profiling-zone">Creating a Profiling Zone</h2>
 
-<p>Our original problem was that we couldn’t capture the execution time of asynchronous tasks inside our code. Now with Zones and the provided APIs we’ve learned about, we have actually everything we need to create a zone that profiles the CPU time of our asynchronous tasks. Luckily, such an implementation of a profiling zone is already available as an example in the <code class="highlighter-rouge">zone.js</code> repository and you can find it <a href="https://github.com/angular/zone.js/tree/master/example/profiling.html">here</a>.</p>
+<p>Our original problem was that we couldn’t capture the execution time of asynchronous tasks inside our code. Now with Zones and the provided APIs we’ve learned about, we have actually everything we need to create a zone that profiles the CPU time of our asynchronous tasks. Luckily, such an implementation of a profiling zone is already available as an example in the <code>zone.js</code> repository and you can find it <a href="https://github.com/angular/zone.js/tree/master/example/profiling.html">here</a>.</p>
 
 <p>Here’s what it looks like:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">profilingZone</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">profilingZone</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
       <span class="nx">timer</span> <span class="o">=</span> <span class="nx">performance</span> <span class="p">?</span>
                   <span class="nx">performance</span><span class="p">.</span><span class="nx">now</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">performance</span><span class="p">)</span> <span class="p">:</span>
@@ -257,20 +259,20 @@
       <span class="nx">time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">};</span>
-<span class="p">}());</span></code></pre></figure>
+<span class="p">}());</span></code></pre></div>
 
-<p>Pretty much the same code as the one we started off with at the beginning of this article, just wrapped in a zone specification. The example also adds a <code class="highlighter-rouge">.time()</code> and <code class="highlighter-rouge">.reset()</code> method to the zone, which can be invoked on the zone object like this:</p>
+<p>Pretty much the same code as the one we started off with at the beginning of this article, just wrapped in a zone specification. The example also adds a <code>.time()</code> and <code>.reset()</code> method to the zone, which can be invoked on the zone object like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">zone</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">zone</span>
   <span class="p">.</span><span class="nx">fork</span><span class="p">(</span><span class="nx">profilingZone</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">fork</span><span class="p">({</span>
     <span class="s1">'+afterTask'</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Took: '</span> <span class="o">+</span> <span class="nx">zone</span><span class="p">.</span><span class="nx">time</span><span class="p">());</span>
     <span class="p">}</span>
   <span class="p">})</span>
-  <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">main</span><span class="p">);</span></code></pre></figure>
+  <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">main</span><span class="p">);</span></code></pre></div>
 
-<p>The <code class="highlighter-rouge">+</code> syntax is a shorthand DSL that allows us to extend the parent zone’s hook. Neat ha?</p>
+<p>The <code>+</code> syntax is a shorthand DSL that allows us to extend the parent zone’s hook. Neat ha?</p>
 
 <p>There’s also a <a href="https://github.com/angular/zone.js/tree/master/lib/zones/long-stack-trace.ts">LongStackTraceZone</a> we can take advantage of and even more <a href="https://github.com/angular/zone.js/tree/master/example/profiling.html">examples</a>. Make sure to check those out too!</p>
 
@@ -282,24 +284,24 @@
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
@@ -363,17 +365,6 @@
         
           
           <li>
-            <a class="thtrm-article-card" href="/announcements/2018/04/12/rxjs-master-class-and-courseware-updates.html" title="RxJS Master Class and courseware updates">
-              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/rxjs-master-class-and-courseware-updates.jpg);"></div>
-              <div class="thtrm-article-card-content ">
-                <h3>RxJS Master Class and courseware updates</h3>
-                <p>If you've been following us for a while, you're quite aware that we're always striving to provide up-to-date and high-quality...</p>
-              </div>
-            </a>
-          </li>
-        
-          
-          <li>
             <a class="thtrm-article-card" href="/angular/2018/03/05/advanced-caching-with-rxjs.html" title="Advanced caching with RxJS">
               <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/advanced_caching.jpg);"></div>
               <div class="thtrm-article-card-content ">
@@ -423,6 +414,17 @@
               <div class="thtrm-article-card-content ">
                 <h3>A web animations deep dive with Angular</h3>
                 <p>Angular comes with a built-in animation system that lets us create powerful animations based on the Web Animations API. In...</p>
+              </div>
+            </a>
+          </li>
+        
+          
+          <li>
+            <a class="thtrm-article-card" href="/angular/2017/05/23/custom-themes-with-angular-material.html" title="Custom themes with Angular Material">
+              <div class="thtrm-article-card-image" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.01) 2%,#29383E 100%),url(/images/banner/custom-themes-with-angular-material.jpg);"></div>
+              <div class="thtrm-article-card-content ">
+                <h3>Custom themes with Angular Material</h3>
+                <p>Angular Material offers great theming capabilities for both, built-in and custom themes. In this article we'll explore how to make...</p>
               </div>
             </a>
           </li>

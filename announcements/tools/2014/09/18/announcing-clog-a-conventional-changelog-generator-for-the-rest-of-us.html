@@ -74,36 +74,38 @@
         <hgroup class="thtrm-banner-container">
           <div class="thtrm-constraint thtrm-constraint--slim">
             <h2 class="thtrm-banner-text">clog - A conventional changelog generator for the rest of us</h2>
-            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Sep 18, 2014<br>5 minute read</span>
+            <span>by <a href="http://twitter.com/" title="Christoph Burgdorf on Twitter">Christoph Burgdorf</a> on Sep 18, 2014<br>4 minute read</span>
 
           </div>
         </hgroup>
       </div>
       <div class="thtrm-constraint thtrm-constraint--slim">
 
-        <div class="thtrm-article">
-          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
-<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
+        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
+  <img width="100" src="/images/angular2-shield-inverse.svg">
+  <h3 class="thtrm-section-headline">Angular Master Class in Las Palmas</h3>
+  <p class="thtrm-section-text">Join our upcoming public training!</p>
+  <a href="https://www.codecamps.com/aiff4/" title="Angular Master Class in Las Palmas" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
 </section>
 
-
+        <div class="thtrm-article">
 
           <p>At thoughtram we teach people how to master Git. We also teach them how to maintain a semantic history. That’s a history where each commit groups a logical code change. Like a feature or a bugfix. You can go even further and follow a commit message convention to wrap up valuable meta data in the commit message. Once you follow a commit message convention, you can easily generate a nice changelog without any manual work.</p>
 
 <p>Let’s take a look at such a commit message.</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh">feat<span class="o">(</span>ngInclude<span class="o">)</span>: add template url parameter to events
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">feat<span class="o">(</span>ngInclude<span class="o">)</span>: add template url parameter to events
 
 The <span class="sb">`</span>src<span class="sb">`</span> <span class="o">(</span>i.e. the url of the template to load<span class="o">)</span> is now provided to the
 <span class="sb">`</span><span class="nv">$includeContentRequested</span><span class="sb">`</span>, <span class="sb">`</span><span class="nv">$includeContentLoaded</span><span class="sb">`</span> and <span class="sb">`</span><span class="nv">$includeContentError</span><span class="sb">`</span>
 events.
 
 Closes <span class="c">#8453</span>
-Closes <span class="c">#8454</span></code></pre></figure>
+Closes <span class="c">#8454</span></code></pre></div>
 
 <p>If you look closely, you might notice a pattern behind this commit message. Let’s annotate it to make things more clear.</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh">                      component        commit title
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">component        commit title
         commit <span class="nb">type</span>       /                /      
                 <span class="se">\ </span>       |                |
                  feat<span class="o">(</span>ngInclude<span class="o">)</span>: add template url parameter to events
@@ -113,9 +115,9 @@ Closes <span class="c">#8454</span></code></pre></figure>
                  events.
 
  referenced  -&gt;  Closes #8453
- issues          Closes #8454</span></code></pre></figure>
+ issues          Closes #8454</span></code></pre></div>
 
-<p>Notice how this commit message preserves valuable meta data among the plain message. Namely the <code class="highlighter-rouge">commit type</code> that can either be <code class="highlighter-rouge">feat</code>, <code class="highlighter-rouge">fix</code>, <code class="highlighter-rouge">docs</code>, <code class="highlighter-rouge">style</code>, <code class="highlighter-rouge">refactor</code>, <code class="highlighter-rouge">test</code> or <code class="highlighter-rouge">chore</code> to indicate the <em>type</em> of the change. What follows is the name of the <em>component</em> that was changed, wrapped in parenthesis. It also contains a short title and an optional body that must have a preceding blank line.</p>
+<p>Notice how this commit message preserves valuable meta data among the plain message. Namely the <code>commit type</code> that can either be <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>style</code>, <code>refactor</code>, <code>test</code> or <code>chore</code> to indicate the <em>type</em> of the change. What follows is the name of the <em>component</em> that was changed, wrapped in parenthesis. It also contains a short title and an optional body that must have a preceding blank line.</p>
 
 <p>References to related issues may follow after another blank line.</p>
 
@@ -127,23 +129,23 @@ Closes <span class="c">#8454</span></code></pre></figure>
 
 <h2 id="hello-clog">Hello clog!</h2>
 
-<p>We want changelog generation to be usable for everyone with the most minimal footprint possible. We wanted something that is aligned with the UNIX philosophy of having a small command line tool just like <code class="highlighter-rouge">cp</code> or <code class="highlighter-rouge">ls</code>. So what should we do? Write a command line tool in C? Well, almost! We’ve written a command line tool called <a href="https://github.com/thoughtram/clog"><code class="highlighter-rouge">clog</code></a> in <a href="http://www.rust-lang.org/">Rust</a>. Rust is a new language by Mozilla that enables you to write low level code in a high level language. Clog is more or less a straight port of the Node.js based <a href="https://github.com/ajoslin/conventional-changelog">generator</a> by <a href="https://twitter.com/andrewtjoslin">Andy Joslin</a>.</p>
+<p>We want changelog generation to be usable for everyone with the most minimal footprint possible. We wanted something that is aligned with the UNIX philosophy of having a small command line tool just like <code>cp</code> or <code>ls</code>. So what should we do? Write a command line tool in C? Well, almost! We’ve written a command line tool called <a href="https://github.com/thoughtram/clog"><code>clog</code></a> in <a href="http://www.rust-lang.org/">Rust</a>. Rust is a new language by Mozilla that enables you to write low level code in a high level language. Clog is more or less a straight port of the Node.js based <a href="https://github.com/ajoslin/conventional-changelog">generator</a> by <a href="https://twitter.com/andrewtjoslin">Andy Joslin</a>.</p>
 
-<p>clogs usage is quite simple. It follows the POSIX standard. Just invoke it with <code class="highlighter-rouge">clog --help</code> and you’ll get this output.</p>
+<p>clogs usage is quite simple. It follows the POSIX standard. Just invoke it with <code>clog --help</code> and you’ll get this output.</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh">Usage:
-  clog <span class="o">[</span><span class="nt">--repository</span><span class="o">=</span>&lt;<span class="nb">link</span><span class="o">&gt;</span> <span class="nt">--setversion</span><span class="o">=</span>&lt;version&gt; <span class="nt">--subtitle</span><span class="o">=</span>&lt;subtitle&gt; 
-        <span class="nt">--from</span><span class="o">=</span>&lt;from&gt; <span class="nt">--to</span><span class="o">=</span>&lt;to&gt; <span class="nt">--from-latest-tag</span><span class="o">]</span></code></pre></figure>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">Usage:
+  clog <span class="o">[</span>--repository<span class="o">=</span>&lt;link&gt; --setversion<span class="o">=</span>&lt;version&gt; --subtitle<span class="o">=</span>&lt;subtitle&gt; 
+        --from<span class="o">=</span>&lt;from&gt; --to<span class="o">=</span>&lt;to&gt; --from-latest-tag]</code></pre></div>
 
-<p>You can invoke <code class="highlighter-rouge">clog</code> without any parameter to generate a nice changelog for the entire history of your project. Provide the <code class="highlighter-rouge">--repository</code> parameter to set the URL of the github repository to make the changelog include links to the commits on github.</p>
+<p>You can invoke <code>clog</code> without any parameter to generate a nice changelog for the entire history of your project. Provide the <code>--repository</code> parameter to set the URL of the github repository to make the changelog include links to the commits on github.</p>
 
-<p>Usually you don’t want to regenerate the entire changelog but instead prepend only the changelog for every commit that happend between now and the previous version. In order to do that you can just run clog with the <code class="highlighter-rouge">--from-latest-tag</code> parameter. If you know that you want to generate the changelog for a specific range of commits you can just provide the <code class="highlighter-rouge">--from</code> and <code class="highlighter-rouge">--to</code> parameters (e.g. <code class="highlighter-rouge">--from=c667e1e</code> <code class="highlighter-rouge">--to=c7a1f1c</code>).</p>
+<p>Usually you don’t want to regenerate the entire changelog but instead prepend only the changelog for every commit that happend between now and the previous version. In order to do that you can just run clog with the <code>--from-latest-tag</code> parameter. If you know that you want to generate the changelog for a specific range of commits you can just provide the <code>--from</code> and <code>--to</code> parameters (e.g. <code>--from=c667e1e</code> <code>--to=c7a1f1c</code>).</p>
 
-<p>In order to also include a nice header you can provide a version and a subtitle as well (e.g. <code class="highlighter-rouge">--setversion=0.11.0</code> <code class="highlighter-rouge">--subtitle=lame-duck</code>).</p>
+<p>In order to also include a nice header you can provide a version and a subtitle as well (e.g. <code>--setversion=0.11.0</code> <code>--subtitle=lame-duck</code>).</p>
 
 <p>Putting it all together, here is how clog generated clogs latest changelog, it’s clogception!</p>
 
-<p><code class="highlighter-rouge">clog --repository=https://github.com/thoughtram/clog --from-latest-tag --setversion=0.2.0</code></p>
+<p><code>clog --repository=https://github.com/thoughtram/clog --from-latest-tag --setversion=0.2.0</code></p>
 
 <p>clog is a work in progress and there are some things missing (like exposing a C interface). That said, it’s ready to be used if you don’t mind the <a href="https://github.com/thoughtram/clog/issues">missing features</a>.</p>
 
@@ -161,24 +163,24 @@ Closes <span class="c">#8454</span></code></pre></figure>
 
 
 
-        </div>
-
-        <section class="thtrm-ad thtrm-section thtrm-section--is-promo is-sticky">
-  <img width="100" src="/images/angular2-shield-inverse.svg">
-  <h3 class="thtrm-section-headline">Angular Master Class at Shopware</h3>
-  <p class="thtrm-section-text">Join our upcoming public training!</p>
-  <a href="https://amc-shopware.eventbrite.com?aff=blogAd" title="Angular Master Class at Shopware" id="event-cta" class="thtrm-layout-divider-cta">Get a ticket <strong>&rarr;</strong></a>
+        
+          <section class="thtrm-ad thtrm-ad--plain thtrm-ad--border thtrm-ad-transparent thtrm-section thtrm-section--is-promo is-sticky">
+<a href="https://course.machinelabs.ai" title="Order now!" id="event-cta" ><img src="/images/ml-course-ad.png"></a>
 </section>
+
+
+        </div>
 
         <div class="thtrm-subscriber">
   <h3>Get updates on new articles and trainings.</h3>
-  <p>Join over 1400 other developers who get our content first.</p>
+  <p>Join over 2400 other developers who get our content first.</p>
   <form action="//thoughtram.us8.list-manage.com/subscribe/post?u=dfbb1507fbced5a20d9dc5698&amp;id=731f22cdca" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate>
     <label for="mce-EMAIL"></label>
     <input type="email" value="" name="EMAIL" placeholder="Your email address..." required>
     <div style="position: absolute; left: -5000px;"><input type="text" name="b_dfbb1507fbced5a20d9dc5698_731f22cdca" tabindex="-1" value=""></div>
     <input type="submit" value="Subscribe" name="subscribe" class="thtrm-cta thtrm-cta--small">
   </form>
+  <p class="thtrm-form__info-text">Information on the performance measurement included in the consent, the use of the mail service provider MailChimp and on the logging of the registration and your rights of revocation can be found in our <a href="https://thoughtram.io/imprint.html" title="Privacy Statement">data protection declaration</a>.</p>
 </div>
 
 
